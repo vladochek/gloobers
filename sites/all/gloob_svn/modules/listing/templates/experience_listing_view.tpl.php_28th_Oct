@@ -1,0 +1,1080 @@
+<?php
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/slimmenu.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/jquery-ui.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/responsiveslides-experience.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/demo-experience.css','file');
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/responsive-styles.css','file');
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/jquery.fs.stepper.css','file');  
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/colorbox.css','file');  
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/jRating.jquery.css','file');  
+
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery-ui.js',array('scope' => 'footer'));
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/responsiveslides.js',array('scope' => 'footer'));
+/* drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.slimmenu.js',array('scope' => 'footer')); */
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.fs.stepper.js',array('scope' => 'footer'));
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.screwdefaultbuttonsV2.js',array('scope' => 'footer'));
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.colorbox.js',array('scope' => 'footer'));
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jRating.jquery.js',array('scope' => 'footer'));
+
+$userDetails = user_load($OverviewData["uid"]);
+
+global $base_url;
+
+?>
+
+        <!-- ======================  slider ========================= -->
+        
+        	<div class="dr-full-slider">
+  		
+                <ul class="rslides" id="slider1">
+				<?php 
+					$i = 1;
+					$photos1 = array_shift($photos);
+					foreach($photos1 as $photo){
+					$photo 	= unserialize($photo);
+					//$style 	= "thumbnail";
+					$style 	= "large";			
+					$file 	= file_load($photo["fid"]);
+					$imgpath = $file->uri;
+				?>
+                  <li><img src="<?php print file_create_url($imgpath); ?>" alt=""></li>
+				<?php
+				}
+				 ?>
+                </ul>  
+            
+                    <div class="add-photo">
+                    	<div class="dr-full-width-wrapper">
+                            
+								<?php 
+									$i = 1;
+									foreach($photos as $photo){
+										$photo 	= unserialize($photo["value1"]);
+										$file 	= file_load($photo["fid"]);
+										$imgpath = $file->uri;
+
+								?>
+                                <a <?php if($i>1) echo "style='display:none;' "; ?> title="<?php echo $photo["text"];  ?>" class="group1" href="<?php echo image_style_url('popup',$imgpath); ?>" ><button class="photo-btn"><i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/cam-ico.png" alt="icon" /></i><span>More Pictures</span><i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/plus-ico.png" alt="ico" /></i></button></a>
+								<?php 
+									$i++;
+									}
+								?>
+							
+                         </div><!-- full width wrapper --> 
+                        <div class="bottom-border"></div>       
+                    </div><!-- add photot -->
+                    
+            </div><!-- slider -->
+            
+            
+  <!-- ======================  title tab ========================= -->  
+
+  	<div class="dr-title-tab">
+    	<div class="dr-full-width-wrapper">
+        	<div class="title-profile">
+            	<div class="dr-profile">
+                	<div class="title-dp">
+					<?php 
+						if($userDetails->picture != ""){
+							$file 	= file_load($userDetails->picture->fid);
+							$imgpath = $file->uri;
+					?>
+                    	<img src="<?php print file_create_url($imgpath); ?>" alt="display pic" />
+					<?php 
+						}
+						else{
+					?>
+						<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/no-profile-male-img.jpg" alt="display pic" />
+					<?php 
+						}
+					?>
+					</div><!-- dp ends -->
+                    	
+					<a href="#">
+						<?php 
+							if($userDetails->field_first_name["und"][0]["value"] != ""){
+								echo $userDetails->field_first_name["und"][0]["value"]." ".$userDetails->field_last_name["und"][0]["value"];
+							}
+							else{
+								echo $userDetails->name;
+							}
+						?>
+					</a>
+                
+                </div><!-- dr-profile ends -->
+                	<div class="profile-title">
+                    	<h5><?php echo $OverviewData["title"]; ?></h5>
+                        <p> <?php echo $OverviewData["city"]; ?>, <?php echo $OverviewData["country"]; ?>, <a href="#"><?php echo $experienceType['experience_type']; ?></a></p>
+                    
+                            <ul class="profile-rating">
+                            	<li><p><?php echo $reviewsCount; ?></p></li>
+								<?php 
+									foreach($SuperAverage1 as $average){
+								?>
+									<div class="basic" data-average="<?php echo $average->average_avg; ?>" data-id="1"></div>
+								<?php 
+								}
+								?>
+                            </ul><!-- profile rating -->
+                    </div><!-- profile -title -->
+              </div><!-- profil ends -->
+              
+              	<div class="title-session">
+                	<div class="session-block active title-share">
+                    	<p>share</p>
+                        <span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/plane-ico.png" alt="icon" /></span>
+                        <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/drop-ico.png" alt="icon" /></i>
+                    </div><!-- share -->
+                    
+                		<div class="session-block title-date">
+                            <p><input id="datetimepicker2" type="text" class="inputDate" placeholder="17/09/2014" /></p>
+                            <span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/cal-ico.png" alt="icon" /></span>
+                            <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/drop-gray-ico.png" alt="icon" /></i>
+                            
+                            	<!-- ====== select date ====== -->
+                                	<div id="datetimepicker2" class="title-datepicker">
+                                    
+                                    
+                                    </div><!-- date ends -->  
+                        </div><!-- date -->
+                        
+                        	<div class="session-block title-date">
+                                <div id="member">
+                                     <p>5</p>
+                                    <span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/user-ico.png" alt="cal"/></span>
+                                    <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/drop-gray-ico.png" alt="icon" /></i>
+                                </div>
+                                
+                                	<!-- ============ toggle ============= -->
+                                    <div class="total-members">
+                                    	<ul class="select-membr">
+                                        	<li><p>Adults</p></li>
+                                            <li><input class="input-number1" type="number" placeholder="0" /></li>
+                                            <li><p>Childrens</p></li>
+                                            <li><input class="input-number1" type="number" placeholder="0" /></li>
+                                            <li><p>Babys</p></li>
+                                            <li><input class="input-number1" type="number" placeholder="0" /></li>
+                                       </ul>
+                                    </div><!-- total members ends -->
+                                    
+                         </div><!-- user -->
+                         
+                         <div class="session-block title-session">
+                                <p>choose your session</p>
+                                <span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/clock-ico.png" alt="cal"/></span>
+                                <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/drop-gray-ico.png" alt="icon" /></i>
+                         </div><!-- session -->
+                         
+                         <div class="session-block title-price">
+                         <div class="top-border"></div>
+                                <small>From</small>
+                                <h4>159&euro;</h4>
+                                <button class="btn-bg">book now</button>
+                         </div><!-- session -->
+                
+                
+                </div><!-- session ends -->
+            
+            
+        
+        </div><!-- wrapper ends -->    
+    </div><!-- ttile ends -->        
+            
+        <div class="discription-article">
+            <div class="dr-full-width-wrapper">
+                <div class="article-row">
+                    <div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/hl-ico.png" alt="highlight" /></i><h3>Highlights</h3>
+                        </div><!-- head ends -->
+                        
+                        	<div class="content-block">
+                            	<p><?php echo $OverviewData["short_description"]; ?></p>
+                                <ul>
+                                	<li><p><span>Duration : </span> <?php echo $calendarDetail["duration"]; ?> <?php echo $calendarDetail["durationUnit"]; ?></p></li>
+                                    <li><p><span>Expected arrival time : </span>30 min prior to session start</p></li>
+									<?php
+									if($rulesDetail['cancellation_policies_type'])
+									{
+									?>
+                                    <li><p><span>Cancellation policy : </span><?php echo $rulesDetail['cancellation_policies_type'];?></p></li>
+									<?php
+									}
+									?>									
+                                 </ul>
+                                 
+                                 	<div class="ancher-block">
+                                    	<a href="javascript:void(0)">+ More</a>
+                                    </div><!-- ancher block -->
+                                    
+                            </div><!-- cont ends -->
+                    
+                    </div><!-- block1 ends -->
+                    
+                    <div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/clip-ico.png" alt="highlight" /></i><h3>Description</h3>
+                        </div><!-- head ends -->
+                        
+                        	<div class="content-block">
+                            	<p><?php echo $OverviewData["brief_description"]; ?></p>
+                                                                
+                                 	<div class="ancher-block">
+                                    	<a href="javascript:void(0)">+ More</a>
+                                    </div><!-- ancher block -->
+                                    
+                            </div><!-- cont ends -->
+                    
+                    </div><!-- block2 ends -->
+                
+                </div><!-- row ends -->
+                
+                 <div class="article-row">
+                    <div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/include-ico.png" alt="highlight" /></i><h3>Included in price</h3>
+                        </div><!-- head ends -->
+                        <?php
+						if($amentiesdata)
+						{
+						?>
+                        	<div class="content-block">
+                            	 
+                                <ul class="included-price">
+                                	<li><p><?php echo $amentiesdata["whats_included"]; ?></p></li>
+									<?php 
+										foreach($amentiesdata["whats_included_extra"] as $key=>$value){
+									?>
+									<li><p><?php echo $value; ?></p></li>		
+									<?php 
+										}
+									?>
+                                	<li><p style="text-decoration: line-through;background:none;"><?php echo $amentiesdata["whats_excluded"]; ?></p></li>
+									<?php 
+										foreach($amentiesdata["whats_excluded_extra"] as $key=>$value){
+									?>
+									<li><p style="text-decoration: line-through;background:none;"><?php echo $value; ?></p></li>		
+									<?php 
+										}
+									?>
+                                 </ul>
+                                 
+                                 	<div class="ancher-block">
+                                    	<a href="javascript:void(0)">+ More</a>
+                                    </div><!-- ancher block -->
+                                    
+                            </div><!-- cont ends -->
+                        <?php
+						}else
+						{
+						?>
+						<div class="content-block">
+						<h4>No amenities Available</h4>
+						</div>
+						<?php
+						}
+						?>
+                    </div><!-- block3 ends -->
+                    
+                    <div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/check-ico.png" alt="highlight" /></i><h3>Optional services</h3>
+                        </div><!-- head ends -->
+                        <?php
+						if($extras)
+						{
+						?>
+                        	<div class="content-block">
+                            	 
+                                <ul class="optional-services">
+								<?php 
+									foreach($extras as $key=>$value){
+										$extras = unserialize($value["value1"]);
+/* 										echo "<pre>";
+										print_r($extras); */
+								?>
+                                	<li>
+                                    	<div class="check-left"><input class="check-box" type="checkbox" /><p><span><?php echo $extras["title"]; ?> :</span>+ $<?php echo $extras["price"]; ?> If Checked <?php echo "-"; ?> Enter quantity</p></div>
+                                    	<div class="check-right"><input type="number" placeholder="0" /></div>
+                                    </li>
+								<?php 
+									}
+								?>
+                                 </ul>
+                                 
+                            </div><!-- cont ends -->
+                    <?php
+					}
+					else
+					{
+					?>
+					<div class="content-block">
+					<h4>No Optional Service Found</h4>
+					</div>
+					<?php
+					}
+					?>
+                    </div><!-- block3 ends -->
+                    
+                 </div> <!-- row -->
+                 
+                 <div class="article-row">
+                 	<div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/exp-ico.png" alt="highlight" /></i><h3>Experience Requirements</h3>
+                        </div><!-- head ends -->
+                          <?php
+						  if($rulesDetail["experience_rules"])
+						  {
+						  ?>
+                        	<div class="content-block">
+                            	<!--<ul class="exp-req">
+                                	<li><p>You have to be 18 years old minimum</p></li>
+                                    <li><p>Non pregnant</p></li>
+                                    <li><p>Valid Driving Licence</p></li>
+                                    <li><p>Healthy</p></li>
+                                    <li><p>Max weight 110 kg</p></li>
+                                    <li><p>Not having drink 24 hours before</p></li>
+                                    <li><p>No diving 24 hours before</p></li>
+                                 </ul>-->
+							<p><?php echo $rulesDetail["experience_rules"]; ?></p>
+                                                                
+                                 	<div class="ancher-block">
+                                    	<a href="javascript:void(0)">+ More</a>
+                                    </div><!-- ancher block -->
+                                    
+                            </div><!-- cont ends -->
+                            <?php
+							}
+							else
+							{
+							?>
+							<div class="content-block">
+							<h4>No Experience Requirements Available</h4>
+							</div>
+							<?php
+							}
+							?>
+                    </div><!-- block2 ends -->
+                    
+                    <div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/safety-ico.png" alt="highlight" /></i><h3>Safety</h3>
+                        </div><!-- head ends -->
+                        <?php
+						if($amentiesdata["safety_precautions"])
+						{
+						?>
+                        	<div class="content-block">
+                            	<p><?php echo $amentiesdata["safety_precautions"]; ?></p>
+                                                                
+                                 	<div class="ancher-block">
+                                    	<a href="javascript:void(0)">+ More</a>
+                                    </div><!-- ancher block -->
+                                    
+                            </div><!-- cont ends -->
+                    <?php
+					}
+					else
+					{
+					?>
+					<div class="content-block">
+					<h4>No Safety Precautions Available</h4>
+					</div>
+					<?php
+					}
+					?>
+                    </div><!-- block2 ends -->
+                 </div><!-- row-->  
+                 
+                 <div class="article-row">
+                 	<div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/hl-ico.png" alt="highlight" /></i><h3>Other details</h3>
+                        </div><!-- head ends -->
+                        <?php
+						if($rulesDetail["other_information"])
+						{
+						?>
+                        	<div class="content-block">
+                            	<p><?php echo $rulesDetail["other_information"]; ?></p>
+                                                                
+                                 	<div class="ancher-block">
+                                    	<a href="javascript:void(0)">+ More</a>
+                                    </div><!-- ancher block -->
+                                    
+                            </div><!-- cont ends -->
+                     <?php
+					 }
+					 else
+					 {
+					 ?>
+					 <div class="content-block">
+					<h4> No other Details Provided yet</h4>
+					 </div>
+					 <?php
+					 }
+					 ?>
+                    </div><!-- block1 ends -->
+                    
+                    <div class="article-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/paper-ico.png" alt="highlight" /></i><h3>Cancellation policies</h3>
+                        </div><!-- head ends -->
+                        <?php
+					
+						if($rulesDetail['cancellation_policies_type'])
+						{
+						
+						?>
+                        	<div class="content-block">
+							<?php
+							 switch ($rulesDetail['cancellation_policies_type']) {
+                               case 'Relaxed':
+									$order = '<p>'.t('Guests will receive a full refund if they cancel at least two weeks before the start of their reservation.').'</p>';
+									break;
+								 case 'Flexible':
+									$order = '<p>'.t('Guests will receive their full refundable deposit plus:').'</p><ul><li>'.t('A 50% refund of their paid rental costs if they cancel at least four weeks before the start of their reservation. OR').'</li><li>'.t('A 25% refund of their paid rental costs if they cancel up to two weeks before the start of their reservation.').'</li></ul>';
+									break;
+								case 'Moderate':
+									$order = '<p>'.t('Guests will receive their full refundable deposit, plus a 50% refund of their paid rental costs, if they cancel at least four weeks before the start of their reservation.').'</p>';
+									break;
+								 case 'Strict':
+									$order = '<p>'.t('Guests will receive their full refundable deposit plus:').'</p><ul><li>'.t('A 50% refund of their paid rental costs if they cancel at least eight weeks before the start of their reservation OR').'</li><li>'.t('A 25% refund of their paid rental costs if they cancel up to four weeks before the start of their reservation.').'</li></ul>';
+									break;
+                                 case 'Super-Strict':
+                                  $order ='<p>'.t('If the guest cancels, any money they have paid cannot be refunded.').'</p>';								 
+								 case 'Custom':
+								 $order ='<p>'.t('Guests will receive their full refundable deposit plus:').'</p><p>'.t('1 % refund of their paid rental costs if they cancel at least 1 weeks prior to reservation').'</p><p>'.t('1 % refund of their paid rental costs if they cancel at least 1 days prior to reservation').'</p>';
+								default:
+									$order = '';
+								}
+								echo $order;
+							?>
+                            	
+                                                                
+                                 	<div class="ancher-block">
+                                    	<a href="javascript:void(0)">+ More</a>
+                                    </div><!-- ancher block -->
+                                    
+                            </div><!-- cont ends -->
+                    <?php
+					}
+					?>
+                    </div><!-- block2 ends -->
+                 </div><!-- row -->
+                 
+                 <div class="article-row">
+                 	<div class="article-block full-width-block">
+                    	<div class="article-block-head">
+                        	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/loc-ico.png" alt="highlight" /></i><h3>Location</h3>
+                        </div><!-- head ends -->
+                        
+                        	<div class="content-block">
+                            	<p><?php echo $OverviewData['about_area'];?></p>
+                                  
+                            </div><!-- cont ends -->
+                    
+                    </div><!-- block2 ends -->
+                 </div><!-- last row ends -->
+                
+                
+            </div><!-- wrapper ends -->
+        </div><!-- dedscription article close -->    
+            
+     <!-- ======================================================= Map Article ================================================ -->
+     <div class="dr-map-article map-wrapper">
+     	<div class="location-filter">
+        	<ul class="short-search-map">
+            	<li><input class="check-box2" type="checkbox" /> <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/exp-loc-ico.png" alt="loc" /></i><p>Experiences</p></li>
+                <li><input class="check-box2" type="checkbox" /> <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/home-ico.png" alt="loc" /></i><p>Vaction Rentals</p></li>
+                <li><input class="check-box2" type="checkbox" /> <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/knif-ico.png" alt="loc" /></i><p>Restaurents</p></li>
+                <li class="last-child"><input class="check-box2" type="checkbox" /> <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/bed-ico.png" alt="loc" /></i><p>Hotels</p></li>
+            </ul>
+        
+        		<div class="nearby-loc">
+                	<p>NEARBY Listings</p><i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/loc-w-ico.png" alt="loc" /></i>
+                </div><!-- neerby loc -->
+          </div><!-- loc filter -->	 
+     <div class="dr-map-article" id="map-canvas">
+		
+    </div><!-- map article -->    
+            <div class="nearby-places">
+            <ul>
+			
+			<?php
+				$i = 1;
+				$markers = array();
+				$str = "";
+				foreach($nearPlaces as $places){
+					if($places->eid == arg(2)) continue;
+					$markers[0] = $places->title;
+					$markers[1] = $places->latitude;
+					$markers[2] = $places->longitude;
+					$markers[3] = $i;
+					$i++;
+					$str .= json_encode($markers).",";
+			?>
+            	<li>
+                	<a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/hotel-thumb.png" alt="place" /></a>
+                        <div class="place-info">
+                        	<ul class="info-ul">
+                        	 	<li><small><?php echo number_format($places->distance, 2);; ?>km away</small></li>
+                                <li><p><?php echo $places->title; ?></p></li>
+                                <li>
+                                	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/star-ico.png" alt="rate" /></i>
+                                    <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/star-ico.png" alt="rate" /></i>
+                                    <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/star-ico.png" alt="rate" /></i>
+                                    <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/star-ico.png" alt="rate" /></i>
+                                    <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/star-ico.png" alt="rate" /></i>
+                                </li>
+                        	</ul>
+                        </div>
+                        
+                        <div class="place-price-info">
+                        	<p>125 <i class="fa fa-eur"></i></p>
+                            <span>/ partic.</span>
+                        
+                        </div><!-- price info -->          
+                   
+                </li> <!-- near place -->
+             <?php 
+				}
+				
+
+			 ?>      
+               
+            </ul>
+            </div><!-- neerby-places -->   
+	</div>
+     <!-- ============================================= reviews n guids ============================================= -->
+     <div class="article-row dr-bottom-article">
+     	<div class="dr-full-width-wrapper">
+        
+        	<div class="article-block reviews r-right">
+                	<div class="article-block-head">
+                       <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/prsn-ico.png" alt="highlight" /></i><h3>Get in touch</h3>
+                    </div><!-- head ends -->
+                    
+                    	<div class="admin-profile">
+                        	<div class="admin-pro-dp">
+                            	<div class="admin-photo">
+									<?php 
+										if($userDetails->picture != ""){
+											$file 	= file_load($userDetails->picture->fid);
+											$imgpath = $file->uri;
+									?>
+										<img src="<?php print file_create_url($imgpath); ?>" alt="display pic" />
+									<?php 
+										}
+										else{
+									?>
+										<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/no-profile-male-img.jpg" alt="display pic" />
+									<?php 
+										}
+									?>
+                                </div><!-- dp ends -->
+                             </div><!-- pro ends -->  
+                             <div class="profile-details">
+                             	<a href="#"><?php
+
+								if($userDetails->field_first_name["und"][0]["value"] != ""){
+									echo $userDetails->field_first_name["und"][0]["value"]." ".$userDetails->field_last_name["und"][0]["value"];
+								}
+								else{
+									echo $userDetails->name;
+								}
+
+								?></a>
+                                <p>Tel-Aviv, Israel</p>
+                                <p><span>Member since <?php echo date('M',$userDetails->created) ?> <?php echo date('Y',$userDetails->created) ?></span></p>
+                                <div class="admin-review">
+                                	<a href="#">Reviews</a>
+                                	<p><?php echo $userReviewsCount; ?></p>
+                                </div><!-- admin-review -->
+                                	<!-- <div class="admin-frnds">
+                                    	<a href="#">Friends (24)</a>
+                                        <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/frnds-ico.png" alt="frnds" /></i>
+                                    </div>-->
+                             
+                             </div><!-- details ends -->
+                             
+                             <div class="admin-contacts">
+                             	<a href="#">Contact</a>
+                             </div><!-- admin-contacts-->      
+                             
+                             	<div class="admin-info">
+                                	<p><?php echo $userDetails->field_about_yourself["und"][0]["value"]; ?></p>
+														
+                                           <a href="javascript:void(0)">+ More</a>             
+
+                                </div><!-- admin info close -->                        
+						                     
+                        </div><!-- admin-->
+                        
+                        	<div class="admin-social-block">
+                            	<div class="col-block">
+                                	<div class="block-row">
+                                         <div class="col-left">
+                                            <p>Email Address</p>
+                                            <a href="#">Verified</a>
+                                           </div>
+                                           <div class="col-right"> 
+                                        	<span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/mail-ico.png" alt="mail ico" /></span>
+                                           </div><!-- col-right --> 
+                                    </div><!-- row ends -->
+                                    
+                                    <div class="block-row">
+                                         <div class="col-left">
+                                            <p>Phone Number</p>
+                                            <a href="#"><i></i> <i></i> <i></i> <i></i> <i></i> <i></i> <i></i> <i></i> <i></i><small>54</small>Verified</a>
+                                           </div>
+                                           <div class="col-right"> 
+                                        	<span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/phon-ico.png" alt="mail ico" /></span>
+                                           </div><!-- col-right --> 
+                                    </div><!-- row ends -->
+                                    
+                                    <!--  <div class="block-row">
+                                       <div class="col-left">
+                                            <p>Facebook</p>
+                                            <a href="#"><small>157 Friends</small></a>
+                                           </div>
+                                           <div class="col-right"> 
+                                        	<span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/fb-ico.png" alt="mail ico" /></span>
+                                           </div>
+                                    </div>-->
+                                	<div class="block-row">
+                                         <div class="col-left">
+                                            <p>Google+</p>
+                                            <a href="#">Validated</a>
+                                           </div>
+                                           <div class="col-right"> 
+                                        	<span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/g-plus-ico.png" alt="mail ico" /></span>
+                                           </div><!-- col-right --> 
+                                    </div><!-- row ends -->                               
+                                </div><!-- block close -->
+                                
+                                <div class="col-block">
+
+                                    
+                                    <div class="block-row">
+                                         <div class="col-left">
+                                            <p>Twitter</p>
+                                            <a href="#">Validated</a>
+                                           </div>
+                                           <div class="col-right"> 
+                                        	<span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/twt-ico.png" alt="mail ico" /></span>
+                                           </div><!-- col-right --> 
+                                    </div><!-- row ends -->
+                                    
+                                    <div class="block-row">
+                                         <div class="col-left">
+                                            <p>Positively Reviewed</p>
+                                            <a href="#"><small>16 Reviews</small></a>
+                                           </div>
+                                           <div class="col-right"> 
+                                        	<span><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/like-ico.png" alt="mail ico" /></span>
+                                           </div><!-- col-right --> 
+                                    </div><!-- row ends -->
+                                
+                                </div><!-- block close -->                           
+                            
+                            </div><!-- social block-->
+                        	
+                            <div class="view-pro">
+                            	<a href="#">View full profile +</a>
+                            </div><!-- view -->
+                        
+                        
+                 </div><!-- article block touch ends -->
+        
+        	<div class="article-block reviews col-left">
+            	<div class="article-block-head">
+                   <i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/revw-ico.png" alt="highlight" /></i><h3>Reviews</h3>
+                </div><!-- head ends -->
+                
+                	<div class="review-rating">
+                   		<div class="review-cal">
+                        	<p><?php echo $reviewsCount; ?></p>
+                            <h5>review</h5>
+								<?php 
+									foreach($SuperAverage as $average){
+								?>
+										<div class="basic3" data-average="<?php echo $average->average_avg; ?>" data-id="1"></div>
+									<?php 
+										if($average->average_avg > 3){
+									?>
+										<div class="basic2" data-average="<?php echo ($average->average_avg-3); ?>" data-id="1"></div>
+								<?php
+										}
+									}
+								?>
+                        </div> 
+                        <?php 
+							foreach($reviewsAverage as $average){
+						?>
+                        	<div class="review-rating-cell r-border">
+                            	<ul>
+                                    <li>
+                                        <p>ACCURACY</p>
+                                            <span>
+												<div class="basic" data-average="<?php echo $average->accuracy_avg; ?>" data-id="1"></div>
+                                            </span>
+                                     </li>
+                                      <li>
+                                        <p>CLEANLINESS</p>
+                                            <span>
+												<div class="basic" data-average="<?php echo $average->cleanliness_avg; ?>" data-id="1"></div>
+                                            </span>
+                                     </li>
+                                      <li>
+                                        <p>CHECK IN</p>
+                                            <span>
+												<div class="basic" data-average="<?php echo $average->check_in_avg; ?>" data-id="1"></div>
+                                            </span>
+                                     </li>
+                                      
+                                </ul>
+                            
+                            </div><!-- review rating cell -->
+                            
+                            <div class="review-rating-cell">
+                            	<ul>
+                                    <li>
+                                        <p>COMMUNICATION</p>
+                                            <span>
+												<div class="basic" data-average="<?php echo $average->communication_avg; ?>" data-id="1"></div>
+                                            </span>
+                                     </li>
+                                      <li>
+                                        <p>LOCATION</p>
+                                            <span>
+												<div class="basic" data-average="<?php echo $average->location_avg; ?>" data-id="1"></div>
+                                            </span>
+                                     </li>
+                                      <li>
+                                        <p>VALUE</p>
+                                            <span>
+												<div class="basic" data-average="<?php echo $average->value_avg; ?>" data-id="1"></div>
+                                            </span>
+                                     </li>
+                                      
+                                </ul>
+                            
+                            </div><!-- review rating cell -->
+						<?php }?>
+                   </div><!-- rating ends -->
+				<div class="review-wrapper">
+                <?php 
+					foreach($reviews as $review){
+						$userDetails = user_load($review["uid"]);
+				?>
+                   <div class="blogger-block">
+                        <div class="blogger-profile">
+                        	<div class="blogger-dp">
+								<?php 
+									if($userDetails->picture->fid != ""){
+										$file 	= file_load($userDetails->picture->fid);
+										$imgpath = $file->uri;
+								?>
+									<img src="<?php print file_create_url($imgpath); ?>" alt="display pic" />
+								<?php 
+									}
+									else{
+								?>
+									<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/no-profile-male-img.jpg" alt="display pic" />
+								<?php 
+									}
+								?>
+                        	</div><!-- dp ends -->
+                            <a href="#">
+								<?php
+									if($userDetails->field_first_name["und"][0]["value"] != ""){
+										echo $userDetails->field_first_name["und"][0]["value"]." ".$userDetails->field_last_name["und"][0]["value"];
+									}
+									else{
+										echo $userDetails->name;
+									}
+								?>
+							</a>
+                        </div> <!-- profile -->
+                        	<div class="blog-description">
+                            	<p><?php echo $review["comments"];  ?></p> 
+									<div class="description-detail">
+                                    	<span><?php echo date('F, Y',strtotime($review["created"])) ?></span>
+                                        <a href="javascript:void(0)">+ More</a>                                     
+                                    </div><!-- detail ends -->
+                            </div><!-- diescription -->
+                   
+                   </div><!-- blogger  -block ends -->
+                   
+				<?php 
+					}
+				?>
+				</div>
+				<?php 
+					if($reviewsCount> 2){
+				?>
+                    <div class="blog-pagination">
+						<?php 
+							for($i = 1; $i <= ceil($reviewsCount/2); $i++)
+							{
+						?>
+							<a class="<?php if($i == 1) echo 'active'; else ''; ?>" href="javascript:void(0)"><?php echo $i; ?></a>
+						<?php 
+							}
+						?>
+                    </div><!-- blog pagination -->
+				<?php 
+				}
+				?>
+            </div><!-- article block ends -->
+            
+             </div><!-- wrapper close -->
+     </div><!-- bottom article -->
+  
+  
+    <script>
+    // You can also use "$(window).load(function() {"
+    jQuery(function () {
+
+      // Slideshow 1
+      jQuery("#slider1").responsiveSlides({
+        maxwidth: 1920,
+        speed: 800,
+		auto: true,
+        pager: false,
+		//manualControls: '#slider3-pager',
+		//namespace: "callbacks",
+       // before: function () {
+         // $('.events').append("<li>before event fired.</li>");
+       // },
+        //after: function () {
+        //  $('.events').append("<li>after event fired.</li>");
+      // }
+      });
+ 
+    });
+  </script>
+  <!-- stepper -->
+		<script>
+			jQuery(document).ready(function() {
+				jQuery("input[type=number]").stepper();
+			});
+		</script>
+ <!-- stepper -->   
+ <!-- check box -->
+	 <script type="text/javascript">
+		jQuery(function(){
+		
+			jQuery('input:radio').screwDefaultButtons({
+				image: 'url("<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/radioSmall.jpg")',
+				width: 43,
+				height: 43
+			});
+			
+			jQuery('.check-box').screwDefaultButtons({
+				image: 'url("<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/icheck.png")',
+				width: 22,
+				height: 23
+			});
+			jQuery('.check-box2').screwDefaultButtons({
+				image: 'url("<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/icheck2.png")',
+				width: 22,
+				height: 23
+			});
+ 	});
+	</script>
+  <script type="text/javascript">
+jQuery( "#search-out" ).click(function() {
+	jQuery( "#short-search" ).toggle( "slow", function() {
+	 
+	});
+});
+jQuery( "#member" ).click(function() {
+	jQuery( ".total-members" ).toggle( "slow", function() {
+	 
+	});
+});
+</script>
+ <script>
+jQuery(function() {
+jQuery( "#datetimepicker2" ).datepicker();
+
+
+	jQuery('.short-search-map').slimmenu(
+	{
+		resizeWidth: '900',
+		collapserTitle: 'Short Search',
+
+		animSpeed:'medium',
+		indentChildren: true,
+		childrenIndenter: '&raquo;'
+	});
+	jQuery('.sign-in').slimmenu(
+	{
+		resizeWidth: '567',
+		collapserTitle: 'Log On',
+		 
+		animSpeed:'medium',
+		indentChildren: true,
+		childrenIndenter: '&raquo;'
+	});
+	
+	jQuery(".basic").jRating({
+		bigStarsPath: "<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/icons/stars.png",
+		isDisabled : true,
+		type: 'small',
+		 length : 5,
+	});
+	
+	jQuery(".basic3").jRating({
+		bigStarsPath: "<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/icons/star-gray.png",
+		isDisabled : true,
+		 length : 3,
+		type: 'small',
+		 rateMax : 3
+	});
+	
+	jQuery(".basic2").jRating({
+		bigStarsPath: "<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/icons/star-gray.png",
+		isDisabled : true,
+		 length : 2,
+		type: 'small',
+		 rateMax : 2
+	});
+	
+});
+
+function initialize() {
+	var marker;
+	var circle;
+	var currentlatlng = new google.maps.LatLng(<?php echo $OverviewData["latitude"]; ?>,<?php echo $OverviewData["longitude"]; ?>);
+	var mapOptions = {
+		zoom: 12,
+		center: new google.maps.LatLng(<?php echo $OverviewData["latitude"]; ?>,<?php echo $OverviewData["longitude"]; ?>)
+	}
+	var map = new google.maps.Map(document.getElementById('map-canvas'),
+	mapOptions);
+
+	if (currentlatlng) {
+
+		map.panTo(currentlatlng);
+		setMarker(marker,map,currentlatlng,circle);
+	}
+	setMarkers(map, beaches);
+}
+
+/**
+ * Data for the markers consisting of a name, a LatLng and a zIndex for
+ * the order in which these markers should display on top of each
+ * other.
+ */
+var beaches = [<?php echo $str; ?>];
+
+function setMarkers(map, locations) {
+
+  var image = {
+    url: "<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/exp-loc-ico.png",
+    // This marker is 20 pixels wide by 32 pixels tall.
+    size: new google.maps.Size(40, 52),
+    // The origin for this image is 0,0.
+    origin: new google.maps.Point(0,0),
+    // The anchor for this image is the base of the flagpole at 0,32.
+    anchor: new google.maps.Point(0, 32)
+  };
+
+  var shape = {
+      coords: [1, 1, 1, 20, 18, 20, 18 , 1],
+      type: 'poly'
+  };
+  var infowindow = new google.maps.InfoWindow({
+      maxWidth: 200
+  });
+
+  
+  for (var i = 0; i < locations.length; i++) {
+    var beach = locations[i];
+    var myLatLng = new google.maps.LatLng(beach[1], beach[2]);
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: image,
+        shape: shape,
+        title: beach[0],
+        zIndex: beach[3]
+    });
+	google.maps.event.addDomListener(marker, 'click', function() {
+		infowindow.setContent(this.title);
+		infowindow.open(map,this);
+
+	});
+  }
+}
+
+function setMarker(marker,map,currentlatlng,circle) {
+    if (marker != undefined)
+        marker.setMap(null);
+
+    marker = new google.maps.Marker({
+        position: currentlatlng,
+        draggable: false,
+        map: map
+    });
+    if (marker) {
+        google.maps.event.addDomListener(marker, "dragend", function () {
+            currentlatlng = marker.getPosition();
+            drawCircle();
+        });
+        drawCircle(map,currentlatlng,circle);
+    }
+}  
+
+function drawCircle(map,currentlatlng,circle) {
+
+    if (circle != undefined)
+        circle.setMap(null);
+
+    var radius = 2500;
+
+	var options = {
+        strokeColor: '#0599e5',
+        strokeOpacity: 1.0,
+        strokeWeight: 1,
+        fillColor: '#0599e5',
+        fillOpacity: 0.5,
+        map: map,
+        center: currentlatlng,
+        radius: radius
+    };
+    circle = new google.maps.Circle(options);
+	
+} 
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+$(".blog-pagination a").on('click',function(){
+	var page = $(this).text();
+	$(".review-wrapper").append("<span class='loading'><img src='<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/loading_1.gif'/></span>");
+	$.ajax({
+		url : "<?php echo $base_url; ?>/listing/review",
+		type: "POST",
+		data : {'page':page,'listing_id':<?php echo arg(2); ?>},
+		success: function(data)
+		{
+			$(".review-wrapper").html(data);
+	
+		},
+		error: function (jqXHR, textStatus, errorThrown)
+		{
+	 
+		}
+	});
+	$(".blog-pagination a").removeClass("active");
+	$(this).addClass("active");
+});
+
+</script>
+
+<!-- ========= toggle listing =============== -->
+

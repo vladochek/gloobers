@@ -1,0 +1,1682 @@
+<?php
+function services_menu() {
+  $items = array();
+  $items['admin/gloobers/services'] = array(
+    'title' => 'Services',
+    'description' => 'Manage all gloobers services/products',
+    'page callback' => 'services',
+    'page arguments' => array('list'),
+    'access arguments' => array('administer users'),
+    'position' => 'left',
+    //'weight' => 12,
+    'file' => 'services.admin.inc',
+  );
+ 
+  
+  $items['admin/usersDetail/list'] = array(
+    'title' => '',
+    'page callback' => 'userDetail_list',
+   // 'page arguments' => array('service_edit_form'),
+    'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,// A type of MENU_CALLBACK means leave the path completely out of the menu links.
+    'file' => 'services.admin.inc',
+  );
+  $items['admin/user/trips/%'] = array(
+	'page callback' => 'view_user_trips',
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	);
+  $items['admin/listing/price'] = array(
+    'title' => '',
+    'page callback' => 'member_listing_price',
+     'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,// A type of MENU_CALLBACK means leave the path completely out of the menu links.
+    'file' => 'services.admin.inc',
+  );
+   $items['admin/listing/price/edit/%'] = array(
+    'title' => '',
+   'page callback' => 'drupal_get_form',
+    'page arguments' => array('listing_pricing_edit_form'),
+    'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,
+    'file' => 'services.admin.inc',
+  );
+  $items['admin/listing/price/add'] = array(
+    'title' => '',
+   'page callback' => 'drupal_get_form',
+    'page arguments' => array('listing_pricing_add_form'),
+    'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,
+    'file' => 'services.admin.inc',
+  );
+  $items['admin/country/list'] = array(
+    'title' => '',
+    'page callback' => 'country_list',
+   // 'page arguments' => array('service_edit_form'),
+    'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,// A type of MENU_CALLBACK means leave the path completely out of the menu links.
+    'file' => 'services.admin.inc',
+  );
+   $items['admin/country/add'] = array(
+    'title' => '',
+   'page callback' => 'drupal_get_form',
+    'page arguments' => array('country_add_form'),
+    'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,// A type of MENU_CALLBACK means leave the path completely out of the menu links.
+    'file' => 'services.admin.inc',
+  );
+  $items['admin/country/edit/%'] = array(
+    'title' => '',
+   'page callback' => 'drupal_get_form',
+    'page arguments' => array('country_edit_form'),
+    'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,// A type of MENU_CALLBACK means leave the path completely out of the menu links.
+    'file' => 'services.admin.inc',
+  );
+ 
+  $items['admin/country/activate/%'] = array(
+    'title' => '',
+    'page callback' => 'country_status',   
+    'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,// A type of MENU_CALLBACK means leave the path completely out of the menu links.
+    'file' => 'services.admin.inc',
+  );
+   $items['country/autocomplete'] = array(
+    'title' => '',
+   'page callback' => 'country_autocomplete',
+    'access arguments' => array('access content'),
+	'access callback' => true,
+   //'page arguments' => array('country_add_form'),
+   // 'access arguments' => array('administer users'),
+     'type' => MENU_CALLBACK,// A type of MENU_CALLBACK means leave the path completely out of the menu links.
+    
+  );
+    $items['admin/revenue/stats'] = array(
+    'title' => 'Revenue',
+    'page callback' => 'revenue_statistics',
+	'access callback' => true,
+    //'access arguments' => array('administer users'),
+    'type' => MENU_CALLBACK, // A type of MENU_CALLBACK means leave the path completely out of the menu links.
+      );
+     $items['admin/experiencetype'] = array(
+   // 'title' => t('Experience Type'),
+    'page callback' => 'experience_type',
+	//'access callback' => true,
+    'access arguments' => array('administer users'),
+    'type' => MENU_CALLBACK, // A type of MENU_CALLBACK means leave the path completely out of the menu links.
+	'file' => 'services.admin.inc',
+      );
+	$items['admin/experienceType/add'] = array(
+    'title' => '',
+    'page callback' => 'drupal_get_form',
+	'page arguments'=>array('experience_type_add_form'),
+	'access arguments' => array('administer users'),
+	'file' => 'services.admin.inc',
+    'type' => MENU_CALLBACK, // A type of MENU_CALLBACK means leave the path completely out of the menu links.
+      );
+	 $items['admin/experienceType/edit/%'] = array(
+     'page callback' => 'drupal_get_form',
+	'page arguments'=>array('experience_type_edit_form'),
+	'file' => 'services.admin.inc',
+    'access arguments' => array('administer users'),
+    'type' => MENU_CALLBACK, // A type of MENU_CALLBACK means leave the path completely out of the menu links.
+      );	
+       
+   $items['admin/experienceCategory'] = array(
+   // 'title' => t('Experience Category'),
+    'page callback' => 'experience_category',
+	//'access callback' => true,
+   // 'page arguments' => array('service_edit_form'),
+    'access arguments' => array('administer users'),
+	'file' => 'services.admin.inc',
+    'type' => MENU_CALLBACK, // A type of MENU_CALLBACK means leave the path completely out of the menu links.
+      );
+	 $items['admin/experienceCategory/add'] = array(
+    'title' => '',
+    'page callback' => 'drupal_get_form',
+	'page arguments'=>array('experience_category_add_form'),
+	'access arguments' => array('administer users'),
+	'file' => 'services.admin.inc',
+    'type' => MENU_CALLBACK, // A type of MENU_CALLBACK means leave the path completely out of the menu links.
+      );
+	 $items['admin/experienceCategory/edit/%'] = array(
+     'page callback' => 'drupal_get_form',
+	'page arguments'=>array('experience_category_edit_form'),
+	'file' => 'services.admin.inc',
+    'access arguments' => array('administer users'),
+    'type' => MENU_CALLBACK, // A type of MENU_CALLBACK means leave the path completely out of the menu links.
+      );
+	 $items['admin/deal/list'] = array(
+   // 'title' => 'Revenue',
+    'page callback' => 'deal_list',
+	'access callback' => true,
+    //'access arguments' => array('administer users'),
+    'type' => MENU_CALLBACK, 
+	 'file' => 'services.admin.inc',
+      );
+	  $items['admin/manage/plans'] = array(
+   // 'title' => 'Manage Advisor plans',
+    'page callback' => 'advisor_plans',
+	'access callback' => true,
+    //'access arguments' => array('administer users'),
+    'type' => MENU_CALLBACK, 
+	 'file' => 'services.admin.inc',
+      ); 
+	$items['admin/revenue/charges'] = array(
+    //'title' => 'Set Commison rate here',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('charges_configuration_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_CALLBACK, 
+	 
+      ); 
+	 $items['admin/experience/view/%'] = array(
+    //'title' => 'Set Commison rate here',
+    'page callback' => 'experience_view_admin',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_CALLBACK, 	 
+      );
+	 $items['admin/list/customers/%'] = array(
+    //'title' => 'list users for particular list who booked list',
+    'page callback' => 'list_customers',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_CALLBACK, 
+    'file' => 'services.admin.inc',	
+      );  
+	  $items['admin/revenue/user/charges'] = array(
+    //'title' => 'list users for particular list who booked list',
+    'page callback' => 'commision_charges_by_user',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_CALLBACK, 
+    'file' => 'services.admin.inc',	
+      );  
+    $items['admin/commision/edit/%'] = array(
+    //'title' => 'list users for particular list who booked list',
+    'page callback' => 'drupal_get_form',
+	'page arguments'=>array('user_edit_commission_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_CALLBACK, 
+    'file' => 'services.admin.inc',	
+      );  
+	  //refund amount for bookindId
+    $items['admin/transactions/refund/%'] = array(
+	'page callback' => 'transactions_refund',
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 	
+	$items['admin/transactions/history'] = array(
+	'page callback' => 'transactions_history_details',
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 	
+	$items['admin/transactions/refund'] = array(
+	'page callback' => 'refundBypaypal',
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 
+    $items['admin/paypal/credentials'] = array(
+	 'page callback' => 'drupal_get_form',
+    'page arguments' => array('paypal_credentials_form'),
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 	
+$items['admin/manage/video'] = array(
+    //'title' => 'Set Commison rate here',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('manage_homepage_video'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_CALLBACK, 
+	 
+      );
+$items['admin/passions'] = array(
+	'page callback' => 'user_passions',
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	);
+$items['admin/passions/delete/%'] = array(
+	'page callback' => 'user_passions_delete',
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	);
+$items['admin/passion/add'] = array(
+	 'page callback' => 'drupal_get_form',
+	'page arguments'=>array('user_passions_add_form'),
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	);
+$items['admin/passions/edit/%'] = array(
+	 'page callback' => 'drupal_get_form',
+	'page arguments'=>array('user_passions_edit_form'),
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 	  
+	$items['admin/advisor/plan/add'] = array(
+	 'page callback' => 'drupal_get_form',
+	'page arguments'=>array('user_advisor_plan_add_form'),
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 	
+	$items['admin/plan/edit/%'] = array(
+	 'page callback' => 'drupal_get_form',
+	'page arguments'=>array('user_advisor_plan_edit_form'),
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 
+	$items['admin/manage/credits'] = array(
+	 'page callback' => 'drupal_get_form',
+	'page arguments'=>array('manage_credits_dollor_form'),
+	 'access arguments' => array('access administration pages'),
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 	  
+
+$items['ajax/adduserpassion'] = array(
+	'page callback' => 'add_user_passions',
+	'access callback' => true, 
+	'type' => MENU_CALLBACK,
+	); 	
+	
+  return $items;
+}
+ function services_theme() {
+
+return array(
+               'revenue_stats' => array(
+                                      'path' => drupal_get_path('module', 'services').'/templates',
+                                      'template' => 'revenue_stats',
+                                      'render element' => 'form'
+                                  ),
+				'experience_view'=>	array(
+                                      'path' => drupal_get_path('module', 'services').'/templates',
+                                      'template' => 'experience_view',
+                                      'render element' => 'form'
+                                  ),
+				'list_customers'=>	array(
+                                      'path' => drupal_get_path('module', 'services').'/templates',
+                                      'template' => 'list_customers',
+                                      'render element' => 'form'
+                                  ),
+				'userDetail_list'=>	array(
+                                      'path' => drupal_get_path('module', 'services').'/templates',
+                                      'template' => 'userDetail_list',
+                                      'render element' => 'form'
+                                  ),
+				'view_user_trips'=>	array(
+                                      'path' => drupal_get_path('module', 'services').'/templates',
+                                      'template' => 'view_user_trips',
+                                      'render element' => 'form'
+                                  ),				  
+								 ); 
+}
+function revenue_statistics()
+{
+return theme('revenue_stats');
+}
+function country_autocomplete($string=null)
+{
+$matches = array();
+$query 		= 	db_select('gbl_country_list', 'gcl');
+$query->fields('gcl',array('country_name'));
+$query->condition('gcl.country_name', '%' . db_like($string) . '%', 'LIKE');
+$query ->range(0, 15);
+$result		=	$query->execute();
+ foreach ($result as $row) {
+    $matches[$row->country_name] = check_plain($row->country_name);
+  }
+  drupal_json_output($matches);
+}
+function getContinent()
+{
+$continent=array();
+$query 		= 	db_select('gbl_country_list', 'gcl');
+$query->fields('gcl',array('continent'));
+$query->distinct();
+$result		=	$query->execute();
+while($data=$result->fetchAssoc())
+{
+	$continent[$data['continent']]		=	$data['continent'];
+}
+return $continent;
+}
+function getCountryData($countryId=null)
+{
+$country=array();
+$query 		= 	db_select('gbl_country_list', 'gcl');
+$query->fields('gcl');
+$query->condition('id',$countryId,'=');
+$result		=	$query->execute();
+while($data=$result->fetchAssoc())
+{
+$country=$data;
+}
+return $country;
+}
+function getExperienceTypeById($id=null)
+{
+$query=db_select('gbl_experience_type','get')
+       ->fields('get')
+	   ->condition('status',1)
+	   ->condition('id',$id,'=')
+	   ->execute();
+	   $data=$query->fetchAssoc();
+	   return $data;
+}
+function charges_configuration_form($form, &$form_state)
+{
+drupal_add_css(drupal_get_path('module', 'services') .'/css/services.css','file');  
+$form['charges'] = array(
+                      '#type' => 'fieldset',
+                      '#title' => t('Add Charges paid by user to gloobers'),
+                  );
+$form['charges']['service_tax'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Service Tax (in %)'),
+    '#default_value' => variable_get('service_tax')!=''?variable_get('service_tax'):'0.0',
+    '#size' => 25,
+    '#maxlength' => 5,
+    '#description' => t('Service Tax to be paid by user while booking'),
+   // '#required' => TRUE,
+  );
+  $form['charges']['commission'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Commission (in %)'),
+    '#default_value' => variable_get('commission')!=''?variable_get('commission'):'0.0',
+    '#size' => 25,
+    '#maxlength' => 5,
+    '#description' => t('Commission paid to gloobers while booking'),
+   // '#required' => TRUE,
+  );
+    return system_settings_form($form);
+}
+function experience_view_admin($eid=null)
+{
+$eid=arg(3);
+drupal_add_css(drupal_get_path('module', 'services') .'/css/experience_view.css','file');
+drupal_add_css(drupal_get_path('module', 'services') .'/css/jquery.datetimepicker.css','file');
+drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/jquery-1.11.0.min.js', 'file');
+drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/jquery-migrate-1.2.1.min.js', 'file');
+drupal_add_js(drupal_get_path('module', 'services') .'/js/jquery.datetimepicker.js', 'file');
+$OverviewData=getOverviewData($eid);
+$photos = getPhotosData($eid);
+$amentiesdata=getAmentiesByproduct($eid);
+$amentiesdata = unserialize($amentiesdata["value1"]);
+$extras = getProductExtraData($eid);
+$rulesDetail=getRulesDetails($eid);
+$rulesDetail=unserialize($rulesDetail["value1"]);
+$pricingData = getPricingData($eid);
+$seasonalPrice=getListExtraPrice($eid);
+$earlyBirdData=getDiscountInfo($eid,'Early Birds');
+$LastMinuteData=getDiscountInfo($eid,'Last Minute');
+$offer_24_Data=getDiscountInfo($eid,'24 Hour Offer');
+$schedulingData=getSchedulingData($eid);
+$sessiondata=getScheduleSessionData($eid);
+$scheduledata_extra=getSchedulingSessionData($eid);
+return theme('experience_view',array('photos'=>$photos,'sessiondata'=>$sessiondata,'scheduleSessionData'=>$scheduledata_extra,'schedulingData'=>$schedulingData,'offer_24_Data'=>$offer_24_Data,'LastMinuteData'=>$LastMinuteData,'earlyBirdData'=>$earlyBirdData,'seasonalPrice'=>$seasonalPrice,'pricingData'=>$pricingData,'OverviewData'=>$OverviewData,'amentiesdata'=>$amentiesdata,'extras'=>$extras,'rulesDetail'=>$rulesDetail));
+}
+function getTotalBookingByList($eid=null)
+{
+$query=db_select('gbl_booking','gb')
+       ->fields('gb',array('id','lid'))
+       ->condition('lid',$eid,'=');
+$result	=$query->execute();
+return $result->rowCount();          	   
+}
+function getAmountEarnedBydeal($eid=null)
+{
+$query=db_select('gbl_booking','gb')
+       ->fields('gb',array('refund_amount'))
+       ->condition('lid',$eid,'=');
+$query->addExpression('SUM(grand_total)', 'grand_profit');	   
+$query->addExpression('SUM(refund_amount)', 'refund_total');	   
+$query->addExpression('SUM(trans_fees)', 'trans_fees_total');	   
+//$result	=$query->execute();
+$points = $query->execute();
+return $points->fetchAssoc();
+}
+function getAllBookingInfo($eid=null,$filter=null,$search=null,$criteria=null)
+{
+$bookings=array();
+    $query 		= 	db_select('gbl_users_meta', 'u')->extend('PagerDefault');///connect to gbl_users_meta here
+    $query ->join('gbl_booking','gbl','u.uid = gbl.uid');
+    $query ->join('gbl_payment','gp','gp.bid = gbl.id');
+   // $query ->leftJoin('gbl_refunds','gr','gr.bid = gbl.id');
+	$query ->fields('gbl');
+	$query ->fields('gp');
+	//$query ->fields('gr');
+	$query->fields('u',array('name','mail','uid','first_name','last_name','commission'));
+	$query->condition('lid',$eid,'=');
+	if($filter!="")
+	{
+	$query->condition('gbl.booking_status',"%$filter%",'like');
+	}
+	if($search!="")
+	{
+		if($criteria=="customer")
+		{
+		$pos=strpos($search," ");
+			if($pos>0)
+			{
+			$titleArr=explode(" ",$search);
+			$search=array_filter($titleArr);
+			$titleResult=array_values($search);		
+				$title1=$titleResult[0];
+				$title2=$titleResult[1];
+			}
+			else
+			{	
+			$title1=$search;
+			$title2=$search;
+			}
+		/*****************************************/
+		
+		$query->condition(db_or()->condition('name',"%$search%",'like')->condition('mail',"%$search%",'like')->condition('first_name',"%$title1%",'like')->condition('last_name',"%$title2%",'like'));
+	   }
+	   else if($criteria=="bookingId")
+	   {
+	   $query->condition('gbl.booking_id',$search,'like');
+	   }
+	}
+	$result=$query->execute();
+	while($data=$result->fetchAssoc())
+	{
+	$bookings[]=$data;
+	}
+	return $bookings;
+}
+function getAllBookingInfoCount($eid=null,$filter=null,$search=null,$criteria=null)
+{
+    $query 		= 	db_select('gbl_users_meta', 'u')->extend('PagerDefault');///connect to gbl_users_meta here
+    $query ->join('gbl_booking','gbl','u.uid = gbl.uid');
+	$query ->join('gbl_payment','gp','gp.bid = gbl.id');
+	//$query ->leftJoin('gbl_refunds','gr','gr.bid = gbl.id');
+	$query ->fields('gbl');
+	
+	$query ->fields('gp',array('trans_id','payment_status'));
+	$query->fields('u',array('name','mail','uid','first_name','last_name','commission'));
+	$query->condition('lid',$eid,'=');
+	if($filter!="")
+	{
+	$query->condition('gbl.booking_status',"%$filter%",'like');
+	}
+	if($search!="")
+	{
+		if($criteria=="customer")
+		{
+		$pos=strpos($search," ");
+			if($pos>0)
+			{
+			$titleArr=explode(" ",$search);
+			$search=array_filter($titleArr);
+			$titleResult=array_values($search);		
+				$title1=$titleResult[0];
+				$title2=$titleResult[1];
+			}
+			else
+			{	
+			$title1=$search;
+			$title2=$search;
+			}
+		/*****************************************/
+		
+		$query->condition(db_or()->condition('name',"%$search%",'like')->condition('mail',"%$search%",'like')->condition('first_name',"%$title1%",'like')->condition('last_name',"%$title2%",'like'));
+	   }
+	   else if($criteria=="bookingId")
+	   {
+	   $query->condition('gbl.booking_id',$search,'like');
+	   }
+	}
+	$result=$query->execute();
+	return $result->rowCount();
+}
+function transactions_refund($bid=null)
+{
+$bid=arg(3);
+    $query 		= 	db_select('gbl_users_meta', 'u');
+    $query ->join('gbl_booking','gbl','u.uid = gbl.uid');
+    $query ->join('gbl_payment','gp','gp.bid = gbl.id');
+	$query->leftJoin('gbl_refunds','gr','gr.bid=gbl.id');
+	$query ->fields('gbl');
+	$query ->fields('gp');
+	$query ->fields('gr',array('refund_msg','refund_status','refund_amount'));
+	$query->fields('u',array('name','mail','uid','first_name','last_name','commission'));
+	$query->condition('gp.bid',$bid,'=');
+	//$query->condition('gp.payment_status','completed','=');
+	$result=$query->execute();
+	$data=$result->fetchAssoc();
+	
+    $currencyID = urlencode('USD');		
+$TRANSACTIONID=$data['trans_id'];
+$REFUNDTYPE='Partial';
+/* if($data['commission']!="")
+{
+$commission=$data['commission'];
+}
+else if(variable_get('commission')!="")
+{
+$commission=variable_get('commission');
+}
+else
+{
+$commission="0.0";
+} */
+//consider here cancellation policy
+//$amount=((100-$commission)*$data['grand_total'])/100;
+$amount=$data['refund_amount'];
+	 
+	$nvpStr =	"&REFUNDTYPE=$REFUNDTYPE&AMT=$amount&TRANSACTIONID=$TRANSACTIONID";
+	 
+	/* echo $nvpStr; die; */
+	$httpParsedResponseAr = PPHttpPost('RefundTransaction', $nvpStr);
+	
+	if($httpParsedResponseAr['ACK']=='Success')
+	{
+	
+	
+	$transFee=urldecode($httpParsedResponseAr['FEEREFUNDAMT']);
+	$refundTransId=urldecode($httpParsedResponseAr['REFUNDTRANSACTIONID']);
+	$actualRefundAmt=urldecode($httpParsedResponseAr['NETREFUNDAMT']);
+	$timeStamp=urldecode($httpParsedResponseAr['TIMESTAMP']);
+	$date = date('Y-m-d H:i:s', strtotime ($timeStamp));
+	/**************************Update booking table**************************************************************************************/
+	$query=db_update('gbl_booking')
+	       ->fields(array('booking_status'=>'refunded','refund_amount'=>$actualRefundAmt,'trans_fees'=>$transFee))
+           ->condition('id',$data['bid'],'=')
+           ->execute(); 		   
+           		   
+	/*****************************************Insert in payment table**************************************************************************/
+	$query1=db_insert('gbl_payment')
+	       ->fields(array('bid'=>$data['bid'],'trans_id'=>$refundTransId,'payment_status'=>'refunded','payment_at'=>$date))
+           ->execute();
+	/**************************************************************************************************************************************************/
+	$Currentdatetime=date("Y-m-d H:i:s");
+	$query2=db_update('gbl_refunds')
+	        ->fields(array('refund_status'=>'refunded','refund_on'=>$Currentdatetime))
+			->condition('bid',$bid);
+	$result2=$query2->execute();		
+	
+	drupal_set_message('Payment refunded successfully');
+	drupal_goto('admin/list/customers/'.$data['lid']);
+	//mail send to provider
+	//mail send to traveller
+	}
+	else
+	{
+	drupal_set_message(t(urldecode($httpParsedResponseAr['L_LONGMESSAGE0'])),'error');
+	drupal_goto('admin/list/customers/'.$data['lid']);
+	}
+
+
+}
+function transactions_history_details()
+{
+drupal_add_css(drupal_get_path('module', 'services') .'/css/services.css','file'); 
+
+$output			=	'';
+$searchQuery	=  $searchCriteria= '';
+$filter	=   '';
+$i=1;
+$amount=0;
+$status="";
+$tempForm		=		drupal_get_form('gbl_transaction_search_form');
+$output			.=		drupal_render($tempForm);
+if (isset($_GET['criteria']) && isset($_GET['search'])) {
+        $searchQuery			=	trim(check_plain($_GET['search']));
+        $searchCriteria		=	trim(check_plain($_GET['criteria']));       
+    }
+if (isset($_GET['filter']))
+{
+$filter=trim(check_plain($_GET['filter']));
+}
+
+$header = array(
+                  /* array(
+                      "data" => t('S.No'),
+                    //  "field" => "title"
+                  ), */
+				  array(
+                      "data" => t('Deal Title'),
+                      "field" => "title"
+                  ),
+				  array(
+                      "data" => t('Deal Type'),
+                      "field" => "list_type"
+                  ),
+                  array(
+                      "data" => t('Customer'),
+                    //  "field" => "name"
+                  ),
+                  array(
+                      "data" => t('Confirmation Id'),
+                    //  "field" => "name"
+                  ),
+				   array(
+                      "data" => t('Payment Status'),
+                    //  "field" => "name"
+                  ),
+				   array(
+                      "data" => t('Transaction Id'),
+                      //"field" => "idea_description"
+                  ),
+				  array(
+                      "data" => t('Payment on'),
+                      //"field" => "idea_description"
+                  ),
+				  array(
+                      "data" => t('Amount'),
+                      //"field" => "idea_description"
+                  ),			  
+				 
+				   array(
+                      "data" => t('Credit/Debit'),
+                      //"field" => "idea_description"
+                  ),
+				
+              );
+			  $rows		=	array();
+/**************************************************************************************/
+    $query 		= 	db_select('gbl_users_meta', 'u')->extend('PagerDefault');
+    $query ->join('gbl_booking','gbl','u.uid = gbl.uid');
+    $query ->join('gbl_payment','gp','gp.bid = gbl.id');
+    $query ->join('gbl_experience_list','gel','gel.eid = gbl.lid');
+	$query ->fields('gbl');
+	$query ->fields('gp');
+	$query ->fields('gel',array('title','list_type'));
+	$query->fields('u',array('name','mail','uid','first_name','last_name','commission'));
+	if($filter!="")
+	{
+	$query->condition('gp.payment_status',"%$filter%",'like');
+	}
+	if($searchCriteria=="customer")
+	{
+	/************************************************************************************************/
+	$pos=strpos($searchQuery," ");
+			if($pos>0)
+			{
+			$titleArr=explode(" ",$searchQuery);
+			$searchQuery=array_filter($titleArr);
+			$titleResult=array_values($searchQuery);		
+				$title1=$titleResult[0];
+				$title2=$titleResult[1];
+			}
+			else
+			{	
+			$title1=$searchQuery;
+			$title2=$searchQuery;
+			}
+		/*****************************************/
+		
+		$query->condition(db_or()->condition('name',"%$searchQuery%",'like')->condition('mail',"%$searchQuery%",'like')->condition('first_name',"%$title1%",'like')->condition('last_name',"%$title2%",'like'));
+	  
+	/************************************************************************************************/
+	
+	}
+	else if($searchCriteria=="bookingId")
+	{
+	$query->condition('gbl.booking_id',$searchQuery,'like');
+	}
+	else if($searchCriteria=="Title")
+	{
+	$query->condition('gel.title',"%$searchQuery%",'like');
+	}
+	$result=$query->execute();
+
+while($data = $result->fetchObject())
+	{	
+if($data->first_name)
+{
+$name=$data->first_name." ".$data->last_name;
+}
+else
+{
+$name=$data->name;
+}
+
+if($data->payment_status=='completed')
+{
+$amount=$data->grand_total;
+$status="Credit";
+}
+else if($data->payment_status=='refunded')
+{
+$amount=$data->refund_amount + $data->trans_fees;
+$status="Debit";
+}
+	
+	$rows[] = array( 
+	                  //$i,
+                      $data->title,
+                      $data->list_type,
+                     '<a href="'.url('user/'.$data->uid).'" >'.$name.'</a>',
+                      $data->booking_id,
+					  ucwords($data->payment_status),
+					  $data->trans_id,
+					  $data->payment_at,
+					  '$'.($amount),
+                      $status   					  
+                  );
+	//$i++;			  
+	}
+$output .= theme_table(
+                   array(
+                       "header" => $header,
+                       "rows" => $rows,
+                       "attributes" => array("width"=>"100%"),
+                       "sticky" => false, // Table header will be sticky
+                       "caption" => "",
+                       "colgroups" => array(),
+                       "empty" => t("Transactions list is empty!"), // The message to be displayed if table is empty
+                   )
+
+               ).theme("pager");
+
+    return $output;	
+}
+function gbl_transaction_search_form($form,&$form_state)
+{
+$form=array();
+ $form['#method'] = 'get';
+ $filter=array(
+             ''=>'All',
+             'pending'=>'Pending',
+			 'completed'=>'Completed',
+			 'refunded'=>'Refunded',
+			 'cancelled'=>'Cancelled'
+			 
+			 );
+  $criteria				=	array(
+                       'customer'=>'Customer',
+                       'bookingId'=>'Confirmation Id',
+                       'Title'=>'Deal Title',
+                                              
+                   ); 
+$form['deal_search']['filter'] = array(
+                                 '#type' => 'select',
+                                  '#title' => t('Filter By Transaction status'),
+                                  '#required' => false,
+                                  '#options' => $filter,
+                                  '#default_value' => (isset($_GET['filter']))?$_GET['filter']:'',
+								  '#attributes' => array('class' => array('form-control')),
+                                   );				   
+ $form['deal_search']['criteria'] = array(
+                                  '#type' => 'select',
+                                  '#title' => t('Search By'),
+                                  '#required' => false,
+                                  '#options' => $criteria,
+                                  '#default_value' => (isset($_GET['criteria']))?$_GET['criteria']:'',
+								   '#attributes' => array('class' => array('form-control')),
+                              );
+$form['deal_search']['search'] = array(
+                                '#type' => 'textfield',
+                                //'#title' => t('Search Deal'),
+                                '#required' => FALSE,
+                                '#default_value' =>(isset($_GET['search']))?$_GET['search']:'',
+								'#attributes' => array('placeholder'=>'Search Customer by name,email','class' => array('form-control')),
+                            );							
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+                                     '#type' => 'submit',
+                                     '#value' => t('Search'),
+                                     
+                                 );
+    return $form;		
+	
+}
+
+function paypal_credentials_form($form,&$form_state)
+{
+$form=array();
+$plaintext_dec="";
+$credentials=getPaypalCredentails();
+
+if($credentials['api_pass']!="")
+{
+ $key = pack('H*', "bcb04b7e103a0cd8b54763051cefRuDy55abe029fdebae251d417e2ffb2a00a3");
+ 
+ $ciphertext_dec = base64_decode($credentials['api_pass']);
+ $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+ $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+ $iv_dec = substr($ciphertext_dec, 0, $iv_size);
+  $ciphertext_dec = substr($ciphertext_dec, $iv_size);
+  $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key,$ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
+} 
+
+$form['credentials'] = array(
+                      '#type' => 'fieldset',
+                      '#title' => t('Add Paypal Api Credentials'),
+                  );
+$form['credentials']['api_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Api Name'),
+    '#default_value' => ($credentials['api_name'])?$credentials['api_name']:'',
+    '#size' => 100,
+    '#maxlength' => 100,
+    //'#description' => t('Service Tax to be paid by user while booking'),
+    '#required' => TRUE,
+  );
+  $form['credentials']['api_pass'] = array(
+    '#type' => 'password',
+    '#title' => t('Api Password'),
+    '#default_value' =>($plaintext_dec!="")?$plaintext_dec:'',
+    '#size' => 100,
+   // '#maxlength' => 200,
+    //'#description' => t('Service Tax to be paid by user while booking'),
+    '#required' => TRUE,
+	
+  );
+   $form['credentials']['api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Api Key'),
+    '#default_value' => ($credentials['api_key'])?$credentials['api_key']:'',
+    '#size' => 100,
+    //'#maxlength' => 100,
+    //'#description' => t('Service Tax to be paid by user while booking'),
+    '#required' => TRUE,
+  );
+  if($credentials)
+  {
+  $form['credentials']['pid']=array(
+  '#type' => 'hidden',
+  '#default_value' =>($credentials['id'])?$credentials['id']:''
+  );
+   $form['update'] = array(
+            '#type' => 'submit',
+            '#value' => t('Update'),
+    );
+  }
+  else
+  {
+  $form['save'] = array(
+            '#type' => 'submit',
+            '#value' => t('Save'),
+    );
+  }	
+	return $form;
+}
+function paypal_credentials_form_submit($form,&$form_state)
+{
+/*************************************************************************************/
+ # --- ENCRYPTION ---
+
+    # the key should be random binary, use scrypt, bcrypt or PBKDF2 to
+    # convert a string into a key
+    # key is specified using hexadecimal
+    $key = pack('H*', "bcb04b7e103a0cd8b54763051cefRuDy55abe029fdebae251d417e2ffb2a00a3");
+   
+    
+    # show key size use either 16, 24 or 32 byte keys for AES-128, 192
+    # and 256 respectively
+    $key_size =  strlen($key);
+   // echo "Key size: " . $key_size . "\n";
+    
+    $plaintext = trim($form_state["values"]["api_pass"]);
+
+    # create a random IV to use with CBC encoding
+    $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+    
+    # creates a cipher text compatible with AES (Rijndael block size = 128)
+    # to keep the text confidential 
+    # only suitable for encoded input that never ends with value 00h
+    # (because of default zero padding)
+    $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,
+                                 $plaintext, MCRYPT_MODE_CBC, $iv);
+
+    # prepend the IV for it to be available for decryption
+    $ciphertext = $iv . $ciphertext;
+    
+    # encode the resulting cipher text so it can be represented by a string
+    $ciphertext_base64 = base64_encode($ciphertext);
+	$pass=$ciphertext_base64;
+/*************************************************************************************/
+
+if($form_state["values"]["op"]=="Save")
+{
+$query=db_insert('gbl_paypal_credentials')
+       ->fields(array('api_name'=>trim($form_state["values"]["api_name"]),'api_pass'=>$pass,'api_key'=>trim($form_state["values"]["api_key"])))
+	   ->execute();
+drupal_set_message('Paypal credentials are saved successfully');	   
+}
+else if($form_state["values"]["op"]=="Update")
+{
+
+$query=db_update('gbl_paypal_credentials')
+        ->fields(array('api_name'=>trim($form_state["values"]["api_name"]),'api_pass'=>$pass,'api_key'=>trim($form_state["values"]["api_key"])))
+		->condition('id',$form_state["values"]["pid"]);
+$result=$query->execute();
+drupal_set_message('Paypal credentials are updated successfully');		
+}
+
+}
+
+function getPaypalCredentails()
+{
+$query=db_select('gbl_paypal_credentials','gpc')
+      ->fields('gpc');
+$result=$query->execute();
+return $result->fetchAssoc();	  
+}
+//refund to provider
+function refundBypaypal()
+{
+$currencyID = urlencode('USD');	
+$EMAILSUBJECT="Payment For deal: with confirmationId";
+
+$nvpStr =	"&RECEIVERTYPE=EmailAddress&EMAILSUBJECT=$EMAILSUBJECT&CURRENCYCODE=$currencyID&L_EMAIL0=yuvraj.singh591@gmail.com&&L_AMT0=120.00";
+$httpParsedResponseAr = PPHttpPost('MassPay', $nvpStr);
+echo "<pre>";
+print_r($httpParsedResponseAr);
+die;
+}
+function getRefundInfo($bid=null)
+{
+$query=db_select('gbl_refunds','gr')
+       ->fields('gr')
+	   ->condition('bid',$bid);
+$result=$query->execute();	   
+return $result->fetchAssoc();	   
+}
+/**********************************************************/
+
+function manage_homepage_video(){
+	drupal_add_css(drupal_get_path('module', 'services') .'/css/services.css','file');  
+	$form['video'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Upload video for homepage'),
+	);
+	$form['video']['video_url'] = array(
+	'#title' => t('Video Url'),
+	'#type' => 'textfield',
+	'#default_value' => (variable_get('video_url') != '')?variable_get('video_url'):'',
+	'#size' => '30',
+	'#description' => t('You can add any youtube or vimeo encoded url'),
+	//'#suffix' => '</div>',
+	);
+    return system_settings_form($form);	
+}
+/******************************************************/
+/******************************************************/
+function getTotalListBookedByUser($userId=null)
+{
+$query=db_select('gbl_booking','gb');
+$query->fields('gb',array('id'));
+$query->condition('gb.uid',$userId,'=');
+$result=$query->execute();
+return $result->rowCount();
+        
+}
+function getTotalListAddedByuser($userId=null)
+{
+$query=db_select('gbl_experience_list','gel');
+$query->fields('gel',array('title'));
+$query->condition('gel.uid',$userId,'=');
+$result=$query->execute();
+return $result->rowCount();
+}
+function searchUser_form($form,&$form_state)
+{
+$form=array();
+$form['#method'] = 'get';
+$form['search-class']=array(
+'#prefix'=>'<div class="listing-search">'
+);
+$form['title'] = array(
+/* '#title' => t('Search'), */
+'#type' => 'textfield',
+/* '#value'=> 'Search', */
+'#size' => '30',
+'#default_value'=>isset($_GET['title'])?$_GET['title']:'',
+'#attributes' => array('placeholder'=>'Search user by name,email','class' => array('form-control')),
+);
+$form['submit'] = array(
+'#type' => 'submit',
+'#value' => t('Search'),
+'#suffix'=>'</div>'
+);
+return $form;
+}
+function getAllusersList($title=null)
+{
+$preparedArray=array();
+$query=db_select('gbl_users_meta','gum')
+       ->fields('gum');
+if($title!="")
+{
+$pos=strpos($title," ");
+		if($pos>0)
+		{
+		$titleArr=explode(" ",$title);
+		$title=array_filter($titleArr);
+		$titleResult=array_values($title);		
+			$title1=$titleResult[0];
+			$title2=$titleResult[1];
+		}
+		else
+		{	
+		$title1=$title;
+		$title2=$title;
+		}
+	/*****************************************/
+	
+	$query->condition(db_or()->condition('name',"%$title1%",'like')->condition('name',"%$title2%",'like')->condition('mail',"%$title1%",'like')->condition('first_name',"%$title1%",'like')->condition('last_name',"%$title2%",'like'));
+
+}	   
+$result=$query->execute();
+	while($data=$result->fetchAssoc())
+	{
+	$preparedArray[]=$data;
+	}
+	return $preparedArray;	   
+}
+function view_user_trips()
+{
+drupal_add_css(drupal_get_path('module', 'services') .'/css/experience_view.css','file');
+$userId=arg(3);
+$title=$booking_status=$search_filter="";
+$bookingsCount=0;
+if(isset($_GET['title']) && $_GET['title'] != ""){
+		$title = trim(check_plain($_GET['title']));
+	}
+if(isset($_GET['booking_status']) && $_GET['booking_status'] != ""){
+		$booking_status = trim(check_plain($_GET['booking_status']));
+	}	
+if(isset($_GET['search_filter']) && $_GET['search_filter'] != ""){
+  $search_filter = trim(check_plain($_GET['search_filter']));
+}
+$bookings=getAllBookedListingHistory($userId,$title,$booking_status,$search_filter);
+$bookingsCount=getAllBookedListingHistoryCount($userId,$title,$booking_status,$search_filter);
+$output = '';
+$bookings = pager_array_splice($bookings, 10);
+$output .= theme('pager', array('quantity' => 10));
+$searchForm=drupal_get_form('search_bookings_by_user_form');
+return theme('view_user_trips',array('bookings'=>$bookings,'bookingsCount'=>$bookingsCount,'pagination'=>$output,'searchForm'=>$searchForm));
+}
+function search_bookings_by_user_form($form,&$form_state)
+{
+$form=array();
+$form['#method'] = 'get';
+$form['search-class']=array(
+'#prefix'=>'<div class="listing-search search-list">'
+);
+/* $form['type'] = array(
+'#title' => t('Filter By List Type'),
+'#type' => 'select',
+'#options'=>array(''=>'All','experience'=>'Experience listing','vacation'=>'Vacation Rental','hotel'=>'Hotels'),
+'#default_value'=>isset($_GET['type'])?$_GET['type']:'',
+'#attributes' => array('onchange' => 'this.form.submit();','class' => array('form-control')),
+); */
+
+$form['booking_status'] = array(
+'#title' => t('Filter By Booking Status'),
+'#type' => 'select',
+'#options'=>array(''=>'All','pending'=>'Pending','completed'=>'Completed','refund_request'=>'Refund Requested','refunded'=>'Refunded','booked'=>'Booked'),
+'#default_value'=>isset($_GET['booking_status'])?$_GET['booking_status']:'',
+'#attributes' => array('class' => array('form-control')),
+);
+
+$form['title'] = array(
+/* '#title' => t('Search'), */
+'#type' => 'textfield',
+/* '#value'=> 'Search', */
+'#size' => '30',
+'#default_value'=>isset($_GET['title'])?$_GET['title']:'',
+'#attributes' => array('placeholder'=>'Search Deal by name','class' => array('form-control')),
+);
+$form['submit'] = array(
+'#type' => 'submit',
+'#value' => t('Search'),
+'#suffix'=>'</div>'
+);
+return $form;
+}
+/*********************Manage user passions ********************************12 dec 2014****************************/
+
+function user_passions()
+{
+$output="";
+$header = array(
+                  array(
+                      "data" => t('Id'),
+                      "field" => "pid"
+                  ),
+				  array(
+                      "data" => t('Passion Logo'),
+                     // "field" => "experience_type"
+                  ),
+				  array(
+                      "data" => t('Passion Logo Thumb'),
+                     // "field" => "experience_type"
+                  ),
+                  array(
+                      "data" => t('Passion'),
+                     // "field" => "experience_type"
+                  ),				  
+				  
+                 /*  array(
+                      "data" => t('Status'),
+                  ), */
+				  array(
+                      "data" => t('Action'),
+                  )
+              );
+	 $rows		=	array();
+    $query 		= 	db_select('gbl_passions', 'gp')->extend('PagerDefault');
+    $query->fields('gp');
+    //$query->condition('status',1,'=');
+	$result		=	$query->execute();
+	while($data = $result->fetchObject())
+	{
+	if($data->fid)
+	{
+	$file = file_load($data->fid);
+	$imgsrc='<img src="'.file_create_url($file->uri).'" alt="passion logo" width="50px">';
+	}
+	else
+	{
+	$imgsrc='<img src="" alt="No passion logo">';
+	}
+		if($data->fid_thumb)
+		{
+		$file_thumb = file_load($data->fid_thumb);
+		$imgsrc_thumb='<img src="'.file_create_url($file_thumb->uri).'" alt="passion logo Thumb" width="50px">';
+		}
+		else
+		{
+		$imgsrc_thumb='<img src="" alt="No passion logo Thumb">';
+		}
+	$rows[] = array(
+                    $data->pid,
+					$imgsrc,
+                    $imgsrc_thumb,
+                    $data->passion,				
+                    //$visible_status,
+					 '<a href="'.url('admin/passions/edit/'.$data->pid).'" >'.t('Edit').'</a>&nbsp&nbsp<a href="'.url('admin/passions/delete/'.$data->pid).'">Delete</a>',
+                  );
+		}
+		$output .='<div style="clear:both"></div>';
+		$output.='<ul class="action-links"><li><a href="'.url('admin/passion/add').'">Add New Passion</a></li></ul>';
+    $output .= theme_table(
+                   array(
+                       "header" => $header,
+                       "rows" => $rows,
+                       "attributes" => array("width"=>"100%"),
+                       "sticky" => false, // Table header will be sticky
+                       "caption" => "<h3>Manage User Passion</h3>",
+                       "colgroups" => array(),
+                       "empty" => t("Passion list is empty!"), // The message to be displayed if table is empty
+                   )
+
+               ).theme("pager");
+
+    return $output;	
+	
+}
+function user_passions_add_form($form,&$form_state)
+{
+$form=array();
+   $form['passion'] = array(
+                      '#type' => 'fieldset',
+                      '#title' => t('Add New Passion'),
+                  );
+    $form['passion']['#tree'] = TRUE;        
+	$form['passion']['passion_title'] = array(
+                               '#type' => 'textfield',
+                               '#title' => t('Passion'),
+                               '#required' => TRUE,
+							   '#maxlength' => 100,
+							   '#attributes' => array('required'=>'required'),							  
+                           );
+    $form['passion']['file'] = array(
+'file_managed_container' => array(
+    //'#prefix' => "<div class='coloum'>",
+    //'#suffix' => '</div>',
+    'file_managed_element' => array(
+		'#type' => 'managed_file',
+		'#title' => t('Upload Passion Logo'),
+		'#description' => t('Allowed extensions: gif,png,jpg,jpeg'),
+		//'#default_value' => (isset($foo->picture->fid) ? $foo->picture->fid : ''),
+		'#upload_location' => 'public://passion',
+		'#upload_validators' => array(
+		'file_validate_extensions' => array('gif png jpg jpeg'),
+		// Pass the maximum file size in bytes
+		'file_validate_size' => array(1024*512),
+		),
+    ),
+),
+);						   
+ $form['passion']['filethumb'] = array(
+	'file_managed_container_thumb' => array(
+		'file_managed_element_thumb' => array(
+			'#type' => 'managed_file',
+			'#title' => t('Upload Passion Logo Thumb'),
+			'#description' => t('Allowed extensions: gif,png,jpg,jpeg'),
+			'#upload_location' => 'public://passion',
+			'#upload_validators' => array(
+			'file_validate_extensions' => array('gif png jpg jpeg'),
+			// Pass the maximum file size in bytes
+			'file_validate_size' => array(1024*512),
+			),
+		),
+	),
+);	
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+                                     '#type' => 'submit',
+                                     '#value' => t('Save'),
+                                     '#weight' => 19,                                   
+
+									 );
+
+ return $form;
+}
+function user_passions_add_form_validate($form,&$form_state)
+{
+
+$passion=trim($form_state['values']['passion']['passion_title']);
+
+$query=db_select('gbl_passions','gp')
+       ->fields('gp')
+	   ->condition('passion',$passion,'like');
+$result=$query->execute();
+$data=	$result->fetchAssoc();
+if($data)
+{
+form_set_error('passion[passion_title]','Passion data already exist');
+}
+}
+function user_passions_add_form_submit($form,&$form_state)
+{
+global $user;
+$fid = $form_state["values"]['passion']['file']['file_managed_container']["file_managed_element"];//file_managed_element
+$fid_thumb = $form_state["values"]['passion']['filethumb']['file_managed_container_thumb']["file_managed_element_thumb"];//file_managed_element_thumb
+/************************************************************/
+// Load the file via file.fid.
+$file = file_load($fid);
+// Change status to permanent.
+$file->status = FILE_STATUS_PERMANENT;
+// Save.
+file_save($file);
+// Record that the module (in this example, user module) is using the file.
+file_usage_add($file, 'services', 'user', $user->uid); 
+
+/**********************Thumb Saved Code**************************************/
+
+$file_thumb = file_load($fid_thumb);
+$file_thumb->status = FILE_STATUS_PERMANENT;
+file_save($file_thumb);
+file_usage_add($file_thumb, 'services', 'user', $user->uid); 
+
+/****************************************************************/
+	$insertData=array(	'passion'=>trim($form_state['values']['passion']['passion_title']),
+						'fid'=>$fid,
+						'fid_thumb'=>$fid_thumb
+					);
+	
+	$query=db_insert('gbl_passions')->fields($insertData);
+
+	$result=$query->execute();
+	if($result)
+	{
+		drupal_set_message('Passion data saved successfully');
+		drupal_goto('admin/passions');
+	}	   
+	   
+}
+function user_passions_edit_form($form,&$form_state)
+{
+$pid=arg(3);
+$query=db_select('gbl_passions','gp')
+       ->fields('gp')
+	   ->condition('pid',$pid,'=');
+$result=$query->execute();
+$data=$result->fetchAssoc();
+	   
+$form=array();
+   $form['passion'] = array(
+                      '#type' => 'fieldset',
+                      '#title' => t('Edit Passion Data'),
+                  );
+    $form['passion']['#tree'] = TRUE;        
+	$form['passion']['passion_title'] = array(
+                               '#type' => 'textfield',
+                               '#title' => t('Passion'),
+                               '#required' => TRUE,
+							   '#maxlength' => 100,
+							   '#default_value'=>($data['passion'])?$data['passion']:'',
+							   '#attributes' => array('required'=>'required'),							  
+                           );
+    $form['passion']['file'] = array(
+'file_managed_container' => array(
+    //'#prefix' => "<div class='coloum'>",
+    //'#suffix' => '</div>',
+    'file_managed_element' => array(
+		'#type' => 'managed_file',
+		'#title' => t('Upload Passion Logo'),
+		'#description' => t('Allowed extensions: gif,png,jpg,jpeg'),
+		'#default_value' => isset($data['fid'])? $data['fid'] : '',
+		'#upload_location' => 'public://passion',
+		'#upload_validators' => array(
+		'file_validate_extensions' => array('gif png jpg jpeg'),
+		// Pass the maximum file size in bytes
+		'file_validate_size' => array(1024*512),
+		),
+    ),
+),
+);						   
+$form['passion']['file_thumb'] = array(
+		'file_managed_container_thumb' => array(
+			//'#prefix' => "<div class='coloum'>",
+			//'#suffix' => '</div>',
+			'file_managed_element_thumb' => array(
+				'#type' => 'managed_file',
+				'#title' => t('Upload Passion Logo Thumb'),
+				'#description' => t('Allowed extensions: gif,png,jpg,jpeg'),
+				'#default_value' => isset($data['fid_thumb'])? $data['fid_thumb']:'',
+				'#upload_location' => 'public://passion',
+				'#upload_validators' => array(
+				'file_validate_extensions' => array('gif png jpg jpeg'),
+				// Pass the maximum file size in bytes
+				'file_validate_size' => array(1024*512),
+				),
+			),
+		),
+	);
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+                                     '#type' => 'submit',
+                                     '#value' => t('Save'),
+                                     '#weight' => 19,                                   
+
+									 );
+
+ return $form;
+}
+function user_passions_edit_form_submit($form,&$form_state)
+{
+global $user;
+$fid = $form_state["values"]['passion']['file']['file_managed_container']["file_managed_element"];//file_managed_element
+$fid_thumb = $form_state["values"]['passion']['file_thumb']['file_managed_container_thumb']["file_managed_element_thumb"];//file_managed_element
+/************************************************************/
+// Load the file via file.fid.
+$file = file_load($fid);
+// Change status to permanent.
+$file->status = FILE_STATUS_PERMANENT;
+// Save.
+file_save($file);
+// Record that the module (in this example, user module) is using the file.
+file_usage_add($file, 'services', 'user', $user->uid); 
+/************************************************************/
+
+$file_thumb = file_load($fid_thumb);
+// Change status to permanent.
+$file_thumb->status = FILE_STATUS_PERMANENT;
+// Save.
+file_save($file_thumb);
+// Record that the module (in this example, user module) is using the file.
+file_usage_add($file_thumb, 'services', 'user', $user->uid); 
+/****************************************************************/
+$query=db_update('gbl_passions')
+       ->fields(array('passion'=>trim($form_state['values']['passion']['passion_title']),'fid'=>$fid,'fid_thumb'=>$fid_thumb))
+	   ->condition('pid',arg(3));
+$result=$query->execute();
+/* if($result)
+{ */
+drupal_set_message('Passion data updated successfully');
+drupal_goto('admin/passions');
+//}	
+}
+function user_passions_delete()
+{
+$pid=arg(3);
+/*************************************************************************/
+$query=db_select('gbl_passions','gp')
+       ->fields('gp')
+	   ->condition('pid',$pid,'=');
+$result=$query->execute();
+$data=$result->fetchAssoc();
+$file = file_load($data['fid']);
+		 $path = $file->uri;
+		 $url=drupal_realpath($path);
+		 unlink($url);
+$file_thumb = file_load($data['fid_thumb']);
+		 $path_thumb = $file_thumb->uri;
+		 $url_thumb=drupal_realpath($path_thumb);
+		 unlink($url_thumb);		 
+$query=db_delete('file_managed')->condition('fid',$data['fid'],'=')->execute();	
+$query=db_delete('file_managed')->condition('fid',$data['fid_thumb'],'=')->execute();	
+
+
+/********************************************************************************************/	 
+$query=db_delete('gbl_passions')->condition('pid',$pid,'=')->execute();
+drupal_set_message('Passion data deleted successfully');
+drupal_goto('admin/passions');
+}
+/********************************************************************/
+function getAllCountryData()
+{
+$country=array();
+$query 		= 	db_select('gbl_country_list', 'gcl');
+$query->fields('gcl',array('country_name','iso_code','phone_code'));
+$query->condition('activate',1);
+$result=$query->execute();
+while($data=$result->fetchAssoc())
+{
+$country[$data['iso_code']]=$data['country_name'];
+}
+return $country;
+}
+function getAllAdvisorPlans($planId=null)
+{
+$plans=array();
+$query=db_select('gbl_advisor_plans','gap')
+       ->fields('gap');
+if($planId)
+{
+$query->condition('pid',$planId);
+}	   
+$result=$query->execute();
+while($data=$result->fetchAssoc())
+{
+$plans[]=$data;
+}
+return $plans;
+
+      
+}
+function user_advisor_plan_add_form($form,&$form_state)
+{
+$form=array();
+     $form['plan'] = array(
+                      '#type' => 'fieldset',
+                      '#title' => t('Add New Advisor Plan'),
+                  );
+    $form['plan']['#tree'] = TRUE;    
+    $form['plan']['package_name'] = array(
+                              '#type' => 'textfield',
+                               '#title' => t('Package Name'),
+                               '#required' => TRUE,
+							   '#maxlength' => 100,
+							  '#attributes' => array('required'=>'required'),
+							  );
+	$form['plan']['package_desc'] = array(
+                              '#type' => 'textarea',
+                               '#title' => t('Package Description'),
+                               '#required' => TRUE,
+							   '#maxlength' => 100,
+							  '#attributes' => array('required'=>'required'),
+							  );						  
+	$form['plan']['package_cost'] = array(
+                               '#type' => 'textfield',
+                               '#title' => t('Package Cost(in $)'),
+                               '#required' => TRUE,
+							   '#attributes' => array('required'=>'required'),							  
+                           );
+	$form['plan']['credit_percent'] = array(
+                               '#type' => 'textfield',
+                               '#title' => t('Credit(in %)'),
+                               '#required' => TRUE,
+							   '#attributes' => array('required'=>'required'),							  
+                           );	
+	$form['plan']['package_cashback'] = array(
+                               '#type' => 'radios',
+                               '#title' => t('Cashback(in %)'),
+							   '#options' => array('0'=>t('Not Available'),'1'=>t('Available')),	
+                               '#required' => TRUE,
+							   '#attributes' => array('required'=>'required'),	
+                               '#default_value'=>0							   
+                           );		 
+   		 
+    						 
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+                                     '#type' => 'submit',
+                                     '#value' => t('Save'),
+                                     '#weight' => 19,                                   
+
+									 );
+	return $form;								 
+}
+function user_advisor_plan_add_form_submit($form,&$form_state)
+{
+
+$query=db_insert('gbl_advisor_plans')
+       ->fields(array('plan_name'=>$form_state['values']['plan']['package_name'],'description'=>$form_state['values']['plan']['package_desc'],'price'=>$form_state['values']['plan']['package_cost'],'cashback'=>$form_state['values']['plan']['package_cashback'],'credit_percent'=>$form_state['values']['plan']['credit_percent']));
+$result=$query->execute();
+	if($result)
+	{
+	drupal_set_message('Plan added successfully');
+	drupal_goto('admin/manage/plans');
+	}	   
+}
+function user_advisor_plan_edit_form($form,&$form_state)
+{
+$plansList=getAllAdvisorPlans(arg(3));
+
+    $form=array();
+     $form['plan'] = array(
+                      '#type' => 'fieldset',
+                      '#title' => t('Edit Advisor Plan'),
+                  );
+    $form['plan']['#tree'] = TRUE;    
+    $form['plan']['package_name'] = array(
+                              '#type' => 'textfield',
+                               '#title' => t('Package Name'),
+                               '#required' => TRUE,
+							   '#maxlength' => 100,
+							  '#attributes' => array('required'=>'required'),
+							  '#default_value'=>$plansList[0]['plan_name'],
+							  );
+	$form['plan']['package_desc'] = array(
+                              '#type' => 'textarea',
+                               '#title' => t('Package Description'),
+                               '#required' => TRUE,
+							   '#maxlength' => 100,
+							  '#attributes' => array('required'=>'required'),
+							   '#default_value'=>$plansList[0]['description'],
+							  );						  
+	$form['plan']['package_cost'] = array(
+                               '#type' => 'textfield',
+                               '#title' => t('Package Cost(in $)'),
+                               '#required' => TRUE,
+							   '#attributes' => array('required'=>'required'),
+                               '#default_value'=>$plansList[0]['price'],							   
+                           );
+    $form['plan']['credit_percent'] = array(
+                               '#type' => 'textfield',
+                               '#title' => t('Credit(in %)'),
+                               '#required' => TRUE,
+							   '#default_value'=>($plansList[0]['credit_percent'])?$plansList[0]['credit_percent']:'',
+							   );						   
+	$form['plan']['package_cashback'] = array(
+                               '#type' => 'radios',
+                               '#title' => t('Cashback(in %)'),
+                               '#required' => TRUE,
+							   '#attributes' => array('required'=>'required'),
+                                '#options' => array('0'=>t('Not Available'),'1'=>t('Available')),							   
+                               '#default_value'=>($plansList[0]['cashback'])?$plansList[0]['cashback_percent']:0,								   
+                           );		 
+    $form['plan']['status'] = array(
+							'#type' => 'radios',
+							'#title' => t('Visibility Status'),							
+							'#options' => array('0'=>t('DeActivate'),'1'=>t('Activate')),
+							'#default_value'=>$plansList[0]['status']
+							);
+    						 
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+                                     '#type' => 'submit',
+                                     '#value' => t('Save'),
+                                     '#weight' => 19,                                   
+
+									 );
+	return $form;
+}
+function user_advisor_plan_edit_form_submit($form,&$form_state)
+{
+$query=db_update('gbl_advisor_plans')
+        ->fields(array('plan_name'=>$form_state['values']['plan']['package_name'],'description'=>$form_state['values']['plan']['package_desc'],'price'=>$form_state['values']['plan']['package_cost'],'cashback'=>$form_state['values']['plan']['package_cashback'],'status'=>$form_state['values']['plan']['status'],'credit_percent'=>$form_state['values']['plan']['credit_percent']));
+$query->condition('pid',arg(3));
+$result=$query->execute();
+	/* if($result)
+	{ */
+	drupal_set_message('Plan updated successfully');
+	drupal_goto('admin/manage/plans');
+	//}	         
+}
+/*************for now $1=7 credits******************************************/
+function manage_credits_dollor_form($form,&$form_state)
+{
+  $form['credit'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Manage credit per dollor'),
+	);
+	$form['credit']['credit_value'] = array(
+	'#title' => t('Credit per dollor'),
+	'#type' => 'textfield',
+	'#default_value' => (variable_get('credit_value') != '')?variable_get('credit_value'):'',
+	'#size' => '30',
+	'#description' => t('Set credit per dollor for user'),
+	);
+    return system_settings_form($form);
+}
+
+/***************************17march*****************************/
+function add_user_passions(){
+global $user;
+$passionId=$_POST['passionid'];
+$status=$_POST['status'];
+$userpassions=getuserspassion($passionId,$user->uid);
+if($userpassions=='0'){$status='0';}else{$status='1';}
+if($status=='0'){
+//echo 'here';exit;
+	$queryins=db_insert('gbl_users_passions')
+	       ->fields(array('pid'=>$passionId,'uid'=>$user->uid))
+           ->execute();
+	echo "ins";exit;
+}else{//echo 'here1';exit;
+
+	$querydel=db_delete('gbl_users_passions')->condition('pid',$passionId,'=')->condition('uid',$user->uid,'=')->execute();	
+	echo "del";exit;
+}
+
+}
+function getuserspassion($pid,$uid){
+	
+	$query 	= db_select('gbl_users_passions', 'gup');
+	$query->fields('gup');
+	$query->condition('pid',$pid,'=');
+	$query->condition('uid',$uid,'=');
+	$result	= $query->execute();
+	$RowCount=$result->rowCount();
+	return $RowCount;
+}

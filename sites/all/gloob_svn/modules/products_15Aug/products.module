@@ -1,0 +1,388 @@
+<?php
+module_load_include('inc', 'products', 'includes/add_product.navigation');
+module_load_include('inc', 'products', 'includes/add_product.submit');
+function products_menu() {
+  $items = array();
+  $items['product/add/%'] = array(
+    'title' => 'Add Product',
+    'page callback' => 'product_add_form_1',
+    'page arguments' => array('product_add_form'),
+    'access arguments' => array('access container'),
+    'file' => 'includes/product_add.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['product/add/images'] = array(
+    'title' => 'Add Images',
+    'page callback' => 'product_add_images',
+    'access arguments' => array('access container'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['product/extra/edit/%/%'] = array(
+    'title' => 'Update Extra',
+    'page callback' => 'product_edit_extra',
+    'page arguments' => array('product_add_form'),
+    'access arguments' => array('access container'),
+    'file' => 'includes/product_add.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['product/extra/delete/%/%'] = array(
+/*     'title' => 'Add Images', */
+    'page callback' => 'product_extra_delete',
+    'access arguments' => array('access container'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+   $items['update_product_list/%/%/%/%/%/%/%'] = array(
+    'page callback' => 'update_product_list_address', 
+    'page arguments' => array(1,2,3,4,5,6,7),
+    'access arguments' => array('access content'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['product/ajax/getProductDetail'] = array(
+    'page callback' => 'getProductAddressData', 
+    'access arguments' => TRUE,
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+function product_add_images(){
+
+	$imagesData = array();
+
+	if (!empty($_FILES)) {
+		$diretorio = $_REQUEST["diretorio"];
+		//$filepath = 'public://products/'.$diretorio;
+		$filepath = 'public://products';
+		$fileName = time()."_".$_FILES["file"]["name"];
+		if(move_uploaded_file($_FILES["file"]["tmp_name"],$_SERVER["DOCUMENT_ROOT"]."/sites/default/files/products/".$fileName)){
+			$file = file_load($_SERVER["DOCUMENT_ROOT"]."/sites/default/files/products/".$fileName);
+			$file->uid = $user->uid;
+			$file->filename = $fileName;
+			$file->uri = $filepath."/".$fileName;
+			$file->status = FILE_STATUS_PERMANENT;
+			$result = file_save($file);
+			$fileId = $result->fid;
+			
+			$photoData["text"] = "";
+			$photoData["fid"] = $fileId;
+			$query=db_insert('gbl_listing_meta')
+			  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+							'key1'=>"photo_data",
+							'value1'=>serialize($photoData)
+				));	 
+			$result=$query->execute();
+			
+			echo $fileId;
+			die();
+		}
+	}
+	else if(isset($_REQUEST["action"]) && $_REQUEST["action"] == "add-text"){
+		$photoData["text"] = $_POST["customText"];
+		$photoData["fid"] = $_POST["fileID"];
+		
+		$query=db_select('gbl_listing_meta','lm')
+				->fields('lm')
+				->condition('listing_id',isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3))
+				->execute();
+		$check = 0;
+		while($data=$query->fetchAssoc()){
+			$value1 = unserialize($data["value1"]);
+			if(in_array($photoData["fid"],$value1)){				
+				$query=db_update('gbl_listing_meta')
+				  ->fields(array('value1'=>serialize($photoData)))
+				  ->condition('meta_id',$data["meta_id"]);
+				$result=$query->execute();	
+				echo $result;
+				die();
+			}
+		}
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"photo_data",
+						'value1'=>serialize($photoData)
+			));	 
+		$result=$query->execute();	
+		echo $result;
+		die();
+	}
+	else if(isset($_REQUEST["action"]) && $_REQUEST["action"] == "delete-photo"){
+		$photoData["fid"] = $_POST["fileID"];
+		
+		$query=db_select('gbl_listing_meta','lm')
+				->fields('lm')
+				->condition('listing_id',isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3))
+				->execute();
+		$check = 0;
+		while($data=$query->fetchAssoc()){
+			$value1 = unserialize($data["value1"]);
+			if(in_array($photoData["fid"],$value1)){				
+				$query=db_delete('gbl_listing_meta')
+					->condition('meta_id',$data["meta_id"]);
+				$result=$query->execute();
+
+				$query=db_delete('file_managed')
+					->condition('fid',$photoData["fid"]);
+				$result=$query->execute();					
+				
+				echo $result;
+				die();
+			}
+		}		
+	}
+
+}
+
+ function findexts ($filename) 
+ { 
+	 $filename = strtolower($filename) ; 
+	 $exts = split("[/\\.]", $filename) ; 
+	 $n = count($exts)-1; 
+	 $exts = $exts[$n]; 
+	 return $exts; 
+ }
+ 
+ function products_theme() {
+  $module_path = drupal_get_path('module', 'products');
+
+   return array(
+    'add_product' => array(
+      'template' => 'add_product',
+      'path' => $module_path.'/templates',
+    ),
+  );
+}
+function getExperienceType()
+{
+$type=array();
+$query=db_select('gbl_experience_type','get')
+       ->fields('get')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['experience_type'];
+}	   
+return $type;
+}
+
+function getExperienceCategory()
+{
+$type=array();
+$query=db_select('gbl_experience_category','gec')
+       ->fields('gec')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['cid']]=$data['category_name'];
+}	   
+return $type;
+}
+/*****************Get all amenties data for experience listing**************************************/
+function getAmentiesdata($type=null)
+{
+
+$amentiestype=array();
+$query=db_select('gbl_amenties_meta','gme')
+       ->fields('gme')
+	   ->condition('status','1','=');
+	if($type!=null)
+	{
+	$query->condition('amenties_type',$type,'like');
+	}	   
+	$result=$query->execute();	
+	while($data=$result->fetchAssoc())
+	{	
+	$amentiestype[]=$data;
+	}	   
+return $amentiestype;
+}
+function getAmentiesByproduct($productId)
+{
+$amenitiesdata=array();
+$query=db_select('gbl_listing_meta','glm')
+      ->fields('glm')
+	  ->condition('key1','amenities','=')
+	  ->condition('listing_id',$productId,'=')
+	  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+   $amenitiesdata[]=$data;
+   } 
+return    $amenitiesdata;
+}
+
+function getOverviewData($eid=''){
+$overviewdata=array();
+$query=db_select('gbl_experience_list','el')
+      ->fields('el')
+	  ->condition('eid',$eid,'=')
+	  ->execute();
+return $query->fetchAssoc();
+}
+
+function getPhotosData($eid=''){
+	$photosData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1'))
+		  ->condition('key1','photo_data','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+		$photosData[]=$data;
+   } 
+   return $photosData;
+}
+
+function getProductExtraData($eid=''){
+	$extrasData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_extra','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+		$extrasData[]=$data;
+   } 
+   return $extrasData;	
+}
+
+function product_extra_delete(){
+	$listingID = arg(3);
+	$metaID = arg(4);
+
+	$query = db_delete("gbl_listing_meta")
+				->condition('meta_id',$metaID);
+	$deleted = $query->execute();
+	if($deleted){
+		drupal_set_message("Product extra value deleted sucessfully.");
+		drupal_goto("product/add/extra/".$listingID);		
+	}
+}
+
+function product_edit_extra(){
+	$listingID = arg(3);
+	$extras = getProductExtraData($listingID);
+	$productForm = drupal_get_form("product_extra_form");
+	return theme( 'add_product', array( 'productForm' => $productForm,'extras'=>$extras));
+}
+
+function getExtraDetails($metaID=''){
+	$query = db_select("gbl_listing_meta","lm")
+			->fields("lm")
+			->condition('meta_id',$metaID)
+			->execute();
+	$data = $query->fetchAssoc();
+	return $data;
+}
+
+function getPricingData($eid=''){
+	$pricingData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_pricing%','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+/* 	while($data=$query->fetchAssoc())
+   {
+		$pricingData[]=$data;
+   }  */
+   return $data=$query->fetchAssoc();		
+}
+
+function getProductSubscriptionData($eid=''){
+	$pricingData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_subscription_data','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+/* 	while($data=$query->fetchAssoc())
+   {
+		$pricingData[]=$data;
+   }  */
+   return $data=$query->fetchAssoc();		
+}
+
+function getRulesDetails($eid=''){
+	$rulesData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_cancellation_data','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+/* 	while($data=$query->fetchAssoc())
+   {
+		$pricingData[]=$data;
+   }  */
+   return $data=$query->fetchAssoc();	
+}
+/**********Get amenities data by productId************************************/
+/* function getAmentiesByproduct($productId=null)
+{
+	$amenitiesdata=array();
+	$query=db_select('gbl_listing_meta','glm')
+		  ->fields('glm')
+		  ->condition('key1','amenities','=')
+		  ->condition('listing_id',$productId,'=')
+		  ->execute();
+		while($data=$query->fetchAssoc())
+	   {
+	   $amenitiesdata[]=$data;
+	   } 
+	return    $amenitiesdata;
+} */
+/***********************************************/
+function update_product_list_address($productId=null,$address1=null,$address2=null,$city=null,$state=null,$zipcode=null,$country=null,$latitude=null,$longitude=null)
+{
+  $query=db_update('gbl_experience_list')
+	        ->fields(array('address1'=>$address1,'address2'=>$address2,'city'=>$city,'state'=>$state,'zipcode'=>$zipcode,'country'=>$country,'latitude'=>$latitude,'longitude'=>$longitude))
+			->condition('eid',$productId,'=')
+			->execute(); 
+return true;
+}
+/***************************************************/
+function getCountryList()
+{
+$country=array();
+$query=db_select('gbl_country_list','gcl')
+       ->fields('gcl',array('country_name'))
+	   ->condition('activate','1','=')
+	   ->execute();
+	   while($data=$query->fetchAssoc())
+	   {
+	   $country[$data['country_name']]=$data['country_name'];
+	   }
+	   return $country;
+}
+function getListingData($productId)
+{
+$product=array();
+$query=db_select('gbl_experience_list','gel')
+	      ->fields('gel')
+		  ->condition('eid',$productId,'=')
+		  ->execute();
+while($data=$query->fetchAssoc())
+{
+$product=$data;
+}
+return $product;		  
+}
+/*******************get address details for google maps*****************************************/
+function getProductAddressData($productId=null)
+{
+$productId=$_GET["productId"];
+$result=array();
+$query=db_select('gbl_experience_list','gel')
+       ->fields('gel')
+	   ->condition('eid',$productId,'=')
+	   ->execute();
+$result=$query->fetchAssoc();
+//echo drupal_json_encode($result); 
+drupal_json_output($result);
+exit();  
+}
+/***************************************************/

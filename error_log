@@ -1,0 +1,18 @@
+[28-Nov-2016 16:20:29 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected '($listId);' in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 3469
+[28-Nov-2016 19:59:20 Asia/Kolkata] PHP Warning:  Unterminated comment starting line 6983 in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 6983
+[28-Nov-2016 19:59:20 Asia/Kolkata] PHP Parse error:  syntax error, unexpected end of file in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 6984
+[28-Nov-2016 16:45:31 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected end of file in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 6842
+[28-Nov-2016 20:15:34 Asia/Kolkata] PHP Parse error:  syntax error, unexpected end of file in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 7283
+[28-Nov-2016 20:16:08 Asia/Kolkata] PHP Fatal error:  Cannot use object of type stdClass as array in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 2083
+[28-Nov-2016 20:17:25 Asia/Kolkata] PHP Parse error:  syntax error, unexpected ''session/timings' (T_ENCAPSED_AND_WHITESPACE), expecting ']' in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 92
+[29-Nov-2016 12:40:49 Asia/Kolkata] PHP Parse error:  syntax error, unexpected ''</p>' (T_ENCAPSED_AND_WHITESPACE) in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 4427
+[29-Nov-2016 13:28:17 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected ''INVE' (T_ENCAPSED_AND_WHITESPACE) in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 2074
+[29-Nov-2016 13:45:40 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected ''session/timings' (T_ENCAPSED_AND_WHITESPACE), expecting ']' in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 92
+[29-Nov-2016 13:45:40 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected ''session/timings' (T_ENCAPSED_AND_WHITESPACE), expecting ']' in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 92
+[29-Nov-2016 13:45:41 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected end of file in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 1114
+[29-Nov-2016 13:45:41 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected end of file in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 1114
+[29-Nov-2016 13:45:41 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected end of file in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 1114
+[29-Nov-2016 13:45:41 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected end of file in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 1114
+[29-Nov-2016 13:45:42 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected end of file, expecting '(' in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 7466
+[29-Nov-2016 13:45:42 Asia/Jerusalem] PHP Parse error:  syntax error, unexpected end of file, expecting '(' in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 7466
+[30-Nov-2016 13:38:50 Asia/Kolkata] PHP Parse error:  syntax error, unexpected ''session/timings' (T_ENCAPSED_AND_WHITESPACE), expecting ']' in /home5/gloobers/public_html/sites/all/modules/listing/listing.module on line 92

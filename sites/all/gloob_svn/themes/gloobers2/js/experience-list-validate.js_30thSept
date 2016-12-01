@@ -1,0 +1,189 @@
+jQuery.noConflict();
+jQuery(document).ready(function() {
+
+	jQuery("#product-details-form").validate({
+		rules: {
+		    product_type :"required",
+			product_name: "required",			
+			short_description: {
+				required: true,
+				minlength: 2,
+				maxlength :500
+			},
+            expect:{
+				//required: true,
+				minlength: 100,
+				maxlength :5000
+			},			
+		},
+		messages: {
+		    product_type :"Experience Type is required",
+			product_name: "Experience Title is required",
+			short_description: {
+				required: "Short Desciption is required",
+				minlength: "What to expect must consist of at least 2 characters",
+				maxlength :"Maximum 500 characters are allowed"
+			},
+			expect: {
+				minlength: "Long description must consist of at least 100 characters",
+				maxlength :"Maximum 5000 characters are allowed"
+			},
+			
+		}
+	});
+	jQuery("#product-scheduling-form").validate({
+		rules: {
+		    dates_available :"required",
+			duration_value: {
+				digits: true
+			},		
+		},
+		messages: {
+		    dates_available :"Date Available is required",
+			duration_value: {
+				digits: "Duration should be numeric",
+				
+			},
+			
+		}
+	});
+	jQuery("#product-pricing-form").validate({
+		rules: {
+		    season_rate_amount :"required",
+		   high_season_rate_dates :"required",			
+		   product_pricing_value :"required",			
+			product_pricing_min: {
+				digits: true
+			},	
+            product_pricing_max: {
+				digits: true
+			},	
+			quantity_min: {
+				digits: true
+			},
+			quantity_max: {
+				digits: true
+			},
+			product_pricing_value: {
+				digits: true
+			},
+			early_birds_time_value: {
+				digits: true
+			},
+			last_minutes_time_value: {
+				digits: true
+			},			
+		},
+		messages: {
+		    season_rate_amount :"Price is required",
+		  //  product_pricing_value :"Price is required",
+			product_pricing_min: {
+				digits: "Minimum Price should be numeric",				
+			},
+			product_pricing_max: {
+				digits: "Maximum Price should be numeric",				
+			},
+			quantity_min: {
+				digits: "Minimum quantity should be numeric",				
+			},
+			quantity_max: {
+				digits: "Maximum quantity should be numeric",				
+			},
+			product_pricing_value: {
+				digits: "Price should be numeric",				
+			},
+			early_birds_time_value: {
+				digits: "Days or month should be numeric",				
+			},
+			last_minutes_time_value: {
+				digits: "Days or month should be numeric",				
+			},
+			
+		}
+	});
+	jQuery("#product-extra-form").validate({
+		rules: {
+		    extra_service :"required",
+			extra_price_value: {
+				digits: true,
+				required: true,
+			},		
+		},
+		messages: {
+		    extra_service :"Extra Service Title is required",
+			extra_price_value: {
+				digits: "Price should be numeric",
+				required:"Price is required"
+			},
+			
+		}
+	});
+	jQuery("#product-rules-form").validate({
+		rules: {
+		   	security_deposit: {
+				digits: true
+			},	
+			amount_week: {
+				digits: true
+			},
+			amount_week_rental: {
+				digits: true
+			},	
+			amount_day: {
+				digits: true
+			},	
+			amount_day_rental: {
+				digits: true
+			},		
+		},
+		messages: {
+		   	security_deposit: {
+				digits: "security deposit should be numeric",				
+			},
+			amount_week: {
+				digits: "This should be numeric",				
+			},
+			
+		}
+	});
+	jQuery('#edit-dates-available').on('change', function() {
+      if(this.value=='INVENTORY')
+	 {
+	 
+	 /*************************************************************************************/
+	 var settings = jQuery("#product-scheduling-form").validate().settings;
+
+		// Modify validation settings
+	    jQuery.extend(settings, {
+	    	rules: {
+				fixed_time_from: {
+			    required: true, 				
+			},	
+           fixed_time_to: {
+			    required: true, 				
+			},					
+			},
+	    });
+	jQuery("#product-scheduling-form").valid();
+	 /*************************************************************************************/
+	
+	 }
+	 else
+	 {
+	 
+	 
+	 //product-scheduling-form
+	/*  var settings = jQuery('#product-scheduling-form').validate().settings;
+delete settings.rules.fixed_time_from;
+delete settings.messages.fixed_time_from;
+delete settings.rules.fixed_time_to;
+delete settings.messages.fixed_time_to; */
+	/*   jQuery( "#edit-fixed-time-from" ).rules( "remove",{required:true } );
+	 jQuery( "#edit-fixed-time-to" ).rules( "remove",{required:true } );  */
+	 //jQuery('#product-scheduling-form').removeData('validator')
+	 }
+});
+jQuery("#product-photos-form #edit-save").attr('disabled','disabled');	
+	
+	
+});

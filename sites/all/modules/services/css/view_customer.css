@@ -1,0 +1,236 @@
+.text-center .label{font-size:100%}
+.left-col-payment-pop {
+    float: left;
+    padding: 10px 0;
+    width: 100%;
+}
+.left-col-payment-pop h1 {
+    margin: 0;
+    text-align: center;
+}
+.left-col-payment-pop .booking-summry {
+    width: 100%;
+}
+.left-col-payment-pop .booking-summry .col-sum.half {
+    width: 40%;
+}
+.left-col-payment-pop .booking-summry .col-sum.half.f-right {
+    float: right;
+}
+.left-col-payment-pop .booking-summry .col-sum + .col-sum {
+    margin: 0;
+}
+.left-col-payment-pop .booking-summry .row-sum {
+    margin: 0;
+    padding: 5px 0;
+}
+.left-col-payment-pop .booking-summry .col-sum p, .left-col-payment-pop .booking-summry .row-sum p {
+    background: none repeat scroll 0 0 #f2f5f6;
+    margin: 1px 0;
+}
+.left-col-payment-pop .booking-summry .col-sum label, .left-col-payment-pop .booking-summry .row-sum label {
+    padding: 0;
+}
+.left-col-payment-pop .amount-chart p.head {
+    background: none repeat scroll 0 0 #f7f8f8;
+    border-bottom: 1px solid #e8e8e8;
+    border-top: 1px solid #eaeaea;
+    color: #ff6800;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 1px 0 0;
+    padding: 7px 0;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+.left-col-payment-pop .amount-chart .chart-table .chart-row .chart-col {
+    padding: 5px 0;
+}
+.left-col-payment-pop .amount-chart .chart-table .total-charg .charg-row span {
+    margin-right: 50px;
+}
+.no-results p {
+    color: #4c4c4c;
+    font-family: "Helvetica Neue";
+    font-size: 16px;
+}
+.btn-yellow:hover, .btn-yellow2:hover, .btn-creme:hover, .btn-creme2:hover, .btn-creme3:hover, .btn-light:hover, .btn-light2:hover, .btn-light3:hover, .btn-light4:hover, .btn-light5:hover, .btn-light6:hover, .btn-light7:hover, .btn-default:hover {
+    color: #555;
+}
+body.boxed-example .console-btn-5, body.boxed-example #timeline-widget {
+    display: none !important;
+}
+body.boxed-example .container .col-md-11, body.boxed-example .container .col-md-10, body.boxed-example .container .col-md-9, body.boxed-example .container .col-md-8, body.boxed-example .container .col-md-7, body.boxed-example .container .col-md-6, body.boxed-example .container .col-md-5, body.boxed-example .container .col-md-4, body.boxed-example .container .col-md-3, body.boxed-example .container .col-md-2 {
+    float: none;
+    width: 100%;
+}
+body.boxed-layout #console-btns #console-search-btn {
+    display: none !important;
+}
+.chart-table .chart-row {
+    float: left;
+    width: 100%;
+}
+.chart-table {
+    float: left;
+    width: 100%;
+}
+.chart-table .chart-row.head {
+    background: none repeat scroll 0 0 #d3ecf3;
+}
+.chart-table .chart-row.head .chart-col {
+    border: 0 none;
+}
+.chart-table .chart-row .chart-col + .chart-col {
+    border-left: 1px solid #e8e8e8;
+}
+.chart-table .chart-row {
+    float: left;
+    width: 100%;
+}
+.total-charg {
+    background: none repeat scroll 0 0 #fff;
+    float: left;
+    width: 100%;
+}
+.chart-table .chart-row .chart-col {
+    border-bottom: 1px solid #e8e8e8;
+    box-sizing: border-box;
+    float: left;
+    padding: 15px 0;
+    text-align: center;
+    width: 25%;
+}
+.chart-table .chart-row.head p {
+    color: #4c4c4c;
+    font-family: "HelveticaRegular";
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.total-charg .charg-row p {
+    color: #07a3d1;
+    float: left;
+    font-family: "HelveticaNeue-Bold";
+    font-size: 16px;
+    text-align: right;
+    width: 60%;
+}
+.total-charg .charg-row span {
+    color: #4c4c4c;
+    float: right;
+    font-family: "HelveticaLTStd-Light";
+    font-size: 16px;
+    margin-right: 10px;
+    padding: 0 5px;
+}
+.booking-summry {
+    float: left;
+    padding: 10px 5%;
+    width: 90%;
+}
+.booking-summry .col-sum {
+    float: left;
+    width: 30%;
+}
+.booking-summry .col-sum + .col-sum {
+    margin-left: 5%;
+}
+.booking-summry .row-sum {
+    float: left;
+    margin: 10px 0;
+    width: 100%;
+}
+.booking-summry .col-sum label, .booking-summry .row-sum label, .booking-summry .col-sum p, .booking-summry .row-sum p {
+    box-sizing: border-box;
+    padding: 10px;
+    width: 100%;
+}
+.booking-summry .col-sum label, .booking-summry .row-sum label {
+    color: #07a3d1;
+    display: block;
+    font-size: 16px;
+    margin: 5px 0;
+    padding: 5px 10px;
+}
+.booking-summry .row-sum .col-sum p, .booking-summry .row-sum p {
+    background: none repeat scroll 0 0 #f2f5f6;
+    border-radius: 6px;
+    color: #626262;
+    font-family: "HelveticaNeue-Bold";
+    font-size: 14px;
+}
+.booking-summry .row-sum .col-sum p + p, .booking-summry .row-sum p + p {
+    padding-top: 0;
+}
+.search-list-booking {
+    float: left;
+    width: 100%;
+}
+.search-list-booking .form-item-filter {
+    float: left;
+    width: 20%;
+}
+.search-list-booking .form-item-criteria {
+    float: left;
+    margin: 0 0 0 15px;
+    width: 15%;
+}
+.search-list-booking .form-item-search {
+    float: left;
+    margin: 20px 0 0 20px;
+
+}
+.search-list-booking  #edit-actions {
+    float: left;
+    margin: 28px 0 0 9px;
+}
+
+.booking-refund-details .charg-row {}
+.booking-refund-details .charg-row p{padding:10px; color:#428bca; display:inline-block; text-align:left; font-size:16px; margin-bottom:0;}
+.booking-refund-details .charg-row span{float:right; padding:10px; display:inline-block; text-align:right;}
+.console-btn {
+    background-color: rgba(248, 248, 248, 0.9);
+    background-image: linear-gradient(to bottom, #ffffff 1%, #f1f1f1 100%);
+    background-repeat: repeat-x;
+    border: 1px solid #d2d2d2;
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 10px 10px 10px 15px;
+    text-shadow: 0 1px #fff;
+    width: 100%;
+}
+.console-btn .console-icon.divider-right:after {
+    border-right: 1px solid #fff;
+    content: "";
+    height: 100%;
+    margin-right: -2px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1px;
+}
+.console-btn .console-text {
+    display: inline-block;
+    padding-top: 3px;
+}
+.console-btn .console-title {
+    color: #555;
+    font-size: 18px;
+    line-height: 20px;
+}
+.console-btn .console-subtitle {
+    color: #888;
+    font-size: 21px;
+    font-weight: bold;
+}
+.list-customers-wrapper > h1 {
+    color: #5cb85c;
+    text-align: center;
+}
+.refund-amount  div{box-sizing:border-box; width:100%; padding:5px; margin:5px 0;}
+.refund-amount  div + div {color:#999; font-size:14px;}
+.refund-amount  a {margin:5px 0; padding:5px 20px; background:#428bca; border:1px solid #428bca; color:#fff; display:inline-block; text-decoration:none; transition:all ease 500ms;}
+.refund-amount  a:hover { color:#f9f9f9;  text-decoration:none;}

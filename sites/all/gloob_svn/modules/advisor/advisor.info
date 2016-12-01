@@ -1,0 +1,7 @@
+name = Advisor module
+description = This is a module to show advise for products.
+package = Gloobers
+core = 7.x
+project = "gloobers"
+
+

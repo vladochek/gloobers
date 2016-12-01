@@ -1,0 +1,63 @@
+<?php
+
+function search_menu(){	
+	$items = array(); 
+	$items['search/packages'] = array(
+		//'title' => "Messages",
+		'page callback' => "search_packages", 
+		'access callback' => true,
+		'type' => MENU_NORMAL_ITEM, 
+		'weight' => '10', 
+	);
+	return $items; 
+}
+
+function search_packages_form($form,$form_state){
+	$form = array();
+	$form['#action'] = 'search/packages';
+	$form['#method'] = 'GET';
+	
+	$form['dest'] = array(
+	'#type' => 'textfield',
+	"#attributes" => array("placeholder" => "Where do you want to go?"),
+	
+	);
+	$form['check-in'] = array(
+	'#type' => 'textfield',
+	"#attributes" => array("placeholder" => "Check in"),
+	
+	);
+	$form['check-out'] = array(
+	'#type' => 'textfield',
+	"#attributes" => array("placeholder" => "Check out"),
+	
+	);
+
+	$form['guest'] = array(
+	'#type' => 'select',
+	'#options' => array('1'=>'1 Guest','2'=>'2 Guest','3'=>'3 Guest'),
+	
+	);
+	  
+	$form['submit'] = array(
+	'#type' => 'submit',
+	'#value' => 'SEARCH',
+	);
+	 
+	return $form;
+}
+
+function search_theme() {
+    return array(
+
+               'search_packages' => array(
+                                      'path' => drupal_get_path('module', 'search').'/templates',
+                                      'template' => 'search_packages',
+                                      'render element' => 'form'
+                                  ),			  
+           );
+}
+
+function search_packages(){
+	return theme('search_packages');
+}

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:og="http://ogp.me/ns#"  xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+	<!--[if IE]><![endif]-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="shortcut icon" href="http://www.gloobers.com/sites/default/files/fav_icon1.ico" type="image/vnd.microsoft.icon" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+	<title>Gloobers</title>
+	<style type="text/css" media="all">
+@import url("//www.gloobers.com/modules/system/system.base.css?ohhstf");
+@import url("//www.gloobers.com/modules/system/system.menus.css?ohhstf");
+@import url("//www.gloobers.com/modules/system/system.messages.css?ohhstf");
+@import url("//www.gloobers.com/modules/system/system.theme.css?ohhstf");
+</style>
+<style type="text/css" media="all">
+@import url("//www.gloobers.com/misc/ui/jquery.ui.core.css?ohhstf");
+@import url("//www.gloobers.com/misc/ui/jquery.ui.theme.css?ohhstf");
+@import url("//www.gloobers.com/misc/ui/jquery.ui.button.css?ohhstf");
+@import url("//www.gloobers.com/misc/ui/jquery.ui.resizable.css?ohhstf");
+@import url("//www.gloobers.com/misc/ui/jquery.ui.dialog.css?ohhstf");
+</style>
+<style type="text/css" media="all">
+@import url("//www.gloobers.com/sites/all/modules/calendar/css/calendar_multiday.css?ohhstf");
+@import url("//www.gloobers.com/modules/comment/comment.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/modules/date/date_api/date.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/modules/date/date_popup/themes/datepicker.1.7.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/modules/date/date_repeat_field/date_repeat_field.css?ohhstf");
+@import url("//www.gloobers.com/modules/field/theme/field.css?ohhstf");
+@import url("//www.gloobers.com/modules/node/node.css?ohhstf");
+@import url("//www.gloobers.com/modules/user/user.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/modules/views/css/views.css?ohhstf");
+</style>
+<style type="text/css" media="all">
+@import url("//www.gloobers.com/sites/all/modules/ctools/css/ctools.css?ohhstf");
+</style>
+<link type="text/css" rel="stylesheet" href="//www.gloobers.com//sites/default/filesevent_calendar_colors/event_calendar_colors.css" media="all" />
+<style type="text/css" media="all">
+@import url("//www.gloobers.com/sites/all/modules/event_calendar/event_popup/css/event_popup.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/modules/panels/css/panels.css?ohhstf");
+</style>
+<style type="text/css" media="all">
+@import url("//www.gloobers.com/sites/all/themes/gloobers_new/css/colors.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/themes/gloobers_new/css/bootstrap.min.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/themes/gloobers_new/css/font-awesome.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/themes/gloobers_new/css/bootstrap-datetimepicker.min.css?ohhstf");
+@import url("//www.gloobers.com/sites/all/themes/gloobers_new/fonts/stylesheet.css?ohhstf");
+</style>
+<style type="text/css" media="print">
+@import url("//www.gloobers.com/sites/all/themes/gloobers_new/css/print.css?ohhstf");
+</style>
+
+<!--[if lte IE 7]>
+<link type="text/css" rel="stylesheet" href="//www.gloobers.com/sites/all/themes/gloobers_new/css/ie.css?ohhstf" media="all" />
+<![endif]-->
+
+<!--[if IE 6]>
+<link type="text/css" rel="stylesheet" href="//www.gloobers.com/sites/all/themes/gloobers_new/css/ie6.css?ohhstf" media="all" />
+<![endif]-->
+	<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/jss/jQuery.min.js?v=1.4.4"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/jquery.once.js?v=1.2"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/drupal.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.core.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.widget.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.button.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.mouse.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.draggable.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.position.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.resizable.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/ui/jquery.ui.dialog.min.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/modules/views/js/jquery.ui.dialog.patch.js?v=1.8.7"></script>
+<script type="text/javascript" src="//www.gloobers.com/misc/jquery.cookie.js?v=1.0"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/modules/event_calendar/event_popup/js/event_popup.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/modules/event_calendar/event_popup/js/event_popup_validate.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/modules/user/user.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/modules/users/js/pass_strength_disable.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/jquery-1.11.0.min.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/jquery.meanmenu.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/bootstrap.min.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/home.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/jquery.validate.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/checkbox-x.min.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/moment.js?ohhstf"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"gloobers_new","theme_token":"5hyZAJ1kljHNxckF7ccijsrniBeCE0PY67P_XGu5RSE","css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"misc\/ui\/jquery.ui.core.css":1,"misc\/ui\/jquery.ui.theme.css":1,"misc\/ui\/jquery.ui.button.css":1,"misc\/ui\/jquery.ui.resizable.css":1,"misc\/ui\/jquery.ui.dialog.css":1,"sites\/all\/modules\/calendar\/css\/calendar_multiday.css":1,"modules\/comment\/comment.css":1,"sites\/all\/modules\/date\/date_api\/date.css":1,"sites\/all\/modules\/date\/date_popup\/themes\/datepicker.1.7.css":1,"sites\/all\/modules\/date\/date_repeat_field\/date_repeat_field.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"modules\/user\/user.css":1,"sites\/all\/modules\/views\/css\/views.css":1,"sites\/all\/modules\/ctools\/css\/ctools.css":1,"http:\/\/www.gloobers.com\/\/sites\/default\/filesevent_calendar_colors\/event_calendar_colors.css":1,"sites\/all\/modules\/event_calendar\/event_popup\/css\/event_popup.css":1,"sites\/all\/modules\/panels\/css\/panels.css":1,"sites\/all\/themes\/gloobers_new\/css\/colors.css":1,"sites\/all\/themes\/gloobers_new\/css\/bootstrap.min.css":1,"sites\/all\/themes\/gloobers_new\/css\/font-awesome.css":1,"sites\/all\/themes\/gloobers_new\/css\/bootstrap-datetimepicker.min.css":1,"sites\/all\/themes\/gloobers_new\/fonts\/stylesheet.css":1,"sites\/all\/themes\/gloobers_new\/css\/print.css":1,"sites\/all\/themes\/gloobers_new\/css\/ie.css":1,"sites\/all\/themes\/gloobers_new\/css\/ie6.css":1},"js":{"sites\/all\/themes\/gloobers_new\/js\/autocomplete.js":1,"sites\/all\/themes\/gloobers_new\/js\/notify.js":1,"misc\/jquery.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"misc\/ui\/jquery.ui.core.min.js":1,"misc\/ui\/jquery.ui.widget.min.js":1,"misc\/ui\/jquery.ui.button.min.js":1,"misc\/ui\/jquery.ui.mouse.min.js":1,"misc\/ui\/jquery.ui.draggable.min.js":1,"misc\/ui\/jquery.ui.position.min.js":1,"misc\/ui\/jquery.ui.resizable.min.js":1,"misc\/ui\/jquery.ui.dialog.min.js":1,"sites\/all\/modules\/views\/js\/jquery.ui.dialog.patch.js":1,"misc\/jquery.cookie.js":1,"sites\/all\/modules\/event_calendar\/event_popup\/js\/event_popup.js":1,"sites\/all\/modules\/event_calendar\/event_popup\/js\/event_popup_validate.js":1,"modules\/user\/user.js":1,"sites\/all\/modules\/users\/js\/pass_strength_disable.js":1,"sites\/all\/themes\/gloobers_new\/js\/jquery-1.11.0.min.js":1,"sites\/all\/themes\/gloobers_new\/js\/jquery.meanmenu.js":1,"sites\/all\/themes\/gloobers_new\/js\/bootstrap.min.js":1,"sites\/all\/themes\/gloobers_new\/js\/home.js":1,"sites\/all\/themes\/gloobers_new\/js\/jquery.validate.js":1,"sites\/all\/themes\/gloobers_new\/js\/checkbox-x.min.js":1,"sites\/all\/themes\/gloobers_new\/js\/moment.js":1}},"event_popup":{"classes":"","defaults":"width:300;height:auto;position:[center,60]","selector":"content","content_type":"event_calendar","op":false}});
+//--><!]]>
+</script>
+	  
+ <!--script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCrieeAcc8gUAxrnmM9dCO33N8X77-hkhs&libraries=places&language=en"
+        async defer></script--> 
+		
+		<script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en"
+        async defer></script>
+
+  <!--script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script-->
+ 
+
+<script>
+	$baseURL = "http://www.gloobers.com";
+</script>
+<title>Gloobers</title>
+<meta charset="utf-8" />
+<!--meta tags Here-->
+<meta property="fb:admins" content="0" />
+<meta property="fb:app_id" content='1494427384207396' /> 
+<meta property="og:type"   content="website" /> 
+
+<meta name="og:url" content="http://gloobers.com/register" />
+<meta name="og:title" content='Help me plan my trip... And get rewarded' />
+<meta name="og:description" content='Be friendly - Travel for free. Travel for free thanks to your helpful recommendations. Drop us your email and be the first to know when we launch. Stay tuned on.' />
+<meta property="og:image" content="http://gloobers.com/sites/all/themes/gloobers_new/images/1meta.png" />
+
+<!-- Twitter Tags -->
+<meta name="twitter:site" content="http://gloobers.com/register">
+<meta name="twitter:title" content="Help me plan my trip... And get rewarded">
+<meta name="twitter:description" content="Be friendly - Travel for free. Travel for free thanks to your helpful recommendations. Drop us your email and be the first to know when we launch. Stay tuned on.">
+<meta name="twitter:creator" content="@Gloobers">
+<!-- Twitter Summary card images must be at least 120x120px -->
+<meta name="twitter:image" content="http://gloobers.com/sites/all/themes/gloobers_new/images/1meta.png" /> 
+<!-- END TWITTER -->
+
+<!--Google + -->
+<meta itemprop="name" content="Help me plan my trip... And get rewarded" />
+<meta itemprop="description" content="Be friendly - Travel for free. Travel for free thanks to your helpful recommendations. Drop us your email and be the first to know when we launch. Stay tuned on." />
+<meta itemprop="image" content="http://gloobers.com/sites/all/themes/gloobers_new/images/1meta.png" /> 
+
+<!-- END Google+ -->
+ 
+<!--Title Here-->
+
+
+
+
+</head>
+
+<body >
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=1628223834126415";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+ 
+<link rel="stylesheet" type="text/css" href="http://www.gloobers.com/sites/all/themes/gloobers_new/fonts/stylesheet.css" />
+
+<link rel="stylesheet" type="text/css" href="http://www.gloobers.com/sites/all/themes/gloobers_new/css/font-awesome.css" />
+
+
+
+<script type="text/Javascript">
+
+$baseUrl="http://www.gloobers.com";
+
+$globalThemeUrl = 'sites/all/themes/gloobers_new';
+
+
+jQuery.noConflict();	
+
+jQuery(document).ready(function(){
+
+	jQuery('#search-listings-form').validate({
+
+			rules: {
+
+				 keys: {
+
+					required: true,
+
+
+
+				 }
+
+			}
+
+	});
+
+});
+
+
+ </script>
+
+<script type="text/jscript">
+
+var $baseUrl ="http://www.gloobers.com";
+
+</script>
+
+
+
+
+
+
+<div id="page-wrapper">
+
+    <div id="page">
+
+        <!-- Page header -->
+
+      
+        <header>
+
+          <div class="container-fluid">
+
+            <div class="row">
+
+              <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6"><a href="http://www.gloobers.com" class="logo"><img src="http://www.gloobers.com/sites/all/themes/gloobers_new/images/sitelogo.png" alt="image"></a></div>
+
+              <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 pull-right">
+			   <div class="sarch_page_nav">
+			    <ul>
+				 <li><a href="http://www.gloobers.com/login" >Log in</a></li>
+				 <li><a href="http://www.gloobers.com/register" >Sign up</a></li>
+				</ul>
+			   </div>
+			  </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+      
+
+     
+        <!------------------------------------------------------------------------------------------------>
+
+        <!-- <div id="header">
+
+           <div class="section clearfix">
+
+        
+            
+        
+     
+
+        
+                     <div id="name-and-slogan">
+
+            
+                
+            
+                                         
+
+            
+                                                   </div>
+
+        
+     
+
+        
+           </div>
+
+         </div>-->
+
+
+
+
+
+        <!--
+    
+
+        
+                                              <div id="breadcrumb">
+
+            <h2 class="element-invisible">You are here</h2><div class="breadcrumb"><a href="/">Home</a></div>
+                                              </div>
+
+        -->
+
+
+
+
+
+
+
+        <div id="main-wrapper">
+
+            <div id="main" class="clearfix">
+
+				<div id="content" class="column">
+
+                    <div class="section">
+
+
+
+                        <a id="main-content"></a>
+
+
+
+                        
+                        
+                        
+
+
+                        
+                            <div class="tabs">
+
+                                
+                            </div>
+
+                        
+
+
+                        
+
+
+                        
+                        
+						
+
+                        <div class="">  
+
+							
+                              <div class="region region-content">
+    <div id="block-system-main" class="block block-system">
+
+    
+  <div class="content">
+    	<!--Landding page Css Here-->
+<link rel="stylesheet" href="http://www.gloobers.com/sites/all/themes/gloobers_new/stylesheet/style.css">
+<link rel="stylesheet" href="http://www.gloobers.com/sites/all/themes/gloobers_new/stylesheet/pop_up.css">
+<!--Fonts Css Here-->
+<link rel="stylesheet" href="http://www.gloobers.com/sites/all/themes/gloobers_new/fonts/stylesheet.css">
+
+<div class="bgback3">
+  <div class="bgdark">
+       <div class="loginsec">
+      <div class="login_box">
+		 <h3>New on Gloobers ?</h3>
+		 <p>Join the tribe now </p>
+		 <div class="facebook"><a href="https://www.facebook.com/v2.3/dialog/oauth?client_id=1587171044923678&redirect_uri=http://www.gloobers.com/fboauth/connect&scope=email,user_about_me,user_birthday,user_hometown,user_location,user_relationships">
+		 <img src="http://www.gloobers.com/sites/all/themes/gloobers_new/images/fb.png" alt="image"></a></div>
+		 <p>or </p>
+			<div class="rowlogin">
+              <h3>Sign up with your email</h3>
+            </div>
+			<div id="divErrReg" style="color:red;"></div>
+			<div class="rowlogin"><form class="loin_form" enctype="multipart/form-data" action="/ajax/register" method="post" id="user-register-form--3" accept-charset="UTF-8"><div><fieldset><div class="col-lg-6 col-sm-6 paddinng_in_login"><div class="field-type-text field-name-field-first-name field-widget-text-textfield form-wrapper" id="edit-field-first-name--3"><div id="field-first-name-add-more-wrapper--3"><div class="form-item form-type-textfield form-item-field-first-name-und-0-value">
+ <input class="text-full form-text required" placeholder="First Name" type="text" id="edit-field-first-name-und-0-value--3" name="field_first_name[und][0][value]" value="" size="60" maxlength="255" />
+</div>
+</div></div></div><input type="hidden" name="form_build_id" value="form-ZMwBAy1FEXgPWWP-ekhEmKf2lrao6_b5GTDn_0qLrCY" />
+<input type="hidden" name="form_id" value="user_register_form" />
+<div class="col-lg-6 col-sm-6 paddinng_in_login"><div class="field-type-text field-name-field-last-name field-widget-text-textfield form-wrapper" id="edit-field-last-name--3"><div id="field-last-name-add-more-wrapper--3"><div class="form-item form-type-textfield form-item-field-last-name-und-0-value">
+ <input class="text-full form-text required" placeholder="Last Name" type="text" id="edit-field-last-name-und-0-value--3" name="field_last_name[und][0][value]" value="" size="60" maxlength="255" />
+</div>
+</div></div></div></fieldset><div id="edit-account--3" class="form-wrapper"><input class="username" type="hidden" name="name" value="email_registration_qCqtAtyr8e" />
+<fieldset><div class="form-item form-type-textfield form-item-mail">
+ <input placeholder="Enter Your Email-id" type="text" id="edit-mail--3" name="mail" value="" size="60" maxlength="254" class="form-text required" />
+</div>
+</fieldset><div class="form-item form-type-password-confirm form-item-pass">
+ <div class="form-item form-type-password form-item-pass-pass1">
+  <label for="edit-pass-pass1--3">Password <span class="form-required" title="This field is required.">*</span></label>
+ <input class="password-field form-text required" type="password" id="edit-pass-pass1--3" name="pass[pass1]" size="25" maxlength="128" />
+</div>
+<div class="form-item form-type-password form-item-pass-pass2">
+  <label for="edit-pass-pass2--3">Confirm password <span class="form-required" title="This field is required.">*</span></label>
+ <input class="password-confirm form-text required" type="password" id="edit-pass-pass2--3" name="pass[pass2]" size="25" maxlength="128" />
+</div>
+
+</div>
+<input type="hidden" name="timezone" value="Asia/Jerusalem" />
+</div><div class="form-actions form-wrapper" id="edit-actions--3"><div class="col-lg-4 singupbtn"><input type="submit" id="edit-submit--3" name="op" value="Sign up" class="form-submit" /></div></div><div class="submit_fld"><div class="col-lg-12 paddinng_in_login">
+						<div class="checkbox_cus"><div class="form-item form-type-checkbox form-item-terms">
+ <input class="required error form-checkbox" id="terms_and_conditions" type="checkbox" name="terms" value="1" />
+</div>
+</div><label><a href="/terms-and-conditions" target="_blank"> I agree on Gloobers Terms & Conditions </a></label></div></div></div></form><div class="load-screen_details_loginSignup"></div></div><div class="rowlogin1"><p>Already member? <a href="/login">Login</a></p></div>			</div>
+		</div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+	jQuery("#edit-name").attr('placeholder','Enter Your Username');
+	jQuery("#edit-mail").attr('placeholder','Enter Your Email');
+	jQuery("#edit-field-first-name-und-0-value").attr('placeholder','First Name');
+	jQuery("#edit-field-last-name-und-0-value").attr('placeholder','Last Name');	jQuery(".password-field").attr('placeholder','Password');	jQuery(".password-confirm").attr('placeholder','Repeat Password');
+
+	jQuery("#edit-pass-pass1--3").attr('placeholder','Enter Your Password');
+	jQuery("#edit-pass-pass2--3").attr('placeholder','Repeat Your Password');
+	
+	});
+	
+	jQuery.noConflict();
+	jQuery( "#user-register-form--2" ).validate({
+		rules: {
+			 mail: {
+				required: true,
+				email: true
+				},
+			"pass[pass1]": "required",
+			"pass[pass2]": {
+			equalTo: "#edit-pass-pass1--2"
+			}
+		}
+	});
+	jQuery.extend(jQuery.validator.messages, {
+		required: "This field is required.",
+		email:"Please enter valid email address",
+		equalTo:"Password and Confirm password do not match."
+			
+   
+	});
+</script>  </div>
+</div>
+  </div>
+
+                        </div>
+
+                        
+                    </div>
+
+                </div>
+
+				</div>
+
+        </div>
+
+        
+        <!---------------------------------------------------------------------------------------------->
+
+
+
+    </div>
+
+</div>
+
+
+
+<script src="http://www.gloobers.com/sites/all/themes/gloobers_new/js/jquery.nicescroll.min.js"></script>
+
+   
+
+  <script type="text/javascript">
+
+   
+
+	jQuery(document).ready(function () {
+
+		jQuery("html").niceScroll();
+
+	});
+
+	
+
+	function readnotifications(recipient_id){
+
+            jQuery.ajax({
+
+        
+
+             url:'http://www.gloobers.com/advice/readnotifications',
+
+             type:'post',
+
+             data:{'recipientid':recipient_id ,'isAjax':1},
+
+             success: function(result){
+
+                window.location.href='http://www.gloobers.com/advice/notification';
+
+             }
+
+
+
+         });
+
+   }
+
+</script><script type="text/jscript">
+
+jQuery(".checkbox_cus").click(function(){
+
+    jQuery(this).toggleClass('checked');
+
+	jQuery('.form-checkbox').toggleClass('checked');
+
+
+
+});
+
+</script>
+
+
+<script type="text/jscript">
+
+  //on change of gloobers search box
+
+    jQuery(document).on('keypress','#_trip_loction',function(event){
+
+
+
+        if ( event.which == 13 ) {
+
+            var search = (jQuery('#_trip_loction').val()).trim();
+
+            if(search.length<=0){
+
+                return false;
+
+            }
+
+            setTimeout(function(){
+
+                var href = $baseUrl+'/search-destination/'+search;
+
+                window.location.href = href;
+
+            });
+
+        }
+
+        
+
+    });
+
+    
+
+  //on change of gloobers search box
+
+    jQuery(document).on('click','.my-custom-search',function(){
+
+      var search = (jQuery('#_trip_loction').val()).trim();
+
+      //alert(search);
+
+     if(search.length<=0){
+
+            return false;
+
+        }
+
+        
+
+        setTimeout(function(){
+
+            var href = $baseUrl+'/search-destination/'+search;
+
+            window.location.href = href;
+
+        });
+
+    
+
+    });
+	
+	jQuery(document).keydown(function(e) {
+		console.log(e.keyCode);
+    
+    if (e.keyCode == 27) {
+       jQuery( ".cancelbtn" ).trigger( "click" );
+    }
+});
+
+</script>
+
+ <script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/autocomplete.js?ohhstf"></script>
+<script type="text/javascript" src="//www.gloobers.com/sites/all/themes/gloobers_new/js/notify.js?ohhstf"></script>
+    <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      
+    <div class="modal-content loginpop">
+        
+      <div class="modal-header">
+          <button class="close" aria-label="Close" style="position:relative;top:-9px;" data-dismiss="modal" type="button">
+            <span aria-hidden="true">×</span>
+            </button>
+        <div class="btnfb"> 
+		<a href="https://www.facebook.com/v2.3/dialog/oauth?SELECT m.main_img_fid AS main_img_fid, m.title AS title
+FROM 
+{gbl_experience_list} m
+WHERE  (eid IS NULL ) "><i class="fa fa-facebook"></i>Sign in with Facebook</a> </div>
+		<h4 class="modal-title" id="exampleModalLabel">Log in with your email</h4>
+      </div>
+	 <form action="/register?destination=register" method="post" id="user-login-form" accept-charset="UTF-8"><div><div class="form-item form-type-textfield form-item-name">
+  <label for="edit-name--4">E-mail or username <span class="form-required" title="This field is required.">*</span></label>
+ <input type="text" id="edit-name--4" name="name" value="" size="15" maxlength="60" class="form-text required" />
+</div>
+<div class="form-item form-type-password form-item-pass">
+  <label for="edit-pass--4">Password <span class="form-required" title="This field is required.">*</span></label>
+ <input type="password" id="edit-pass--4" name="pass" size="15" maxlength="128" class="form-text required" />
+</div>
+<div class="item-list"><ul><li class="first"><a href="/register" title="Create a new user account." class="active">Create new account</a></li>
+<li class="last"><a href="/user/password" title="Request new password via e-mail.">Request new password</a></li>
+</ul></div><input type="hidden" name="form_build_id" value="form-JGFuejg54yHHGkhWITjuqCjHcTzj039mkIQTRL6WoN4" />
+<input type="hidden" name="form_id" value="user_login_block" />
+<div class="form-actions form-wrapper" id="edit-actions--4"><input type="submit" id="edit-submit--4" name="op" value="Login" class="form-submit" /></div></div></form>	  
+    </div>
+      <div class="modal-footer">
+	  <p>Don't have an account? <a href="/register">Sign up</a></p>
+	  </div>     	
+   </div>
+  </div>
+<div class="modal fade" id="signup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content loginpop">
+      <div class="modal-header">
+           <button class="close" aria-label="Close" style="position:relative;top:-9px;" data-dismiss="modal" type="button">
+            <span aria-hidden="true">×</span>
+            </button>
+        <div class="btnfb"><a href="https://www.facebook.com/v2.3/dialog/oauth?SELECT m.main_img_fid AS main_img_fid, m.title AS title
+FROM 
+{gbl_experience_list} m
+WHERE  (eid IS NULL ) ">
+		
+		<i class="fa fa-facebook"></i>Sign in with Facebook</a> </div>
+       
+        <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+      </div>
+	  <div id="divErr" style="color:red;"></div>
+      <div class="modal-body">
+	  <div class="alert-message alert" style="display:none;"></div>
+       <form class="loin_form" enctype="multipart/form-data" action="/ajax/register" method="post" id="user-register-form--4" accept-charset="UTF-8"><div><fieldset><div class="col-lg-6 col-sm-6 paddinng_in_login"><div class="field-type-text field-name-field-first-name field-widget-text-textfield form-wrapper" id="edit-field-first-name--4"><div id="field-first-name-add-more-wrapper--4"><div class="form-item form-type-textfield form-item-field-first-name-und-0-value">
+ <input class="text-full form-text required" placeholder="First Name" type="text" id="edit-field-first-name-und-0-value--4" name="field_first_name[und][0][value]" value="" size="60" maxlength="255" />
+</div>
+</div></div></div><input type="hidden" name="form_build_id" value="form-hd8LFUtc0_Lrr-MY1m6D3awvyT293-Ny04HTGQunY2U" />
+<input type="hidden" name="form_id" value="user_register_form" />
+<div class="col-lg-6 col-sm-6 paddinng_in_login"><div class="field-type-text field-name-field-last-name field-widget-text-textfield form-wrapper" id="edit-field-last-name--4"><div id="field-last-name-add-more-wrapper--4"><div class="form-item form-type-textfield form-item-field-last-name-und-0-value">
+ <input class="text-full form-text required" placeholder="Last Name" type="text" id="edit-field-last-name-und-0-value--4" name="field_last_name[und][0][value]" value="" size="60" maxlength="255" />
+</div>
+</div></div></div></fieldset><div id="edit-account--4" class="form-wrapper"><input class="username" type="hidden" name="name" value="email_registration_DkxAUc8kcJ" />
+<fieldset><div class="form-item form-type-textfield form-item-mail">
+ <input placeholder="Enter Your Email-id" type="text" id="edit-mail--4" name="mail" value="" size="60" maxlength="254" class="form-text required" />
+</div>
+</fieldset><div class="form-item form-type-password-confirm form-item-pass">
+ <div class="form-item form-type-password form-item-pass-pass1">
+  <label for="edit-pass-pass1--4">Password <span class="form-required" title="This field is required.">*</span></label>
+ <input class="password-field form-text required" type="password" id="edit-pass-pass1--4" name="pass[pass1]" size="25" maxlength="128" />
+</div>
+<div class="form-item form-type-password form-item-pass-pass2">
+  <label for="edit-pass-pass2--4">Confirm password <span class="form-required" title="This field is required.">*</span></label>
+ <input class="password-confirm form-text required" type="password" id="edit-pass-pass2--4" name="pass[pass2]" size="25" maxlength="128" />
+</div>
+
+</div>
+<input type="hidden" name="timezone" value="Asia/Jerusalem" />
+</div><div class="form-actions form-wrapper" id="edit-actions--5"><div class="col-lg-4 singupbtn"><input type="submit" id="edit-submit--5" name="op" value="Sign up" class="form-submit" /></div></div><div class="submit_fld"><div class="col-lg-12 paddinng_in_login">
+						<div class="checkbox_cus"><div class="form-item form-type-checkbox form-item-terms">
+ <input class="required error form-checkbox" id="terms_and_conditions" type="checkbox" name="terms" value="1" />
+</div>
+</div><label><a href="/terms-and-conditions" target="_blank"> I agree on Gloobers Terms & Conditions </a></label></div></div></div></form>		
+      </div>
+      <div class="modal-footer">        
+        <p>Already have an account? <a href="/login">Log In</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var jq = jQuery.noConflict();
+jq(document).ready(function(){
+	jq("#user-register-form").validate({
+		 rules: {
+
+        "field_first_name[und][0][value]": {
+            required :true,
+        },
+        "field_last_name[und][0][value]": {
+          required :true,
+        },
+        "terms" :{
+          required : true,
+        }, 
+
+        "mail": {
+            required: true,
+			  email: true
+        },
+        "pass[pass1]": {           
+             required: true,
+        },
+		"pass[pass2]":{
+			 required: true,
+			 equalTo : "#edit-pass-pass1"
+		}
+    },
+	});	
+});
+</script>
+<div id="load-screen" style="display:none;"></div>
+<script type="text/javascript">
+jQuery(document).on('mouseenter','#drop4',function (){
+	console.log('unread_counter front');
+
+		jQuery.ajax({
+            url: $baseUrl + '/ajax/unread_counter',
+            type: 'post',
+            async:true,            
+            beforeSend: function () {
+               
+            },
+            success: function (data) {
+                          
+              jQuery('.notification_block').html('');        
+              jQuery(".nav-dropdown-heading").text('Notifications');
+
+
+            }
+        });
+});
+
+jQuery(document).ready(function(){
+    //1 minute interval for notification
+   setInterval(function() { 
+        getNotifications();
+    },60000);
+  
+});
+
+getNotifications =  function(){  
+console.log("front"); 
+var uid="0";
+if(uid>0) {
+  console.log(uid); 
+
+    jq.ajax({
+        url: $baseUrl + '/advice/notification/',
+        type: 'post',        
+        data: {notification:1},
+        async:true,
+        beforeSend: function () {
+           
+        },
+        success: function (data) {
+            // var res = jQuery.parseJSON(data);
+            // var notificationCount = (res.count>0)? res.count : '';
+            // jQuery('#_my_notifications_badge').html(notificationCount);
+            var res = jQuery.parseJSON(data);
+            var notificationCount = (res.count>0)? res.count : '';
+            var html = '<span class="count" id="_my_notifications_badge">'+notificationCount+'</span>';
+            if(res.count>0)
+            {
+            jQuery('.notification_block').html(html);
+            //jQuery('.notification_block').text(notificationCount);
+            jQuery(".nav-dropdown-heading").text('Notifications('+notificationCount+')');
+            } else {
+            	jQuery('.notification_block').html('');
+            }
+
+            jQuery('#_my_notifications_badge2').text(notificationCount);
+            jQuery('#noti_ajax_data').html(res.html);
+        }
+    });
+ }
+}
+
+</script>
+</body>
+</html>
+<!-- Page cached by Boost @ 2016-12-01 09:00:30, expires @ 2016-12-01 10:00:30, lifetime 1 hour -->

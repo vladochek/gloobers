@@ -1,0 +1,54 @@
+.form-item.form-type-select.form-item-criteria{
+    float: left;
+    width: 25%;
+}
+.form-item-type{float:left;width:14%;}
+.form-item-criteria label {
+    float: left;
+    width: 30%;
+}
+#edit-criteria {
+    float: left;
+    width: 55%;
+}
+
+.form-item-search {
+    float: left;
+    width: 38%;
+}
+.form-item-service-tax  label,.form-item-commission  label {
+    float: left;
+    width: 12%;
+}
+#gbl-user-search-form  .form-item.form-type-select.form-item-filter {
+    float: left;
+    width: 25%;
+}
+#gbl-user-search-form  .form-item.form-type-select.form-item-filter  label {
+    float: left;
+    width: 45%;
+}
+/*****************************************Get Transaction History*****************************/
+.content form#gbl-transaction-search-form, .content form#gbl-transaction-search-form div, .content form#gbl-transaction-search-form + table {float:left; width:100%;}
+.content form#gbl-transaction-search-form div .form-item, .content form#gbl-transaction-search-form div .form-actions.form-wrapper {float:left; margin:10px 1%; width:23%;}
+.content form#gbl-transaction-search-form div .form-item label {padding:5px 0; clear:both; float:left; width:100%; margin:0;}
+.content form#gbl-transaction-search-form div .form-item select {box-sizing:border-box; width:100%; padding:5px; }
+.content form#gbl-transaction-search-form div .form-actions.form-wrapper {text-align:center;}
+.content form#gbl-transaction-search-form div .form-item.form-type-textfield.form-item-search input[type="text"]{ width:100%; box-sizing:border-box; display:inline-block;margin-top:30px; padding:6px;}
+.content form#gbl-transaction-search-form div .form-actions.form-wrapper input[type="submit"] {padding:5px 20px; display:inline-block; margin-top: 37px; max-width: 50%;width: 100%;}
+.content form#gbl-transaction-search-form div .form-actions.form-wrapper input[type="submit"]:hover {background:#3e93bf; color:#fff;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,11 @@
+name = Manage Hotels
+description = This is a custom module to manage hotels.
+package = Custom modules
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2014-06-07
+version = "7.x"
+core = "7.x"
+project = "Gloobers"
+
+

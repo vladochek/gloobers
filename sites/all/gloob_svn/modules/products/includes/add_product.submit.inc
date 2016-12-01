@@ -1,0 +1,960 @@
+<?php
+
+
+/**
+ * @file 
+ * Handles the form submission of the customer survey form
+ */
+
+
+/**
+ * Handles what to do with the submitted form depending on what stage has been
+ * completed.
+ * 
+ * @see customer_survey_form()
+ * @see customer_survey_form_validate()
+ * 
+ * @param type $form
+ * @param type $form_state 
+ */
+function product_add_form_submit($form, &$form_state) {
+
+/*  	echo "<pre>";
+	print_r($form_state); die;  */
+  
+  switch ($form_state['stage']) {
+    
+
+    default:
+      $form_state['multistep_values'][$form_state['stage']] = $form_state['values'];
+      $form_state['new_stage'] = product_add_move_to_next_stage($form, $form_state);
+     break;
+ 
+  } 
+
+  if (isset($form_state['complete'])) drupal_goto('complete-page');   
+  
+  if ($form_state['triggering_element']['#value'] == 'Back') {
+    $form_state['new_stage'] = product_add_move_to_previous_stage($form, $form_state);
+  } 
+  
+  if (isset($form_state['multistep_values']['form_build_id'])) {
+    $form_state['values']['form_build_id'] = $form_state['multistep_values']['form_build_id'];
+  }
+  $form_state['multistep_values']['form_build_id'] = $form_state['values']['form_build_id'];
+  $form_state['stage'] = $form_state['new_stage'];
+  
+  $form_state['rebuild'] = TRUE;
+    
+	drupal_goto('product/add/page/'.$form_state['stage']);
+}
+
+function product_add_complete() {
+    
+  return 'Product has beed added';  
+    
+}
+
+function product_photos_form_submit($form, &$form_state){
+	global $user;
+	$photoData = array();
+/*  	echo "<pre>";
+	print_r($_SESSION["imagesData2"]); die;  */
+	if(isset($_SESSION["imagesData2"]) && !empty($_SESSION["imagesData2"])){
+		$filepath = 'public://products';
+		foreach($_SESSION["imagesData2"] as $key=>$value){
+			
+			$file = file_load($_SERVER["DOCUMENT_ROOT"]."/gloobers/sites/default/files/products/".$value["files"]);
+			$file->uid = $user->uid;
+			$file->filename = $value["files"];
+			$file->uri = $filepath."/".$value["files"];
+			$file->status = FILE_STATUS_PERMANENT;
+			$result = file_save($file);
+			
+			$fileId = $result->fid;
+			$photoData["text"] = $value["data"]["customValue"];
+			$photoData["fid"] = $fileId;
+			
+		    $query=db_insert('gbl_listing_meta')
+			  ->fields(array('listing_id'=>arg(3),
+							'key1'=>"photo_data",
+							'value1'=>serialize($photoData)
+				));	 
+			$result=$query->execute();		
+			
+		}
+		unset($_SESSION["imagesData2"]);
+		drupal_set_message("Photos uploaded sucessfully.");
+		drupal_goto("product/add/extra/".arg(3));
+	}
+		drupal_set_message("Photos uploaded sucessfully.");
+		drupal_goto("product/add/amenities/".arg(3));
+}
+
+function product_extra_form_submit($form, &$form_state){
+	$extraData = array();
+	$extraData["title"] = $form_state["values"]["extra_service"];
+	$extraData["description"] = $form_state["values"]["product_extra_description"];
+	$extraData["price"] = $form_state["values"]["extra_price_value"];
+	$extraData["price-type"] = $form_state["values"]["extra_price_type"];
+	$extraData["price-key"] = $form_state["values"]["extra_price_key"];
+	
+	if($form_state["values"]["metaID"]){
+		$query=db_update('gbl_listing_meta')
+		  ->fields(array('listing_id'=>arg(3),
+						'key1'=>"product_extra",
+						'value1'=>serialize($extraData)
+			))
+			->condition('meta_id',$form_state["values"]["metaID"]);	 
+		$result=$query->execute();	
+		if($result){
+			drupal_set_message("Product extra value updated sucessfully.");
+			drupal_goto("product/add/rules/".arg(3));		
+		}
+	}
+	else{
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>arg(3),
+						'key1'=>"product_extra",
+						'value1'=>serialize($extraData)
+			));	 
+		$result=$query->execute();	
+		if($result){
+			drupal_set_message("Product extra value saved sucessfully.");
+			drupal_goto("product/add/rules/".arg(3));		
+		}	
+	}
+}
+
+/* function product_pricing_form_validate($form, &$form_state) {
+
+
+if(!empty($form_state['input']['quantity_min']))
+ {
+ if($form_state['input']['quantity_min']>$form_state['input']['quantity_max'])
+ {
+ drupal_set_message('MAX value should be greater than MIN value','error');
+ return false;
+ }
+ }
+
+
+	$early_birds_time_value = $form_state["values"]["early_birds_time_value"];
+	if (strlen(trim($early_birds_time_value)) > 0){
+		if (!is_numeric($early_birds_time_value)) {
+		  form_set_error("early_birds_time_value", t('Days or months must be Numeric'));
+		}
+	}
+	$last_minutes_time_value = $form_state["values"]["last_minutes_time_value"];
+	if (strlen(trim($last_minutes_time_value)) > 0){
+		if (!is_numeric($last_minutes_time_value)) {
+		  form_set_error("last_minutes_time_value", t('Days or months must be Numeric'));
+		}
+	}
+
+	$hour_offer_price_value = $form_state["values"]["24_hour_offer_price_value"];
+	if (strlen(trim($hour_offer_price_value)) > 0){
+		if (!is_numeric($hour_offer_price_value)) {
+		  form_set_error("24_hour_offer_price_value", t('Price field must be Numeric'));
+		}
+	}
+	$early_birds_price_value = $form_state["values"]["early_birds_price_value"];
+	if (strlen(trim($early_birds_price_value)) > 0){
+		if (!is_numeric($early_birds_price_value)) {
+		  form_set_error("early_birds_price_value", t('Price field must be Numeric'));
+		}
+	}	
+
+	$last_minutes_price_value = $form_state["values"]["last_minutes_price_value"];
+	if (strlen(trim($last_minutes_price_value)) > 0){
+		if (!is_numeric($last_minutes_price_value)) {
+		  form_set_error("last_minutes_price_value", t('Price field must be Numeric'));
+		}
+	}
+
+	$product_pricing_value = $form_state["values"]["product_pricing_value"];
+	if (strlen(trim($product_pricing_value)) > 0){
+		if (!is_numeric($product_pricing_value)) {
+		  form_set_error("product_pricing_value", t('Price field must be Numeric'));
+		}
+	}		
+}
+ */
+function product_pricing_form_validate($form, &$form_state) {
+	$early_birds_time_value = $form_state["values"]["early_birds_time_value"];
+	if (strlen(trim($early_birds_time_value)) > 0){
+		if (!is_numeric($early_birds_time_value)) {
+		  form_set_error("early_birds_time_value", t('Days or months must be Numeric'));
+		}
+	}
+	$last_minutes_time_value = $form_state["values"]["last_minutes_time_value"];
+	if (strlen(trim($last_minutes_time_value)) > 0){
+		if (!is_numeric($last_minutes_time_value)) {
+		  form_set_error("last_minutes_time_value", t('Days or months must be Numeric'));
+		}
+	}
+
+	$hour_offer_price_value = $form_state["values"]["24_hour_offer_price_value"];
+	if (strlen(trim($hour_offer_price_value)) > 0){
+		if (!is_numeric($hour_offer_price_value)) {
+		  form_set_error("24_hour_offer_price_value", t('Price field must be Numeric'));
+		}
+	}
+	$early_birds_price_value = $form_state["values"]["early_birds_price_value"];
+	if (strlen(trim($early_birds_price_value)) > 0){
+		if (!is_numeric($early_birds_price_value)) {
+		  form_set_error("early_birds_price_value", t('Price field must be Numeric'));
+		}
+	}	
+
+	$last_minutes_price_value = $form_state["values"]["last_minutes_price_value"];
+	if (strlen(trim($last_minutes_price_value)) > 0){
+		if (!is_numeric($last_minutes_price_value)) {
+		  form_set_error("last_minutes_price_value", t('Price field must be Numeric'));
+		}
+	}
+
+	$product_pricing_value = $form_state["values"]["product_pricing_value"];
+	if (strlen(trim($product_pricing_value)) > 0){
+		if (!is_numeric($product_pricing_value)) {
+		  form_set_error("product_pricing_value", t('Price field must be Numeric'));
+		}
+	}		
+}
+
+function product_pricing_form_submit($form, &$form_state){
+	/*echo '<pre>';
+	print_r($form_state['values']);
+	die;*/
+
+$eid=arg(3);
+$offer_24_hour_price=$offer_24_hour_date=array();
+$seasonalPrice=getListExtraPrice(arg(3));
+ 
+/* echo "<pre>";
+  
+print_r($form_state["input"]); die;  */
+if($form_state['input']['removed-pricing'])
+{
+$removed_values=array();
+$removed_values=explode(",",$form_state['input']['removed-pricing']);
+	foreach($removed_values as $values)
+	{
+	$query=db_delete('gbl_special_price')
+		   ->condition('sid',$values,'=')
+		   ->execute();
+	}
+
+}
+if($form_state['input']['season_rate'])
+{
+	foreach($form_state['input']['season_rate'] as $rate)
+	{
+		//if($seasonalPrice)
+		//{
+		if($rate['priceID'])
+		{
+		$query=db_update('gbl_special_price')
+				   ->fields(array('rate_label'=>$rate['label'],'rate_price'=>$rate['price'],'from_to_date'=>$rate['from-to'],'modified'=>time()))
+				   ->condition('sid',$rate['priceID'],'=')
+				   ->execute();
+		}
+		//}
+		else
+		{
+		$query=db_insert('gbl_special_price')
+				   ->fields(array('listing_id'=>arg(3),'rate_label'=>$rate['label'],'rate_price'=>$rate['price'],'from_to_date'=>$rate['from-to'],'created'=>time()))
+				   ->execute();
+		}
+	}
+}
+
+ $earlyBirdData=getDiscountInfo($eid,'Early Birds');
+
+ $LastMinuteData=getDiscountInfo($eid,'Last Minute');
+ $offer_24_Data=getDiscountInfo($eid,'24 Hour Offer');
+	foreach($form_state["input"]['PriceOption'][$form_state["input"]['product_pricing_type']] as $pricing){
+/*   		echo "<pre>";
+		print_r($pricing); die;   */
+
+			if(isset($pricing["priceID"])){
+				$query=db_update('gbl_pricing')
+				  ->fields(array('listing_id'=>arg(3),
+					'price_type'=>$form_state["input"]['product_pricing_type'],
+					'price_option_type'=>$pricing["price_option_type"],
+					'max'=>($pricing["max"] != "")?$pricing["max"]:null,
+					'min'=>($pricing["min"] != "")?$pricing["min"]:null,
+					'label'=>($pricing["label"] != "")?$pricing["label"]:null,
+					'price_group_type'=>isset($pricing["priceGroupType"])?$pricing["priceGroupType"]:null,
+					'price'=>$pricing["price"],
+					'quantity_required'=>($form_state['values']['product_pricing_quantity'])?1:0,
+					'quantity_min'=>($form_state['values']['quantity_min'] != "")?$form_state['values']['quantity_min']:null,
+					'quantity_max'=>($form_state['values']['quantity_max'] != "")?$form_state['values']['quantity_max']:null,
+					//'quantity_label_singular'=>(trim($form_state['values']['quantity_label_singular']) != '')?$form_state['values']['quantity_label_singular']:'Participant',
+					//'quantity_label_plural'=>(trim($form_state['values']['quantity_label_plural']) != '')?$form_state['values']['quantity_label_plural']:'Participants',
+					))->condition('id',$pricing["priceID"]);	 
+				$result=$query->execute();	
+				
+				$pricingData=array();
+				$query=db_select('gbl_pricing','p')
+					  ->fields('p')
+					  ->condition('listing_id',arg(3),'=')
+					  ->execute();
+				while($data=$query->fetchAssoc())
+			   {
+					$pricingData[]=$data;
+			   } 
+
+				$query=db_update('gbl_scheduling_sessions')
+				  ->fields(array('pricingData'=>serialize($pricingData)
+					))->condition('listing_id',arg(3));	 
+				$result=$query->execute();	
+				
+			}
+			else{
+				$query=db_select('gbl_pricing','p')
+						->fields('p')
+						->condition('price_type',$form_state["input"]['product_pricing_type'],'like')
+						->condition('listing_id',arg(3))
+						->execute();
+				if($query->rowCount() == 0){
+					$query=db_delete('gbl_pricing')->condition('listing_id',arg(3))->execute();	
+				}
+
+				$query=db_insert('gbl_pricing')
+				  ->fields(array('listing_id'=>arg(3),
+					'price_type'=>$form_state["input"]['product_pricing_type'],
+					'price_option_type'=>$pricing["price_option_type"],
+					'max'=>($pricing["max"] != "")?$pricing["max"]:null,
+					'min'=>($pricing["min"] != "")?$pricing["min"]:null,
+					'label'=>($pricing["label"] != "")?$pricing["label"]:null,
+					'price_group_type'=>isset($pricing["priceGroupType"])?$pricing["priceGroupType"]:null,
+					'price'=>$pricing["price"],
+					'quantity_required'=>($form_state['values']['product_pricing_quantity'])?1:0,
+					'quantity_min'=>($form_state['values']['quantity_min'] != "")?$form_state['values']['quantity_min']:null,
+					'quantity_max'=>($form_state['values']['quantity_max'] != "")?$form_state['values']['quantity_max']:null,
+					//'quantity_label_singular'=>(trim($form_state['values']['quantity_label_singular']) != '')?$form_state['values']['quantity_label_singular']:'Participant',
+					//'quantity_label_plural'=>(trim($form_state['values']['quantity_label_plural']) != '')?$form_state['values']['quantity_label_plural']:'Participants',
+					));	 
+				$result=$query->execute();	
+
+				$pricingData=array();
+				$i = 1;
+				$query=db_select('gbl_pricing','p')
+					  ->fields('p')
+					  ->condition('listing_id',arg(3),'=')
+					  ->execute();
+				while($data=$query->fetchAssoc())
+			   {
+					if($data["label"] != null){
+						$title = $data["label"];
+					}
+					else if($data["price_option_type"] != null){
+						$title = $data["price_option_type"];
+					}
+					else if($data["min"] != null){
+						$title = $data["min"] ." to ". $data["max"] ." days (".$data['price_group_type'].")";
+					}
+					$pricingData[$i]["title"] = $title;
+					$pricingData[$i]["basePrice"] = $data["price"];
+					$i++;
+			   } 
+
+				$query=db_update('gbl_scheduling_sessions')
+				  ->fields(array('pricingData'=>serialize($pricingData)))->condition('listing_id',arg(3));	 
+				$result=$query->execute();					
+			}
+	}
+	/********************************************************************************/
+	if($form_state['input']['early_birds_check'])
+	{
+	
+		if(!empty($earlyBirdData))
+		{
+		
+			$query=db_update('gbl_offers_and_discount')
+			   ->fields(array('time_key'=>$form_state['input']['early_birds_time_type'],'time_value'=>$form_state['input']['early_birds_time_value'],'amount'=>$form_state['input']['early_birds_price_value'],'discount_by'=>$form_state['input']['early_birds_price_type'],'modified'=>time()))
+			   /* ->condition('listing_id',arg(3),'=')
+			   ->condition('offer_type',"%Early Birds%",'like') */
+			   ->condition('id',$earlyBirdData['id'],'=')
+			   ->execute();	
+		}
+		else
+		{
+		
+		$query=db_insert('gbl_offers_and_discount')
+			   ->fields(array('listing_id'=>arg(3),'offer_type'=>'Early Birds','time_key'=>$form_state['input']['early_birds_time_type'],'time_value'=>$form_state['input']['early_birds_time_value'],'amount'=>$form_state['input']['early_birds_price_value'],'discount_by'=>$form_state['input']['early_birds_price_type'],'added'=>time()))
+			   ->execute();
+		}
+	}
+	if($form_state['input']['last_minutes_check'])
+	{
+		if(!empty($LastMinuteData))
+		{
+	   $query=db_update('gbl_offers_and_discount')
+			   ->fields(array('time_key'=>$form_state['input']['last_minutes_time_type'],'time_value'=>$form_state['input']['last_minutes_time_value'],'amount'=>$form_state['input']['last_minutes_price_value'],'discount_by'=>$form_state['input']['last_minutes_price_type'],'modified'=>time()))
+			/*    ->condition('listing_id','arg(3)','=')
+			   ->condition('offer_type','%Last Minute%','like') */
+			   ->condition('id',$LastMinuteData['id'],'=')
+			   ->execute();
+		
+		}
+		else{
+		
+		$query=db_insert('gbl_offers_and_discount')
+			   ->fields(array('listing_id'=>arg(3),'offer_type'=>'Last Minute','time_key'=>$form_state['input']['last_minutes_time_type'],'time_value'=>$form_state['input']['last_minutes_time_value'],'amount'=>$form_state['input']['last_minutes_price_value'],'discount_by'=>$form_state['input']['last_minutes_price_type'],'added'=>time()))
+			   ->execute();
+		}
+	}
+/*	if($form_state['input']['24_hour_offer_check'])
+	{
+
+	$offer_24_Data_array = array();
+	$offer_24_Data_array[0]["price"] = $form_state['input']['offer_24_hour_price_value'];
+	$offer_24_Data_array[0]["date"] = $form_state['input']['offer_24_hour_offer_date'];
+	
+	$s = 1;
+	foreach($form_state['input']['offer_24_hour_price_value_extra'] as $key=>$value){
+		$offer_24_Data_array[$s]["price"] = $value;
+		$offer_24_Data_array[$s]["date"] = $form_state['input']['offer_24_hour_date_extra'][$key];
+		$s++;
+	}
+	
+
+		if(!empty($offer_24_Data))
+		{
+			$query=db_update('gbl_offers_and_discount')
+			   ->fields(array('date'=>serialize($offer_24_Data_array),'amount'=>serialize($offer_24_Data_array),'discount_by'=>$form_state['input']['24_hour_offer_price_type'],'modified'=>time()))
+			    ->condition('listing_id','arg(3)','=')
+			  
+			   ->condition('id',$offer_24_Data['id'],'=')
+			   ->execute();
+		}
+		else
+		{
+	
+		$query=db_insert('gbl_offers_and_discount')
+			   ->fields(array('listing_id'=>arg(3),'offer_type'=>'24 Hour Offer','date'=>serialize($offer_24_hour_date),'amount'=>serialize($offer_24_hour_price),'discount_by'=>$form_state['input']['24_hour_offer_price_type'],'added'=>time()))
+			   ->execute();
+		}
+	}*/
+	if($form_state['input']['24_hour_offer_check'])
+	{
+	/* echo "<pre>";
+	print_r($form_state['input']);
+	die; */
+	$offer_24_hour_price['offer_24_hour_price_value']=$form_state['input']['offer_24_hour_price_value'];
+	$offer_24_hour_price['24_hour_offer_price_value_extra']=$form_state['input']['24_hour_offer_price_value_extra'];
+	$offer_24_hour_date['offer_24_hour_offer_date']=$form_state['input']['offer_24_hour_offer_date'];
+	$offer_24_hour_date['24_hour_offer_date_extra']=$form_state['input']['24_hour_offer_date_extra'];
+		if(!empty($offer_24_Data))
+		{
+			$query=db_update('gbl_offers_and_discount')
+			   ->fields(array('date'=>serialize($offer_24_hour_date),'amount'=>serialize($offer_24_hour_price),'discount_by'=>$form_state['input']['24_hour_offer_price_type'],'modified'=>time()))
+			/*    ->condition('listing_id','arg(3)','=')
+			   ->condition('offer_type','%24 Hour Offer%','like') */
+			   ->condition('id',$offer_24_Data['id'],'=')
+			   ->execute();
+		}
+		else
+		{
+	
+		$query=db_insert('gbl_offers_and_discount')
+			   ->fields(array('listing_id'=>arg(3),'offer_type'=>'24 Hour Offer','date'=>serialize($offer_24_hour_date),'amount'=>serialize($offer_24_hour_price),'discount_by'=>$form_state['input']['24_hour_offer_price_type'],'added'=>time()))
+			   ->execute();
+		}
+	}
+	
+	/**********Update base price to experience_list*****************/
+	if($form_state['values']['base_price'])
+	{
+		$query=db_update('gbl_experience_list')
+	   ->fields(array('base_price'=>$form_state['values']['base_price']))
+	   ->condition('eid',arg(3),'=')
+	   ->execute();
+	}	
+	
+	/*******************************************************************************/
+
+	drupal_set_message("Product pricing data saved sucessfully.");
+	drupal_goto("product/add/scheduling/".arg(3));	
+	
+}
+
+
+function product_subscription_form_submit($form, &$form_state){
+
+	if($form_state["values"]["metaID"]){
+		$query=db_update('gbl_listing_meta')
+		  ->fields(array('listing_id'=>arg(3),
+						'key1'=>"product_subscription_data",
+						'value1'=>$form_state["values"]["subscription_value"]
+			))
+		->condition('meta_id',$form_state["values"]["metaID"]);	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product subscription data updated sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		}
+	}
+	else{	
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>arg(3),
+						'key1'=>"product_subscription_data",
+						'value1'=>$form_state["values"]["subscription_value"]
+			));	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product subscription data saved sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		}
+	}
+}
+
+
+function product_rules_form_submit($form, &$form_state){
+/*  echo "<pre>";
+print_r($form_state['values']);
+die;  */
+$rulesData = array();
+$rulesData["experience_rules"] = serialize($form_state["input"]["experience_rules"]);
+$rulesData["other_information"] = trim($form_state["values"]["other_information"]);
+/* $rulesData["expected_arrival_time"] = trim($form_state["values"]["expected_arrival_time"]);
+$rulesData["expected_dept_time"] = trim($form_state["values"]["expected_dept_time"]); */
+$rulesData["security_deposit"] = trim($form_state["values"]["security_deposit"]);
+$rulesData["security_options"] = trim($form_state["values"]["security_options"]);
+$rulesData["cancellation_policies_type"] = trim($form_state["values"]["cancellation_policies_type"]);
+if($rulesData["cancellation_policies_type"]=='Custom'){
+$rulesData["amount_week"] = trim($form_state["values"]["amount_week"]);
+$rulesData["amount_week_rental"] = trim($form_state["values"]["amount_week_rental"]);
+$rulesData["amount_week_select"] = trim($form_state["values"]["amount_week_select"]);
+$rulesData["amount_day"] = trim($form_state["values"]["amount_day"]);
+$rulesData["amount_day_rental"] = trim($form_state["values"]["amount_day_rental"]);
+$rulesData["amount_day_select"] = trim($form_state["values"]["amount_day_select"]);
+}
+$rulesData["agreement"] = trim($form_state["values"]["agreement"]);
+
+/* 
+	$rulesData = array();
+	$rulesData["experience_rules"] = $form_state["values"]["experience_rules"];
+	$rulesData["experience_manual"] = $form_state["values"]["experience_manual"];
+	$rulesData["entire_prior_day"] = $form_state["values"]["cancellation_policy_entire_prior_day"];
+	$rulesData["entire_prior_amount"] = $form_state["values"]["cancellation_policy_entire_prior_amount"];
+	$rulesData["cancellation_policies_type"] = $form_state["values"]["cancellation_policies_type"];
+	$rulesData["policy_pending_day"] = $form_state["values"]["cancellation_policy_pending_day"];
+	$rulesData["policy_pending_amount_after_arrival"] = $form_state["values"]["cancellation_policy_pending_amount_after_arrival"];*/
+	
+	if($form_state["values"]["metaID"]){
+		$query=db_update('gbl_listing_meta')
+		  ->fields(array('listing_id'=>arg(3),
+						'key1'=>"product_cancellation_data",
+						'value1'=>serialize($rulesData)
+			))
+		->condition('meta_id',$form_state["values"]["metaID"]);	 
+		$result=$query->execute();	
+		
+		//if($result){
+			drupal_set_message("Product cancellation rules updated sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		//}
+	}
+	else{	
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>arg(3),
+						'key1'=>"product_cancellation_data",
+						'value1'=>serialize($rulesData)
+			));	 
+		$result=$query->execute();	
+		
+		//if($result){
+			drupal_set_message("Product cancellation rules data saved sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		//}
+	}
+
+	
+}
+/********************************************************************************************************/
+/* function product_scheduling_form_validate($form,&$form_state)
+{
+$productId=arg(3);
+if(!isset($productId))
+{
+drupal_set_message('No product Found','error');
+drupal_goto('product/add/overview');
+}
+else
+{
+
+if($form_state["input"]["dates_available"] == "INVENTORY"){
+$fromdate= strtotime($form_state["input"]["fixed_time_from"]);
+$enddate = strtotime($form_state["input"]["fixed_time_to"]);
+if($fromdate>$enddate)
+{
+drupal_set_message('From date should be smaller than to date','error');
+return false;
+}
+if(isset($form_state["input"]["session_start_from_date"]))
+{
+if(empty($form_state["input"]["session_start_to_date"]))
+{
+drupal_set_message('Session end date is required','error');
+return false;
+}
+else if(strtotime($form_state["input"]["session_start_from_date"])>strtotime($form_state["input"]["session_start_to_date"]))
+{
+drupal_set_message(' Session From-date should be smaller than to-date','error');
+return false;
+}
+}
+
+
+}
+return true;
+}
+}
+ */
+function product_scheduling_form_validate($form,&$form_state){
+/*   echo"<pre>";
+print_r($form_state['input']);
+die;  */ 
+	
+	if(isset($form_state["input"]["Product"]["duration"]) && $form_state["input"]["Product"]["duration"] == ""){
+		form_set_error('Product[duration]', t('Estimated duration cannot be blank.'));
+	}
+
+	
+/* 	if($form_state["input"]["Product"]["duration"] == "FIXED"){ */
+ 	if($form_state["input"]["Product"]["bookingMode"] == "INVENTORY"){ 
+	
+		if(isset($form_state["input"]["Session"]["endDate"]) && $form_state["input"]["Session"]["endDate"] == ""){
+			form_set_error('Session[endDate]', t('End date cannot be blank.'));
+		}	
+		if($form_state["input"]["Session"]["startDate"] != "" && $form_state["input"]["Session"]["endDate"] != ""){
+			if(strtotime($form_state["input"]["Session"]["startDate"])>strtotime($form_state["input"]["Session"]["endDate"])){
+				form_set_error('Session[endDate]', t('End date cannot be less than start date.'));
+			}
+		}
+		/************************Compare Start date and until date for per day offer************************************************************/
+           if($form_state["input"]["Session"]["repeatPeriod"] !="DoNOt"){
+			   if(($form_state["input"]["Session"]["startDate"] != "") && ($form_state["input"]["Session"]["endRepeatDate"]!=""))
+			   {
+			  
+			   if(strtotime($form_state["input"]["Session"]["startDate"])>=strtotime($form_state["input"]["Session"]["endRepeatDate"])){
+			  
+					form_set_error('Session[endRepeatDate]', t('Until date should be greater than or equal to start date.'));
+				}
+			   }
+			}
+		   /*****************************************************************************************/
+       		
+	//}
+	/****************************************************************/
+	/* if($form_state["input"]["Product"]["bookingMode"]=='INVENTORY')
+	{ */
+		if($form_state["input"]["Session"]["startDate"]=="")
+		{
+		form_set_error('Session[startDate]', t('Start Date is Required'));
+		}
+		/* if(isset($form_state["input"]["Session"]["endDate"]))
+		{
+		if($form_state["input"]["Session"]["endDate"]=="")
+		{
+		form_set_error('Session[endDate]', t('End Date is Required'));
+		}
+		} */
+		
+		if($form_state["input"]["Session"]["repeatPeriod"] !="DoNOt")
+		{
+			if($form_state["input"]["Session"]["endRepeatDate"]=="")
+			{
+			form_set_error('Session[endRepeatDate]', t('Until Date is Required'));	
+			}		
+		}
+	/*************************Check Scheduling date*************************************************************/
+	$scheduledata=getScheduleSessionData(arg(3));
+	if($scheduledata)
+	{
+	foreach($scheduledata as $data)
+	{
+	$startdate = strtotime($data['startDate']);
+    $enddate = strtotime($data['endDate']);
+	$untildate = strtotime($data['endRepeatDate']);
+	if(isset($form_state["input"]["Session"]["endDate"]))
+	{
+	
+		if($data['endRepeatDate']!="")
+		{
+			
+			if($untildate>$enddate)
+			{
+			$datetoCompare=$untildate;
+			}
+			else
+			{
+			$datetoCompare=$enddate;
+			}
+		}
+		else
+		{
+		$datetoCompare=$enddate;
+		}
+	}
+    else if(isset($form_state["input"]["Session"]["endRepeatDate"]))
+	{
+	
+	$datetoCompare=$untildate;
+    }
+	
+	/********************Compare date in between*********************************************/
+	$session_startdate=strtotime($form_state["input"]["Session"]["startDate"]);
+	
+		if(($session_startdate>=$startdate) && ($session_startdate<=$datetoCompare))
+		{
+		
+		form_set_error('Session[startDate]', t('Session with these dates are already exist.Kindly add different Session dates'));	
+		}
+		
+	}
+	}
+	/***************************************************************************/
+}
+}
+function product_scheduling_form_submit($form,&$form_state)
+{
+
+	$schedulingData=getSchedulingData(arg(3));
+	if($form_state["input"]["Product"]["subscriptionID"] != "")
+	{
+		$query=db_update('gbl_scheduling')
+		->fields(array(
+					'bookingMode'=>$form_state["input"]["Product"]["bookingMode"],
+					'confirmMode'=>$form_state["input"]["Product"]["confirmMode"],
+					'duration'=>($form_state["input"]["Product"]["duration"] != "")?$form_state["input"]["Product"]["duration"]:null,
+					'durationUnit'=>$form_state["input"]["Product"]["durationUnit"],
+					'durationType'=>isset($form_state["input"]["Product"]["durationType"])?$form_state["input"]["Product"]["durationType"]:null,
+					'minDuration'=>($form_state["input"]["Product"]["durationType"] == "Any")?$form_state["input"]["Product"]["minDuration"]:null,
+					'maxDuration'=>($form_state["input"]["Product"]["durationType"] == "Any")?$form_state["input"]["Product"]["maxDuration"]:null,
+					'DurationOption'=>($form_state["input"]["Product"]["durationType"] == "LIST")?serialize($form_state["input"]["DurationOption"]):null,
+					'inventoryMode'=>($form_state["input"]["Product"]["bookingMode"] == "INVENTORY")?$form_state["input"]["Product"]["inventoryMode"]:null,
+					'bookingTimeMode'=>($form_state["input"]["Product"]["bookingMode"] == "DATE_ENQUIRY")?$form_state["input"]["Product"]["bookingTimeMode"]:null,
+					'bookingFixedTimes'=>($form_state["input"]["Product"]["bookingMode"] == "DATE_ENQUIRY" && $form_state["input"]["Product"]["bookingTimeMode"] == "FIXED" && !empty($form_state["input"]["Product"]["bookingFixedTimes"]))?serialize($form_state["input"]["Product"]["bookingFixedTimes"]):null,
+					'modified'=> time()
+	))
+	->condition('id',$form_state["input"]["Product"]["subscriptionID"],'=');	 
+	$result=$query->execute();
+	}
+	else
+	{
+		$query=db_insert('gbl_scheduling')
+		->fields(array('listing_id'=>arg(3),
+					'bookingMode'=>$form_state["input"]["Product"]["bookingMode"],
+					'confirmMode'=>$form_state["input"]["Product"]["confirmMode"],
+					'duration'=>($form_state["input"]["Product"]["duration"] != "")?$form_state["input"]["Product"]["duration"]:null,
+					'durationUnit'=>$form_state["input"]["Product"]["durationUnit"],
+					'durationType'=>isset($form_state["input"]["Product"]["durationType"])?$form_state["input"]["Product"]["durationType"]:null,
+					'minDuration'=>($form_state["input"]["Product"]["durationType"] == "Any")?$form_state["input"]["Product"]["minDuration"]:null,
+					'maxDuration'=>($form_state["input"]["Product"]["durationType"] == "Any")?$form_state["input"]["Product"]["maxDuration"]:null,
+					'DurationOption'=>($form_state["input"]["Product"]["durationType"] == "LIST")?serialize($form_state["input"]["DurationOption"]):null,
+					'inventoryMode'=>($form_state["input"]["Product"]["bookingMode"] == "INVENTORY")?$form_state["input"]["Product"]["inventoryMode"]:null,
+					'bookingTimeMode'=>($form_state["input"]["Product"]["bookingMode"] == "DATE_ENQUIRY")?$form_state["input"]["Product"]["bookingTimeMode"]:null,
+					'bookingFixedTimes'=>($form_state["input"]["Product"]["bookingMode"] == "DATE_ENQUIRY" && $form_state["input"]["Product"]["bookingTimeMode"] == "FIXED" && !empty($form_state["input"]["Product"]["bookingFixedTimes"]))?serialize($form_state["input"]["Product"]["bookingFixedTimes"]):null,
+					'created'=> time()
+		));	 
+		$result=$query->execute();	
+    }
+	if($form_state["input"]["Product"]["bookingMode"] == "INVENTORY"){
+		if($form_state["input"]["Session"]["repeatPeriod"] == "Hourly")
+		{
+			$repeatEvery = $form_state["input"]["Session"]["repeatEveryHour"];
+		}
+		else if($form_state["input"]["Session"]["repeatPeriod"] == "Minute")
+		{
+			$repeatEvery = $form_state["input"]["Session"]["repeatEveryMinute"];
+		}
+		else if($form_state["input"]["Session"]["repeatPeriod"] == "Daily")
+		{
+			$repeatEvery = $form_state["input"]["Session"]["repeatEveryDay"];
+		}
+		else if($form_state["input"]["Session"]["repeatPeriod"] == "Weekly")
+		{
+			$repeatEvery = $form_state["input"]["Session"]["repeatEveryWeek"];
+		}
+		else if($form_state["input"]["Session"]["repeatPeriod"] == "MONTHLY")
+		{
+			$repeatEvery = $form_state["input"]["Session"]["repeatEveryMonth"];
+		}
+		else if($form_state["input"]["Session"]["repeatPeriod"] == "YEARLY")
+		{
+			$repeatEvery = $form_state["input"]["Session"]["repeatEveryYear"];
+		}
+		else{
+			$repeatEvery = null;
+		}
+		
+		$reapeatDaysTime = array();
+		$k = 1;
+		foreach($form_state["input"]["Session"]["repeaton"] as $key=>$value){
+			$reapeatDaysTime[$k]["on"] = $key;
+			$reapeatDaysTime[$k]["from"] = $form_state["input"]["Session"]["repeatfrom"][$key];
+			$reapeatDaysTime[$k]["to"] = $form_state["input"]["Session"]["repeatto"][$key];
+			$k++;
+		}
+
+		$startTime = date("H:i", strtotime($form_state["input"]["Session"]["startTime"]));
+		$endTime = date("H:i", strtotime($form_state["input"]["Session"]["endTime"]));
+		
+		$query=db_insert('gbl_scheduling_sessions')
+		->fields(array('listing_id'=>arg(3),
+					'durationType'=>isset($form_state["input"]["Product"]["durationType"])?$form_state["input"]["Product"]["durationType"]:null,
+					'minDuration'=>($form_state["input"]["Product"]["durationType"] == "Any")?$form_state["input"]["Product"]["minDuration"]:null,
+					'maxDuration'=>($form_state["input"]["Product"]["durationType"] == "Any")?$form_state["input"]["Product"]["maxDuration"]:null,
+					'allowSpanning'=>isset($form_state["input"]["Product"]["allowSpanning"])?$form_state["input"]["Product"]["allowSpanning"]:0,
+					'DurationOption'=>($form_state["input"]["Product"]["durationType"] == "LIST")?serialize($form_state["input"]["DurationOption"]):null,
+					'startDate'=>($form_state["input"]["Session"]["startDate"])?$form_state["input"]["Session"]["startDate"]:null,
+					'startTime'=>(isset($form_state["input"]["all_day_session"]) && $form_state["input"]["Session"]["startTime"] != "")?$startTime:null,
+					'endDate'=>($form_state["input"]["Session"]["endDate"])?$form_state["input"]["Session"]["endDate"]:null,
+					'endTime'=>(isset($form_state["input"]["all_day_session"]) && $form_state["input"]["Session"]["endTime"] != "")?$endTime:null,
+					'repeatPeriodBy'=>$form_state["input"]["Session"]["repeatPeriod"],
+					'repeatEvery'=>$repeatEvery,
+					'endRepeatDate'=>($repeatEvery != null)?$form_state["input"]["Session"]["endRepeatDate"]:null,
+					'defaultQuantity'=>($form_state["input"]["Product"]["inventoryMode"] == "SESSION_SEATS" && $form_state["input"]["Product"]["defaultQuantity"] != "" && $form_state["input"]["Product"]["bookingMode"] == "INVENTORY")?$form_state["input"]["Product"]["defaultQuantity"]:null,
+					'reapeatDaysTime'=>serialize($reapeatDaysTime),
+					'pricingData'=> serialize($form_state["input"]["Session"]["hiddenprice"]),
+					'discountData'=> serialize($form_state["input"]["Session"]["discountAmt"]),
+					'scheduleID'=> isset($form_state["input"]["Session"]["scheduleID"])?$form_state["input"]["Session"]["scheduleID"]:$result,
+					'is_all_day'=> isset($form_state["input"]["all_day_session"])?1:0
+		));	 
+		$result=$query->execute();	
+	}
+	else{
+		if(isset($form_state["input"]["Session"]["scheduleID"])){
+			$query = db_delete('gbl_scheduling_sessions')
+					->condition('scheduleID',$form_state["input"]["Session"]["scheduleID"])
+					->execute();
+		}
+	}
+	/*************Update after completing 5 steps*******************************/
+$query=db_update('gbl_experience_list')
+      ->fields(array('list_status'=>1))
+	  ->condition('eid',arg(3),'=')
+	  ->execute();
+/********************************************/
+	drupal_set_message(t('Product scheduling data saved sucessfully.'));	 
+	drupal_goto("product/add/extra/".arg(3));
+	
+}
+
+function location_direction_form_submit($form,&$form_state)
+{
+$productId=arg(3);
+if(!isset($productId))
+{
+drupal_set_message('No product Found','error');
+drupal_goto('product/add/overview');
+}
+else
+{
+$query=db_update('gbl_experience_list')
+        ->fields(array('direction'=>trim($form_state['values']['Itinerary'])			
+			))
+         ->condition('eid',$productId,'=')
+         ->execute();
+	drupal_set_message(t('Product Itinerary data saved sucessfully.'));	 
+}
+
+drupal_goto("product/add/pricing/".arg(3));
+
+}
+/***********************************************************************************************/
+function product_amenities_form_submit($form,&$form_state)
+{
+/* echo "<pre>";
+print_r($form_state['input']);
+die; */
+$amenitiesData=array();
+$amenitiesData['whats_included']=$form_state['input']['whats_included'];
+$amenitiesData['whats_included_extra']=$form_state['input']['whats_included_extra'];
+$amenitiesData['whats_excluded']=$form_state['input']['whats_excluded'];
+$amenitiesData['whats_excluded_extra']=$form_state['input']['whats_excluded_extra'];
+$amenitiesData['safety_precautions']=trim(check_plain($form_state['input']['safety_precautions']));
+if($form_state["values"]["op"]=="Update")
+{
+$query=db_update('gbl_listing_meta')
+          ->fields(array('value1'=>serialize($amenitiesData))) 
+          ->condition('listing_id',arg(3),'=')		 
+          ->condition('key1','amenities','=')		 
+		  ->execute();
+drupal_set_message(t('Amenities data updated successfully.'));			  
+		  
+}
+	else
+	{
+		
+				$query=db_insert('gbl_listing_meta')
+					  ->fields(array('listing_id'=>arg(3),'key1'=>'amenities','value1'=>serialize($amenitiesData)))
+					  ->execute();
+			drupal_set_message(t('Amenities data saved successfully.'));	
+	}
+drupal_goto("product/add/location/".arg(3));
+}
+
+function package_payment_form_submit($form, &$form_state){
+	global $user;
+	$paymentType = urlencode('Sale');				// 'Authorization' or 'Sale'
+	$firstName = urlencode($form_state['values']['first_name']);
+	$lastName = urlencode($form_state['values']['last_name']);
+	$creditCardType = urlencode($form_state['values']['credit_card_type']);
+	$creditCardNumber = urlencode($form_state['values']['credit_card_no']);
+	$expDateMonth = $form_state['values']['credit_expiration_month'];
+	/* $booking_creditcard_country = $form_state['values']['booking-country']; */
+
+	$padDateMonth = urlencode(str_pad($expDateMonth, 2, '0', STR_PAD_LEFT));
+	 
+	$expDateYear = urlencode($form_state['values']['credit_expiration_year']);
+	$cvv2Number = urlencode($form_state['values']['credit_varification_no']);
+	$address1 = urlencode($form_state['values']['address']);
+
+	$city = urlencode($form_state['values']['city']);
+	$state = urlencode($form_state['values']['state']);
+	$zip = urlencode($form_state['values']['zipcode']);
+	$country = urlencode($form_state['values']['country']);				// US or other valid country code
+	//$amount = urlencode($form_state['values']['amount']);
+	$amount = urlencode($_SESSION['price']);
+	$currencyID = urlencode('USD');							// or other currency ('GBP', 'EUR', 'JPY', 'CAD', 'AUD')
+	 
+	$nvpStr =	"&PAYMENTACTION=$paymentType&AMT=$amount&CREDITCARDTYPE=$creditCardType&ACCT=$creditCardNumber".
+				"&EXPDATE=$padDateMonth$expDateYear&CVV2=$cvv2Number&FIRSTNAME=$firstName&LASTNAME=$lastName".
+				"&STREET=$address1&CITY=$city&STATE=$state&ZIP=$zip&COUNTRYCODE=$country&CURRENCYCODE=$currencyID";
+	 
+	/* echo $nvpStr; die; */
+	$httpParsedResponseAr = PPHttpPost('DoDirectPayment', $nvpStr);
+	
+	if($httpParsedResponseAr['ACK']=='Success' || $httpParsedResponseAr['ACK']=='SUCCESSWITHWARNING'){
+/* 		echo '<pre>';
+		print_r($httpParsedResponseAr['TRANSACTIONID']); die; */
+		$query = db_update('gbl_experience_list')
+				->fields(array('package_id'=>$_SESSION["packageID"]))
+				->condition('eid',arg(3))
+				->execute();
+		
+		$query = db_insert('gbl_packages_transactions')
+				->fields(array('listing_id'=>arg(3),
+					'package_id'=>$_SESSION["packageID"],
+					'transaction_id'=>$httpParsedResponseAr['TRANSACTIONID'],
+					'price'=>$_SESSION["price"],
+					'user_id'=>$user->uid,
+					'created'=>time()
+				))	
+				->execute();
+		drupal_goto("product/add/success/".arg(3));
+	}
+	else if($httpParsedResponseAr['ACK']=='Failure')
+	{
+		$errorMessage=urldecode($httpParsedResponseAr['L_LONGMESSAGE0']);
+		drupal_set_message($errorMessage,'error');
+	}
+}
+

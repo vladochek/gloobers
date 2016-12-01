@@ -1,0 +1,69 @@
+<?php
+function credit_menu()
+{
+	$items = array();
+	$items['booking/creditplans'] = array(
+	'page callback' => 'get_plan_list',
+	'access callback' => true, 
+	'type' => MENU_NORMAL_ITEM,
+	);
+	$items['booking/usecredits'] = array(
+	'page callback' => 'use_credits',
+	'access callback' => true,	
+	'type' => MENU_NORMAL_ITEM,
+	);
+	return $items;
+}
+function get_plan_list(){
+	
+	$query = db_select('gbl_credit_plan','r')
+			->fields('r')
+			->execute();
+	$result=$query;
+	$creditPlans=array();
+	while($res=$result->fetchAssoc())
+	{
+		$creditPlans[]=$res['credit_plan_name'];
+	}
+	return $creditPlans;
+}
+function use_credits(){
+
+	global $user;
+	$userid=$user->uid;
+	
+	
+	if($_SESSION['order']['creditstatus']!='1'){
+		$query = db_select('gbl_credit_plan','r');			
+		$query->join('gbl_credit_user','cu', 'cu.gbl_credit_plan_id=r.gbl_credit_plan_id');
+		$query->fields('r')
+				->fields('cu')
+				->condition('cu.uid',$userid);
+		$result = $query->execute();
+		$res=$result->fetchAssoc();
+		$credits=$res['credits'];
+		$percentageused=$res['credit_plan_reward'];
+		$usedcredits=($credits*$percentageused)/100;
+		$usedcredits= floor($usedcredits);
+		$creditPerDollar=variable_get('credit_value');
+		$disscountamt=(1/$creditPerDollar)*$usedcredits;
+		$remainingcredits=$credits-$usedcredits;
+		$_SESSION['order']['disscount']=$disscountamt;
+		$_SESSION['order']['creditstatus']='1';
+		$nid = db_update('gbl_credit_user')
+			  ->fields(array(
+				'credits' => $remainingcredits,
+				'modified' => time()
+			  ))
+			->condition('uid',$userid)
+			->execute();
+		$_SESSION['credit_message']=t('You successfully your credits.');
+		drupal_goto('booking/summary');
+			
+	}else{
+		$_SESSION['credit_message']=t('You already used your credits.');
+		drupal_goto('booking/summary');
+				
+	}
+
+}

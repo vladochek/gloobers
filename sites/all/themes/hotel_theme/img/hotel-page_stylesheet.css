@@ -1,0 +1,967 @@
+@charset "utf-8";
+/* CSS Document */
+
+*,
+*:after,
+*:before {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.toggle_heading {
+    text-align: left;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+
+.toggle_heading-div{
+    border-bottom: 1px solid #fff;
+}
+
+.search_place select {
+    border: 2px solid #373737;
+    height: 40px;
+    padding-left: 10px;
+    width: 100%;
+}
+h1 {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 0px;
+    color: #414141;
+    font-family: "Khula", sans-serif;
+}
+h2 {
+    font-size: 21px;
+    margin-bottom: 35px;
+    color: #5a5a5a;
+    text-align: center;
+    font-weight: lighter;
+    font-style: normal;
+    font-family: "Khula", sans-serif;
+}
+h3 {
+    color: #565656;
+    float: left;
+    font-family: "Khula", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.new_experience {
+    float: left;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.Calenderform label {
+    float: left;
+    width: 100%;
+    font-size: 22px;
+    font-family: "Khula", sans-serif;
+    color: #565656;
+    font-weight: bold;
+    margin: 10px 0px;
+}
+label {
+    display: inline-block;
+    max-width: 100%;
+}
+.padding_left {
+    padding-left: 0px !important;
+}
+.Calenderform textarea {
+    width: 100%;
+    border: 2px solid #878787;
+    height: 300px;
+    padding-left: 10px;
+    font-size: 18px;
+    font-family: "Khula", sans-serif;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-right: 0px;
+    resize: none;
+}
+.Calenderform p {
+    font-size: 15px;
+    width: 100%;
+    min-height: 30px;
+}
+.Calenderform fieldset {
+    float: left;
+    width: 100%;
+    margin-bottom: 20px;
+}
+fieldset {
+    padding: 0px;
+    border: 0px none;
+    margin: 0px;
+    min-width: 0px;
+}
+.heading_help {
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+    font-size: 20px;
+    font-family: "Khula", sans-serif;
+    color: #414141;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: none repeat scroll 0% 0% #EBEBEB;
+    border-bottom: 2px solid #b9b9b9;
+    background: #fff;
+}
+.help_block {
+    float: left;
+    width: 100%;
+    border: 2px solid #b9b9b9;
+    min-height: 200px;
+    background: #fff;
+	margin-bottom:40px;
+}
+.help_block p {
+    font-size: 16px;
+    font-family: "Khula", sans-serif;
+    color: #646464;
+    padding: 20px;
+    text-align: center;
+    padding-bottom: 0px;
+}
+.sbSelector:link {
+    width: 100%;
+    font-family: "Khula", sans-serif;
+    margin-bottom: 10px;
+    color: #5c5c5c;
+    font-style: normal;
+}
+.star {
+    font-size: 59px;
+}
+.Calenderform input {
+    width: 100%;
+    border: 2px solid #919191;
+    height: 40px;
+    padding-left: 10px;
+    font-size: 18px;
+    font-family: "Khula", sans-serif;
+    margin-bottom: 10px;
+}
+.Calenderform input[type="button"] {
+    background: linear-gradient(to bottom, #F2CB00 0%, #FFAE00 100%) repeat scroll 0px 0px transparent;
+    border: 1px solid #A5A5A5;
+    color: #000;
+    font-family: Agency FB;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 1px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    width: auto;
+    display: block;
+    margin: 0px auto;
+    margin-top: 80px;
+    margin-bottom: 150px;
+}
+/** 16-july-2015 **/
+
+.hotel_amenities input[type=checkbox].css-checkbox {
+    position: absolute;
+    z-index: -1000;
+    left: -1000px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+}
+.hotel_amenities {
+    float: left;
+    width: 50%;
+}
+input[type=checkbox].css-checkbox + label.css-label,
+input[type=checkbox].css-checkbox + label.css-label.clr {
+    padding-left: 28px;
+    height: 18px;
+    display: inline-block;
+    line-height: 18px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 16px;
+    color: #757575;
+    margin: 10px;
+    font-weight: normal;
+}
+input[type=checkbox].css-checkbox:checked + label.css-label,
+input[type=checkbox].css-checkbox + label.css-label.chk {
+    background-position: 0 -18px;
+}
+label.css-label {
+    background-image: url(file:///D|/project/HTML/img/checkbox.jpg);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/* 3. Hotel_Create a room
+------------------------------------------------------*/
+
+.select_room {
+    width: 100%;
+    height: auto;
+    border-bottom: 2px solid #8d8d8d;
+	padding: 20px;
+}
+.grey_form_div {
+    background: #ebebeb;
+    height: auto;
+    border: 2px solid #9d9d9d;
+    padding-bottom: 20px;
+}
+
+.red{
+	color:#bc474e;
+	font-size: 19px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: "Khula", sans-serif;
+    font-weight: lighter;
+	padding-left: 20px;
+	
+}
+.safety_amenities input[type=checkbox].css-checkbox {
+    position: absolute;
+    z-index: -1000;
+    left: -1000px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+}
+.safety_amenities {
+    float: none;
+    width: 50%;
+}
+input[type=checkbox].css-checkbox + label.css-label,
+input[type=checkbox].css-checkbox + label.css-label.clr {
+    padding-left: 34px;
+    height: 18px;
+    display: inline-block;
+    line-height: 18px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 18px;
+    color: #4d4d4d;
+    margin: 10px;
+    font-weight: lighter;
+    font-family: Arial, Helvetica, sans-serif;
+}
+input[type=checkbox].css-checkbox:checked + label.css-label,
+input[type=checkbox].css-checkbox + label.css-label.chk {
+    background-position: 0 -18px;
+}
+label.css-label {
+    background-image: url(file:///D|/project/HTML/img/checkbox.jpg);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.blue {
+    font-size:19px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: #1e85b1;
+    text-align: center;
+    font-family: "Khula", sans-serif;
+    font-weight: lighter;
+	padding-left: 20px;
+}
+.grey_form_div,
+h6 {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    color: #1e85b1;
+    text-align: left;
+    font-size: 24px;
+    color: #414141;
+    font-family: "Khula", sans-serif;
+    margin-left: 10px;
+}
+.room_heading {
+    margin-bottom: 10px;
+    color: #1e85b1;
+    text-align: left;
+    font-size: 24px;
+    color: #414141;
+    font-family: "Khula", sans-serif;
+    font-weight: bold;
+    margin-left: 20px;
+}
+.arrow_pic {
+    float: left;
+    margin-right: 20px;
+}
+.head {
+    font-size: 20px;
+    margin-bottom: 15px;
+    margin-top: 2px;
+    color: #5a5a5a;
+    text-align: center;
+    font-weight: lighter;
+    font-style: normal;
+    font-family: "Khula", sans-serif;
+}
+.button_create-room-page {
+    background: linear-gradient(#eec400, #fea000) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 1px solid #9b702b;
+    box-shadow: 1px 0 2px #000;
+    color: #191919;
+    font-family: "lucida_grandebold";
+    font-size: 16px;
+    height: 38px;
+    line-height: 38px;
+    margin-top: 2px;
+    padding: 0 27px;
+    margin-bottom: 150px;
+	width:15%;
+}
+h4 {
+    font-size: 20px;
+    margin-top: 30px;
+    margin-bottom: 50px;
+    color: #1e85b1;
+    text-align: center;
+    font-family: "Khula", sans-serif;
+    font-weight: lighter;
+}
+/****hotel_photos *********/
+
+#parentHorizontalTab {
+    background: none repeat scroll 0 0 #e8e8e8;
+    border: 2px solid #555555;
+}
+ul.resp-tabs-list,
+p {
+    margin: 0;
+    padding: 0;
+}
+.resp-tabs-list li {
+    border-right: 2px solid #555555;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    font-size: 20px;
+    font-weight: 600;
+    list-style: outside none none;
+    margin: 0;
+    padding: 18px 37px;
+}
+.resp-tabs-container {
+    background-color: #fff;
+    clear: left;
+    padding: 0;
+}
+.resp-tabs-container {
+    background-color: #fff;
+    clear: left;
+    padding: 0;
+}
+.modal {
+    bottom: 0;
+    display: none;
+    left: 0;
+    outline: 0 none;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 1040;
+}
+/****hotel_optional_service *********/
+
+.top_text {
+    margin-bottom: 50px;
+    font-size: 24px;
+    margin-top: 10px;
+    color: #5a5a5a;
+    text-align: center;
+    font-weight: lighter;
+    font-style: normal;
+    font-family: "Khula", sans-serif;
+}
+.Calenderform fieldset {
+    float: left;
+    margin-bottom: 20px;
+    width: 100%;
+}
+.boaders {
+    border-top: 1px solid #ccc;
+    padding: 70px 10px;
+}
+.add_service {
+    color: #00a4cf;
+    float: right;
+    font-size: 20px;
+    text-decoration: none;
+}
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+.boader_class {
+    border: 2px solid #484848;
+    display: block;
+    float: left;
+    width: 100%;
+}
+table {
+    background-color: transparent;
+    text-align: center;
+}
+.table2 {
+    max-width: 100%;
+    width: 100%;
+    text-align: center;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.help-block {
+    color: #737373;
+    display: block;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+.table_heading_help {
+    background: none repeat scroll 0 0 #ebebeb;
+    border-bottom: 1px solid #464646;
+    color: #595959;
+    font-family: "Khula", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 10px;
+    text-transform: uppercase;
+    width: 100%;
+    text-align: left;
+}
+.table2 > tbody > tr > td,
+.table2 > tbody > tr > th,
+.table2 > tfoot > tr > td,
+.table2 > tfoot > tr > th,
+.table2 > thead > tr > td,
+.table2 > thead > tr > th {
+    border-top: 1px solid #484848;
+    line-height: 1.42857;
+    padding: 15px 8px;
+    vertical-align: top;
+    border-right: 1px solid #484848;
+    font-size: 16px;
+    text-align: center;
+}
+.table2 > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 1px solid #484848;
+}
+th {
+    text-align: left;
+}
+.addanother {
+    text-decoration: none;
+    color: #51C1DE;
+    font-size: 18px;
+}
+.delete {
+    text-decoration: none;
+    color: #941100;
+    font-size: 18px;
+	margin-left: 20px;
+}
+.save_button {
+    background: linear-gradient(#eec400, #fea000) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 1px solid #9b702b;
+    box-shadow: 1px 0 2px #000;
+    color: #191919;
+    font-family: "lucida_grandebold";
+    font-size: 16px;
+    height: 38px;
+    line-height: 38px;
+    margin-top: 2px;
+    padding: 0 22px;
+    margin-bottom: 1400px;
+}
+/****hotel_Rule&policies *********/
+
+.addanotherrequirement {
+    text-decoration: none;
+    color: #51C1DE;
+    font-size: 17px;
+    margin-top: 10px;
+}
+.boaders_ruleregulation {
+    border-top: 1px solid #818181;
+    padding: 65px 0px;
+    border-bottom: 1px solid #818181;
+}
+.boaders_ruleregulation2 {
+    border-bottom: 1px solid #818181;
+    float: left;
+    padding: 40px 0;
+    width: 100%;
+}
+
+.Calenderform textarea .otherinformation {
+    width: 100%;
+    border: 2px solid #878787;
+    height: 150px;
+    padding-left: 10px;
+    font-size: 18px;
+    font-family: "Khula", sans-serif;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-right: 0px;
+    resize: none;
+}
+
+.Calenderform textarea .smalldiv{
+    width: 100%;
+    border: 2px solid #878787;
+    height: 170px;
+    padding-left: 10px;
+    font-size: 18px;
+    font-family: "Khula", sans-serif;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-right: 0px;
+    resize: none;
+}
+
+.heading {
+    text-align: left;
+    color: #3e3d3d;
+    font-size: 22px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.Calenderform label.subheading {
+    text-align: left;
+    color: #5b5b5b;
+    font-size: 18px;
+    font-weight: lighter;
+}
+/**** Hotel_Location *********/
+ 
+ .location_add{
+	 width:100%;
+	 height:auto;
+	 padding:20px;
+	 border: 2px solid #878787;
+	 margin-top:-3px;
+ }
+ 
+ .mail{
+	 color:#1193d1;
+	 text-align:center;
+ }
+	  
+
+
+address {
+    font-style: normal;
+    line-height: 1.42857;
+    margin-bottom: 20px;
+	font-size:14px;
+	font-family:Arial, Helvetica, sans-serif;
+	color:#4d4d4d;
+	font-weight:600;
+}
+
+.map{
+	 width:100%;
+	 margin:0 auto;
+	 margin-bottom:0px;
+	 margin-top:0px;
+	 border-top:2px solid #dfdcd5;
+	 border-right:2px solid #ffffff;
+	 }
+	 
+.space{
+	padding:10px;
+}
+
+.location_heading{
+    font-size: 22px;
+    font-family: "Khula",sans-serif;
+    color:#4d4d4d;
+    padding: 10px;
+	margin-top:30px;
+	text-align:left;
+	font-weight:lighter;
+}
+.locationp {
+    color: #4d4d4d;
+    font-family: "Khula",sans-serif;
+    font-size: 15px;
+    font-weight:normal;
+    padding: 10px 0px;
+    text-align: left;
+}
+
+
+/**** Responsive  Css *********/
+
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    /* Retina-specific stuff here */
+    
+    .container-fluid {
+        padding: 0px 50px;
+    }
+}
+/* 1.25 dpr */
+
+@media (-webkit-min-device-pixel-ratio: 1.25),
+(min-resolution: 120dpi) {
+    /* Retina-specific stuff here */
+}
+/* 1.3 dpr */
+
+@media (-webkit-min-device-pixel-ratio: 1.3),
+(min-resolution: 124.8dpi) {
+    /* Retina-specific stuff here */
+}
+/* 1.5 dpr */
+
+@media (-webkit-min-device-pixel-ratio: 1.5),
+(min-resolution: 144dpi) {
+    /* Retina-specific stuff here */
+}
+/* ----------- Non-Retina Screens ----------- */
+
+@media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {}
+/* ----------- Retina Screens ----------- */
+
+@media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+    .container-fluid {
+        padding: 0px 50px;
+    }
+}
+/* ----------- Normal Screens ----------- */
+
+@media screen and (max-width: 1200px) {} @media screen and (max-width: 1024px) {
+    #slide {
+        margin-right: 25px
+    }
+}
+@media screen and (max-width: 1023px) {
+    .slidediv {
+        display: none;
+    }
+    .showhide {
+        display: block;
+        padding: 25px;
+    }
+    .nav_main_menu ul li {
+        width: 100%;
+        text-align: center;
+    }
+    .nav_main_menu ul li:hover ul {
+        display: none;
+    }
+    .nav_main_menu ul li:hover .togelsubmenu {
+        display: block;
+    }
+    .togelsubmenu {
+        cursor: pointer;
+        display: block;
+    }
+    .nav_main_menu ul li ul {
+        position: inherit;
+        float: left;
+    }
+    #nav > li {
+        float: none;
+        border-bottom: 0;
+        margin-bottom: 0;
+    }
+    #nav ul.subs {
+        position: relative;
+        top: 0;
+    }
+    #nav li:hover ul.subs {
+        display: none;
+    }
+    #nav li #s1:target + ul.subs,
+    #nav li #s2:target + ul.subs {
+        display: block;
+    }
+    #nav ul.subs > li {
+        display: block;
+        width: auto;
+    }
+}
+@media screen and (max-width: 767px) {
+
+	
+	.Calenderform input[type="button"] {
+    background: linear-gradient(to bottom, #F2CB00 0%, #FFAE00 100%) repeat scroll 0px 0px transparent;
+    border: 1px solid #A5A5A5;
+    color: #000;
+    font-family: Agency FB;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 1px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    width: auto;
+    display: block;
+    margin: 0px auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+h4{
+	margin-top:0px;
+}
+	
+    .logo {
+        float: left;
+        margin-top: 10px;
+        width: 100%;
+    }
+    .logo img {
+        display: block;
+        margin: 0 auto;
+        max-width: 150px;
+        text-align: center;
+    }
+    .login_box {
+        margin-top: 140px;
+    }
+    .footer_landing_page {
+        margin-top: 10px;
+    }
+    .landing_menu ul {
+        float: none;
+        margin: 0 auto;
+        width: 125px;
+    }
+    .landing_menu li {
+        margin: 5px 10px;
+    }
+    .slider_subtitle {
+        color: #fff;
+        font-family: "Open Sans", sans-serif;
+        font-size: 16px;
+        left: 0;
+        position: absolute;
+        text-shadow: 1px 2px 1px #212121;
+        top: 155px;
+        left: 10px;
+    }
+    .slider_heading {
+        color: #fff;
+        font-family: "Open Sans", sans-serif;
+        font-size: 25px;
+        left: 10px;
+        position: absolute;
+        text-shadow: 1px 2px 1px #212121;
+        top: 120px;
+    }
+    .login_box {
+        margin-top: 0px;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+    #slide {
+        margin-right: 0px;
+        top: 0px;
+    }
+    #basic {
+        margin-right: 0px;
+        top: 0px;
+    }
+    .footer_landing_page {
+        bottom: 10px;
+    }
+    .landing_menu {
+        padding-right: 0px;
+    }
+    .loin_form fieldset .paddinng_in_login {
+        padding: 0px;
+        margin-bottom: 10px;
+    }
+    .loin_form fieldset .col-lg-6:last-child,
+    .col-lg-8:last-child {
+        margin-bottom: 0px;
+    }
+    .login_box {
+        width: 100%;
+        max-width: 350px;
+    }
+    .submit_fld {
+        margin-left: 10px !important;
+        max-width: 300px !important;
+    }
+    .loin_form fieldset {
+        float: none;
+        margin: 0 auto;
+        max-width: 270px;
+        padding: 5px 15px;
+        width: 100%;
+    }
+    .footer_landing_page a,
+    .landing_menu li a {
+        font-size: 14px;
+    }
+    .search_place,
+    .map {
+        max-width: 90%;
+        margin: 0px 5%;
+    }
+    .search_place input,
+    .search_place .sbHolder {
+        margin-bottom: 20px;
+    }
+    .search_place .button {
+        width: 100%;
+        text-align: center;
+    }
+    .spep5 .step_link {
+        width: 90%;
+        margin: 0px 5%;
+    }
+    .button {
+        width: 100%;
+        text-align: center;
+    }
+    .step_link input {
+        margin-bottom: 15px;
+    }
+    .paddng_left {
+        padding-left: 15px;
+    }
+    .about_me h3 {
+        text-align: center;
+    }
+    .passport .search_place {
+        max-width: 90%;
+    }
+    .passport .map {
+        float: left;
+        max-width: 100%;
+        width: 90%;
+    }
+    .share_link {
+        float: left;
+        width: 90% !important;
+    }
+    .Calenderform input[type="button"] {
+        text-align: left;
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
+    .heading {
+        margin-left: 10px;
+    }
+	
+	.hotel_amenities {
+    float:left;
+    width: 100%;
+}
+
+.sidebar_btn {
+    background: none repeat scroll 0% 0% #333;
+    float: left;
+    color: #FFF;
+    padding: 10px 15px;
+    margin-bottom: 50px;
+}
+
+
+
+
+}
+@media screen and (max-width: 479px) {
+
+	.sidebar_btn {
+    background: none repeat scroll 0% 0% #333;
+    float: left;
+    color: #FFF;
+    padding: 10px 15px;
+    margin-bottom: 50px;
+}
+
+.table2 > tbody > tr > td, .table2 > tbody > tr > th, .table2 > tfoot > tr > td, .table2 > tfoot > tr > th, .table2 > thead > tr > td, .table2 > thead > tr > th {
+    border-right: 1px solid #484848;
+    border-top: 1px solid #484848;
+    font-size: 16px;
+    line-height: 1.42857;
+    padding: 16px 2px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.table_heading_help {
+    background: none repeat scroll 0 0 #ebebeb;
+    border-bottom: 1px solid #464646;
+    color: #595959;
+    font-family: "Khula",sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px 7px;
+    text-align: left;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.Calenderform input[type="button"] {
+    background: linear-gradient(to bottom, #F2CB00 0%, #FFAE00 100%) repeat scroll 0px 0px transparent;
+    border: 1px solid #A5A5A5;
+    color: #000;
+    font-family: Agency FB;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 5px 20px;
+    text-align: center;
+    text-transform: uppercase;
+    width: auto;
+    display: block;
+    margin: 48px auto 50px;
+}
+    .footer_landing_page {
+        top: 85%;
+    }
+    .footer_landing_page a {
+        color: #fff;
+        float: left;
+        text-align: center !important;
+        text-shadow: 0 4px 2px #000;
+        width: 100%;
+    }
+    .hotel_amenities {
+        float: left;
+        width: 100%;
+    }
+}

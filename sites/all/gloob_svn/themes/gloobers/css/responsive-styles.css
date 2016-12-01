@@ -1,0 +1,444 @@
+/* Gloober Media Device Styles */
+
+@media only screen and (max-width:1249px)
+
+{
+	.title-session .title-session { width:28%; min-height: 191px;}
+	.title-session .title-share { width:12%; min-height: 191px;}
+	.title-session .title-date{ min-height: 191px;}
+	.title-session .session-block.title-price { min-height: 191px;}
+	.title-session .session-block.title-price button {top:100%;}
+	.search-page {width:65%;}
+	.admin-social-block .col-block .block-row .col-left a i {width:5px;}
+	
+	
+}
+
+@media only screen and (max-width:1170px)
+
+{
+	.admin-profile .admin-pro-dp {width:30%;}
+	.profile-details{width:65%;}
+	.admin-contacts a {margin-top:10px; margin-left:25px;}
+	.article-row .article-block .content-block ul.optional-services li .check-right {width:25%;}
+	.article-row .article-block .content-block ul.optional-services li .check-left{width:75%;}
+	.article-row .article-block .content-block ul.optional-services li .check-left p { padding-left: 5%; width: 85%;}
+	.search-page{ width: 70%;}
+	.admin-social-block { padding: 40px 2%; width: 96%; }
+	.admin-social-block .col-block {margin-right: 1%; width: 49%;}
+	.dr-title-tab .title-profile .profile-title {padding-left: 3%;width: 65%;}
+	.plane-way {width: 370px;}
+	.rslides_tabs {margin-top:auto;}
+	.dr-search-pannel {width: 90%;}
+	
+}
+
+@media only screen and (max-width:1130px)
+
+{
+	.review-rating .review-cal i {width:20px;}
+	.review-rating .review-rating-cell ul li span i {width:15px;}
+	.blogger-block .blogger-profile {max-width: inherit; width:22%; margin-left:3%;	}
+	.blogger-block .blog-description {width:73%;}
+	.search-page {width:75%;}
+	.review-rating .review-rating-cell {width:73%; padding:0px 3%;  border-right: 1px solid #dfdfdf; margin-top:5px;}
+	.review-rating .review-rating-cell + .review-rating-cell {margin-top:0;}
+	.review-rating .review-rating-cell + .review-rating-cell ul {padding-top:0;}
+	.review-rating .review-rating-cell ul li {padding-bottom:2px;}
+	
+}
+
+@media only screen and (max-width:1066px)
+
+{
+	.dr-map-article .location-filter ul li {padding:0px 10px;}
+	.admin-social-block .col-block .block-row .col-left p {font-size:14px;}
+	.admin-contacts a {margin-top:5px;}
+
+}
+
+@media only screen and (max-width:1024px)
+
+{
+	.stepper .stepper-input {width:114px;}
+	.search-page .block-content input[type="text"] {width:210px;}
+	
+	/************ from gloobers.css 21 oct ************/
+	.result-row .result-block .share-result p { font-size: 14px;}
+	.tab-content-wrap.discover-article-page .result-block {width:32%;}
+	.tab-content-wrap.discover-article-page .result-block.discover-col {width:96%; padding:0 2%; padding-bottom:20px; text-align:center; margin:0;}
+	.discover-article, .result-block.discover-col .discover-article p {text-align:center;}
+	.result-row .result-block h4 {min-height:70px; margin-top:0;}
+	.result-row .result-block p {min-height:40px;}
+	.result-row .result-block .dr-pricing .price-range p { min-height:inherit; }
+}
+
+@media only screen and (max-width:980px)
+
+{
+	.dr-title-tab .title-profile .dr-profile {width:35%;}
+	.dr-title-tab .title-profile .profile-title {width:62%;}
+	.dr-title-tab .title-profile .profile-title ul.profile-rating li {padding:5px 1px;}
+	.profile-details .admin-frnds {width:50%;}
+	.dr-footer .footer-col ul {padding-left:0; width:100%;}
+	.dr-footer .footer-col ul li select {margin-left:0;}
+	.dr-footer .footer-col ul li a {padding-left:25%;}
+	.nearby-loc p {font-size:18px; margin-top:21px;}
+	.nearby-loc i {margin-top:10px;}
+	
+	/************ from gloobers.css 21 oct ************/
+	.dr-result-container .dr-tab-header .rsult-des {width: 70%;}
+	.dr-search-pannel {width: 98%;}
+	
+}
+
+@media only screen and (max-width:900px)
+
+{
+	.dr-title-tab .title-profile {width:90%; padding:0px 5%; padding-bottom:10px; margin-top:10px;  }
+	.title-session {width:100%; border-top: 1px solid #dfdfdf;}
+	.title-session > .title-session{border-top:0;}
+	.article-row .article-block .content-block ul.optional-services li .check-left {width:100%;}
+	.article-row .article-block .content-block ul.optional-services li .check-right {float:left; width:50%;}
+	.stepper .stepper-input {width:100%;}
+	.article-row .article-block .content-block ul.optional-services li .check-left p {width:88%; padding-left:2%;}
+	.review-rating .review-rating-cell {width:64%;}
+	.review-rating .review-cal {margin-left: 5%; width: 25%;}
+	.profile-details .admin-review a {font-size:17px;}
+	.profile-details .admin-frnds a {font-size:17px;}
+	.dr-map-article .location-filter{position:relative;}
+	.location-filter ul.short-search-map li {float:left; width:90%; padding:5px 5%; margin:0; border:0;}
+	.location-filter ul.short-search-map li+li{margin-top:1px solid #111;}
+	.dr-map-article {min-height:inherit; height:auto;}
+	.dr-footer .footer-col {width:33%; min-height:250px;}
+	.dr-footer .footer-col.support h5, .footer-col.social h5 {margin-top:0;}
+	.dr-footer .footer-col.support, .footer-col.social  {width:50%; border-top: 1px solid #dfdfdf;}
+	.dr-footer .footer-col ul li a {padding-left:38%;}
+	.dr-footer .footer-col ul li select {margin-left:5%;}
+	.admin-social-block .col-block {width:98%;}
+	.admin-social-block .col-block .block-row { padding: 5px 0;}
+	.search-page {width:95%; left:2%; top:85px;}
+	.search-page small {left:185px;}
+	
+	/******************* toggle media ****************/
+.location-filter .menu-collapser {float:left; width:60%; background:none;}
+.location-filter .menu-collapser .collapse-button { margin: 0 15px; position:inherit; float:left;}
+.location-filter ul.short-search-map{width:40%; position:absolute;top:100%;left:0; background:#111; background:rgba(0,0,0,0.7);}
+.dr-main-header .menu-collapser {float:right; width:40%; background:none; text-align:center;}
+.dr-main-header .menu-collapser .collapse-button { margin: 0 5px; position:inherit; float:right; background:none; box-sizing:none; border:0; box-shadow:none; right:5%; width:30px; padding:0;}
+.dr-main-header ul.short-search-map{width:40%; position:absolute;top:100%;left:0; background:#111; background:rgba(0,0,0,0.7);}
+.collapse-button .icon-bar {margin:3px 0;}	
+
+	/************ from gloobers.css 21 oct ************/
+	.image-content { padding-right:5%; width: 35%; margin-top:50px;}
+	.slide-content .profile-section {margin-left: 1%; width: 59%; margin-top: 50px;}
+	.plane-way {  bottom: -35px;left: 8%;}
+	.resp-tabs-container div .search-page .block-content input.loc[type="text"], .resp-tabs-container div .search-page .block-content input.exp[type="text"] {width:22%;}
+	.resp-tabs-container div .search-page .block-content input.cal[type="text"], .resp-tabs-container div .search-page .block-content input.prtcpnt[type="text"] {width:14.5%;}
+}
+
+@media only screen and (max-width:800px)
+
+{
+	.nearby-loc p {margin-top:15px;}
+	.nearby-loc i {margin-top:5px;}
+	.review-rating .review-rating-cell { width:60%;}
+	.admin-profile .admin-pro-dp .admin-photo {width:100%;}
+	.profile-details {margin-left:5%; padding-left:0; width:60%;}
+	.profile-details .admin-review {width:50%; padding:0; text-align:center;}
+	.profile-details .admin-review a {width:100%; padding-bottom:5px;}
+	.profile-details .admin-review p {display:inline-block; float:none;}
+	.profile-details .admin-frnds {width:50%;  text-align:center; padding:0;}
+	.profile-details .admin-frnds a {width:100%; padding-bottom:5px;}
+	.profile-details .admin-frnds i {display:inline-block; float:none;}
+	.blogger-block .blogger-profile .blogger-dp {width:100%;}
+	.blogger-block .blogger-profile {width:22%;}
+	.blogger-block .blog-description { padding: 0 0 0 5%; width:70%;}
+	
+	/************ from gloobers.css 21 oct ************/
+	.result-row .result-block {width: 32%;}
+	.video-section .video-caption p { margin-bottom: 0;}
+	.video-section .video-frame img {min-height: 300px;}
+	
+	/****** res tabs 11-14 02014 *******/
+	.resp-tabs-container div { min-height:inherit;}
+	.tab-ico {display: inline-block; margin-top: auto; }
+	h2.resp-accordion {text-align:center; background:#38393c; background:rgba(0, 0, 0, 0.7)}
+	.resp-tabs-container h2 p{float:none; display:inline-block; margin:5px 10px; width: 50%; color:#fff; vertical-align: top;}
+	.tab-content-wrap.discover-article-page .result-block { width: 31%;}
+	.resp-tabs-container div .search-page .block-content {padding:15px 0;}
+	h2.resp-accordion.resp-tab-active {background:#111;}
+	.resp-arrow {margin-top: 22px;}
+	.tab1-content.resp-tab-content.resp-tab-content-active {   border-bottom: 3px solid #f35f00; margin-bottom:10px;}
+	.tab2-content.resp-tab-content.resp-tab-content-active {border-bottom: 3px solid #3fb9e5;  margin-bottom:10px;}
+	.tab3-content.resp-tab-content.resp-tab-content-active {border-bottom: 3px solid #f43a3a;  margin-bottom:10px;}
+	.tab4-content.resp-tab-content.resp-tab-content-active {border-bottom: 3px solid #71b732;  margin-bottom:10px; background:#38393c; background:rgba(0, 0, 0, 0.7)}
+	.section-text { width: 100%;}
+	
+	
+	.tab-content-wrap.discover-article-page .result-row .result-block .quick-share ul li input[type="text"] {max-width:none; width:88%; float:none; display:inline-block;}
+	.resp-tabs-container div .search-page .block-content input.loc[type="text"], .resp-tabs-container div .search-page .block-content input.exp[type="text"] { width:44%; margin-left:1.5%; margin-bottom:10px;}
+	.resp-tabs-container div .search-page .block-content input.cal[type="text"], .resp-tabs-container div .search-page .block-content input.prtcpnt[type="text"] {width: 35%; margin:0; margin-left:2%;}
+	.resp-tabs-container div .search-page .block-content input[type="button"] {width:15%; margin-left:2%;}
+	
+ 	
+	
+}
+	
+
+@media only screen and (max-width:790px)
+
+{
+	.article-row .article-block {width:96%; padding:0px 2%;}
+	.article-block.reviews.col-left {width:96%; padding:0px 2%;}
+	.review-rating .review-rating-cell {border:0;}
+	.review-rating .review-rating-cell.r-border{border:0;}
+	.article-row .article-block .content-block ul.optional-services li .check-left {width:70%;}
+	.article-row .article-block .content-block ul.optional-services li .check-right {width:30%;}
+	.blogger-block .blogger-profile .blogger-dp {width:75%;}
+	.blogger-block .blog-description .description-detail a {margin-top:20px;}
+	.admin-profile .admin-pro-dp {width:20%;}
+	.profile-details {width:50%;}
+	.profile-details .admin-review, .profile-details .admin-frnds{padding-top:10px;}
+	.profile-details .admin-review a, .profile-details .admin-frnds a {width:auto; padding-top:10px;}
+	.admin-social-block .col-block {width:48%;}
+	.admin-social-block .col-block .block-row {padding:10px 0;}
+	.article-row .article-block.full-width-block {width:96%;}
+	.admin-contacts {width:21%; margin-top:35px;}
+	.dr-full-slider .add-photo .dr-full-width-wrapper button.photo-btn {right:8%; left:auto;}	
+	.search-block .search-block-col {padding:5px 0;}
+	.search-block .search-block-col a i img {height: 20px; width: 20px;}
+	.search-block .search-block-col a {line-height:28px;}
+	/************ from gloobers.css 21 oct ************/
+	
+	
+}
+	
+@media only screen and (max-width:768px)
+
+{
+	.nearby-places {max-width:240px; width:100%;}
+	.nearby-places ul li a {width:30%;}	
+	.nearby-places ul li .place-info {width:65%;}
+	.nearby-places ul li .place-info ul {padding-left:2%; width:98%;}
+	.place-price-info {float:left;}
+	.place-info ul.info-ul li {width:100%; padding:0;}
+	.place-price-info p {float:left; padding-right:10px;}
+	.place-price-info span {float:left; margin-top:16px;}
+	.review-rating .review-rating-cell {width:33%;  padding:10px 1%;}
+	.review-rating .review-rating-cell + .review-rating-cell {margin-top:10px; float:right;}
+	.tab-content-wrap.discover-article-page .result-block { width: 48.7%;}
+	
+	/************ from gloobers.css 21 oct ************/
+ 
+
+
+
+}
+@media only screen and (max-width:767px)
+
+{
+	p.search-text {float:right; margin:0; margin-right:10px; padding-top:25px; }
+	.search-block .search-block-col a i {width:90%; margin:2px;}
+	.search-page .block-content input[type="text"] {width:36%;}
+	.review-rating .review-rating-cell {width:55%; padding:0px; padding-left:3%;}
+	.review-rating .review-rating-cell + .review-rating-cell {float:left; margin-top:0;}
+	 /**************** 9 oct *****************/
+	.search-page small {  left: 0;  margin: 0;  padding: 0;  right: 0; text-align: right;  width: 100%;} 
+	/************ from gloobers.css 21 oct ************/
+	.dt-main-header { position:static; background:#2d3d54; text-align:center;}
+	.dt-main-header a.dr-logo + span.head-border {display:none;}
+	.dt-main-header button { float:right; margin-right:10px;}
+	.dt-main-header .dr-logo { display:inline-block; cursor:pointer; float:none; padding:3px 0;}
+	.dt-main-header.no-bg { background:#2d3d54;}
+	.dr-main-header { position:static; background:#2d3d54; text-align:center;}
+	.dr-right-login { padding:2px 0; border-top:1px solid #1f2a3b; float:left; width:100%; display:table;}
+	.dr-right-login span {padding:0;}
+	.dr-right-login .profile-menu, .dr-right-login a{ display:table-cell; vertical-align:middle; text-align:center; float:none;}
+	.dr-right-login a.list-btn {  display: block; float: right; margin-right: 18%; margin-top:2px;}
+	.user-in a.user-profile {display: inline-block;}
+	.dr-main-header a.dr-logo + span.head-border {display:none;}
+	.dr-main-header button { float:right; margin-right:10px;}
+	.search-page small { left: 95%;}
+	.dr-main-header .dr-logo { display:inline-block; cursor:pointer; float:none; padding:3px 0;}
+	.profile-menu .user-manual { left:20%;}
+	.dr-main-header.no-bg { background:#2d3d54;}
+	
+	.dr-block-row .dr-block-col {width:100%; border-bottom:1px solid #d0d0d0; min-height:inherit;padding-bottom:10px;}
+ 	.dr-block-row .dr-block-col.border-r .rating-star {margin:0;}
+	.dr-block-row .dr-block-col {text-align:center;}
+	.dr-block-row .dr-block-col.border-r .rating-star {display: inline-block; float: none; width: auto;}
+	
+	/*11-14-2014*/
+	.dt-main-header.no-bg {position: inherit;}
+	.dr-search-pannel {margin-top:50px;}
+	.dt-main-header .dr-logo { position: relative; z-index: 999;}
+	
+}
+
+@media only screen and (max-width:640px)
+{
+	.dr-title-tab .title-profile .dr-profile .title-dp {z-index:99;}
+	.dr-main-header .dr-logo img{width:100px;}
+	.dr-main-header button img {width:30px;}
+	.head-border > img { height: 55px;}
+	/************ from gloobers.css 21 oct ************/
+	.result-row .result-block {margin: 0 1% 35px; width: 48%;}
+	.result-row .result-block .share-result p { font-size: 15px;}
+	.dr-full-banner h1 { top: 20%; font-size: 40px;}
+	.more-social-options {max-width:inherit; width:90%;}
+	.social-content ul li {width:33.3%;}
+	.plane-way { width: 135px;}
+	.resp-tabs-container div .search-page .block-content input.cal[type="text"], .resp-tabs-container div .search-page .block-content input.prtcpnt[type="text"] {width:30%;}
+	.resp-tabs-container div .search-page .block-content input[type="button"] {width:26%;}
+	.tab-content-wrap.discover-article-page .result-block { width: 47.7%;}
+	 
+	
+}
+
+@media only screen and (max-width:568px)
+{
+	.admin-contacts a {margin:5px;}
+	.dr-main-header span {padding:0 10px;}
+	.dr-right-login span {padding:0 10px;}
+	.dr-footer .footer-col {width:50%;}
+	.dr-footer .footer-col.about, .dr-footer footer-col.support, .dr-footer footer-col.social {width:33.3%}
+	.dr-footer .footer-col.support, .footer-col.social {width:33.3%}
+	.dr-footer .footer-col.about h5 {margin-top:0; border-top: 1px solid #dfdfdf;}
+	.dr-footer .footer-col ul li a {width:100%; padding:0; text-align:center;}
+	/************ from gloobers.css 21 oct ************/
+	.dr-result-container .dr-tab-header .right-tab { border-top: 1px solid #d0d0d0;}
+	.dr-result-container .dr-tab-header .rsult-des {width:100%;}
+	.tab-content-wrap.discover-article-page .result-block { width: 97.5%;}
+	.result-row .result-block h4 { min-height:inherit;}
+	
+	
+}
+
+@media only screen and (max-width:567px)
+{
+	
+	.search-block .search-block-col a {line-height:15px;}
+	.search-block .search-block-col {min-height:55px;}
+	.search-page .block-content input.cal[type="text"] {width:35%;}
+	.search-page .block-content input[type="text"] {width:45%;}
+	.search-page .block-content input.prtcpnt[type="text"] {width: 34.5%;}
+	.search-page {top:70px;}
+	.location-filter ul.short-search-map {width:55%;}
+	/************ from gloobers.css 21 oct ************/
+	 
+	
+	
+}
+
+@media only screen and (max-width:500px)
+{
+	.admin-profile {width:100%; padding-left:0;}
+	.admin-profile .admin-pro-dp {width:25%;}
+	.profile-details {width:65%; border-right:0;}
+	.admin-contacts {  margin-top: 10px;  width: 100%;}
+	.admin-social-block .col-block {width:98%;}
+	.view-pro {padding-top:10px; margin-bottom:20px;}
+	.search-page .block-content input[type="text"] {width:44%;}
+	.search-page .block-content input.prtcpnt[type="text"] {width:30%;}
+	.title-session .title-share, .title-session .title-date, .title-session .title-session, .title-session .session-block.title-price {width:100%; min-height:inherit; height:auto; padding:5px 0;}
+	.title-session .session-block {text-align:center;}
+	.title-session .session-block p, .title-session .session-block span, .title-session .session-block i{display:inline-block; width:30%; text-align:center; padding:5px; margin:0px 2px; float:none; font-size:15px;}
+	.title-session .session-block span img {height:27px;}
+	.title-session .session-block.title-price small {padding-top:5px;}
+	.title-session .session-block.title-price button {width:100%;}
+	.location-filter .menu-collapser {width:40%;}
+	.nearby-loc {width:42%;}
+}
+
+@media only screen and (max-width:480px)
+{
+	.dr-title-tab .title-profile .dr-profile .title-dp {margin-top:10px;}
+	.article-row .article-block .content-block ul.included-price li {width:50%;}
+	.article-row .article-block .article-block-head {height:auto;}
+	.article-row .article-block .article-block-head i {width:16px;}
+	.article-row .article-block .article-block-head h3 {font-size:20px;}
+	 
+	
+}
+	
+	@media only screen and (max-width:479px)
+{
+	
+	.search-block .search-block-col {width:100%; border-bottom:1px solid #d0d0d0; min-height: inherit; padding: 10px 0; width: 100%;}
+	.search-block .search-block-col a i {width:auto;  margin: 0 15px;}
+	.search-block .search-block-col a { line-height: 20px;}
+	.search-page .block-content input[type="text"] {  width: 93%;}
+	.search-page .block-content input.cal[type="text"], .search-page .block-content input.prtcpnt[type="text"] { width: 41%;}
+	.search-page .block-content input[type="button"] {width:94%;}
+	/************ from gloobers.css 21 oct ************/
+	.dr-result-container .dr-tab-header .right-tab {width:100%; border-bottom: 1px solid #d0d0d0;}
+	.dr-result-container .dr-tab-header .right-tab ul {border:none; display:table; width:100%;}
+	.dr-result-container .dr-tab-header .right-tab ul li { text-align:center; border-bottom:0; box-sizing:border-box; display:table-cell; float:none; vertical-align:middle; width:33.3%; padding:0;}
+	.dr-result-container .dr-tab-header .right-tab ul li a {float:none; display:inline-block;}
+	.dr-result-container .dr-tab-header .rsult-des .total-result p {margin-top:5px;}
+	.result-row .result-block {width:97%;}
+	.social-content ul li {width:100%; border-bottom:1px solid #d0d0d0;}
+	.dr-right-login a.list-btn {font-size: 13px; width: 118px;  margin: 1% 5% 0 0; }
+	.user-in a small { clear: both; width: 100%; margin:0;}
+	.dr-right-login .profile-menu, .dr-right-login a {  padding: 0;}
+	.user-in a span { display: inline-block; float: none;}
+	.dr-right-login span.head-border{display:none;}
+	.dr-right-login a.m-border {border-left:1px solid #1f2a3b; border-right:1px solid #1f2a3b; padding:0px 10px; text-align:center;}
+	.dr-full-banner h1 { font-size: 30px;line-height: 25px;  top: 20%;}
+	.resp-tabs-container div .search-page .block-content input.cal[type="text"], .resp-tabs-container div .search-page .block-content input.prtcpnt[type="text"], .resp-tabs-container div .search-page .block-content input.loc[type="text"], .resp-tabs-container div .search-page .block-content input.exp[type="text"] {width:92%; margin:10px 2%; padding:5px 2%;}
+	.resp-tabs-container div .search-page .block-content input[type="button"] {width:96.5%;}
+	.dr-right-login.user-in .profile-menu.nav-space a {padding:15px;}
+	 
+}
+	
+
+@media only screen and (max-width:380px)
+{
+	.dr-title-tab .title-profile .dr-profile {width:100%;}
+	.dr-title-tab .title-profile .profile-title {width:100%; padding:0; text-align:center;}
+	.dr-title-tab .title-profile .profile-title h5 {font-size:22px; width:100%;}
+	.dr-title-tab .title-profile .profile-title ul.profile-rating {display:inline-block; float:none; width:auto;}
+	.title-session .session-block p, .title-session .session-block span, .title-session .session-block i {width:20%;}
+	.article-row .article-block .content-block ul.optional-services li .check-left, .article-row .article-block .content-block ul.optional-services li .check-right {width:100%;}
+	
+	.admin-profile {text-align:center;}
+	.admin-profile .admin-pro-dp {width:60%; float:none; display:inline-block;}
+	.profile-details a {display:inline-block; float:none;}
+	.profile-details {width:100%; text-align:center; margin:0;}
+	.admin-contacts {text-align:center;}
+	.admin-contacts a {display:inline-block; float:none;}
+	.review-rating .review-cal {margin-left:0; width:20%;}
+	.review-rating .review-rating-cell {width:75%;}
+	.dr-footer .footer-col {width:100%;}
+	.dr-footer .footer-col.support, .footer-col.social {width:100%;}
+	.dr-footer .footer-col.about, .dr-footer footer-col.support, .dr-footer footer-col.social {width:100%;}
+	.dr-footer .footer-col ul li select {width:90%;}
+	.blogger-block .blogger-profile {width:100%; margin:0;}
+	.blogger-block .blogger-profile .blogger-dp {width:35%;}
+	.blogger-block .blogger-profile a {width:100%;}
+	.blogger-block .blog-description {width:100%;}
+	.dr-right-login {float:left; width:100%; margin:0;}
+	/************ from gloobers.css 21 oct ************/
+	.dr-right-login a.list-btn {font-size: 13px;width: 118px;  margin: 1% 10% 0; }
+	
+	
+	
+}
+@media only screen and (max-width:330px)
+{
+	.dr-right-login a {padding-right:5px;}
+	 .search-page small {right: -60px;} /**************** 9 oct *****************/
+	
+}
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+ 

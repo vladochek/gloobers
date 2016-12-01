@@ -1,0 +1,510 @@
+<?php
+//drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/jquery.fs.stepper.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/responsiveslides.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/demo.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/datepicker.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/jquery.datetimepicker.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/bootstrap.min.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/bootstrap-slider.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/range-slider.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/jquery.selectBoxIt.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/flexslider.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/experience-listing.css','file'); 
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/responsive-styles.css','file');
+drupal_add_css(drupal_get_path('theme', 'gloobers') .'/css/jRating.jquery.css','file');
+
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.bpopup.min.js',array('scope' => 'footer')); 
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.flexslider.js',array('scope' => 'footer')); 
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.slimmenu.js',array('scope' => 'footer')); 
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jquery.selectBoxIt.min.js',array('scope' => 'footer')); 
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/bootstrap-slider.js',array('scope' => 'footer')); 
+drupal_add_js(drupal_get_path('theme', 'gloobers') .'/js/jRating.jquery.js',array('scope' => 'footer'));
+
+global $base_url;
+?>
+ 
+        <!-- ======================  slider ========================= -->
+        
+        	<div class="dr-full-banner">
+            		<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/banner.png" alt="bungee jump" />
+                    
+                    <h1>Adrenaline &amp; Extreme </h1>
+                 
+            </div><!-- banner -->
+            
+            
+  <!-- ======================  title tab ========================= -->  
+  
+  	<div class="dr-title-tab">
+    	<div class="dr-full-width-wrapper">
+        	 <div class="dr-block-row">
+             	<div class="dr-block-col border-r catagory-block">
+                	<h5>Category</h5>
+                	<select class="select" id="edit-product-type">
+							<option value="">Select experience type</option>
+						<?php
+						$experienceType=getExperienceType();		
+						foreach($experienceType as $key=>$value){
+						?>
+                            <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+						<?php 
+						}
+						?>
+   					</select>
+                    <div class="edit-product-category">       
+                       <select class="select" id="edit-product-category">
+
+						</select>
+					</div>
+                </div><!-- col ends -->
+                
+                	<div class="dr-block-col border-r rating-block">
+                    
+                		<h5>Ratings</h5>
+                        <div class="rating-star">
+                        	<!--<div class="search-basic" data-average="0" data-id="1"></div>-->
+				<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/rating-star.png" alt="five star" />
+                        </div>
+                	</div><!-- col2 ends -->
+                
+                	<div class="dr-block-col border-r price">
+                		<h5>price</h5>
+							<p>
+								<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+							</p>
+
+							<div id="slider-range"></div>
+               		</div><!-- col3 ends -->       	  
+             
+        	</div><!-- dr block row ends -->
+        </div><!-- wrapper ends -->    
+    </div><!-- ttile ends -->        
+            
+         <div class="dr-full-width-wrapper">
+         	<div class="dr-result-container">
+            	<div class="dr-tab-header">
+                	<div class="rsult-des">
+                    	<h2>Etats-Unis, New York City, <span>Adrenaline & Extreme</span></h2>
+                    		<div class="total-result">
+                            	<p>(9,158 Results)</p>
+                            </div>
+                    </div><!-- description -->
+                
+                		<div class="right-tab">
+                        	<ul>
+                            	<li class="active"><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/gallery-ico.png" alt="gallery view" /></a></li>
+                                <li><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/location-ico.png" alt="gallery view" /></a></li>
+                                <li><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/menu-ico.png" alt="gallery view" /></a></li>
+                            </ul>
+                        </div><!-- right tab ends -->                
+                </div><!-- tab header ends --> 
+                
+         <!-- ======================================================= Map Article ================================================ -->
+         
+         <div class="tab-content-wrap">
+         	<div class="result-row">
+            <?php 
+				$i = 1;
+				foreach($listings as $listing){
+					$photos = getPhotosData($listing["eid"]);
+			?>	
+                <div class="result-block loadData" id="myData_<?php echo $i; ?>">
+                	<div class="slider-block">
+                    	<div class="flexslider">
+                        <ul class="slides">
+							<?php 
+								if(count($photos)>0){
+									foreach($photos as $photo){
+									$photo 	= unserialize($photo["value1"]);
+									$file 	= file_load($photo["fid"]);
+									$imgpath = $file->uri;
+									$style = 'listing_slider';
+
+							?>
+									<li>
+										<img src="<?php print image_style_url($style,$imgpath); ?>" alt="place" />
+									</li>
+							<?php 
+									}
+								}
+								else{
+							?>
+									<li>
+										<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/img/place1.png" alt="place" />
+									</li>							
+							<?php 
+								}
+							?>
+                        </ul>
+                    </div> <!-- flex ends -->
+                    
+                    <div class="dr-heart">  </div><!-- heart ico -->
+                    <div class="dr-timing">
+                    	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/alarm-ico.png" alt="time" /></i>
+                        <p>24h</p>
+                     </div><!-- heart ico -->
+                    <div class="dr-pricing">
+                    	<div class="price-range">
+                            <p><small>From</small></p>
+                            <p><?php echo $listing["price"]; ?> $</p>
+                        </div><!-- price range -->
+                    </div><!-- heart ico -->
+                    
+                    
+                    
+                    </div><!-- slide ends -->
+                    
+                          <div class="commenter">
+                            <div class="cmntr-profile">
+							<?php 
+								$userDetails = user_load($listing["uid"]);
+								if($userDetails->picture != ""){
+									$file 	= file_load($userDetails->picture->fid);
+									$imgpath = $file->uri;
+							?>
+								<img src="<?php print file_create_url($imgpath); ?>" alt="display pic" />
+							<?php 
+								}
+								else{
+							?>
+								<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/no-profile-male-img.jpg" alt="display pic" />
+							<?php 
+								}
+							?>
+                            </div><!-- cmnter pro -->         
+                         </div><!-- cmmntr ends -->
+						 <div class="place-rating">
+						 <?php 
+							if($listing["average_ratings"] != "")
+							{
+						 ?>
+								<div class="basic" data-average="<?php echo $listing["average_ratings"]; ?>" data-id="1"></div>
+						<?php 
+							}
+						?>
+                            </div><!-- ratin ends -->
+                                <h4><a href="<?php echo $base_url; ?>/experience/view/<?php echo $listing["eid"]; ?>"><?php echo $listing["title"]; ?></a></h4>
+                                	<p><?php echo $listing["city"]; ?>, <?php echo $listing["state"]; ?></p>
+                                		<p><span><?php echo $listing["experience_type"]; ?></span></p>  
+                                        
+                                        <div class="share-outer-vj">
+                                        	<div id="share" class="share share-result">
+                                            	<i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/plane-ico-b.png" alt="share" /></i>
+                                                <p>Share with your friends</p>
+                                                <small><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/move-right.png" alt="share" /></small>
+                                            </div><!-- result share --> 
+                                               
+                                            <div id="quick-share" class="quick-share">
+                                                	<ul>
+                                                    	<li><p>Add to MY</p><div class="circle">+</div></li>
+                                                        <li><p><span>Embed</span></p><input type="text" placeholder="<iframe width="560" heigh..." /></li>
+                                                        <li class="social">
+                                                        	<div class="soical fb"><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/fb-ico-w.png" alt="ico" /></a></div>
+                                                            <div class="soical twt"><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/twt-ico-w.png" alt="ico" /></a></div>
+                                                            <div class="soical ggl"><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/ggl-ico-w.png" alt="ico" /></a></div>
+                                                            <div class="soical plus"><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/plus-ico-w.png" alt="ico" /></a></div>
+                                                         </li>
+                                                    </ul>
+                                                </div><!-- quick ends -->
+                    					</div> <!-- toggle wrap -->
+                                        
+                </div><!-- block ends -->          
+            <?php
+				$i++;
+				}
+			?>     
+            </div><!-- row ends --> 
+			<div class="tableRow">
+				<div class="secondColumn" id="loaderImg" style="display:none;"></div>
+			</div>       
+            <!-- <div class="more-results">
+                        	<a href="#" class="load-more">Load more</a>
+              </div><!-- more results -->
+            
+         </div><!-- tab contanet wrapper -->  
+            </div><!-- result cotainer ends -->         
+         </div><!-- wrapper -->   
+ 
+ <!-- ====================== popup ============================ -->
+ 
+ <!-- Button that triggers the popup -->
+            <div class="more-social-options">
+              <div class="social-content">
+                 <span class="button b-close"><span>X</span></span>
+                 <ul>
+                 	<li><a href="#"><i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/msg-ico.png" alt="message" /></i><span>Email</span></a></li>
+                    <li class="active"><a href="#"><i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/social-ico.png" alt="message" /></i><span>Share</span></a></li>
+                    <li><a href="#"><i><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/plus-social.png" alt="message" /></i><span>Add To</span></a></li>
+                 </ul>
+                	 
+                     <div class="social-share">
+                     	<p>Share with social network</p>
+                     		
+                            <ul class="soical-networks">
+                            	<li class="scl1"><a href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/fb-ico-w.png" alt="icon" /></a></li>
+                                <li class="scl2"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/twt-ico-w.png" alt="icon" /></a></li>
+                                <li class="scl3"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/ggl-ico-w.png" alt="icon" /></a></li>
+                                <li class="scl4"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/s-p4.png" alt="icon" /></a></li>
+                                <li class="scl5"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/s-p5.png" alt="icon" /></a></li>
+                                <li class="scl6"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/s-p6.png" alt="icon" /></a></li>
+                                <li class="scl7"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/s-p7.png" alt="icon" /></a></li>
+                                <li class="scl8"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/s-p8.png" alt="icon" /></a></li>
+                                <li class="scl9"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/s-p9.png" alt="icon" /></a></li>
+                                <li class="scl10"><a class="" href="#"><img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/s-p10.png" alt="icon" /></a></li>
+                            </ul><!-- networks -->
+                     
+                     <p>Share a link</p>
+                     <div class="share-input">
+                     	<input type="text" placeholder="http://gloobers.com/adrenaline-extreme/base-jumping-by" />
+                        <button>copy</button>
+                     </div>
+                     
+                     <p>Embed on a website</p>
+                         <div class="share-input textarea">
+                            <textarea placeholder=" Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."></textarea>
+                            <button>copy</button>
+                         </div>
+                     
+                     </div><!-- sociual share -->
+                
+            	</div><!-- social conent close -->
+            </div>
+			
+   <script type="text/javascript" charset="utf-8">
+			$(window).load(function() {
+			$('.flexslider').flexslider();
+			
+            $('div.plus').bind('click', function(e) {
+
+                // Prevents the default action to be triggered. 
+                e.preventDefault();
+
+                // Triggering bPopup when click event is fired
+                $('.more-social-options').bPopup({
+				 
+				 	 zIndex: 101,
+                     modalClose: false,
+					 speed: 650,
+            		transition: 'slideIn',
+	    			transitionClose: 'slideBack',
+					 modalColor: '#000',
+					 
+				
+			});
+
+            });
+				});
+				
+		/*********************************************************/		
+		$( "#user-manual" ).click(function() {
+		$( ".user-manual" ).toggle( "slow", function() {
+		 
+		});
+	});
+	//$( ".share" ).on('click',function() {
+	$(document).on("click",".share",function(e){
+		$(this).parent().find(".quick-share").toggle( "slow");
+		
+	});	
+       
+				
+	</script>
+	
+  <script> 
+
+   jQuery(document).ready(function() {  
+	   jQuery(".select").selectBoxIt({
+	   showFirstOption: false,
+	  });	
+	jQuery(".basic").jRating({
+		bigStarsPath: "<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/icons/stars.png",
+		isDisabled : true,
+		length : 5,
+	});
+	
+	jQuery('.search-basic').jRating({
+		canRateAgain : true,
+		showRateInfo:true,
+		decimalLength:1,
+		nbRates : 10,
+		phpPath : "<?php print $GLOBALS['base_url'].'/listing/review/data'; ?>",
+		bigStarsPath : "<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/images/icons/stars.png",
+		smallStarsPath : "<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/images/icons/small.png",
+		onClick:function(element,rate) {
+			//$(".result-row").append("<span class='loading'><img src='<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/loading_1.gif'/></span>");
+		},		
+		onSuccess : function(elem,rate){
+			$.ajax({
+				type: 'POST',
+				async:false,
+				url : "<?php echo $base_url; ?>/experience",
+				data : {'rate':rate,'action':'filter'},
+				success: function(data){
+					$(".result-row").html(data);
+				},
+				error: function(data){
+					alert("ajax error occured…"+data);
+				}
+			})
+	
+		},
+		onError : function(){
+			alert('Error : please retry');
+		}
+	});
+	jQuery( "#slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 500,
+		values: [ 75, 300 ],
+		slide: function( event, ui ) {
+			jQuery( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+		},
+		change: function( event, ui ) {
+		var typeId = jq('#edit-product-type').val();
+		if(typeId == null){
+			typeId = '';
+		}
+		var catID = jq('#edit-product-category').val();
+		if(catID == null){
+			catID = '';
+		}
+		var dataString = new Array();
+		if(typeId.length != 0 && catID.length != 0){
+			dataString = {'catID':catID,'typeId':typeId,'min':ui.values[ 0 ],'max':ui.values[ 1 ],'action':'filter'};
+		}
+		else if(typeId.length != 0 && catID.length == 0){
+			dataString = {'typeId':typeId,'min':ui.values[ 0 ],'max':ui.values[ 1 ],'action':'filter'};
+		}
+		else if(typeId.length == 0 && catID.length != 0){
+			dataString = {'catID':catID,'min':ui.values[ 0 ],'max':ui.values[ 1 ],'action':'filter'};
+		}
+		else{
+			dataString = {'min':ui.values[ 0 ],'max':ui.values[ 1 ],'action':'filter'};
+		}
+					$.ajax({
+						type: 'POST',
+						async:false,
+						url : "<?php echo $base_url; ?>/experience",
+						data : dataString,
+						success: function(data){
+							$(".result-row").html(data);
+						},
+						error: function(data){
+							alert("ajax error occured…"+data);
+						}
+					})
+		}
+	});
+	jQuery( "#amount" ).val( "$" + jQuery( "#slider-range" ).slider( "values", 0 ) +
+		" - $" + jQuery( "#slider-range" ).slider( "values", 1 ) );
+	
+	var jq = jQuery;
+	jq('#edit-product-type').on('change', function() {
+	var min = 	jQuery( "#slider-range" ).slider( "values", 0 );
+	var max = 	jQuery( "#slider-range" ).slider( "values", 1 );
+	
+	jq.ajax({
+				type: "GET",
+				url: "<?php echo $base_url; ?>/product/ajax/getExperienceCategory",
+				//dataType: "json",
+				data: "typeId=" + encodeURI(this.value) +"&action=filter",
+				success: function(msg){
+					jq('.edit-product-category').html("");
+					
+					jq('.edit-product-category').html(msg);
+					
+				}
+	});
+
+	jq.ajax({
+		type: 'POST',
+		async:false,
+		url : "<?php echo $base_url; ?>/experience",
+		data : {'typeId':this.value,'min':min,'max':max,'action':'filter'},
+		success: function(data){
+			jq(".result-row").html(data);
+		},
+		error: function(data){
+			alert("ajax error occured…"+data);
+		}
+	})
+					
+	});
+	
+	jq(document).on('change','#edit-product-category', function() {
+		var typeId = jq('#edit-product-type').val();
+		var min = 	jQuery( "#slider-range" ).slider( "values", 0 );
+		var max = 	jQuery( "#slider-range" ).slider( "values", 1 );	
+		jq.ajax({
+			type: 'POST',
+			async:false,
+			url : "<?php echo $base_url; ?>/experience",
+			data : {'catID':this.value,'typeId':typeId,'min':min,'max':max,'action':'filter'},
+			success: function(data){
+				jq(".result-row").html(data);
+			},
+			error: function(data){
+				alert("ajax error occured…"+data);
+			}
+		})
+					
+	});
+
+  });	
+
+$(document).ready(function(){
+
+
+
+
+$(window).on('scroll', function(){
+	scrollMore();
+});
+
+function scrollMore(){
+	//console.log("Scrol To=="+$(window).scrollTop()+" document height=="+$(document).height()+" window height=="+$(window).height());
+	if($(window).scrollTop() == ($(document).height() - $(window).height())){
+	
+		var offset = $('[id^="myData_"]').length; // here we find out total records on page.
+
+		$(window).unbind("scroll");
+		$("#loaderImg").html('<img src="<?php print base_path() . drupal_get_path('theme', 'gloobers'); ?>/images/ajax-loader.gif" />');
+		$("#loaderImg").show();
+		loadMoreData(offset);
+	}
+}
+
+function loadMoreData(offset){
+	$.ajax({
+		type: 'POST',
+		async:false,
+		url : "<?php echo $base_url; ?>/experience",
+		data : {'offset':offset},
+		success: function(data){
+			$("#loaderImg").empty();
+			if(data.length > 0){
+				$("#loaderImg").hide();
+			}
+			else{
+				$("#loaderImg").html("<span>No more results..</span>");
+			}
+			//$(".loadData :last").after(data);
+			$(".result-row").append(data);
+		},
+		error: function(data){
+			alert("ajax error occured…"+data);
+		}
+	}).done(function(){
+		$(window).on("scroll",function(){
+		scrollMore();	
+	});
+	});
+}
+
+
+});
+  
+   </script>
+   
+ 

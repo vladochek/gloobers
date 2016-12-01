@@ -1,0 +1,7 @@
+name = Listing module
+description = This is a module to show listing of products.
+package = Gloobers
+core = 7.x
+project = "gloobers"
+
+

@@ -1,0 +1,6 @@
+core = "7.x"
+package = Gloobers
+description = "An gloobers module to manage services/products by admin"
+name = "services Module for gloobers"
+files[]			=	services.module
+project = "gloobers"

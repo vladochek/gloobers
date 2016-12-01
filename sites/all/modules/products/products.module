@@ -1,0 +1,1572 @@
+<?php
+module_load_include('inc', 'products', 'includes/add_product.navigation');
+module_load_include('inc', 'products', 'includes/add_product.submit');
+module_load_include('inc', 'products', 'includes/add_restaurant.submit');
+function products_menu(){
+  $items = array();
+  $items['product/add/%'] = array(
+    'title' => 'Add Listing',
+    'page callback' => 'product_add_form_1',
+    'page arguments' => array('product_add_form'),
+	'access callback' => TRUE,
+	'access arguments' => array('access container'),
+    'file' => 'includes/product_add.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['product/add/images'] = array(
+    'title' => 'Add Images',
+    'page callback' => 'product_add_images',
+    'access arguments' => array('access container'),
+	'access callback' => 'user_is_logged_in',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['product/extra/edit/%/%'] = array(
+    'title' => 'Update Extra',
+    'page callback' => 'product_edit_extra',
+    'page arguments' => array('product_add_form'),
+    'access arguments' => array('access container'),
+	'access callback' => 'user_is_logged_in',
+    'file' => 'includes/product_add.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['product/extra/delete/%/%'] = array(
+
+    'page callback' => 'product_extra_delete',
+    'access arguments' => array('access container'),
+	'access callback' => 'user_is_logged_in',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['product/session/delete/%/%'] = array(
+
+    'page callback' => 'product_session_delete',
+    'access arguments' => array('access container'),
+    'type' => MENU_NORMAL_ITEM,
+	'access callback' => 'user_is_logged_in',
+  );
+
+   $items['update_product_list/%/%/%/%/%/%/%'] = array(
+    'page callback' => 'update_product_list_address', 
+    'page arguments' => array(1,2,3,4,5,6,7),
+    'access arguments' => array('access content'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['product/ajax/getProductDetail'] = array(
+    'page callback' => 'getProductAddressData', 
+    'access arguments' => TRUE,
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['product/ajax/getExperienceCategory'] = array(
+    'page callback' => 'getExperienceCategoryData', 
+    'access arguments' => TRUE,
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+   $items['product/manage'] = array(
+    'page callback' => 'list_visibility', 
+    'page arguments' => array(1,2),
+    'access arguments' => array('access content'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['product/subscription'] = array(
+/*     'title' => 'Add Product', */
+    'page callback' => 'product_subscription_status',
+    'access arguments' => array('access container'),
+	'access callback' => 'user_is_logged_in',
+    'type' => MENU_NORMAL_ITEM,
+  );
+ 
+   $items['add/restaurant/%'] = array(
+    'title' => 'Add Restaurant',
+    'page callback' => 'add_restaurant_form',
+    'access arguments' => array('access container'),
+    'file' => 'includes/add_restaurant.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+ 
+   $items['add/rentals/%'] = array(
+    'title' => 'Add Vacation Rentals',
+    'page callback' => 'add_rentals_form',
+    'access arguments' => array('access container'),
+    'file' => 'includes/add_rentals.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+   $items['product/calendar'] = array(
+    'title' => 'Add Calendar Events',
+    'page callback' => 'add_calendar_events',
+    'access arguments' => array('access container'),
+    'file' => 'includes/product_add.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+/*    $items['deal/types'] = array(
+    'title' => 'Deal Types',
+    'page callback' => 'product_deal_types',
+    'access arguments' => array('access container'),
+    'type' => MENU_NORMAL_ITEM,
+  ); */
+   $items['removePricing/%'] = array(
+    'page callback' => 'remove_pricing', 
+    'page arguments' => array(1),
+    'access arguments' => array('access content'), 
+    'type' => MENU_CALLBACK,
+  );
+    $items['manage/listing'] = array(
+    'title' => t('Manage Listing'),
+    'page callback' => 'manage_product_list',
+    'access arguments' => array('access container'),
+	'access callback' =>true,
+	/* 'access callback' => 'user_is_logged_in', */
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['view/customer/%'] = array(
+    'title' => t('View Customers'),
+    'page callback' => 'view_customers',
+    'access arguments' => array('access container'),
+	'access callback' => 'user_is_logged_in',
+    'type' => MENU_NORMAL_ITEM,
+  );
+   $items['product/ajax/getExperienceTitle'] = array(
+    'page callback' => 'getExperienceTitleData', 
+    'access arguments' => TRUE,
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['product/ajax/setmainimg'] = array(
+    'page callback' => 'setMainImg', 
+    'access arguments' => TRUE,
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['product/GetPriceFilter'] = array(
+    'page callback' => 'GetPriceFilter', 
+    'access arguments' => TRUE,
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['product/ajax/checkImagecounter'] = array(
+    'page callback' => 'checkImagecounter', 
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  
+   /* Edit Session */
+   $items['product/session/edit/%'] = array(
+    'title' => 'Update Session',
+    'page callback' => 'product_edit_session',
+    'page arguments' => array('product_add_form'),
+    'access arguments' => array('access container'),
+	'access callback' => 'user_is_logged_in',
+    'file' => 'includes/product_add.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );  
+  /* End Edit Session */
+
+    // Updated 17-02-2016
+  $items['product/geteachsessiondata'] = array(
+    'page callback' => 'geteachsessiondata', 
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );  
+  // End Updated 17-02-2016
+
+  // Updated 18-02-2016
+    $items['product/getediteddates'] = array(
+    'page callback' => 'getediteddates', 
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+    // End Updated 18-02-2016
+
+     $items['product/getpassport'] = array(
+    'page callback' => 'getpassport', 
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+function GetPriceFilter(){
+	//$minPriceBase= min($minPriceBase);
+	//$maxPriceBase= max($maxPriceBase);
+	$minPriceBase= 1;
+	$maxPriceBase=100;
+	$selectPrice=db_select('gbl_pricing','p')->fields('p',array('max_price','min_price'))->condition('listing_id',56);
+	$result_selectPrice=$selectPrice->execute();
+	$result_selectPrice=$result_selectPrice->fetchAll(PDO::FETCH_ASSOC);
+	if(!empty($result_selectPrice)){
+	
+	$min_price=$result_selectPrice[0]['min_price'];
+	$max_price=$result_selectPrice[0]['max_price'];
+	if($min_price>=$minPriceBase)
+	{
+		$FinalMinPrice=$minPriceBase;
+	}else{
+		$FinalMinPrice=$min_price;
+	}
+	if($max_price>=$maxPriceBase)
+	{
+		$FinalMaxPrice=$max_price;
+	}else{
+		$FinalMaxPrice=$maxPriceBase;
+	}
+		$query_price=db_update('gbl_pricing')->fields(array('min_price'=>$FinalMinPrice,
+													'max_price'=>$FinalMaxPrice)
+													)->condition('listing_id',56);
+		$result_price=$query_price->execute();
+	}else{
+			$query_price=db_insert('gbl_pricing')->fields(array('min_price'=>$FinalMinPrice,
+															'max_price'=>$FinalMaxPrice,
+															'listing_id',56)
+														);
+			$result_price=$query_price->execute();
+	}
+	echo "Here";exit;
+}
+function product_add_images(){
+
+	$imagesData = array();
+	global $user;
+	if(!empty($_FILES)){
+		$filepath = 'public://products';
+		$fileName = time()."_".$_FILES["file"]["name"];
+		if(move_uploaded_file($_FILES["file"]["tmp_name"],$_SERVER["DOCUMENT_ROOT"].base_path()."sites/default/files/products/".$fileName)){
+			$file = file_load($_SERVER["DOCUMENT_ROOT"].base_path()."/sites/default/files/products/".$fileName);
+			$file->uid = $user->uid;
+			$file->filename = $fileName;
+			$file->uri = $filepath."/".$fileName;
+			$file->status = FILE_STATUS_PERMANENT;
+			$result = file_save($file);
+			$fileId = $result->fid;
+			
+			$photoData["text"] = "";
+			$photoData["fid"] = $fileId;
+			$query=db_insert('gbl_listing_meta')
+			  ->fields(array('listing_id'=>isset($_REQUEST["customValue"])?$_REQUEST["customValue"]:arg(3),
+							'key1'=>"photo_data",
+							'value1'=>serialize($photoData)
+				));	 
+			$result=$query->execute();
+			echo $fileId;
+			die();
+		}
+	}
+	else if(isset($_REQUEST["action"]) && $_REQUEST["action"] == "add-text"){
+		$photoData["text"] = $_POST["customText"];
+		$photoData["fid"] = $_POST["fileID"];
+		
+		$query=db_select('gbl_listing_meta','lm')
+				->fields('lm')
+				->condition('listing_id',isset($_POST['listingID'])?$_POST['listingID']:arg(3))
+				->execute();
+		$check = 0;
+		while($data=$query->fetchAssoc()){
+		
+			$value1 = unserialize($data["value1"]);
+			if(in_array($photoData["fid"],$value1)){
+		
+				$query=db_update('gbl_listing_meta')
+				  ->fields(array('value1'=>serialize($photoData)))
+				  ->condition('meta_id',$data["meta_id"]);
+				$result=$query->execute();	
+				echo $result;
+				die();
+			}
+		}
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_POST['listingID'])?$_POST['listingID']:arg(3),
+						'key1'=>"photo_data",
+						'value1'=>serialize($photoData)
+			));	 
+		$result=$query->execute();	
+		echo $result;
+		die();
+	}
+	else if(isset($_REQUEST["action"]) && $_REQUEST["action"] == "delete-photo"){
+		$photoData["fid"] = $_POST["fileID"];
+		
+		if($photoData["fid"]){
+			$query=db_select('gbl_listing_meta','lm')
+				->fields('lm')
+				->condition('listing_id',isset($_POST['listingID'])?$_POST['listingID']:arg(3))
+				->execute();			
+		}
+		
+		$check = 0;
+		while($data=$query->fetchAssoc()){
+			$value1 = unserialize($data["value1"]);
+			if(in_array($photoData["fid"],$value1)){				
+				$query=db_delete('gbl_listing_meta')
+					->condition('meta_id',$data["meta_id"]);
+				$result=$query->execute();
+
+				$query=db_delete('file_managed')
+					->condition('fid',$photoData["fid"]);
+				$result=$query->execute();					
+				
+				echo $result;
+				die();
+			}
+		}		
+	}
+}
+
+ function findexts ($filename) 
+ { 
+	 $filename = strtolower($filename) ; 
+	 $exts = split("[/\\.]", $filename) ; 
+	 $n = count($exts)-1; 
+	 $exts = $exts[$n]; 
+	 return $exts; 
+ }
+ 
+ function products_theme() {
+  $module_path = drupal_get_path('module', 'products');
+
+   return array(
+    'add_product' => array(
+      'template' => 'add_product',
+      'path' => $module_path.'/templates',
+    ),
+    'deal_types' => array(
+      'template' => 'deal_types',
+      'path' => $module_path.'/templates',
+    ),
+	'manage_listing' => array(
+      'template' => 'manage_listing',
+      'path' => $module_path.'/templates',
+    ),
+	'view_customers' => array(
+      'template' => 'view_customers',
+      'path' => $module_path.'/templates',
+    ),
+  );
+}
+function getExperienceType()
+{
+$type=array();
+$type['']=t('Select a type of activity');
+$query=db_select('gbl_experience_type','gt')
+       ->fields('gt')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['experience_type'];
+}	   
+return $type;
+}
+
+function getRentalsListingType()
+{
+$type=array();
+$query=db_select('gbl_rentals_listing_type','gt')
+       ->fields('gt')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['listing_type'];
+}	   
+return $type;
+}
+/*******************Vacation Rental*************************/
+function getPropertyType()
+{
+$type=array();
+$query=db_select('gbl_rentals_property_type','gt')
+       ->fields('gt')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['property_type'];
+}	   
+return $type;
+}
+
+function getRentalsBedType()
+{
+$type=array();
+$query=db_select('gbl_rentals_bed_type','gt')
+       ->fields('gt')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['bed_type'];
+}	   
+return $type;
+}
+/***************Restaurant*************************************/
+function getRestaurantType()
+{
+$type=array();
+$query=db_select('gbl_restaurant_type','gt')
+       ->fields('gt')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['restaurant_type'];
+}	   
+return $type;
+}
+
+function getCuisineType()
+{
+$type=array();
+$query=db_select('gbl_cuisine_type','gt')
+       ->fields('gt')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['cuisine_type'];
+}	   
+return $type;
+}
+/*******************Not Required*********************************/
+function getExperienceCategory()
+{
+$type=array();
+$query=db_select('gbl_experience_category','gec')
+       ->fields('gec')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['cid']]=$data['category_name'];
+}	   
+return $type;
+}
+/*****************************************************/
+function getExperienceListingType(){
+$type=array();
+
+$query=db_select('gbl_experience_type','gec')
+       ->fields('gec')
+	   ->condition('status',1)
+	   ->execute();
+while($data=$query->fetchAssoc())
+{
+$type[$data['id']]=$data['experience_type'];
+}	   
+return $type;
+}
+
+function getExperienceListingTypeById($id=""){
+$type=array();
+$query=db_select('gbl_experience_type','gec')
+       ->fields('gec')
+	   ->condition('id',$id)
+	   ->execute();
+return $query->fetchAssoc();
+}
+
+/*****************Get all amenties data for experience listing**************************************/
+function getAmentiesdata($type=null)
+{
+
+$amentiestype=array();
+$query=db_select('gbl_amenties_meta','gme')
+       ->fields('gme')
+	   ->condition('status','1','=');
+	if($type!=null)
+	{
+	$query->condition('amenties_type',$type,'like');
+	}	   
+	$result=$query->execute();	
+	while($data=$result->fetchAssoc())
+	{	
+	$amentiestype[]=$data;
+	}	   
+return $amentiestype;
+}
+function getAmentiesByproduct($productId)
+{
+$amenitiesdata=array();
+$query=db_select('gbl_listing_meta','glm')
+      ->fields('glm')
+	  ->condition('key1','amenities','=')
+	  ->condition('listing_id',$productId,'=')
+	  ->execute();
+ 
+return   $query->fetchAssoc();
+}
+
+function getOverviewData($eid=''){
+$overviewdata=array();
+$query=db_select('gbl_experience_list','el')
+      ->fields('el')
+	  ->condition('eid',$eid,'=')
+	  ->execute();
+return $query->fetchAssoc();
+}
+
+function getPhotosData($eid=''){
+	$photosData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1'))
+		  ->condition('key1','photo_data','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+		$photosData[]=$data;
+   } 
+   return $photosData;
+}
+/***************************Additional Services data************************/
+function getProductExtraData($eid=''){
+	$extrasData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_extra','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+		$extrasData[]=$data;
+   } 
+   return $extrasData;	
+}
+
+function product_extra_delete(){
+	$listingID = arg(3);
+	$metaID = arg(4);
+
+	$query = db_delete("gbl_listing_meta")
+				->condition('meta_id',$metaID);
+	$deleted = $query->execute();
+	if($deleted){
+		drupal_set_message("Product extra value deleted successfully.");
+		drupal_goto("product/add/extra/".$listingID);		
+	}
+}
+/***************Delete Fixed date and time session settings data from calendar**********************************************/
+function product_session_delete(){
+	$listingID = arg(3);
+	$sessionID = arg(4);
+
+	$query = db_delete("gbl_scheduling_sessions")
+				->condition('id',$sessionID);
+	$deleted = $query->execute();
+	$query_p = db_delete("gbl_pricing")
+				->condition('listing_id',$listingID);
+	$deleted_price = $query_p->execute();
+
+	$query_del_sess = db_delete("gbl_scheduling_sessions_edited")->condition('scheduling_session_id',$sessionID);
+	$deleted_sess = $query_del_sess->execute();
+
+	$query_del_sess_spprice = db_delete("gbl_special_price")->condition('session_ID',$sessionID);
+	$deleted_sess_spprice = $query_del_sess_spprice->execute();
+
+	if($deleted){
+		drupal_set_message("Schedule session value deleted successfully.");
+		drupal_goto("product/add/Calendernew/".$listingID);		
+	}
+}
+
+function product_edit_extra(){
+	$listingID = arg(3);
+	$extras = getProductExtraData($listingID);
+	drupal_add_css(drupal_get_path('theme', 'gloobers_new') .'/stylesheet/for-head-foot.css', 'file');
+	$productForm = drupal_get_form("product_extra_form");
+	return theme('add_product', array('productForm' => $productForm,'extras'=>$extras));
+}
+
+function getExtraDetails($metaID=''){
+	$query = db_select("gbl_listing_meta","lm")
+			->fields("lm")
+			->condition('meta_id',$metaID)
+			->execute();
+	$data = $query->fetchAssoc();
+	return $data;
+}
+function getExtraDetailsNew($listing_id=''){
+	
+	$or = db_or()->condition('key1','product_extra','=')->condition('key1','product_cancellation_data','=');
+	$query = db_select("gbl_listing_meta","lm")
+			->fields("lm")
+			->condition('listing_id',$listing_id)->condition('key1','product_extra','=')->execute();
+	$data = $query->fetchAll(PDO::FETCH_ASSOC);
+	return $data;
+}
+
+/* function getSchedulingData($eid=''){
+	$schedulingData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm')
+		  ->condition('key1','product_scheduling_data','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+		$schedulingData[]=$data;
+   } 
+   return $schedulingData;
+} */
+
+/* function getPricingData($eid=''){
+	$pricingData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_pricing%','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+   return $data=$query->fetchAssoc();		
+} */
+
+function getPricingData($eid=''){
+	$pricingData=array();
+	$query=db_select('gbl_pricing','p')
+		  ->fields('p')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+		$pricingData[]=$data;
+   } 
+   return $pricingData;		
+}
+/*****************BAckup 27March2015***************/
+
+function getPricingDataByType($eid,$priceType,$optionType,$Selected_booking_date){
+	
+	$pricingData=array();
+	
+	$Selected_booking_date = date('Y-m-d', strtotime($Selected_booking_date));
+	
+	$result = db_query("SELECT * FROM `gbl_special_price` WHERE  '" . $Selected_booking_date . "' between `from_date` AND `to_date` and listing_id=" . $eid);
+	$seasonal_result=$result->fetchAll(PDO::FETCH_ASSOC);
+	
+	if($seasonal_result){
+	
+		//echo "<pre>";Print_r($seasonal_result[0]);exit;
+		$pricingData['session_price']=	$seasonal_result[0];
+	}else{
+	
+	$query=db_select('gbl_pricing','p')
+	->fields('p')
+	->condition('listing_id',$eid,'=');
+	if($priceType){
+		$query->condition('price_type',$priceType,'=');
+	}
+	if($priceType==="PER_PERSON"){
+		if($optionType){
+			$query->condition('price_option_type',$optionType,'=');
+		}
+	}else if($priceType==="PER_ITEM"){
+		if($optionType){
+			$query->condition('label',$optionType,'=');
+		}
+	}
+	$result=$query->execute();
+	while($data=$result->fetchAssoc())
+   {
+		$pricingData[]=$data;
+   } 
+   }
+   return $pricingData;		
+}
+
+/*****************Boost your listings package*************************************************/
+function getProductSubscriptionData($eid=''){
+	$pricingData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_subscription_data','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+/* 	while($data=$query->fetchAssoc())
+   {
+		$pricingData[]=$data;
+   }  */
+   return $data=$query->fetchAssoc();		
+}
+
+function getRulesDetails($eid=''){
+	$rulesData=array();
+	$query=db_select('gbl_listing_meta','lm')
+		  ->fields('lm',array('value1','meta_id','listing_id'))
+		  ->condition('key1','product_cancellation_data','like')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+/* 	while($data=$query->fetchAssoc())
+   {
+		$pricingData[]=$data;
+   }  */
+   return $data=$query->fetchAssoc();	
+}
+/**********Get amenities data by productId************************************/
+/* function getAmentiesByproduct($productId=null)
+{
+	$amenitiesdata=array();
+	$query=db_select('gbl_listing_meta','glm')
+		  ->fields('glm')
+		  ->condition('key1','amenities','=')
+		  ->condition('listing_id',$productId,'=')
+		  ->execute();
+		while($data=$query->fetchAssoc())
+	   {
+	   $amenitiesdata[]=$data;
+	   } 
+	return    $amenitiesdata;
+} */
+/***********************************************/
+function update_product_list_address($productId=null,$address1=null,$address2=null,$city=null,$state=null,$zipcode=null,$country=null,$latitude=null,$longitude=null,$itinerary=null)
+{
+
+  $query=db_update('gbl_experience_list')
+	        ->fields(array('address1'=>$address1,'address2'=>$address2,'city'=>$city,'state'=>$state,'zipcode'=>$zipcode,'country'=>$country,'latitude'=>$latitude,'longitude'=>$longitude,'direction'=>$itinerary))
+			->condition('eid',$productId,'=')
+			->execute(); 
+			//echo "true";exit;
+			drupal_set_message("Location updated successfully.");
+return true;
+}
+/***************************************************/
+function getCountryList()
+{
+$country=array();
+$query=db_select('gbl_country_list','gcl')
+       ->fields('gcl',array('country_name'))
+	   ->condition('activate','1','=')
+	   ->execute();
+	   while($data=$query->fetchAssoc())
+	   {
+	   $country[$data['country_name']]=$data['country_name'];
+	   }
+	   return $country;
+}
+function getListingData($productId=null)
+{
+$product=array();
+$query=db_select('gbl_experience_list','gel')
+	      ->fields('gel')
+		  ->condition('eid',$productId,'=')
+		  ->execute();
+while($data=$query->fetchAssoc())
+{
+$product=$data;
+}
+return $product;		  
+}
+/*******************get address details for google maps*****************************************/
+function getProductAddressData($productId=null)
+{
+$productId=$_GET["productId"];
+$result=array();
+$query=db_select('gbl_experience_list','gel')
+       ->fields('gel')
+	   ->condition('eid',$productId,'=')
+	   ->execute();
+$result=$query->fetchAssoc();
+drupal_json_output($result);
+exit();  
+}
+/***************************************************/
+function getproductCategoryByType($typeId=null)
+{
+$cat=array();
+$query=db_select('gbl_experience_category','gec')
+       ->fields('gec')
+	   ->condition('tid',$typeId,'=')
+	   ->execute();
+
+while($data=$query->fetchAssoc())
+{
+$cat[$data['cid']]=$data['category_name'];
+}
+return $cat;
+}
+function getExperienceCategoryData($typeId=null)
+{
+	if(!isset($_GET["action"])){
+		$string="";
+		$typeId=$_GET["typeId"];
+		$data=getproductCategoryByType($typeId);
+		if($data)
+		{
+			echo drupal_json_output($data);
+		}
+
+		else
+		{
+			echo 0;
+		}
+		exit();
+	}
+	else{
+		$string='<select class="select" id="edit-product-category"><option value="">Select category</option>';
+		$typeId=$_GET["typeId"];
+		$data=getproductCategoryByType($typeId);
+		if($data)
+		{
+			foreach($data as $key=>$value){
+				$string .= '<option value="'.$key.'">'.$value.'</option>';
+			}
+			echo $string.'<select><script> 
+			   jQuery(".select").selectBoxIt({
+			   showFirstOption: false,
+			  });	</script>';
+		}
+
+		else
+		{
+			$string .= '<option value="">No category found</option>';
+			echo $string.'<select><script> 
+			   jQuery(".select").selectBoxIt({
+			   showFirstOption: false,
+			  });	</script>';
+		}
+		exit();  
+	}
+}
+function getExperienceCategoryDataById($catId=null)
+{
+$query=db_select('gbl_experience_category','gec')
+       ->fields('gec')
+	   ->condition('cid',$catId,'=')
+	   ->execute();
+	 $result=$query->fetchAssoc();
+return $result;	 
+}
+
+
+function product_deal_types(){
+	return theme( 'deal_types');
+}
+
+function getLanguagesList(){
+	$lan=array();
+	$query=db_select('gbl_languages','la')
+		   ->fields('la')
+		   ->execute();
+
+	while($data=$query->fetchAssoc())
+	{
+	$lan[$data['id']]=$data['language'];
+	}
+	return $lan;	
+}
+function remove_pricing($pricingId=null)
+{
+
+$query=db_delete('gbl_pricing')
+       ->condition('id',$pricingId,'=')
+	   ->execute();
+return true;	   
+}
+function getSchedulingData($listingId=null)
+{
+$query=db_select('gbl_scheduling','gs')
+       ->fields('gs')
+	   ->condition('listing_id',$listingId,'=')
+	   ->execute();
+return $query->fetchAssoc();	   
+      
+}
+function getSchedulingSessionData($listingId=null)
+{
+$query=db_select('gbl_scheduling_sessions','gs')
+       ->fields('gs')
+	   ->condition('listing_id',$listingId,'=')
+	   ->execute();
+return $query->fetchAssoc();	         
+}
+
+function getSchedulingSessionData_new($listingId=null){
+
+	$query=db_select('gbl_scheduling_sessions','gs')
+       ->fields('gs')
+	   ->condition('listing_id',$listingId,'=')
+	   ->execute();	
+	return $query->fetchAll(PDO::FETCH_ASSOC);	      
+}
+
+
+function getScheduleSessionData($listingID){
+	$data = array();
+	$query = db_select('gbl_scheduling', 'sch');
+	$query->join('gbl_scheduling_sessions', 'se', 'sch.id = se.scheduleID');
+	$query->fields('sch',array('id','bookingMode'))
+	->fields('se',array('id','listing_id','startDate','startTime','endDate','endTime','repeatPeriodBy','repeatEvery','pricingData','endRepeatDate','reapeatDaysTime','scheduleID','defaultQuantity','is_all_day','avalability_min','avalability_max','privacy'))
+	->condition('sch.listing_id',$listingID)
+	->orderBy('id','ASC');
+	$result = $query->execute();
+	$record = $result->fetchAll(PDO::FETCH_ASSOC);
+	/* while($record = $result->fetchAssoc()) {
+		$data[] = $record;
+	}	 */
+	//echo "<pre>";Print_r($data);exit;
+	return $record;
+}
+function getDiscountInfo($listId=null,$offerType=null)
+{
+$query=db_select('gbl_offers_and_discount','gbl')
+       ->fields('gbl')
+	   ->condition('listing_id',$listId,'=')
+	   ->condition('offer_type',"%$offerType%",'like')
+	   ->execute();
+return $query->fetchAssoc();	   
+}
+function getListExtraPrice($listId=null,$priceId=null)
+{
+$result=array();
+$query=db_select('gbl_special_price','gcp')
+       ->fields('gcp');
+	if($priceId!=null)
+	{
+	$query->condition('sid',$priceId,'=');
+	}
+	$query->condition('listing_id',$listId,'=');
+	 $result1=$query->execute();
+while($data=$result1->fetchAssoc())
+{
+
+$result[]=$data;
+}	   
+return $result;   
+}
+
+function getListExtraPrice_new($listId=null)
+{
+
+$query=db_select('gbl_special_price','gs')
+   ->fields('gs')
+   ->condition('listing_id',$listId,'=')
+   ->execute();	
+return $query->fetchAll(PDO::FETCH_ASSOC);	
+
+}
+
+function getDiscountData($eid){
+	$discounData=array();
+	$query=db_select('gbl_offers_and_discount','d')
+		  ->fields('d')
+		  ->condition('listing_id',$eid,'=')
+		  ->execute();
+	while($data=$query->fetchAssoc())
+   {
+		$discounData[]=$data;
+   } 
+   return $discounData;	
+}
+function manage_product_list()
+{
+	global $user;
+	if(!$user->uid){
+	$dest = drupal_get_destination();
+		unset($_SESSION['destination']);
+		$_SESSION['destination']  = $dest["destination"];
+		drupal_goto('login', $dest);
+	}
+$title =$type ="";
+if(isset($_GET['title']) && $_GET['title'] != ""){
+		$title = $_GET['title'];
+	}
+if(isset($_GET['type']) && $_GET['type'] != ""){
+		$type = $_GET['type'];
+	}	
+$listing=manage_listing_data($title,$type);
+$output = '';
+$listing = pager_array_splice($listing, 12);
+$output .= theme('pager', array('quantity' => 12));
+return theme('manage_listing',array('listings'=>$listing,'pagination'=>$output))	;
+}
+/*****************************Manage Listing*******************************************************************************************/
+function manage_listing_data($title=null,$type=null)
+{
+global $user;
+$listing=array();
+$query=db_select('gbl_experience_list','gel')
+      ->fields('gel',array('eid','uid','title','brief_description','city','state','country','visibility_status','list_type'))
+	  ->condition('uid',$user->uid,'=');
+	if($title !="")
+	{
+	$query->condition(db_or()->condition('title',"%$title%",'like')->condition('short_description',"%$title%",'like'));
+  	}
+	if($type !="")
+	{
+	$query->condition('list_type',"%$type%",'like');
+  	}
+	
+$query->orderBy('created','DESC');
+$result=$query->execute();
+
+while($data=$result->fetchAssoc())
+{
+$listing[]=$data;
+}
+
+return $listing;  	  
+}
+function getListingMetaData($listingId=null)
+{
+$metaData=array();
+$query=db_select('gbl_listing_meta','glm')
+      ->fields('glm',array('key1','value1'))
+	  ->condition('listing_id',$listingId,'=')
+      ->execute();
+while($data=$query->fetchAssoc())
+{
+$metaData[]=$data;
+} 	  
+return $metaData;
+
+}
+function search_listing_form($form,&$form_state)
+{
+	$form=array();
+	$form['#method'] = 'get';
+	$form['search-class']=array(
+	'#prefix'=>'<div class="listing-search"><div class="listing_form_design">'
+	);
+	$form['title'] = array(
+	'#type' => 'textfield',
+	'#size' => '30',
+	'#default_value'=>isset($_GET['title'])?$_GET['title']:'',
+	'#attributes' => array('placeholder'=>'Search Listing'),
+	);
+	$form['search-class-end4'] = array(
+		'#prefix' => '</div><div class="listing_form_design">'
+	);
+	$form['type'] = array(
+	'#type' => 'select',
+	'#options'=>array(''=>'All','experience'=>'Experience listing','vacation'=>'Vacation Rental','hotel'=>'Hotels'),
+	'#default_value'=>isset($_GET['type'])?$_GET['type']:'',
+	'#attributes' => array('onchange' => 'this.form.submit();','class' => array('form-control')),
+	'#prefix'=>'<label>'.t('List Type').'</label>',
+	'#suffix'=>''
+	);
+	$form['search-class-end3'] = array(
+		'#prefix' => '</div><div class="listing_form_design">'
+	);
+
+	$form['submit'] = array(
+	'#type' => 'submit',
+	'#value' => t('Search'),
+	'#suffix'=>'</div>'
+	);
+
+	$form['search-class-end2'] = array(
+		'#prefix' => '</div>'
+	);
+	return $form;
+}
+/* View customers for Listing booked */
+/* Added on 17 nov */
+function view_customers()
+{
+global $user;
+$bookings=array();
+$bookingsCount=0;
+$listId=arg(2);
+$OverviewData=getOverviewData(arg(2));
+$title=$booking_status=$search_filter="";
+if($OverviewData['uid']!=$user->uid)
+{
+drupal_set_message('You are not authorize to access this list','error');
+drupal_goto('manage/listing');
+}
+if(isset($_GET['title']) && $_GET['title'] != ""){
+		$title = trim(check_plain($_GET['title']));
+	}
+if(isset($_GET['booking_status']) && $_GET['booking_status'] != ""){
+		$booking_status = trim(check_plain($_GET['booking_status']));
+	}	
+if(isset($_GET['search_filter']) && $_GET['search_filter'] != ""){
+  $search_filter = trim(check_plain($_GET['search_filter']));
+}	
+$bookings=getBookingCustomers($listId,$title,$booking_status,$search_filter);
+$bookingsCount=getBookingCustomersCount($listId,$title,$booking_status,$search_filter);
+$output = '';
+$bookings = pager_array_splice($bookings, 10);
+$output .= theme('pager', array('quantity' => 10));
+$searchForm=drupal_get_form('search_bookings_users_form');
+return theme('view_customers',array('bookings'=>$bookings,'bookingsCount'=>$bookingsCount,'pagination'=>$output,'OverviewData'=>$OverviewData,'searchForm'=>$searchForm))	;
+}
+function getBookingCustomers($listId=null,$title=null,$booking_status=null,$search_filter=null)
+{
+
+$query=db_select('gbl_booking','gb');
+//$query->join('gbl_experience_list','gel');
+$query->join('gbl_users_meta', 'gum', 'gum.uid = gb.uid');
+//$query->join('users', 'gum', 'gum.uid = gb.uid');//replace with users_meta
+$query->fields('gb');
+$query->fields('gum',array('name','mail','first_name','last_name','commission'));
+if($title !="")
+	{
+	
+	/***************************************/
+	$pos=strpos($title," ");
+		if($pos>0)
+		{
+		$titleArr=explode(" ",$title);
+		$title=array_filter($titleArr);
+		$titleResult=array_values($title);		
+			$title1=$titleResult[0];
+			$title2=$titleResult[1];
+		}
+		else
+		{	
+		$title1=$title;
+		$title2=$title;
+		}
+	/*****************************************/
+	
+	$query->condition(db_or()->condition('name',"%$title%",'like')->condition('mail',"%$title%",'like')->condition('mail',"%$title%",'like')->condition('first_name',"%$title1%",'like')->condition('last_name',"%$title2%",'like'));
+	
+}	
+if($booking_status!="")
+{
+$query->condition('booking_status',"%$booking_status%",'like');
+}
+if($search_filter!="")
+{
+$query->condition('arrive_at_date',$search_filter,'=');
+}
+//$query->addExpression('SUM(grand_total)', 'grand_profit');	
+//$query->fields('gel',array('title'));
+$query->condition('lid',$listId,'=');
+$query->orderBy('gb.created', 'DESC');
+$result=$query->execute();
+while($record = $result->fetchAssoc()) {
+		$data[] = $record;
+	}	
+return $data;  
+
+}
+function getBookingCustomersCount($listId=null,$title=null,$booking_status=null,$search_filter=null)
+{
+$query=db_select('gbl_booking','gb');
+$query->join('gbl_users_meta', 'gum', 'gum.uid = gb.uid');
+//$query->join('users', 'gum', 'gum.uid = gb.uid');//replace with users_meta
+$query->fields('gb');
+$query->fields('gum',array('name','mail','first_name','last_name','commission'));
+$query->condition('lid',$listId,'=');
+if($title !="")
+	{
+	
+	/***************************************/
+	$pos=strpos($title," ");
+		if($pos>0)
+		{
+		$titleArr=explode(" ",$title);
+		$title=array_filter($titleArr);
+		$titleResult=array_values($title);		
+			$title1=$titleResult[0];
+			$title2=$titleResult[1];
+		}
+		else
+		{	
+		$title1=$title;
+		$title2=$title;
+		}
+	/*****************************************/
+	
+	$query->condition(db_or()->condition('name',"%$title%",'like')->condition('mail',"%$title%",'like')->condition('mail',"%$title%",'like')->condition('first_name',"%$title1%",'like')->condition('last_name',"%$title2%",'like'));
+	
+}	
+if($booking_status!="")
+{
+$query->condition('booking_status',"%$booking_status%",'like');
+}
+$result=$query->execute();	
+return $result->rowCount(); 
+}
+function search_bookings_users_form($form,&$form_state)
+{
+$form=array();
+$form['#method'] = 'get';
+$form['search-class']=array(
+'#prefix'=>'<div class="listing-search">'
+);
+/* $form['type'] = array(
+'#title' => t('Filter By List Type'),
+'#type' => 'select',
+'#options'=>array(''=>'All','experience'=>'Experience listing','vacation'=>'Vacation Rental','hotel'=>'Hotels'),
+'#default_value'=>isset($_GET['type'])?$_GET['type']:'',
+'#attributes' => array('onchange' => 'this.form.submit();','class' => array('form-control')),
+); */
+
+$form['booking_status'] = array(
+'#title' => t('Filter By Booking Status'),
+'#type' => 'select',
+'#options'=>array(''=>'All','pending'=>'Pending','completed'=>'Completed','refund_request'=>'Refund Requested','refunded'=>'Refunded','booked'=>'Booked'),
+'#default_value'=>isset($_GET['booking_status'])?$_GET['booking_status']:'',
+'#attributes' => array('class' => array('form-control')),
+);
+$form['search_filter'] = array(
+'#title' => t('Search By Arrival date'),
+'#type' => 'textfield',
+'#default_value'=>isset($_GET['search_filter'])?$_GET['search_filter']:'',
+'#attributes' => array('class' => array('form-control')),
+);
+$form['title'] = array(
+/* '#title' => t('Search'), */
+'#type' => 'textfield',
+/* '#value'=> 'Search', */
+'#size' => '30',
+'#default_value'=>isset($_GET['title'])?$_GET['title']:'',
+'#attributes' => array('placeholder'=>'Search Customer by name,email','class' => array('form-control')),
+);
+$form['submit'] = array(
+'#type' => 'submit',
+'#value' => t('Search'),
+'#suffix'=>'</div>'
+);
+return $form;
+} 
+function getCommisionByuserForBooking($eid=null,$uid=null)
+{
+$query 		= 	db_select('gbl_users_meta', 'u');
+$query ->join('gbl_experience_list','gel','gel.uid = u.uid');
+$query->fields('u',array('name','mail','uid','first_name','last_name','commission'));
+$query ->fields('gel',array('title','eid'));
+if($eid!="")
+{
+$query->condition('eid',$eid,'=');
+}
+if($uid!="")
+{
+$query->condition('u.uid',$uid,'=');
+}
+$result=$query->execute();
+return $result->fetchAssoc();
+}
+function list_visibility()
+{
+$visibility_status=$_POST['status'];
+	$listId =$_POST['typeId'];
+
+	if($visibility_status==1)
+	{
+		$visibility_status=0;
+	}	else {
+		$visibility_status=1;
+	}
+
+	$query=db_update('gbl_experience_list');
+	$query->fields(array('visibility_status'=>$visibility_status));
+	$query->condition('eid',$listId);
+	$result=$query->execute();	
+	echo $visibility_status;
+	die;
+}
+/*********Check if experience title is unique or already exist 
+**********/
+function getExperienceTitleData()
+{
+$title=trim($_POST['title']);
+$productId=trim($_POST['productId']);
+if($productId!="")
+{
+$values = getOverviewData($productId);
+	if($title!=$values['title'])
+	{
+	
+	$query=db_select('gbl_experience_list','gel')
+		   ->fields('gel',array('title'))
+		   ->condition('title',$title,'like'); 
+	$result=$query->execute();
+	$data=$result->fetchAssoc();
+	if($data['title'])
+		{
+		echo "1";
+		die;
+		}
+		else
+		{
+		echo "0";
+		die;
+		}
+	}
+}
+else
+	{
+	$query=db_select('gbl_experience_list','gel')
+		   ->fields('gel',array('title'))
+		   ->condition('title',$title,'like'); 
+	$result=$query->execute();
+	$data=$result->fetchAssoc();
+		if($data['title'])
+		{
+		echo "1";
+		die;
+		}
+		else
+		{
+		echo "0";
+		die;
+		}
+	}	
+}
+
+function setMainImg(){
+	$query=db_update('gbl_experience_list')
+			->fields(array('main_img_fid'=>$_REQUEST['fid']))
+			->condition('eid',$_REQUEST["listingId"]);
+	$result=$query->execute();	
+	echo $result;exit;
+}
+function checkImagecounter(){
+
+	echo "<pre>";Print_r($_POST);exit;
+	$query=db_select('gbl_listing_meta','l')
+		   ->fields('l')
+		   ->condition('listing_id',$listing_id)->condition('key1','photo_data'); 
+	$result=$query->execute();
+	$data=$result->fetchAssoc();
+
+}
+
+
+/* Edit Session */
+function product_edit_session(){	
+	drupal_add_css(drupal_get_path('theme', 'gloobers_new').'/stylesheet/for-head-foot.css', 'file');
+	$SessionForm = drupal_get_form("product_edit_session_form");
+	return theme('add_product',array('SessionForm'=>$SessionForm));
+}
+function product_edit_session_form($form,&$form_state){
+	$form=array();
+	
+	$form['#method'] = 'post';
+	
+	$form['html']=array('#prefix'=>'<div class="col-md-12 col-sm-12 col-xs-12"><h2 class="pagehead">Calendar</h2><p class="subtitle">Edit session price</p></div>');
+	$form['edit_session']=array(
+	'#prefix'=>'<div class="col-md-9 col-sm-12 cl-xs-12"><div id="calendar_new">',
+	'#suffix'=>'</div><div class="clearfix"></div><fieldset class="marg_bottom_80"></fieldset></div>'
+	);
+	$form['edit_session_values']=array(
+		'#type'=>'hidden',
+		'#attributes'=>array('id'=>'edit_session_data_value')
+	);
+	
+	$form['submit'] = array(
+	'#type' => 'submit',
+	'#prefix'=>'<fieldset class="full_width_fix"><div class="col-xs-12 col-sm-9 col-md-9">',
+	'#value' => t('Save'),
+	'#suffix'=>'</div></fieldset>'
+	);
+	return $form;
+}
+
+// Updated 12-02-2016 //Updated 18-02-2016 // updated 2/22/2016
+function product_edit_session_form_submit($form,&$form_state){
+    
+	$EditedsessionData=array();
+	parse_str($_POST['edit_session_values'],$EditedsessionData);
+
+	/*echo "<pre>";
+	Print_r($EditedsessionData);exit;*/
+	$listing_id=arg(3);
+	$edited_date=$EditedsessionData['edited_date'];	
+	$edited_time=date("H:i", strtotime($EditedsessionData['edited_time']));	
+	unset($EditedsessionData['edited_date']);	
+	unset($EditedsessionData['edited_time']);	
+
+	/*echo "<pre>";
+	Print_r($EditedsessionData);exit;*/
+
+	if($EditedsessionData) {
+
+
+		if($EditedsessionData['price_checkbox']=='checked'){
+
+			$AlreadyEdited=db_select('gbl_scheduling_sessions_edited','es')->fields('es')->condition('listing_id',$listing_id)->condition('edited_date',trim($edited_date))->condition('status',1)->execute();
+				$AlreadyEditedResult=$AlreadyEdited->fetchAll(PDO::FETCH_ASSOC);
+				//echo "<pre>";print_r($AlreadyEditedResult);exit;
+				if($AlreadyEditedResult) {
+
+					$query=db_update('gbl_scheduling_sessions_edited')
+					->fields(array('listing_id'=>$listing_id,
+					'edited_date'=>$edited_date,
+					'status'=>1,
+					'pricingData'=>serialize($EditedsessionData),
+					))->condition('edited_date',$edited_date)->condition('status',1);	
+					$result=$query->execute();
+
+				} else {
+
+					$query = db_delete("gbl_scheduling_sessions_edited")
+					->condition('listing_id',$listing_id)->condition('edited_date',$edited_date);
+					$query->execute();
+					
+					$query=db_insert('gbl_scheduling_sessions_edited')
+					->fields(array('listing_id'=>$listing_id,
+					'edited_date'=>$edited_date,
+					'status'=>1,
+					'pricingData'=>serialize($EditedsessionData),
+					));
+					$result=$query->execute();		
+				}
+			
+
+		} else {
+			
+				$AlreadyEdited=db_select('gbl_scheduling_sessions_edited','es')->fields('es')->condition('listing_id',$listing_id)->condition('edited_date',trim($edited_date))->condition('start_time',trim($edited_time))->execute();
+				$AlreadyEditedResult=$AlreadyEdited->fetchAll(PDO::FETCH_ASSOC);
+				/*echo "<pre>";print_r($AlreadyEditedResult);exit;*/
+				if($AlreadyEditedResult) {
+
+					$query=db_update('gbl_scheduling_sessions_edited')
+					->fields(array('listing_id'=>$listing_id,
+					'edited_date'=>$edited_date,
+					'start_time'=>$edited_time,
+					'status'=>0,
+					'pricingData'=>serialize($EditedsessionData),
+					))->condition('edited_date',$edited_date)->condition('start_time',$edited_time);	
+					$result=$query->execute();
+
+				} else {
+
+					$query = db_delete("gbl_scheduling_sessions_edited")
+					->condition('listing_id',$listing_id)->condition('edited_date',$edited_date)->condition('status',1);
+					$query->execute();
+
+					$query=db_insert('gbl_scheduling_sessions_edited')
+					->fields(array('listing_id'=>$listing_id,
+					'edited_date'=>$edited_date,
+					'start_time'=>$edited_time,
+					'status'=>0,
+					'pricingData'=>serialize($EditedsessionData),
+					));
+					$result=$query->execute();		
+				}
+
+		}
+	
+
+	
+ }
+    
+drupal_set_message('Session for the '.$edited_date.' date is updated successfully.');
+
+	if(arg(3)=='192'){
+	 drupal_goto('product/session/edit/'.arg(3));	
+	}	else {
+	 drupal_goto('product/add/extra/'.arg(3));
+	}	
+	
+
+
+}
+
+function product_edit_session_form_validate($form,&$form_state){
+	
+} 
+ //Updated 17-02-2016
+function getScheduleSessionPerData($listingID,$sessId){
+	$data = array();
+	$query = db_select('gbl_scheduling', 'sch');
+	$query->join('gbl_scheduling_sessions', 'se', 'sch.id = se.scheduleID');
+	$query->fields('sch',array('id'))
+	->fields('se',array('id','listing_id','startDate','startTime','endDate','endTime','repeatPeriodBy','repeatEvery','pricingData','endRepeatDate','reapeatDaysTime','scheduleID','defaultQuantity','is_all_day'))
+	->condition('sch.listing_id',$listingID)
+	->condition('se.id',$sessId)	
+	->orderBy('startDate','ASC');
+	$result = $query->execute();
+	$record = $result->fetchAll(PDO::FETCH_ASSOC);
+	return $record;
+}
+/* End Edit Session */
+
+ //Updated 17-02-2016
+function geteachsessiondata($listing_id=null,$ses_id=null) {
+	
+    $lisingid = $_POST['listing_id'] ;
+    $sesid = $_POST['ses_id'] ;
+    
+	$data = array();
+	$query = db_select('gbl_scheduling', 'sch');
+	$query->join('gbl_scheduling_sessions', 'se', 'sch.id = se.scheduleID');
+	$query->fields('sch',array('id'))
+	->fields('se',array('id','listing_id','startDate','startTime','endDate','endTime','avalability_min','avalability_max','repeatPeriodBy','repeatEvery','pricingData','endRepeatDate','reapeatDaysTime','scheduleID','defaultQuantity','is_all_day'))
+	->condition('sch.listing_id', $lisingid)
+	->condition('se.id', $sesid)
+	->orderBy('startDate','ASC');
+	
+	$result = $query->execute();
+	$record = $result->fetchAll(PDO::FETCH_ASSOC);
+
+	foreach($record as $key=>$value) {				
+	$records = $value;
+	}
+	$records['pricingData'] = unserialize($records['pricingData']);
+	
+	echo json_encode($records);exit;
+	
+
+}
+ //End Updated 17-02-2016
+
+ //Updated 18-02-2016
+function getediteddates($listing_id=null,$ses_id=null) {
+	
+    $lisingid = $_POST['listing_id'] ;
+    $sesid = $_POST['ses_id'] ;
+  
+	$data = array();
+	$query = db_select('gbl_scheduling_sessions_edited', 'sch');	
+	$query->fields('sch',array('edited_date','start_time','end_time','pricingData'))	
+	->condition('sch.listing_id', $lisingid)
+	->condition('sch.scheduling_session_id', $sesid)
+	->orderBy('edited_date','ASC');
+	
+	$result = $query->execute();
+	$record = $result->fetchAll(PDO::FETCH_ASSOC);	
+
+	$i=0;
+	foreach($record as $key=>$value) {				
+	$records[$i] = $value;
+	$records[$i]['pricingData'] = unserialize($records[$i]['pricingData']);
+	$i++;
+	}
+	
+	//echo "<pre>";print_r($records);exit;
+	echo json_encode($records);exit;
+	
+
+}
+ //End Updated 18-02-2016
+// update 2/22/2016
+function getsessionspecialPrice($sesId=null,$priceId=null)
+{
+$result=array();
+$query=db_select('gbl_special_price','gcp')
+       ->fields('gcp');
+	if($priceId!=null)
+	{
+	$query->condition('sid',$priceId,'=');
+	}
+	$query->condition('	session_ID',$sesId,'=');
+	 $result1=$query->execute();
+while($data=$result1->fetchAssoc())
+{
+
+$result[]=$data;
+}	   
+return $result;   
+}
+//end updated 2/22/2016 //
+
+function getpassport(){
+
+	global $user;
+	
+	$description='I live there';
+	$query=db_select('gbl_user_passeport','p')
+				  ->fields('p')
+				  ->condition('uid',$user->uid)
+				  ->condition('description',$description);
+	
+	$result=$query->execute();
+	$user_homeTown = $result->fetchAssoc();
+	return $user_homeTown;
+	
+}

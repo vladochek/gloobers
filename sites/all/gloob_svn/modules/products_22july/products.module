@@ -1,0 +1,50 @@
+<?php
+module_load_include('inc', 'products', 'includes/add_product.navigation');
+module_load_include('inc', 'products', 'includes/add_product.submit');
+function products_menu() {
+  $items = array();
+  $items['product/add'] = array(
+    'title' => 'Add Product',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('product_add_form'),
+    'access arguments' => array('access content'),
+    'file' => 'includes/product_add.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['product/add/images'] = array(
+    'title' => 'Add Images',
+    'page callback' => 'product_add_images',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+function product_add_images(){
+	if (!empty($_FILES)) {
+		
+		global $user;
+		
+		$filepath = 'public://products';
+		$ext = findexts ($_FILES["file"]["name"]) ;
+		$fileName = time().".".$ext;
+
+		move_uploaded_file($_FILES["file"]["tmp_name"],$_SERVER["DOCUMENT_ROOT"]."/gloobers/sites/default/files/products/".$fileName);
+		
+		$file = file_load($_SERVER["DOCUMENT_ROOT"]."/gloobers/sites/default/files/products/".$fileName);
+		$file->uid = $user->uid;
+		$file->filename = $fileName;
+		$file->uri = $filepath."/".$fileName;
+		$file->status = FILE_STATUS_PERMANENT;
+		file_save($file);
+	}
+}
+
+ function findexts ($filename) 
+ { 
+	 $filename = strtolower($filename) ; 
+	 $exts = split("[/\\.]", $filename) ; 
+	 $n = count($exts)-1; 
+	 $exts = $exts[$n]; 
+	 return $exts; 
+ }

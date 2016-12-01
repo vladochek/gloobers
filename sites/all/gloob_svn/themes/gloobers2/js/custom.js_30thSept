@@ -1,0 +1,1354 @@
+var jq=jQuery.noConflict();
+jq(document).ready(function(){
+	   jq(".form-item-product-pricing-max-participants").hide();
+	   jq(".form-item-product-pricing-person-type").hide();
+	   if(jq(".form-item-product-pricing-type select").val() == "PER_PERSON"){
+			jq(".form-item-product-item-label").hide();
+			jq(".form-item-product-pricing-min").hide();
+			jq(".form-item-product-pricing-max").hide(); 
+			jq(".form-item-product-pricing-day-type").hide();
+			jq(".form-item-product-pricing-minute-type").hide();
+			jq(".form-item-product-pricing-hour-type").hide();
+			jq(".form-item-product-pricing-key").show();
+			jq(".form-item-product-pricing-value").show();
+			jq(".form-item-product-pricing-person-type").hide();
+			jq(".form-item-product-pricing-max-participants").hide();	
+	   }
+	   if(jq(".form-item-product-pricing-type select").val() == "PER_ITEM"){
+			jq(".form-item-product-item-label").show();
+			jq(".form-item-product-pricing-min").hide();
+			jq(".form-item-product-pricing-max").hide();
+			jq(".form-item-product-pricing-day-type").hide();
+			jq(".form-item-product-pricing-minute-type").hide();
+			jq(".form-item-product-pricing-hour-type").hide();
+			jq(".form-item-product-pricing-key").hide();
+			jq(".form-item-product-pricing-value").show();
+			jq(".form-item-product-pricing-person-type").hide();
+			jq(".form-item-product-pricing-max-participants").hide();	
+	   }
+	   if(jq(".form-item-product-pricing-type select").val() == "FIXED"){
+			jq(".form-item-product-item-label").hide();
+			jq(".form-item-product-pricing-min").hide();
+			jq(".form-item-product-pricing-max").hide();
+			jq(".form-item-product-pricing-day-type").hide();
+			jq(".form-item-product-pricing-minute-type").hide();
+			jq(".form-item-product-pricing-hour-type").hide();
+			jq(".form-item-product-pricing-key").hide();
+			jq(".form-item-product-pricing-value").show();
+			jq(".form-item-product-pricing-person-type").hide();
+			jq(".form-item-product-pricing-max-participants").hide();	
+	   }
+	   if(jq(".form-item-product-pricing-type select").val() == "PER_DAY"){
+			jq(".form-item-product-item-label").hide();
+			jq(".form-item-product-pricing-min").show();
+			jq(".form-item-product-pricing-max").show();
+			jq(".form-item-product-pricing-day-type").show();
+			jq(".form-item-product-pricing-minute-type").hide();
+			jq(".form-item-product-pricing-hour-type").hide();
+			jq(".form-item-product-pricing-key").hide();
+			jq(".form-item-product-pricing-value").show();
+			jq(".form-item-product-pricing-person-type").hide();
+			jq(".form-item-product-pricing-max-participants").hide();	
+	   }
+	   if(jq(".form-item-product-pricing-type select").val() == "PER_HOUR"){
+			jq(".form-item-product-item-label").hide();
+			jq(".form-item-product-pricing-min").show();
+			jq(".form-item-product-pricing-max").show();
+			jq(".form-item-product-pricing-day-type").hide();
+			jq(".form-item-product-pricing-minute-type").hide();
+			jq(".form-item-product-pricing-hour-type").show();
+			jq(".form-item-product-pricing-key").hide();
+			jq(".form-item-product-pricing-value").show();
+			jq(".form-item-product-pricing-person-type").hide();
+			jq(".form-item-product-pricing-max-participants").hide();	
+	   }
+	  if(jq(".form-item-product-pricing-type select").val() == "PER_MINUTE"){
+			jq(".form-item-product-item-label").hide();
+			jq(".form-item-product-pricing-min").show();
+			jq(".form-item-product-pricing-max").show();
+			jq(".form-item-product-pricing-day-type").hide();
+			jq(".form-item-product-pricing-minute-type").show();
+			jq(".form-item-product-pricing-hour-type").hide();
+			jq(".form-item-product-pricing-key").hide();
+			jq(".form-item-product-pricing-value").show();
+			jq(".form-item-product-pricing-person-type").hide();
+			jq(".form-item-product-pricing-max-participants").hide();	
+	   }
+	   if(jq(".form-item-product-pricing-key select").val() == "family-of-three" || jq(".form-item-product-pricing-key select").val() == "family-of-four" || jq(".form-item-product-pricing-key select").val() == "family-of-five"){
+				jq(".form-item-product-pricing-person-type").show();
+				jq(".form-item-product-pricing-max-participants").hide();
+	   }
+	   if(jq(".form-item-product-pricing-key select").val() == "group"){
+				jq(".form-item-product-pricing-person-type").show();
+				jq(".form-item-product-pricing-max-participants").show();
+	   }	   
+	   if (jq("#edit-annulation-policy").is(":checked")) {
+			   jq(".form-item-annulation-policy-days").show();
+			   jq(".form-item-annulation-policy-refund").show();
+	   }
+	   
+	   if(jq("#edit-product-pricing-quantity-type").val() == "Limited"){
+			jq(".form-item-quantity-min").show();
+			jq(".form-item-quantity-max").show();
+			jq(".form-item-quantity-label").show();
+
+	   }
+	   else if(jq("#edit-product-pricing-quantity-type").val() == "Unlimited"){
+			jq(".form-item-quantity-min").hide();
+			jq(".form-item-quantity-max").hide();
+			jq(".form-item-quantity-label").hide();
+	   }	   
+
+		jq("#edit-product-pricing-quantity-type").change(function(){
+			if(jq(this).val() == "Limited"){
+				jq(".form-item-quantity-min").show();
+				jq(".form-item-quantity-max").show();
+				jq(".form-item-quantity-label").show();
+
+			}
+			else if(jq(this).val() == "Unlimited"){
+				jq(".form-item-quantity-min").hide();
+				jq(".form-item-quantity-max").hide();
+				jq(".form-item-quantity-label").hide();
+			}			
+		});	
+	   
+	/*    jq("#product-rules-form .relaxed").hide();
+	   jq("#product-rules-form .flexible").hide();
+	   jq("#product-rules-form .moderate").hide();
+	   jq("#product-rules-form .strict").hide();
+	   jq("#product-rules-form .super_strict").hide(); */
+	   jq("#product-rules-form .cancelation-policy-entire-stay").hide();
+	   jq("#product-rules-form .cancelation-policy-pending-stay").hide();
+	     /**********************************************************************************/
+	   jq("#product-rules-form .custom-policy").hide();
+	   jq("#edit-cancellation-policies-type").change(function(){
+	   if(jq(this).val() == "Custom"){
+	            jq("#product-rules-form .custom-policy").show();   
+				jq("#product-rules-form .cancelation-policy-entire-stay").show();
+				jq("#product-rules-form .cancelation-policy-pending-stay").show();
+		   }
+		   else
+		   {
+		   jq("#product-rules-form .custom-policy").hide();
+		   }
+	   });
+	   if(jq("#edit-cancellation-policies-type").val()=="Custom")
+	   {
+	    jq("#product-rules-form .custom-policy").show();
+	   }
+	  /************************************************************************************************/ 
+	   
+	   if(jq("#edit-cancellation-policies-type").val() == "Relaxed"){
+			jq("#product-rules-form .relaxed").show();
+
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Flexible"){
+			jq("#product-rules-form .flexible").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Moderate"){
+			jq("#product-rules-form .moderate").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Strict"){
+			jq("#product-rules-form .strict").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Super-Strict"){
+			jq("#product-rules-form .super_strict").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Custom"){
+	           //jq("#product-rules-form .custom-policy").show(); 
+		   jq("#product-rules-form .cancelation-policy-entire-stay").show();
+		   jq("#product-rules-form .cancelation-policy-pending-stay").show();
+	   }
+       
+		jq(".form-type-select form-item-openning-hours-days").hide();
+	   if(jq("#edit-openning-hours-type").val() == "every-day"){
+			jq(".form-item-openning-hours-days").hide();
+			jq(".form-item-openning-hours-dates").hide();
+
+	   }
+	   else if(jq("#edit-openning-hours-type").val() == "specific-days"){
+			jq(".form-item-openning-hours-days").show();
+			jq(".form-item-openning-hours-dates").hide();
+	   }
+	   else if(jq("#edit-openning-hours-type").val() == "specific-dates"){
+			jq(".form-item-openning-hours-days").hide();
+			jq(".form-item-openning-hours-dates").show();
+	   }
+
+	   jq("#edit-openning-hours-type").change(function(){
+		   if(jq(this).val() == "every-day"){
+				jq(".form-item-openning-hours-days").hide();
+				jq(".form-item-openning-hours-dates").hide();
+
+		   }
+		   else if(jq(this).val() == "specific-days"){
+				jq(".form-item-openning-hours-days").show();
+				jq(".form-item-openning-hours-dates").hide();
+		   }
+		   else if(jq(this).val() == "specific-dates"){
+				jq(".form-item-openning-hours-days").hide();
+				jq(".form-item-openning-hours-dates").show();
+		   }			
+	   });	   
+		jq(".rentals-scheduling").hide();
+
+		if(jq("#edit-rentals-dates-available").val() == "ALWAYS"){
+			jq(".rentals-scheduling").hide();
+
+		}
+		else if(jq("#edit-rentals-dates-available").val() == "MOSTLY" || jq("#edit-rentals-dates-available").val() == "OCCASIONNALY"){
+			jq(".rentals-scheduling").show();
+		}
+	   
+	   jq("#edit-rentals-dates-available").change(function(){
+		   if(jq(this).val() == "ALWAYS"){
+				jq(".rentals-scheduling").hide();
+
+		   }
+		   else if(jq(this).val() == "MOSTLY" || jq(this).val() == "OCCASIONNALY"){
+				jq(".rentals-scheduling").show();
+		   }		
+	   });
+	   
+		if (jq("#edit-miscellaneous-fees-included").is(":checked")) {
+			jq(".miscellaneous_fees").hide();
+		}
+		else{
+			jq(".miscellaneous_fees").show();
+		}
+		
+		jq("#edit-miscellaneous-fees-included").click(function(){
+			if (jq(this).is(":checked")) {
+				jq(".miscellaneous_fees").hide();
+			}
+			else{
+				jq(".miscellaneous_fees").show();
+			}
+		});
+		
+		jq(".form-type-select form-item-openning-hours-days").hide();
+	   if(jq("#edit-sessions-type").val() == "Single-time"){
+			jq(".form-item-sessions-date").show();
+			jq(".form-item-sessions-time").show();
+			jq(".form-item-sessions-days").hide();
+
+	   }
+	   else if(jq("#edit-sessions-type").val() == "every"){
+			jq(".form-item-sessions-time").show();
+			jq(".form-item-sessions-days").show();
+			jq(".form-item-sessions-date").hide();
+	   }
+/* 	   else if(jq("#edit-openning-hours-type").val() == "specific-dates"){
+			jq(".form-item-openning-hours-days").hide();
+	   } */
+	   else if(jq("#edit-sessions-type").val() == "on-demand"){
+			jq(".form-item-sessions-time").hide();
+			jq(".form-item-sessions-days").hide();
+			jq(".form-item-sessions-date").hide();
+	   }	
+	   jq("#edit-sessions-type").change(function(){
+		   if(jq(this).val() == "Single-time"){
+				jq(".form-item-sessions-date").show();
+				jq(".form-item-sessions-time").show();
+				jq(".form-item-sessions-days").hide();
+				jq(".form-item-sessions-time-from").show();
+				jq(".form-item-sessions-time-to").show();
+		   }
+		   else if(jq(this).val() == "every"){
+
+				jq(".form-item-sessions-days").show();
+				jq(".form-item-sessions-date").hide();
+				jq(".form-item-sessions-time-from").show();
+				jq(".form-item-sessions-time-to").show();
+		   }
+		   else if(jq(this).val() == "on-demand"){
+				jq(".form-item-sessions-time").hide();
+				jq(".form-item-sessions-days").hide();
+				jq(".form-item-sessions-date").hide();
+				jq(".form-item-sessions-time-from").hide();
+				jq(".form-item-sessions-time-to").hide();
+		   }		   
+	   });	
+	   
+	   jq("#edit-cancellation-policies-type").change(function(){
+		   if(jq(this).val() == "Relaxed"){
+				jq("#product-rules-form .relaxed").show();
+				jq("#product-rules-form .flexible").hide();
+				jq("#product-rules-form .moderate").hide();
+				jq("#product-rules-form .strict").hide();
+				jq("#product-rules-form .super_strict").hide();
+				jq("#product-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#product-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Flexible"){
+				jq("#product-rules-form .relaxed").hide();
+				jq("#product-rules-form .flexible").show();
+				jq("#product-rules-form .moderate").hide();
+				jq("#product-rules-form .strict").hide();
+				jq("#product-rules-form .super_strict").hide();
+				jq("#product-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#product-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Moderate"){
+				jq("#product-rules-form .relaxed").hide();
+				jq("#product-rules-form .flexible").hide();
+				jq("#product-rules-form .moderate").show();
+				jq("#product-rules-form .strict").hide();
+				jq("#product-rules-form .super_strict").hide();
+				jq("#product-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#product-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Strict"){
+				jq("#product-rules-form .relaxed").hide();
+				jq("#product-rules-form .flexible").hide();
+				jq("#product-rules-form .moderate").hide();
+				jq("#product-rules-form .strict").show();
+				jq("#product-rules-form .super_strict").hide();
+				jq("#product-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#product-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Super-Strict"){
+				jq("#product-rules-form .relaxed").hide();
+				jq("#product-rules-form .flexible").hide();
+				jq("#product-rules-form .moderate").hide();
+				jq("#product-rules-form .strict").hide();
+				jq("#product-rules-form .super_strict").show();
+				jq("#product-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#product-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Custom"){
+				jq("#product-rules-form .relaxed").hide();
+				jq("#product-rules-form .flexible").hide();
+				jq("#product-rules-form .moderate").hide();
+				jq("#product-rules-form .strict").hide();
+				jq("#product-rules-form .super_strict").hide();
+				jq("#product-rules-form .cancelation-policy-entire-stay").show();
+				jq("#product-rules-form .cancelation-policy-pending-stay").show();
+		   }
+	   });
+	   
+
+	   jq("#restaurant-rules-form .relaxed").hide();
+	   jq("#restaurant-rules-form .flexible").hide();
+	   jq("#restaurant-rules-form .moderate").hide();
+	   jq("#restaurant-rules-form .strict").hide();
+	   jq("#restaurant-rules-form .super_strict").hide();
+	   jq("#restaurant-rules-form .cancelation-policy-entire-stay").hide();
+	   jq("#restaurant-rules-form .cancelation-policy-pending-stay").hide();
+	   
+	   if(jq("#edit-cancellation-policies-type").val() == "Relaxed"){
+			jq("#restaurant-rules-form .relaxed").show();
+
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Flexible"){
+			jq("#restaurant-rules-form .flexible").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Moderate"){
+			jq("#restaurant-rules-form .moderate").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Strict"){
+			jq("#restaurant-rules-form .strict").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Super-Strict"){
+			jq("#restaurant-rules-form .super_strict").show();
+	   }
+	   else if(jq("#edit-cancellation-policies-type").val() == "Custom"){
+		   jq("#restaurant-rules-form .cancelation-policy-entire-stay").show();
+		   jq("#restaurant-rules-form .cancelation-policy-pending-stay").show();
+	   }
+
+	 
+	   jq("#edit-cancellation-policies-type").change(function(){
+		   if(jq(this).val() == "Relaxed"){
+				jq("#restaurant-rules-form .relaxed").show();
+				jq("#restaurant-rules-form .flexible").hide();
+				jq("#restaurant-rules-form .moderate").hide();
+				jq("#restaurant-rules-form .strict").hide();
+				jq("#restaurant-rules-form .super_strict").hide();
+				jq("#restaurant-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#restaurant-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Flexible"){
+				jq("#restaurant-rules-form .relaxed").hide();
+				jq("#restaurant-rules-form .flexible").show();
+				jq("#restaurant-rules-form .moderate").hide();
+				jq("#restaurant-rules-form .strict").hide();
+				jq("#restaurant-rules-form .super_strict").hide();
+				jq("#restaurant-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#restaurant-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Moderate"){
+				jq("#restaurant-rules-form .relaxed").hide();
+				jq("#restaurant-rules-form .flexible").hide();
+				jq("#restaurant-rules-form .moderate").show();
+				jq("#restaurant-rules-form .strict").hide();
+				jq("#restaurant-rules-form .super_strict").hide();
+				jq("#restaurant-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#restaurant-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Strict"){
+				jq("#restaurant-rules-form .relaxed").hide();
+				jq("#restaurant-rules-form .flexible").hide();
+				jq("#restaurant-rules-form .moderate").hide();
+				jq("#restaurant-rules-form .strict").show();
+				jq("#restaurant-rules-form .super_strict").hide();
+				jq("#restaurant-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#restaurant-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Super-Strict"){
+				jq("#restaurant-rules-form .relaxed").hide();
+				jq("#restaurant-rules-form .flexible").hide();
+				jq("#restaurant-rules-form .moderate").hide();
+				jq("#restaurant-rules-form .strict").hide();
+				jq("#restaurant-rules-form .super_strict").show();
+				jq("#restaurant-rules-form .cancelation-policy-entire-stay").hide();
+				jq("#restaurant-rules-form .cancelation-policy-pending-stay").hide();
+		   }
+		   else if(jq(this).val() == "Custom"){
+				jq("#restaurant-rules-form .relaxed").hide();
+				jq("#restaurant-rules-form .flexible").hide();
+				jq("#restaurant-rules-form .moderate").hide();
+				jq("#restaurant-rules-form .strict").hide();
+				jq("#restaurant-rules-form .super_strict").hide();
+				jq("#restaurant-rules-form .cancelation-policy-entire-stay").show();
+				jq("#restaurant-rules-form .cancelation-policy-pending-stay").show();
+		   }
+	   });
+	   
+	   
+	   
+	   jq(".form-item-product-pricing-key select").change(function(){
+			if(jq(this).val() == "family-of-three" || jq(this).val() == "family-of-four" || jq(this).val() == "family-of-five"){
+				jq(".form-item-product-pricing-person-type").show();
+				jq(".form-item-product-pricing-max-participants").hide();
+			}
+			else if(jq(this).val() == "group"){
+				jq(".form-item-product-pricing-person-type").show();
+				jq(".form-item-product-pricing-max-participants").show();
+			}
+			else{
+				jq(".form-item-product-pricing-person-type").hide();
+				jq(".form-item-product-pricing-max-participants").hide();				
+			}
+	   });
+
+		jq(".form-item-product-pricing-type select").change(function(){
+		   if(jq(".form-item-product-pricing-type select").val() == "PER_PERSON"){
+				jq(".form-item-product-item-label").hide();
+				jq(".form-item-product-pricing-min").hide();
+				jq(".form-item-product-pricing-max").hide();
+				jq(".form-item-product-pricing-day-type").hide();
+				jq(".form-item-product-pricing-minute-type").hide();
+				jq(".form-item-product-pricing-hour-type").hide();
+				jq(".form-item-product-pricing-key").show();
+				jq(".form-item-product-pricing-value").show();
+				if(jq(".form-item-product-pricing-key select").val() == "group"){
+					jq(".form-item-product-pricing-person-type").show();
+					jq(".form-item-product-pricing-max-participants").show();					
+				}
+			   if(jq(".form-item-product-pricing-key select").val() == "family-of-three" || jq(".form-item-product-pricing-key select").val() == "family-of-four" || jq(".form-item-product-pricing-key select").val() == "family-of-five"){
+						jq(".form-item-product-pricing-person-type").show();
+						jq(".form-item-product-pricing-max-participants").hide();
+			   }
+		   }
+		   else if(jq(".form-item-product-pricing-type select").val() == "PER_ITEM"){
+				jq(".form-item-product-item-label").show();
+				jq(".form-item-product-pricing-min").hide();
+				jq(".form-item-product-pricing-max").hide();
+				jq(".form-item-product-pricing-day-type").hide();
+				jq(".form-item-product-pricing-minute-type").hide();
+				jq(".form-item-product-pricing-hour-type").hide();
+				jq(".form-item-product-pricing-key").hide();
+				jq(".form-item-product-pricing-value").show();
+				jq(".form-item-product-pricing-person-type").hide();
+				jq(".form-item-product-pricing-max-participants").hide();	
+		   }
+		   else if(jq(".form-item-product-pricing-type select").val() == "FIXED"){
+				jq(".form-item-product-item-label").hide();
+				jq(".form-item-product-pricing-min").hide();
+				jq(".form-item-product-pricing-max").hide();
+				jq(".form-item-product-pricing-day-type").hide();
+				jq(".form-item-product-pricing-minute-type").hide();
+				jq(".form-item-product-pricing-hour-type").hide();
+				jq(".form-item-product-pricing-key").hide();
+				jq(".form-item-product-pricing-value").show();
+				jq(".form-item-product-pricing-person-type").hide();
+				jq(".form-item-product-pricing-max-participants").hide();	
+		   }
+		   else if(jq(".form-item-product-pricing-type select").val() == "PER_DAY"){
+				jq(".form-item-product-item-label").hide();
+				jq(".form-item-product-pricing-min").show();
+				jq(".form-item-product-pricing-max").show();
+				jq(".form-item-product-pricing-day-type").show();
+				jq(".form-item-product-pricing-minute-type").hide();
+				jq(".form-item-product-pricing-hour-type").hide();
+				jq(".form-item-product-pricing-key").hide();
+				jq(".form-item-product-pricing-value").show();
+				jq(".form-item-product-pricing-person-type").hide();
+				jq(".form-item-product-pricing-max-participants").hide();	
+		   }
+		   else if(jq(".form-item-product-pricing-type select").val() == "PER_HOUR"){
+				jq(".form-item-product-item-label").hide();
+				jq(".form-item-product-pricing-min").show();
+				jq(".form-item-product-pricing-max").show();
+				jq(".form-item-product-pricing-day-type").hide();
+				jq(".form-item-product-pricing-minute-type").hide();
+				jq(".form-item-product-pricing-hour-type").show();
+				jq(".form-item-product-pricing-key").hide();
+				jq(".form-item-product-pricing-value").show();
+				jq(".form-item-product-pricing-person-type").hide();
+				jq(".form-item-product-pricing-max-participants").hide();	
+		   }
+		   else if(jq(".form-item-product-pricing-type select").val() == "PER_MINUTE"){
+				jq(".form-item-product-item-label").hide();
+				jq(".form-item-product-pricing-min").show();
+				jq(".form-item-product-pricing-max").show();
+				jq(".form-item-product-pricing-day-type").hide();
+				jq(".form-item-product-pricing-minute-type").show();
+				jq(".form-item-product-pricing-hour-type").hide();
+				jq(".form-item-product-pricing-key").hide();
+				jq(".form-item-product-pricing-value").show();
+				jq(".form-item-product-pricing-person-type").hide();
+				jq(".form-item-product-pricing-max-participants").hide();	
+		   }		
+		})	
+		
+		if (jq("#edit-purchased-as-gift").is(":checked")) {
+		   jq(".form-item-gift-card-expires").show();
+		}
+			
+		jq("#edit-purchased-as-gift").click(function(){
+			if (jq("#edit-purchased-as-gift").is(":checked")) {
+			   jq(".form-item-gift-card-expires").show();
+			}
+			else{
+				jq(".form-item-gift-card-expires").hide();
+			}
+		});
+		
+		if (jq("#edit-special-deposit-rules").is(":checked")) {
+		   jq(".form-item-special-deposit-rules-type").show();
+		   if(jq("#edit-special-deposit-rules-type").val() == "DEPOSIT_PERCENT"){
+				jq(".form-item-special-deposit-rules-value-perc").show();
+				jq(".form-item-special-deposit-rules-value-dollor").hide();
+		   }
+		   else if((jq("#edit-special-deposit-rules-type").val() == "DEPOSIT_FIXED") ||  (jq("#edit-special-deposit-rules-type").val() == "DEPOSIT_FIXED_PER_ORDER")){
+				jq(".form-item-special-deposit-rules-value-dollor").show();
+				jq(".form-item-special-deposit-rules-value-perc").hide();
+		   }
+		   else if((jq("#edit-special-deposit-rules-type").val() == "FULL") ||  (jq("#edit-special-deposit-rules-type").val() == "NONE")){
+				jq(".form-item-special-deposit-rules-value-dollor").hide();
+				jq(".form-item-special-deposit-rules-value-perc").hide();
+		   }
+		}
+			
+		jq("#edit-special-deposit-rules").click(function(){
+			if (jq("#edit-special-deposit-rules").is(":checked")) {
+				   jq(".form-item-special-deposit-rules-type").show();
+				   if(jq("#edit-special-deposit-rules-type").val() == "DEPOSIT_PERCENT"){
+						jq(".form-item-special-deposit-rules-value-perc").show();
+						jq(".form-item-special-deposit-rules-value-dollor").hide();
+				   }
+				   else if((jq("#edit-special-deposit-rules-type").val() == "DEPOSIT_FIXED") ||  (jq("#edit-special-deposit-rules-type").val() == "DEPOSIT_FIXED_PER_ORDER")){
+						jq(".form-item-special-deposit-rules-value-dollor").show();
+						jq(".form-item-special-deposit-rules-value-perc").hide();
+				   }
+				   else if((jq("#edit-special-deposit-rules-type").val() == "FULL") ||  (jq("#edit-special-deposit-rules-type").val() == "NONE")){
+						jq(".form-item-special-deposit-rules-value-dollor").hide();
+						jq(".form-item-special-deposit-rules-value-perc").hide();
+				   }
+			}
+			else{
+				jq(".form-item-special-deposit-rules-type").hide();
+				jq(".form-item-special-deposit-rules-value-dollor").hide();
+				jq(".form-item-special-deposit-rules-value-perc").hide();
+			}
+		});
+		
+		jq("#edit-annulation-policy").click(function(){
+			if (jq("#edit-annulation-policy").is(":checked")) {
+				   jq(".form-item-annulation-policy-days").show();
+				   jq(".form-item-annulation-policy-refund").show();
+			}
+			else{
+				   jq(".form-item-annulation-policy-days").hide();
+				   jq(".form-item-annulation-policy-refund").hide();
+			}
+		});
+
+		jq("#edit-special-deposit-rules-type").change(function(){
+			   if(jq(this).val() == "DEPOSIT_PERCENT"){
+					jq(".form-item-special-deposit-rules-value-perc").show();
+					jq(".form-item-special-deposit-rules-value-dollor").hide();
+			   }
+			   else if((jq(this).val() == "DEPOSIT_FIXED") ||  (jq(this).val() == "DEPOSIT_FIXED_PER_ORDER")){
+					jq(".form-item-special-deposit-rules-value-dollor").show();
+					jq(".form-item-special-deposit-rules-value-perc").hide();
+			   }
+			   else if((jq(this).val() == "FULL") ||  (jq(this).val() == "NONE")){
+					jq(".form-item-special-deposit-rules-value-dollor").hide();
+					jq(".form-item-special-deposit-rules-value-perc").hide();
+			   }			
+		})	
+
+		if (jq("#edit-extra-value-has-extra").is(":checked")) {
+		   jq(".product-extra").show();
+		}
+		
+		jq("#edit-extra-value input").click(function(){
+			var button = jq(this).val();
+			if(button == "has-extra"){
+				jq(".product-extra").show();
+			}
+			else{
+				jq(".product-extra").hide();
+			}
+		});
+		jq(".form-item-fixed-date").hide();
+		jq(".form-item-time-available-type").hide();
+		jq(".form-item-time-available-value").hide();
+		jq("#addTime").hide();
+		jq(".form-item-fixed-time-from").hide();
+		jq(".form-item-season-label").hide();
+		jq(".form-item-fixed-time-to").hide();
+		jq("#addSchedule").hide();
+		if (jq("#edit-dates-available").val() == "NO_DATE") {
+						jq(".form-item-fixed-date").hide();
+						jq(".form-item-fixed-time-from").hide();
+						jq(".form-item-time-available-type").hide();
+						jq(".form-item-fixed-time-to").hide();
+						jq(".time-available").hide();
+						jq("#session-wrapper").hide();
+						jq(".form-item-season-label").hide();
+						jq(".form-item-confirm-booking-type").hide();
+						jq(".form-item-duration-value").hide();
+						jq(".form-item-duration-type").hide();
+						jq("#addSchedule").hide();
+		}	
+		else if (jq("#edit-dates-available").val() == "INVENTORY") {
+						jq(".form-item-fixed-date").show();
+						jq(".form-item-fixed-time-from").show();
+						jq(".form-item-fixed-time-to").show();
+						jq(".form-item-time-available-type").hide();
+						jq("#addSchedule").show();
+						jq(".time-available").hide();
+						jq("#session-wrapper").show();
+						jq(".form-item-season-label").show();
+						jq(".form-item-confirm-booking-type").show();
+						jq(".form-item-duration-value").show();
+						jq(".form-item-duration-type").show();
+		}	
+		else if (jq("#edit-dates-available").val() == "DATE_ENQUIRY") {
+						jq(".time-available").show();
+						jq(".form-item-time-available-value").show();
+						jq(".form-item-fixed-date").hide();
+						jq(".form-item-fixed-time-from").hide();
+						jq(".form-item-time-available-type").show();
+						jq(".form-item-fixed-time-to").hide();
+						jq("#session-wrapper").hide();
+						jq(".form-item-season-label").hide();
+						jq("#addSchedule").hide();
+						jq(".form-item-confirm-booking-type").show();
+						jq(".form-item-duration-value").show();
+						jq(".form-item-duration-type").show();
+		}		
+		jq("#edit-dates-available").change(function(){
+			var type = jq(this).val();
+			switch(type){
+				case 'NO_DATE':
+						jq(".form-item-fixed-date").hide();
+						jq(".form-item-fixed-time-from").hide();
+						jq(".form-item-time-available-type").hide();
+						jq(".form-item-fixed-time-to").hide();
+						jq(".time-available").hide();
+						jq(".time-available #removeTime").hide();
+						jq("#session-wrapper").hide();
+						jq(".form-item-season-label").hide();
+						jq("#addSchedule").hide();
+						jq(".form-item-confirm-booking-type").hide();
+						jq(".form-item-duration-value").hide();
+						jq(".form-item-duration-type").hide();
+						break;
+				case 'INVENTORY':
+						jq(".form-item-fixed-date").show();
+						jq(".form-item-fixed-time-from").show();
+						jq(".form-item-fixed-time-to").show();
+						jq(".form-item-time-available-type").hide();
+						jq(".time-available").hide();
+						jq(".time-available #removeTime").hide();
+						jq(".form-item-season-label").show();
+						jq("#session-wrapper").show();
+						jq("#addSchedule").show();
+						jq(".form-item-confirm-booking-type").show();
+						jq(".form-item-duration-value").show();
+						jq(".form-item-duration-type").show();
+/* 						if (jq("#edit-availability-type").val() == "SESSION_SEATS") {
+						   jq(".form-item-availability-value").show();
+						   jq(".manage-resources").hide();
+						}
+						else if(jq("#edit-availability-type").val() == "RESOURCES"){
+						   jq(".form-item-availability-value").hide();
+						   jq(".manage-resources").show();							
+						}
+						else if(jq("#edit-availability-type").val() == "FREE_SALE"){
+						   jq(".form-item-availability-value").hide();
+						   jq(".manage-resources").hide();							
+						} */
+						break;
+				case 'DATE_ENQUIRY':
+						jq(".time-available").show();
+						jq(".form-item-time-available-value").show();
+						jq("#addTime").show();
+						jq(".form-item-fixed-date").hide();
+						jq(".form-item-fixed-time-from").hide();
+						jq(".form-item-time-available-type").show();
+						jq(".form-item-fixed-time-to").hide();
+						jq("#removeTime").show();
+						jq(".form-item-season-label").hide();
+						jq("#session-wrapper").hide();
+						jq("#addSchedule").hide();
+						jq(".form-item-confirm-booking-type").show();
+						jq(".form-item-duration-value").show();
+						jq(".form-item-duration-type").show();
+						break;
+				default:
+						jq(".product-availability").show();
+						break;
+			}
+		});
+/* 		if (jq("#edit-availability-type").val() == "SESSION_SEATS") {
+		   jq(".form-item-availability-value").show();
+		}	
+		else{
+			jq(".form-item-availability-value").hide();
+		} */
+		jq("#edit-availability-type").change(function(){
+			var type = jq(this).val();
+			switch(type){
+				case 'FREE_SALE':
+						jq(".form-item-availability-value").hide();
+						jq(".manage-resources").hide();
+						break;
+				case 'SESSION_SEATS':
+						jq(".form-item-availability-value").show();
+						jq(".manage-resources").hide();
+						break;
+				case 'RESOURCES':
+						jq(".form-item-availability-value").hide();
+						jq(".manage-resources").show();
+						break;
+				default:
+						jq(".product-availability").show();
+						break;
+			}
+		});
+		if ((jq("#edit-confirm-booking-type").val() == "AUTOCONFIRM") || (jq("#edit-confirm-booking-type").val() == "MANUAL")) {
+		   jq(".form-item-confirm-booking-value").hide();
+		}	
+		else{
+			jq(".form-item-confirm-booking-value").show();
+		}		
+		jq("#edit-confirm-booking-type").change(function(){
+			var type = jq(this).val();
+			switch(type){
+				case 'AUTOCONFIRM':
+						jq(".form-item-confirm-booking-value").hide();
+						break;
+				case 'MANUAL':
+						jq(".form-item-confirm-booking-value").hide();
+						break;
+				case 'MANUAL_THEN_AUTO':
+						jq(".form-item-confirm-booking-value").show();
+						break;
+				case 'AUTO_THEN_MANUAL':
+						jq(".form-item-confirm-booking-value").show();
+						break;
+				default:
+						jq(".form-item-confirm-booking-value").hide();
+						break;
+			}
+		});
+
+		if (jq("#edit-time-available-type").val() == "FIXED") {
+			if (jq("#edit-dates-available").val() == "DATE_ENQUIRY") {
+				jq(".form-item-time-available-value").show();
+				jq("#addTime").show();
+			}
+		}	
+		else if (jq("#edit-time-available-type").val() == "TIME_ENQUIRY") {
+			jq(".form-item-time-available-value").hide();
+			jq("#addTime").hide();
+		}	
+		else if (jq("#edit-time-available-type").val() == "NO_TIME") {
+			jq(".form-item-time-available-value").hide();
+			jq("#addTime").hide();
+		}			
+		jq("#edit-time-available-type").change(function(){
+			var type = jq(this).val();
+			switch(type){
+				case 'FIXED':
+						jq(".form-item-time-available-value").show();
+						jq("#addTime").show();
+						
+						break;
+				case 'TIME_ENQUIRY':
+						jq(".form-item-time-available-value").hide();
+						jq("#addTime").hide();
+						break;
+				case 'NO_TIME':
+						jq(".form-item-time-available-value").hide();
+						jq("#addTime").hide();
+						break;
+				default:
+						jq(".form-item-time-available-value").show();
+						break;
+			}
+		});
+
+		if (jq("#edit-repeat-session").val() == "DoNOt") {
+			jq(".form-item-repeat-session-every-minutes").hide();
+			jq(".form-item-repeat-session-every-hours").hide();
+			jq(".form-item-repeat-session-every-days").hide();
+			jq(".form-item-repeat-session-weekly-on").hide();
+			jq(".form-item-repeat-session-until").hide();
+			jq(".form-item-session-repeats-from").hide();
+			jq(".form-item-session-repeats-to").hide();
+			jq("#repeat-session-wrapper").hide();
+/* 			jq(".form-item-repeat-session-weekly-on").hide(); */
+			jq("#addSession").hide();
+		}	
+		else if (jq("#edit-repeat-session").val() == "Minute") {
+			jq(".form-item-repeat-session-every-minutes").show();
+			jq(".form-item-repeat-session-every-hours").hide();
+			jq(".form-item-repeat-session-every-days").hide();
+			jq(".form-item-repeat-session-weekly-on").hide();
+			jq(".form-item-repeat-session-until").show();
+			jq(".form-item-session-repeats-from").show();
+			jq(".form-item-session-repeats-to").show();
+			jq("#addSession").show();
+			jq("#repeat-session-wrapper").show();
+		}	
+		else if (jq("#edit-repeat-session").val() == "Hourly") {
+			jq(".form-item-repeat-session-every-minutes").hide();
+			jq(".form-item-repeat-session-every-hours").show();
+			jq(".form-item-repeat-session-every-days").hide();
+			jq(".form-item-repeat-session-weekly-on").hide();
+			jq(".form-item-repeat-session-until").show();
+			jq(".form-item-session-repeats-from").show();
+			jq(".form-item-session-repeats-to").show();
+			jq("#repeat-session-wrapper").show();
+			jq("#addSession").show();
+		}		
+		else if (jq("#edit-repeat-session").val() == "Daily") {
+			jq(".form-item-repeat-session-every-minutes").hide();
+			jq(".form-item-repeat-session-every-hours").hide();
+			jq(".form-item-repeat-session-every-days").show();
+			jq(".form-item-repeat-session-weekly-on").hide();
+			jq(".form-item-repeat-session-until").show();
+			jq(".form-item-session-repeats-from").show();
+			jq(".form-item-session-repeats-to").show();
+			jq("#repeat-session-wrapper").hide();
+			jq("#addSession").hide();
+		}	
+		else if (jq("#edit-repeat-session").val() == "Weekly") {
+			jq(".form-item-repeat-session-weekly-on").hide();
+			jq(".form-item-repeat-session-every-minutes").hide();
+			jq(".form-item-repeat-session-every-hours").hide();
+			jq(".form-item-repeat-session-every-days").hide();
+			/* jq(".form-item-repeat-session-weekly-on").show(); */
+			jq(".form-item-repeat-session-until").hide();
+			jq(".form-item-session-repeats-from").hide();
+			jq(".form-item-session-repeats-to").hide();
+			jq("#repeat-session-wrapper").hide();
+			jq("#addSession").hide();
+		}
+		jq("#edit-repeat-session").change(function(){
+			var type = jq(this).val();
+			switch(type){
+				case 'DoNOt':
+						jq(".form-item-repeat-session-every-minutes").hide();
+						jq(".form-item-repeat-session-every-hours").hide();
+						jq(".form-item-repeat-session-every-days").hide();
+						jq(".form-item-repeat-session-weekly-on").hide();
+						jq(".form-item-repeat-session-until").hide();
+						jq(".form-item-session-repeats-from").hide();
+						jq(".form-item-session-repeats-to").hide();
+						jq("#addSession").hide();
+						jq("#removeSession").hide();
+						jq("#repeat-session-wrapper").hide();
+						
+						break;
+				case 'Minute':
+						jq(".form-item-repeat-session-every-minutes").show();
+						jq(".form-item-repeat-session-every-hours").hide();
+						jq(".form-item-repeat-session-every-days").hide();
+						jq(".form-item-repeat-session-weekly-on").hide();
+						jq(".form-item-repeat-session-until").show();
+						jq(".form-item-session-repeats-from").show();
+						jq(".form-item-session-repeats-to").show();
+						jq("#addSession").show();
+						jq("#removeSession").show();
+						jq("#repeat-session-wrapper").show();
+						break;
+				case 'Hourly':
+						jq(".form-item-repeat-session-every-minutes").hide();
+						jq(".form-item-repeat-session-every-hours").show();
+						jq(".form-item-repeat-session-every-days").hide();
+						jq(".form-item-repeat-session-weekly-on").hide();
+						jq(".form-item-repeat-session-until").show();
+						jq(".form-item-session-repeats-from").show();
+						jq(".form-item-session-repeats-to").show();
+						jq("#addSession").show();
+						jq("#removeSession").show();
+						jq("#repeat-session-wrapper").show();
+						break;
+				case 'Daily':
+						jq(".form-item-repeat-session-every-minutes").hide();
+						jq(".form-item-repeat-session-every-hours").hide();
+						jq(".form-item-repeat-session-every-days").show();
+						jq(".form-item-repeat-session-weekly-on").hide();
+						jq(".form-item-repeat-session-until").show();
+						jq(".form-item-session-repeats-from").hide();
+						jq(".form-item-session-repeats-to").hide();
+						jq("#addSession").hide();
+						jq("#removeSession").hide();
+						jq("#repeat-session-wrapper").hide();
+						break;
+				case 'Weekly':
+						/* jq(".repeat_session1").hide();  */
+						jq(".form-item-repeat-session-every-minutes").hide();
+						jq(".form-item-repeat-session-every-hours").hide();
+						jq(".form-item-repeat-session-every-days").hide();
+						/* jq(".form-item-repeat-session-weekly-on").show(); */
+						jq(".form-item-repeat-session-until").hide();
+						jq(".form-item-session-repeats-from").hide();
+						jq(".form-item-session-repeats-to").hide();
+						jq("#addSession").hide();
+						jq("#removeSession").hide();
+						jq("#repeat-session-wrapper").hide();
+						break;
+				default:
+						jq(".form-item-time-available-value").show();
+						break;
+			}
+		});
+
+		if (jq("#edit-all-day-session-all-day").is(":checked")) {
+		   jq("#edit-session-start-from-date").val("");
+		   jq("#edit-session-start-to-date").val("");
+		}
+		
+		jq("#edit-session-start-from-date").focus(function(){
+			jq("#edit-all-day-session-all-day").attr("checked",false);
+		
+		});
+		jq("#edit-session-start-to-date").focus(function(){
+			jq("#edit-all-day-session-all-day").attr("checked",false);
+		
+		});		
+		
+		jq("#edit-all-day-session-all-day").click(function(){
+			if (jq("#edit-all-day-session-all-day").is(":checked")) {
+			   jq("#edit-session-start-from-date").val("");
+			   jq("#edit-session-start-to-date").val("");			
+			}
+		
+		});
+
+		jq(".amenities-payment-methods").show();
+		jq("#edit-payment-methods").hide();
+		if (jq("#edit-credit-card").is(":checked")) {
+			jq(".amenities-credit-cards ul").show();
+		}
+		else{
+			jq(".amenities-credit-cards ul").hide();
+		}
+			
+		jq("#edit-credit-card").click(function(){
+
+			if (jq("#edit-credit-card").is(":checked")) {
+			   jq(".amenities-credit-cards ul").show();
+			}
+			else{
+				jq(".amenities-credit-cards ul").hide();
+			}
+		});
+
+		jq(".rentals-scheduling").hide();
+		jq(".rentals-scheduling-yearly").hide();
+
+		if(jq("#edit-restaurant-dates-available").val() == "YEARLY"){
+			jq(".rentals-scheduling").hide();
+			jq(".rentals-scheduling-yearly").show();
+
+		}
+		else if(jq("#edit-restaurant-dates-available").val() == "SEASON"){
+			jq(".rentals-scheduling").show();
+			jq(".rentals-scheduling-yearly").hide();
+		}
+	   
+	   jq("#edit-restaurant-dates-available").change(function(){
+		   if(jq(this).val() == "YEARLY"){
+				jq(".rentals-scheduling").hide();
+				jq(".rentals-scheduling-yearly").show();
+
+		   }
+		   else if(jq(this).val() == "SEASON"){
+				jq(".rentals-scheduling").show();
+				jq(".rentals-scheduling-yearly").hide();
+		   }		
+	   });	
+	   
+		var changeTooltipPosition = function(event) {
+		  var tooltipX = event.pageX - 8;
+		  var tooltipY = event.pageY + 8;
+		  jq('div.tooltip').css({top: tooltipY, left: tooltipX});
+		};
+	 
+		var showTooltip = function(event) {
+		var title = jq(this).attr("rel");
+		  jq('div.tooltip').remove();
+		  jq('<div class="tooltip">'+title+'</div>')
+				.appendTo('body');
+		  changeTooltipPosition(event);
+		};
+	 
+		var hideTooltip = function() {
+		   jq('div.tooltip').remove();
+		};
+	 
+		jq("strong#hint").bind({
+		   mousemove : changeTooltipPosition,
+		   mouseenter : showTooltip,
+		   mouseleave: hideTooltip
+		});
+		var addDiv1 = jq('#product_season_rate');
+		var i = 1;
+
+		jq('#addRate').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+				jq('<div id="product_season_rate[' + i +']" class="product_season_rate quantity"><div class="form-item form-type-textfield form-item-season-rate-label"><label for="edit-season-rate-label">Rate Label </label><input type="text" maxlength="128" size="60" value="" name="season_rate_label_extra[' + i +']" id="edit-season-rate-label' + i +'" class="form-control form-text" placeholder="Rate Label"></div><div class="form-item form-type-textfield form-item-season-rate-amount"><label for="edit-season-rate-amount">Rate Price </label><span class="input-group-addon"><i class="fa fa-usd"></i> </span><input type="text" maxlength="128" size="60" value="" name="season_rate_amount_extra[' + i +']" id="edit-season-rate-amount' + i +'" class="form-control form-text" placeholder="Rate Price"></div><div class="form-item form-type-textfield form-item-high-season-rate-dates"><label for="edit-high-season-rate-dates">From - To </label><span class="input-group-addon"><i class="fa fa-calendar"></i> </span><input id="edit-high-season-rate-dates' + i +'" class="form-control form-text" type="text" maxlength="128" size="60" value="" name="high_season_rate_dates_extra[' + i +']" placeholder="From - To"></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="remRate">Remove Rate</a> </div>').appendTo(addDiv1);
+				jq('input[name="openning_hours_dates"] , .form-item-high-season-rate-dates input').daterangepicker();
+				i++;
+			}
+			return false;
+		});
+
+		jq('#remRate').live('click', function() {
+			jq(this).parent('.product_season_rate').remove();
+
+			return false;
+		});	 
+
+		var addDiv = jq('#product-scheduling');
+		var i = 1;
+		
+		jq('#addSchedule').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				jq('input[name="openning_hours_dates"] , .form-item-high-season-rate-dates input').daterangepicker();
+				e.handled=true;
+				jq('<div id="product-scheduling[' + i +']" class="product-scheduling"><div class="form-item form-type-textfield form-item-fixed-time-from" style="display: block;"><label for="edit-fixed-time-from">From </label><span class="input-group-addon"><i class="fa fa-calendar"></i> </span><input type="text" maxlength="128" size="60" value="" name="fixed_time_from_more[' + i +']" id="edit-fixed-time-from[' + i +']" class="form-control datetimepicker form-text" placeholder="From"></div><div class="form-item form-type-textfield form-item-fixed-time-to" style="display: block;"><label for="edit-fixed-time-to">To </label><span class="input-group-addon"><i class="fa fa-calendar"></i> </span><input type="text" maxlength="128" size="60" value="" name="fixed_time_to_more[' + i +']" id="edit-fixed-time-to[' + i +']" class="form-control datetimepicker form-text" placeholder="To"></div><div class="form-item form-type-textfield form-item-season-label" style="display: block;"><label for="edit-season-label">Label </label><input type="text" maxlength="128" size="60" value="" name="season_label_more[' + i +']" id="edit-season-label[' + i +']" class="form-control form-text" placeholder="Label"></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="remSchedule">Remove schedule</a> </div>').appendTo(addDiv);
+				jQuery('.datetimepicker').datepicker();
+				i++;
+			}
+			
+			return false;
+		});
+
+		jq('#remSchedule').live('click', function() {
+			jq(this).parent('.product-scheduling').remove();
+
+			return false;
+		});	
+		
+		
+/* 		var addSession = jq('#session');
+		var i = 1;
+
+		jq('#addSession').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+				jq('<div id="session" class="quantity"><div class="form-item form-type-select form-item-sessions-type"><select name="sessions_type" id="edit-sessions-type" class="form-control form-select"><option value="Single-time">Single time</option><option value="every">Every</option><option value="on-demand">On demand</option></select></div><div class="form-item form-type-textfield form-item-sessions-date"><input type="text" maxlength="128" size="60" value="" name="sessions_date" id="edit-sessions-date" class="form-control datepicker form-text hasDatepicker" placeholder="Date"></div><div class="form-item form-type-select form-item-sessions-days" style="display: none;"><select name="sessions_days" id="edit-sessions-days" class="form-control form-select"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option><option value="Sunday">Sunday</option></select></div><div class="form-item form-type-textfield form-item-sessions-time-from">  <label for="edit-sessions-time-from">From </label> <input type="text" maxlength="128" size="60" value="" name="sessions_time_from" id="edit-sessions-time-from" class="form-control timepicker form-text" placeholder="From"></div><div class="form-item form-type-textfield form-item-sessions-time-to">  <label for="edit-sessions-time-to">To </label> <input type="text" maxlength="128" size="60" value="" name="sessions_time_to" id="edit-sessions-time-to" class="form-control timepicker form-text" placeholder="To"></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="removeSession">Remove Session</a> </div>').appendTo(addSession);
+				i++;
+			}
+			return false;
+		});
+
+		jq('#removeSession').live('click', function() {
+			jq(this).parent('#session').remove();
+
+			return false;
+		}); */
+
+		var addSession = jq('#repeat-session');
+		var i = 1;
+
+		jq('#addSession').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+					jq('<div id="repeat-session[' + i +']" class="repeat-session"><div class="form-item form-type-select form-item-repeat-session-weekly-on" style="display: block;"><label for="edit-repeat-session-weekly-on">On </label><select name="repeat_session_weekly_on_extra[' + i +']" id="edit-repeat-session-weekly-on[' + i +']" class="form-control form-select"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option><option value="Sunday">Sunday</option></select></div><div class="form-item form-type-textfield form-item-session-repeats-from" style="display: block;"><label for="edit-session-repeats-from">From </label><input type="text" maxlength="128" size="60" value="" name="session_repeats_from_extra[' + i +']" id="edit-session-repeats-from[' + i +']" class="form-control timepicker form-text" placeholder="From"></div><div class="form-item form-type-textfield form-item-session-repeats-to" style="display: block;"><label for="edit-session-repeats-to">To </label><input type="text" maxlength="128" size="60" value="" name="session_repeats_to_extra[' + i +']" id="edit-session-repeats-to[' + i +']" class="form-control timepicker form-text" placeholder="To"></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="removeSession">Remove</a> </div>').appendTo(addSession);
+				i++;
+			}
+			return false;
+		});
+
+		jq('#removeSession').live('click', function() {
+			jq(this).parent('.repeat-session').remove();
+
+			return false;
+		});		
+
+		var addtTime = jq('#time-available');
+		var i = 1;
+
+		jq('#addTime').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+				jq('<div id="time-available[' + i +']" class="time-available"><div class="form-item form-type-textfield form-item-time-available-value"><label for="edit-time-available-value">Available time </label><span class="input-group-addon"><i class="fa fa-clock-o"></i> </span><input type="text" maxlength="128" size="60" value="" name="time_available_value_more[' + i +']" id="edit-time-available-value[' + i +']" class="form-control timepicker form-text"></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="removeTime">Remove</a> </div>').appendTo(addtTime);
+				jQuery('.timepicker').timepicker();
+				i++;
+			}
+			return false;
+		});
+
+		jq('#removeTime').live('click', function() {
+			jq(this).parent('.time-available').remove();
+
+			return false;
+		});	
+
+		var addtCategory = jq('#restaurant-category-name');
+		var i = 1;
+
+		jq('#addCat').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+				jq('<div class="restaurant-category-name" id="restaurant-category-name[' + i +']"><div class="form-item form-type-textfield form-item-category-name"><input type="text" maxlength="128" size="60" value="" name="category_name[' + i +']" id="edit-category-name[' + i +']" class="form-control form-text"></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="remCat">Remove</a></div>').appendTo(addtCategory);
+				jQuery('.datepicker').datepicker();
+				i++;
+			}
+			return false;
+		});
+
+		jq('#remCat').live('click', function() {
+			jq(this).parent('.restaurant-category-name').remove();
+
+			return false;
+		});	
+		
+		var addtRentals= jq('#rentals-scheduling');
+		var i = 1;
+
+		jq('#addDate').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+				jq('<div class="rentals-scheduling-extra"><div class="rentals-scheduling" id="rentals-scheduling[' + i +']" style="display: block;"><div class="form-item form-type-textfield form-item-rentals-date-from"><label for="edit-rentals-date-from">From </label><span class="input-group-addon"><i class="fa fa-calendar"></i> </span><input type="text" maxlength="128" size="60" value="" name="rentals_date_from[' + i +']" id="edit-rentals-date-from[' + i +']" class="form-control datepicker form-text" placeholder="From"></div><div class="form-item form-type-textfield form-item-rentals-date-to"><label for="edit-rentals-date-to">To </label><span class="input-group-addon"><i class="fa fa-calendar"></i> </span><input type="text" maxlength="128" size="60" value="" name="rentals_date_to[' + i +']" id="edit-rentals-date-to[' + i +']" class="form-control datepicker form-text" placeholder="To"></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="remDate">Remove</a> </div></div>').appendTo(addtRentals);
+				jQuery('.datepicker').datepicker();
+				i++;
+			}
+			return false;
+		});
+
+		jq('#remDate').live('click', function() {
+			jq(this).parent('.rentals-scheduling').remove();
+
+			return false;
+		});	
+
+		/*************************************************************************/
+		
+		var addtPricing = jq('.product_pricing');
+		var i = 1;
+
+		jq('#addPricing').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				i++;
+				e.handled=true;
+				jq('<div class="product_pricing" id="product_pricing' + i +'"><div class="form-item form-type-select form-item-product-pricing-type"><label for="edit-product-pricing-type">Product pricing </label><select name="product_pricing_type_extra[' + i +']" id="edit-product-pricing-type[' + i +']" class="form-control form-select"><option value="PER_PERSON">By Person</option><option value="PER_ITEM">By Item</option><option value="FIXED">Fixed</option><option value="PER_DAY">By Day</option><option value="PER_HOUR">By Hour</option><option value="PER_MINUTE">By Minute</option></select></div><div class="form-item form-type-select form-item-product-pricing-key" id="yui_3_17_2_1_1408691059318_43"><select name="product_pricing_key_extra[' + i +']" id="edit-product-pricing-key[' + i +']" class="form-control form-select"><option value="everyone">Everyone</option><option value="adult">Adult</option><option value="child">Child</option><option value="senior">Senior</option><option value="teenager">Teenager</option><option value="student">Student</option><option value="family-of-three">Family of 3</option><option value="family-of-four">Family of 4</option><option value="family-of-five">Family of 5</option><option value="group">Group</option></select></div><div class="form-item form-type-textfield form-item-product-item-label" style="display: none;"><input type="text" maxlength="128" size="60" value="" name="product_item_label_extra[' + i +']" id="edit-product-item-label[' + i +']" class="form-control form-text" placeholder="Label"></div><div class="form-item form-type-textfield form-item-product-pricing-min" style="display: none;"><input type="text" maxlength="128" size="60" value="" name="product_pricing_min_extra[' + i +']" id="edit-product-pricing-min[' + i +']" class="form-control form-text" placeholder="min"></div><div class="form-item form-type-textfield form-item-product-pricing-max" style="display: none;"><input type="text" maxlength="128" size="60" value="" name="product_pricing_max_extra[' + i +']" id="edit-product-pricing-max[' + i +']" class="form-control form-text" placeholder="max"></div><div class="form-item form-type-textfield form-item-product-pricing-max-participants" style="display: none;"><input type="text" maxlength="128" size="60" value="" name="product_pricing_max_participants_extra[' + i +']" id="edit-product-pricing-max-participants[' + i +']" class="form-control form-text" placeholder="Max participants"></div><div class="form-item form-type-textfield form-item-product-pricing-value" id="yui_3_17_2_1_1408691059318_35"> <span class="input-group-addon"><i class="fa fa-usd"></i> </span><input type="text" maxlength="128" size="60" value="" name="product_pricing_value_extra[' + i +']" id="edit-product-pricing-value[' + i +']" class="form-control themePrice form-text" placeholder="Price"></div><div class="form-item form-type-select form-item-product-pricing-person-type" style="display: none;"> <select name="product_pricing_person_type_extra[' + i +']" id="edit-product-pricing-person-type[' + i +']" class="form-control form-select"><option value="per-person">Per person</option><option value="TOTAL">Total</option></select></div><div class="form-item form-type-select form-item-product-pricing-day-type" style="display: none;"> <select name="product_pricing_day_type_extra[' + i +']" id="edit-product-pricing-day-type[' + i +']" class="form-control form-select"><option value="EACH">Per day</option><option value="TOTAL">Total</option></select></div><div class="form-item form-type-select form-item-product-pricing-hour-type" style="display: none;"> <select name="product_pricing_hour_type_extra[' + i +']" id="edit-product-pricing-hour-type[' + i +']" class="form-control form-select"><option value="EACH">Per hour</option><option value="TOTAL">Total</option></select></div><div class="form-item form-type-select form-item-product-pricing-minute-type" style="display: none;"> <select name="product_pricing_minute_type_extra[' + i +']" id="edit-product-pricing-minute-type[' + i +']" class="form-control form-select"><option value="EACH">Per minute</option><option value="TOTAL">Total</option></select></div><div class="form-item form-type-select form-item-schedule-type">  <label for="edit-schedule-type">Apply to schedule </label> <select name="schedule_type_extra[' + i +']" id="edit-schedule-type[' + i +']" class="form-control form-select"><option value="1">schedule 1</option><option value="2">schedule 2</option></select></div><a class="btn btn-dark btn-gradient form-submit" href="#" id="removePricing">Remove</a> </div>').appendTo(addtPricing);
+				jq(".form-item-product-pricing-type select").change(function(){
+					var newID = "product_pricing"+ i;
+/* 					alert("here"); */
+				   if(jq(this).val() == "PER_PERSON"){
+						jq("#"+newID+" .form-item-product-item-label").hide();
+						jq("#"+newID+" .form-item-product-pricing-min").hide();
+						jq("#"+newID+" .form-item-product-pricing-max").hide();
+						jq("#"+newID+" .form-item-product-pricing-day-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-minute-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-hour-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-key").show();
+						jq("#"+newID+" .form-item-product-pricing-value").show();
+						if(jq(".form-item-product-pricing-key select").val() == "group"){
+							jq("#"+newID+" .form-item-product-pricing-person-type").show();
+							jq("#"+newID+" .form-item-product-pricing-max-participants").show();					
+						}
+					   if(jq(".form-item-product-pricing-key select").val() == "family-of-three" || jq(".form-item-product-pricing-key select").val() == "family-of-four" || jq(".form-item-product-pricing-key select").val() == "family-of-five"){
+								jq("#"+newID+" .form-item-product-pricing-person-type").show();
+								jq("#"+newID+" .form-item-product-pricing-max-participants").hide();
+					   }
+				   }
+				   else if(jq(this).val() == "PER_ITEM"){
+						jq("#"+newID+" .form-item-product-item-label").show();
+						jq("#"+newID+" .form-item-product-pricing-min").hide();
+						jq("#"+newID+" .form-item-product-pricing-max").hide();
+						jq("#"+newID+" .form-item-product-pricing-day-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-minute-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-hour-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-key").hide();
+						jq("#"+newID+" .form-item-product-pricing-value").show();
+						jq("#"+newID+" .form-item-product-pricing-person-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").hide();	
+				   }
+				   else if(jq(this).val() == "FIXED"){
+						jq("#"+newID+" .form-item-product-item-label").hide();
+						jq("#"+newID+" .form-item-product-pricing-min").hide();
+						jq("#"+newID+" .form-item-product-pricing-max").hide();
+						jq("#"+newID+" .form-item-product-pricing-day-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-minute-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-hour-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-key").hide();
+						jq("#"+newID+" .form-item-product-pricing-value").show();
+						jq("#"+newID+" .form-item-product-pricing-person-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").hide();	
+				   }
+				   else if(jq(this).val() == "PER_DAY"){
+						jq("#"+newID+" .form-item-product-item-label").hide();
+						jq("#"+newID+" .form-item-product-pricing-min").show();
+						jq("#"+newID+" .form-item-product-pricing-max").show();
+						jq("#"+newID+" .form-item-product-pricing-day-type").show();
+						jq("#"+newID+" .form-item-product-pricing-minute-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-hour-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-key").hide();
+						jq("#"+newID+" .form-item-product-pricing-value").show();
+						jq("#"+newID+" .form-item-product-pricing-person-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").hide();	
+				   }
+				   else if(jq(this).val() == "PER_HOUR"){
+						jq("#"+newID+" .form-item-product-item-label").hide();
+						jq("#"+newID+" .form-item-product-pricing-min").show();
+						jq("#"+newID+" .form-item-product-pricing-max").show();
+						jq("#"+newID+" .form-item-product-pricing-day-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-minute-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-hour-type").show();
+						jq("#"+newID+" .form-item-product-pricing-key").hide();
+						jq("#"+newID+" .form-item-product-pricing-value").show();
+						jq("#"+newID+" .form-item-product-pricing-person-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").hide();	
+				   }
+				   else if(jq(this).val() == "PER_MINUTE"){
+						jq("#"+newID+" .form-item-product-item-label").hide();
+						jq("#"+newID+" .form-item-product-pricing-min").show();
+						jq("#"+newID+" .form-item-product-pricing-max").show();
+						jq("#"+newID+" .form-item-product-pricing-day-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-minute-type").show();
+						jq("#"+newID+" .form-item-product-pricing-hour-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-key").hide();
+						jq("#"+newID+" .form-item-product-pricing-value").show();
+						jq("#"+newID+" .form-item-product-pricing-person-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").hide();	
+				   }		
+				})
+				var newID = "product_pricing"+ i;
+			   jq(".form-item-product-pricing-key select").change(function(){
+			   alert(newID);
+					if(jq(this).val() == "family-of-three" || jq(this).val() == "family-of-four" || jq(this).val() == "family-of-five"){
+						jq("#"+newID+" .form-item-product-pricing-person-type").show();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").hide();
+					}
+					else if(jq(this).val() == "group"){
+						jq("#"+newID+" .form-item-product-pricing-person-type").show();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").show();
+					}
+					else{
+						jq("#"+newID+" .form-item-product-pricing-person-type").hide();
+						jq("#"+newID+" .form-item-product-pricing-max-participants").hide();				
+					}
+			   });
+			}
+			return false;
+		});
+
+		jq('#removePricing').live('click', function() {
+			jq(this).parent('.product_pricing').remove();
+
+			return false;
+		});	
+		
+		
+		jq(".datepicker").before('<span class="input-group-addon"><i class="fa fa-calendar"></i> </span>');
+		//jq("#edit-high-season-rate-dates").before('<span class="input-group-addon"><i class="fa fa-calendar"></i> </span>');
+		jq(".daterangepicker2").before('<span class="input-group-addon"><i class="fa fa-calendar"></i> </span>');
+		jq(".datetimepicker").before('<span class="input-group-addon"><i class="fa fa-calendar"></i> </span>');
+		jq(".timepicker").before('<span class="input-group-addon"><i class="fa fa-clock-o"></i> </span>');
+		jq(".themePrice").before('<span class="input-group-addon"><i class="fa fa-usd"></i> </span>');
+		
+		jq("#sidebar-menu ul li ul").addClass("menu-open");
+		jq("#sidebar-menu ul li ul").show();
+		 /****************************Added on 16th Sept******experience amenities***************************************/
+		var addtInc = jq('#amenities-included');
+		var i = 1;
+
+		jq('#addInc').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+				jq('<div class="amenities-included" id="amenities-included' + i +'"><div class="form-item form-type-textfield form-item-whats-included"><input type="text" maxlength="35" size="60" value="" name="whats_included_extra[]" id="edit-whats-included' + i +'" class="form-control form-text" placeholder="Add label"></div><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#" id="remInc">Remove</a></div>').appendTo(addtInc);
+				i++;
+			}
+			return false;
+		});
+
+		jq('#remInc').live('click', function() {
+			jq(this).parent('.amenities-included').remove();
+
+			return false;
+		});	
+		
+		var addExc = jq('#amenities-excluded');
+		var i = 1;
+
+		jq('#addExc').on('click', function(e) {
+			e.preventDefault();
+			if(e.handled !==true)
+			{
+				e.handled=true;
+				jq('<div class="amenities-excluded" id="amenities-excluded' + i +'"><div class="form-item form-type-textfield form-item-whats-excluded"><input type="text" maxlength="35" size="60" value="" name="whats_excluded_extra[]" id="edit-whats-excluded' + i +'" class="form-control form-text" placeholder="Add label"></div><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#" id="remExc">Remove</a></div>').appendTo(addExc);
+			
+				i++;
+			}
+			return false;
+		});
+
+		jq('#remExc').live('click', function() {
+			jq(this).parent('.amenities-excluded').remove();
+
+			return false;
+		});	
+		jq('#remIncExtra').live('click', function() {
+	
+		jq(this).parent().parent('.amenities-extra-included').remove();
+		
+
+			return false;
+		});	
+		/*************************************************************************************************************/
+		
+	});

@@ -1,0 +1,3492 @@
+<?php
+function product_add_form_1(){
+	global $user;
+	if(!$user->uid){
+		$dest = drupal_get_destination();
+		$_SESSION['destination']  = $dest["destination"];
+		drupal_goto('login', $dest);
+	}
+	$productForm=$addressform=$productDetail=$extras=$photos =$packages= $directionform=$scheduleSessionData=array();
+	$page = arg(2);
+	$payment=$success=$calendar=$extrasListing = $addressListing = $photosListing = $subscriptionListing=$overViewListing =$amenitiesList= $pricingList=$rulesList=$schedulingList=0;
+	switch($page){
+		case "overview":
+		$overViewListing=1;
+			$productForm = drupal_get_form('product_details_form');
+		break;
+		case "photos":
+			$photosListing = 1;
+			$_SESSION['product_id'] = arg(3);
+			drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/jquery.alerts.js', 'file');
+			drupal_add_css(drupal_get_path('theme', 'gloobers2') .'/css/jquery.alerts.css', 'file');
+			drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/jquery.ui.plupload.js',array('scope' => 'footer'));
+			drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/custom-pluplaod.js',array('scope' => 'footer'));
+			$photos = getPhotosData(arg(3));
+			$productForm = drupal_get_form('product_photos_form');
+		break;
+		case "amenities":
+			$amenitiesList=1;
+			$productForm = drupal_get_form('product_amenities_form');
+		break;
+		case "location":
+			$addressListing = 1;
+			$addressform=drupal_get_form('product_location_info_form');
+		   $directionform=drupal_get_form('location_direction_form');	
+	         drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/location-custom.js',array('scope' => 'footer'));				
+			$productId=(Integer)arg(3);			
+			if (is_int ($productId) )
+			{
+				$productDetail=getListingData($productId);	
+			}
+		break;
+		 case "extra":
+			$extrasListing = 1;
+			$extras = getProductExtraData(arg(3));
+			$productForm = drupal_get_form('product_extra_form');
+		break; 
+		case "pricing":
+		$pricingList=1;
+			drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/vendor/plugins/datepicker/bootstrap-datepicker.js', 'file');
+			drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/experience-pricing-validate.js',array('scope' => 'footer'));
+			$productForm = drupal_get_form('product_pricing_form');
+		break;
+		case "subscription":
+			$subscriptionListing = 1;
+			$packages = getListingPackages();
+			$productForm = drupal_get_form('product_subscription_form');
+		break;
+		case "rules":
+		$rulesList=1;
+			$productForm = drupal_get_form('product_rules_form');
+		break;
+		case "scheduling":
+			$schedulingList=1;
+			$scheduleSessionData = getScheduleSessionData(arg(3));
+			$productForm = drupal_get_form('product_scheduling_form');
+		break;
+		case "calendar":
+			$calendar = 1;
+		break;
+		case "success":		
+			$success=1;
+		break;
+		case "payment":
+			$payment=1;
+			if(arg(4)=="3")
+			{
+			setFreeSubscription(arg(3));
+			}
+			else {
+			$productForm = drupal_get_form('package_payment_form');
+			}
+		break;
+		default:
+			$productForm = drupal_get_form('product_details_formproduct_details_form');
+		break; 
+	}
+	$_SESSION['product_id'] = arg(3);
+/* 	drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/custom.js', 'file'); */
+	return theme( 'add_product', array('payment'=>$payment,'packages'=>$packages,'success'=>$success,'scheduleSessionData'=>$scheduleSessionData,'directionform'=>$directionform,'productForm' => $productForm,'photos'=>$photos,'extras'=>$extras,'extrasListing'=>$extrasListing,'productDetail'=>$productDetail,'addressform'=>$addressform,'addressListing'=>$addressListing,'photosListing'=>$photosListing,'subscriptionListing'=>$subscriptionListing,'overViewListing'=>$overViewListing,'amenitiesList'=>$amenitiesList,'pricingList'=>$pricingList,'schedulingList'=>$schedulingList,'rulesList'=>$rulesList,'calendar'=>$calendar));
+}
+
+/**
+ * Form for the rate_the_room step.
+ * 
+ * @see customer_survey_form().
+ *  
+ * @param type $form
+ * @param type $form_state
+ * @return type 
+ */
+ 
+ 
+function product_service_type_form($form, &$form_state) {
+
+    
+  $values = isset($form_state['multistep_values']['product_service_type']) ? $form_state['multistep_values']['product_service_type'] : array();
+
+  $form['product_service_type'] = array(
+    '#prefix' => '<div><h2>Select your Listing type </h2>',
+    '#suffix' => '</div>',
+  );
+  
+  $form['product_service_type']['service_type'] = array(
+    '#type' => 'radios',
+    '#options' => array('HOTEL' => 'Hotels', 'VACATION-RENTALS' => 'Vacation Rentals', 'RESTAURANTS' => 'Restaurants', 'EXPERIENCE' => 'Experience'),
+    '#default_value' => isset($values['service_type']) ? $values['service_type'] : NULL,
+	'#required' => TRUE
+  );
+ 
+  $form['page'] = array(
+    '#type' => 'hidden',
+    '#default_value' => 'product_service_type'
+  );
+  
+  $form['next'] = array(
+    '#type' => 'submit',
+    '#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Next')
+  );
+    
+  return $form;
+}
+
+function location_direction_form($form,&$form_state)
+{
+$form=array();
+$productId=(Integer)arg(3);
+$productDetail=getListingData($productId);
+ $form['transport'] = array(
+    '#prefix' => '<div class="loctaion-transport-info"><h2>'.t('Transportation & Itinerary').'</h2>',
+   
+  );
+    /*  $form['transport']['about_area'] = array(
+    '#type' => 'textarea',
+	'#attributes' => array(
+		'class' => array('form-control'),'placeholder' => t('Whats around your area')),
+	
+    '#title' => t('About your area'),
+	'#default_value' => isset($productDetail['about_area']) ? $productDetail['about_area'] : NULL,
+  ); */
+   $form['transport']['Itinerary'] = array(
+    '#type' => 'textarea',
+	'#attributes' => array(
+		'class' => array('form-control'),'placeholder' => t('Itinerary')),
+	
+    '#title' => t('Itinerary'),
+	 //'#description'=>t('only for confirmed guests'), 
+    '#default_value' => isset($productDetail['direction']) ? $productDetail['direction'] : NULL,
+	 '#suffix' => '</div>',
+  );
+    $form['save'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Save')
+	
+  );
+return $form;  
+}
+function product_service_form($form, &$form_state) {
+
+    
+  $values = isset($form_state['multistep_values']['product_service']) ? $form_state['multistep_values']['product_service'] : array();
+
+  $form['product_service'] = array(
+    '#prefix' => '<div><h2>Select your Listing category </h2>',
+    '#suffix' => '</div>',
+  );
+  
+  $form['product_service']['service_id'] = array(
+    '#type' => 'radios',
+    '#options' => array(1 => 'Activity', 2 => 'Day Tour', 3 => 'Multi Day Tour', 4 => 'Private Tour',5 => 'Rental', 6 => 'Ticket', 7 => 'Lesson', 8 => 'Charter', 9 => 'Event'),
+    '#default_value' => isset($values['service_id']) ? $values['service_id'] : NULL,
+	'#required' => TRUE
+  );
+  
+  $form['page'] = array(
+    '#type' => 'hidden',
+    '#default_value' => 'product_service'
+  );
+  
+  $form['next'] = array(
+    '#type' => 'submit',
+    '#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Next')
+  );
+
+  
+  return $form;
+}
+
+
+/**
+ * Form for the rate_the_service step.
+ * 
+ * @see customer_survey_form().
+ *  
+ * @param type $form
+ * @param type $form_state
+ * @return type 
+ */
+ /*
+
+/**********changes on 25-july************/
+function product_details_form($form, &$form_state) {
+global $user;  
+$eid = arg(3);
+$values = getOverviewData($eid);
+if(isset($eid) && $eid!="")
+{
+if(empty($values))
+{
+drupal_set_message('No Listing data yet Created','error');
+drupal_goto('product/add/overview');
+}
+else if($user->uid!=$values['uid']){
+
+drupal_set_message('You have not access to view Listing data','error');
+drupal_goto('product/add/overview');
+}
+}
+
+
+  $form['product_details'] = array(
+    '#prefix' => '<div><h2>Overview</h2>',
+    '#suffix' => '</div>',
+  );
+$experienceType=getExperienceType();
+//$experienceType['']=t('--Select Experience Type--');
+//array_unshift($experienceType,t('--Select Experience Type--'));
+$experienceCategory=getExperienceCategory();
+  $form['product_details']['product_type'] = array(
+    '#type' => 'select',
+    '#prefix' => '<div class="product-type-category">',
+    '#title' => t('Experience Type'),
+    '#default_value' => isset($values['experience_type']) ? $values['experience_type'] : 0,
+	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+	'#options'=>$experienceType,
+	'#required' => TRUE
+  );
+
+ /*  $form['product_details']['product_category'] = array(
+    '#type' => 'select',
+    '#suffix' => '</div>',
+    '#title' => t('Experience category'),
+  
+	 '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+	
+  ); */
+  
+ $form['product_details']['experiencehtml'] = array(
+ '#type' => 'markup',
+ '#markup' => '<h3>'.t('About your Experience').'</h3>',
+); 
+  $form['product_details']['product_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Experience title'),
+    /* '#description' => t('Max 35 characters'), */
+    '#default_value' => isset($values['title']) ? $values['title'] : '',
+	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+	  '#maxlength' =>35,
+	'#required' => TRUE
+  );
+
+  //$form['#attributes'] = array('enctype' => 'multipart/form-data');
+
+  /* $form['product_details']['short_description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Highlight'),
+    '#default_value' => isset($values['short_description']) ? trim($values['short_description']) : '',
+	  '#attributes' => array(
+		'class' => array('form-control'),'onKeyPress'=>"return(this.value.length<500);",
+	  ),
+	'#required' => TRUE
+  ); */
+ $form['product_details']['long_description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Long Description'),
+    '#default_value' => isset($values['brief_description']) ? trim($values['brief_description']) : '',
+	  '#attributes' => array(
+		'class' => array('form-control'),'onKeyPress'=>"return(this.value.length<5000);"
+	  ),
+	'#required' => TRUE
+  );
+
+  $form['page'] = array(
+    '#type' => 'hidden',
+    '#default_value' => 'product_amenities'
+  );
+  
+  $form['eid'] = array(
+    '#type' => 'hidden',
+    '#default_value' => isset($values['eid']) ? $values['eid'] : 0,
+  );
+  
+   $form['save']=array(
+               '#type' => 'submit',
+			   '#value' => t('Save'),
+			   '#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+                  );
+  
+
+    
+  return $form;
+}
+function product_details_form_validate($form, &$form_state) {
+$eid = arg(3);
+$values = getOverviewData($eid);
+if(!isset($eid) || empty($values) || (isset($eid) && trim($form_state['values']['product_name']) != $values['title'] ))
+{
+
+$title=trim($form_state['values']['product_name']);
+$query=db_select('gbl_experience_list','gel')
+       ->fields('gel',array('title'))
+       ->condition('title',$title,'like'); 
+	  
+$result=$query->execute();
+
+$data=$result->fetchAssoc();
+if($data['title'])
+{
+form_set_error('edit-product-name',t('Experience Title Should be unique'));
+return false;
+} 
+}  
+return true; 	   
+
+}
+function product_details_form_submit($form, &$form_state)
+{
+global $user;
+/*  
+echo "<pre>";
+print_r($form_state["values"]);
+die; */
+if($form_state["values"]["eid"]){
+
+		$query=db_update('gbl_experience_list')
+      ->fields(array('experience_type'=>$form_state['values']['product_type'],
+	  'title'=>$form_state['values']['product_name'],
+	  'brief_description'=>$form_state['values']['long_description'],'modified'=>time()
+	    ))->condition('eid',$form_state["values"]["eid"]);	
+     $result=$query->execute();	 
+
+	 if($result)
+	 {	
+		 $_SESSION['product_id']=$form_state["values"]["eid"];		 
+		 drupal_set_message(t('Product Overview data updated successfully'));
+		 drupal_goto('product/add/photos/'.urlencode($form_state["values"]["eid"]));
+	 }
+}
+else{
+$query=db_insert('gbl_experience_list')
+      ->fields(array('experience_type'=>$form_state['values']['product_type'],
+	  'title'=>$form_state['values']['product_name'],'brief_description'=>$form_state['values']['long_description'],'created'=>time(),'list_type'=>'experience','uid'=>$user->uid
+	    ));
+ 
+     $result=$query->execute();	
+
+	 if($result)
+	 {	
+		 $_SESSION['product_id']=$result;		 
+		 drupal_set_message(t('Product Overview data saved successfully'));
+		 drupal_goto('product/add/photos/'.urlencode($result));
+	 }
+}
+
+}
+function product_photos_form($form, &$form_state){
+		
+	global $user;  
+    $listing_id = arg(3);
+	
+	if($listing_id!="")
+	{
+	$values = getOverviewData($listing_id);
+	if(empty($values))
+	{
+  
+	drupal_set_message('No Listing data yet Created','error');
+	drupal_goto('product/add/overview');
+	}
+	else if($user->uid!=$values['uid']){
+
+	drupal_set_message('You have not access to view Listing data','error');
+	drupal_goto('product/add/overview');
+	}
+	}
+	//$values = isset($form_state['multistep_values']['product_photos']) ? $form_state['multistep_values']['product_photos'] : array();
+  
+	$form['picture_upload'] = array(
+	  '#type' => 'plupload',
+	  '#title' => t('Upload files'),
+	 // '#description' => t('This multi-upload widget uses Plupload library.'),
+	  //'#autoupload'=>TRUE,
+	  //'#autosubmit'=>TRUE,
+	  '#upload_validators' => array(
+		'file_validate_extensions' => array('jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'),
+		//'my_custom_file_validator' => array('some validation criteria'),
+	  ),
+	  '#plupload_settings' => array(
+		'runtimes' => 'html5',
+		'chunk_size' => '1mb',
+	  ),
+	);
+	
+	$form['listing_id']=array(
+						'#type'=>'hidden',
+						'#default_value'=>$listing_id,	
+						'#attributes' => array('class'=>array('listing_id')),		
+	);
+ 
+    $form['save']=array(
+               '#type' => 'submit',
+			   '#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+			   '#value' => t('Save')
+    );
+	
+	 return $form;
+}
+
+function product_amenities_form($form, &$form_state){
+global $user;  
+    $listing_id = arg(3);
+	
+	if($listing_id!="")
+	{
+	$values = getOverviewData($listing_id);
+		 if(empty($values))
+		{
+		drupal_set_message('No Listing data yet Created','error');
+		drupal_goto('product/add/overview');
+		}
+		else  if($user->uid!=$values['uid']){
+
+		drupal_set_message('You have not access to view Listing data','error');
+		drupal_goto('product/add/overview');
+		}
+	}
+	/***************************************************************************************/
+	 $amenitiesdatas=getAmentiesByproduct(arg(3));
+
+	 $undata=unserialize($amenitiesdatas['value1']);
+
+	$form['product_amenities'] = array(
+		'#prefix' => '<div><h2>Amenities</h2>',
+		'#suffix' => '</div>',
+	);
+
+	$form['product_amenities']['important-information'] = array( 
+		'#markup' => '<h3>'.t('Important Informations').'</h3>',
+	);
+
+	$form['product_amenities']['whats_included'] = array(
+		'#type' => 'textfield',
+		'#title' => t("What's included ?"),
+		'#prefix' => '<div class="amenities-included" id="amenities-included">',
+		'#default_value' => isset($undata['whats_included']) ? $undata['whats_included'] : '',
+		  '#attributes' => array('placeholder'=>'Add label',
+			'class' => array('form-control'),
+		  ),
+		  '#maxlength' =>35,
+		  '#required'=>TRUE
+	);
+
+ 	$form['product_amenities']['add_whats_included'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#" id="addInc">Add another</a>',
+		'#suffix' => '</div></div>',
+	);
+/********************************************************************************************/
+ if(count($undata['whats_included_extra']>0))
+ {
+ foreach ($undata['whats_included_extra'] as $key=>$value)
+ {
+ $form['product_amenities']['whats_included_extra['.$key.']'] = array(
+		'#type' => 'textfield',
+		//'#title' => t("What's included"),
+		'#prefix' => '<div class="amenities-extra-included">',
+		'#default_value' => isset($value) ?$value : '',
+		  '#attributes' => array('placeholder'=>'Add label',
+			'class' => array('form-control amenities-included'),
+		  ),
+		  '#maxlength' =>35,
+	);
+	$form['product_amenities']['remove_whats_included['.$key.']'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#" id="remIncExtra">Remove</a>',
+		'#suffix' => '</div></div>',
+	); 
+ }
+ }
+/********************************************************************************************/	
+	
+	$form['product_amenities']['whats_excluded'] = array(
+		'#type' => 'textfield',
+		'#title' => t("What's excluded ?"),
+		'#prefix' => '<div class="amenities-excluded" id="amenities-excluded">',
+		'#default_value' => isset($undata['whats_excluded']) ? $undata['whats_excluded'] : '',
+		  '#attributes' => array('placeholder'=>'Add label',
+			'class' => array('form-control'),
+		  ),
+		  '#maxlength' =>35,
+		  '#required'=>TRUE
+	);
+	
+ 
+ 	$form['product_amenities']['add_whats_excluded'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#" id="addExc">Add another</a>',
+		'#suffix' => '</div></div>',
+	); 
+/*************************************************************************************************/
+if(count($undata['whats_excluded_extra']>0))
+ {
+ foreach ($undata['whats_excluded_extra'] as $key=>$value)
+ {
+ $form['product_amenities']['whats_excluded_extra['.$key.']'] = array(
+		'#type' => 'textfield',
+		//'#title' => t("What's included"),
+	    '#prefix' => '<div class="amenities-extra-excluded">',
+		'#default_value' => isset($value) ?$value : '',
+		  '#attributes' => array('placeholder'=>'Add label',
+			'class' => array('form-control amenities-excluded'),
+		  ),
+		  '#maxlength' =>35,
+	);
+	$form['product_amenities']['remove_whats_excluded_extra['.$key.']'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#" id="remExcExtra">Remove</a>',
+		'#suffix' => '</div></div>',
+	); 
+ }
+ }
+/*************************************************************************************************/
+	
+
+	$form['product_amenities']['amenities-safety'] = array( 
+		'#markup' => '<h3>'.t('Safety').'</h3>',
+	);
+
+	$form['product_amenities']['safety_precautions'] = array(
+		'#type' => 'textarea',
+		//'#title' => t("What are the safety precautions you take for your travelers?"),
+		'#default_value' => isset($undata['safety_precautions']) ? $undata['safety_precautions'] : '',
+		  '#attributes' => array(
+			'class' => array(''),
+		  ),
+	);
+	
+	if($amenitiesdatas)
+	{
+	 $form['save'] = array(
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+		'#value' => t('Update'),
+		'#prefix'=>'<div class="form-save">',
+		'#suffix'=>'</div>'
+		  );
+
+	}
+	else
+	{
+	   $form['save'] = array(
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+		'#value' => t('Save'),
+		'#prefix'=>'<div class="form-save">',
+		'#suffix'=>'</div>'
+		  );
+	}
+
+	
+	  return $form;
+}
+
+
+/*********************************************************************************/
+function product_location_info_form($form,&$form_state)
+	{
+	
+	$countryList=getCountryList();
+	$productId=(Integer)arg(3);
+	/**************************************************************************************/
+	global $user;  
+    $productId = arg(3);
+	
+	if($productId!="")
+	{
+	$values = getOverviewData($productId);
+		if(empty($values))
+		{
+		drupal_set_message('No Listing data Found','error');
+		drupal_goto('product/add/overview');
+		}
+		else if($user->uid!=$values['uid']){
+
+		drupal_set_message('You have not access to view Listing data','error');
+		drupal_goto('product/add/overview');
+		}
+	}
+	/**************************************************************************************/
+	
+     /* if (is_int($productId))
+	 {
+	$productDetail=getListingData($productId);
+	} */
+	$form=array();
+	$form['product_address'] = array(
+    '#prefix' => '<div><h2>'.t('Enter Address').'</h2>',
+    '#suffix' => '</div>',
+  );
+	
+  $form['address1'] = array(
+	'#type' => 'textfield',
+	'#attributes' => array(
+		'class' => array('form-control'),'placeholder' => t('ex. Rua Bossoroca, 1')
+	),
+    '#title' => t('Address Line 1'),
+	'#required' => TRUE,
+	'#default_value' => ($values['address1'])?$values['address1'] :"",
+  );
+  $form['address2'] = array(
+
+    '#type' => 'textfield',
+	'#attributes' => array(
+		'class' => array('form-control'),'placeholder' => t('"ex. apt 50')	),
+    '#title' => t('Address Line 2'), 
+    '#default_value' => ($values['address2'])?$values['address2'] :"",	
+  );
+  $form['city'] = array(
+	
+    '#type' => 'textfield',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+	//'#attributes' =>array('placeholder' => t(''))
+    '#title' => t('City'),
+    '#required' => TRUE ,
+    '#default_value' => ($values['city'])?$values['city'] :"",		
+  );
+	 $form['state'] = array(
+	'#type' => 'textfield',
+	'#attributes' => array(	'class' => array('form-control'),),
+    '#title' => t('State / Province / Region'),
+    '#required' => TRUE ,
+     '#default_value' => ($values['state'])?$values['state'] :"",	
+  );
+  $form['zipcode'] = array(
+	'#type' => 'textfield',
+	'#attributes' => array(
+		'class' => array('form-control'),'placeholder' => t('ex. 437719')
+	),	
+    '#title' => t('ZIP / Postal Code'),  
+    '#maxlength' =>10,
+	'#default_value' => ($values['zipcode'])?$values['zipcode'] :"",	
+    //'#required' => TRUE	,
+	// '#element_validate' => array('element_validate_integer_positive'),
+  );
+    $form['country'] = array(
+	//'#prefix' => '<div class="product-extra" style="display:none;">',
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),	
+    '#title' => t('Country'),   
+    '#required' => TRUE	,
+	'#options'=>$countryList,
+	'#default_value' => ($values['country'])?$values['country'] :"",
+  );
+  $form['next'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Next')
+	
+  );
+  $form['cancel'] = array(
+    '#type' => 'button',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Cancel')
+	
+  ); 
+  return $form;
+	}
+/*********************************************************************************/
+function product_extra_form($form, &$form_state){
+/**************************************************************************************/
+	global $user;  
+    $productId = arg(3);
+	
+	if($productId!="")
+	{
+	$values = getOverviewData($productId);
+		if(empty($values))
+		{
+		drupal_set_message(t('No Listing data found'),'error');
+		drupal_goto('product/add/overview');
+		}
+		else if($user->uid!=$values['uid']){
+
+		drupal_set_message(t('You have not access to view Listing data'),'error');
+		drupal_goto('product/add/overview');
+		}
+	}
+	/**************************************************************************************/
+	
+	$metaID = arg(4);
+	$extraDetails1 = getExtraDetails($metaID);
+	$extraDetails = unserialize($extraDetails1["value1"]);
+
+  $form['product_extra']['extra_service'] = array(
+	'#prefix' => '<div class="product-extra">',
+    '#type' => 'textfield',
+    '#required' => TRUE,
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#title' => t('Optional Service'),
+    '#default_value' => isset($extraDetails['title']) ? $extraDetails['title'] : NULL,
+  );
+  
+  $form['product_extra']['extra_price_value'] = array(
+    '#type' => 'textfield',
+    '#prefix' => '<div class="product_extra_price">',
+	'#attributes' => array(
+		'class' => array('form-control','themePrice'),
+	),
+    '#title' => t('Price'),
+	'#required' => TRUE,
+    '#default_value' => isset($extraDetails['price']) ? $extraDetails['price'] : NULL,
+  );
+  
+  $form['product_extra']['extra_price_type'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($extraDetails['price-type']) ? $extraDetails['price-type'] : NULL,
+	'#options' => array('%'=>'Amount in %','$'=>'Amount in $'),
+  );
+  
+/*   $form['product_extra']['extra_price_key'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($extraDetails['price-key']) ? $extraDetails['price-key'] : NULL,
+	'#options' => array('per-day'=>'Per Day','per-stay'=>'Per Stay','per-item'=>'Per Item','per-hour'=>'Per Hour'),
+	'#suffix' => '</div>'
+  ); */
+  
+  $form['product_extra']['extra_price_key'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($values['extra_price_key']) ? $values['extra_price_key'] : NULL,
+	'#options' => array('customer-choice'=>'Customer Choice','per-order'=>'Per Order','per-quantity'=>'Per Quantity'),
+	'#suffix' => '</div>'
+  );
+ 
+  $form['product_extra']['product_extra_description'] = array(
+    '#type' => 'textarea',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#title' => t('Description'),
+    '#default_value' => isset($extraDetails['description']) ? $extraDetails['description'] : NULL,
+  ); 
+  
+   $form['metaID'] = array(
+    '#type' => 'hidden',
+    '#default_value' => isset($extraDetails1['meta_id']) ? $extraDetails1['meta_id'] : NULL,
+  ); 
+
+  $form['page'] = array(
+    '#type' => 'hidden',
+    '#default_value' => 'product_subscription'
+  );
+  
+/*   $form['back'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Back')
+  ); */
+  
+   $form['next_step']=array(
+ '#type' => 'markup',
+  '#markup' => '<a href="'.url("product/add/rules/".arg(3)).'" class="btn btn-dark btn-gradient form-submit additinal-step">'.t('Next').'</a>',
+  '#prefix'=>'</div><div class="extra-save">'
+  );  
+  $form['next'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Save'),
+	'#suffix'=>'</div>'
+	
+  );
+  return $form;
+}
+
+function product_pricing_form($form, &$form_state){
+	
+	
+
+/**************************************************************************************/
+	global $user;  
+    $eid = arg(3);
+
+	if($eid!="")
+	{
+		$values = getOverviewData($eid);
+	if(empty($values))
+		{
+		drupal_set_message(t('No Listing data found'),'error');
+		drupal_goto('product/add/overview');
+		}
+		else if($user->uid!=$values['uid']){
+
+		drupal_set_message(t('You have not access to view Listing data'),'error');
+		drupal_goto('product/add/overview');
+		}
+	}
+	/**************************************************************************************/
+	
+$pricingData = getPricingData($eid);
+$earlyBirdData=getDiscountInfo($eid,'Early Birds');
+$LastMinuteData=getDiscountInfo($eid,'Last Minute');
+$offer_24_Data=getDiscountInfo($eid,'24 Hour Offer');
+$listingData = getOverviewData($eid);
+
+/* echo "<pre>";
+print_r($pricingData);
+die; */
+//$values = unserialize($pricingData["value1"]);
+$seasonalPrice=getListExtraPrice(arg(3));
+ 
+$form['#attributes'] = array('onsubmit' => 'return pricingValidation();' );
+ 
+$form['product_pricing'] = array(
+    '#prefix' => '<div><h2>Pricing</h2>',
+    '#suffix' => '</div>',
+  );
+
+ $i=1; 
+ if($seasonalPrice)
+ { 
+ $form['product_pricing']['product_pricing_seosanal'] = array(
+    '#prefix' => '<div><input type="checkbox" name="seosonal-pricing" id="seosonal-pricing" checked="checked"><h5>Special Seasonal Price</h5>',
+   '#suffix' => '</div>',
+  );
+ foreach($seasonalPrice as $price)
+ {
+ $form['product_pricing']['season_rate['.$i.'][label]'] = array(
+    '#type' => 'textfield',
+	'#prefix' => '<div class="quantity product_season_rate" id="product_season_rate">',
+	'#title' => t('Rate Label').'<span class="form-required"> *<span>', 
+    '#default_value' => isset($price['rate_label']) ? $price['rate_label'] : NULL,
+	'#attributes' => array('placeholder'=>'Rate Label','class' => array('form-control')),
+	
+  );
+  $form['product_pricing']['season_rate['.$i.'][price]'] = array(
+    '#type' => 'textfield',
+	'#title' => t('Rate Price').'<span class="form-required"> *<span>', 
+    '#default_value' => isset($price['rate_price']) ? $price['rate_price'] : NULL,
+	'#attributes' => array('placeholder'=>'Rate Price','class' => array('form-control','themePrice')),
+	'#prefix'=>'<div class="special-price">',
+	'#suffix'=>'</div>'
+  );
+    $form['product_pricing']['season_rate['.$i.'][from-to]'] = array(
+    '#type' => 'textfield',
+    '#title' => t('From - To').'<span class="form-required"> *<span>', 
+	  '#attributes' => array('placeholder'=>'From - To',
+		'class' => array('form-control','daterangepicker2'),
+	  ),
+    '#default_value' => isset($price['from_to_date']) ? $price['from_to_date'] : NULL,
+	'#prefix'=>'<div class="seosonal-date-price">',
+	'#suffix'=>'</div>'
+  );
+   $form['product_pricing']['season_rate['.$i.'][priceID]'] = array(
+				'#type' => 'hidden',
+				'#default_value' => isset($price['sid']) ? $price['sid'] : NULL,
+			  ); 
+	    if($i==1)
+	    {
+	    $form['product_pricing']['add_new'] = array(
+			'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit" href="#" id="addRate">Add Rate</a>',
+			'#suffix' => '</div></div>',
+		);
+		}
+		else
+		{
+		$form['product_pricing']['rem_new'.$i] = array(
+			'#prefix' => '<a class="btn btn-dark btn-gradient form-submit" href="#" id="remRate">Remove Rate</a>',
+			'#suffix' => '</div>',
+		);
+		}
+	$i++;
+   }
+   $form['product_pricing']['removed-pricing']=array(
+   '#type' => 'hidden',
+   '#default_value'=>'',
+    '#attributes' => array('id' => 'removed-pricing'),
+   
+   );
+   }
+  else
+  {
+  $form['product_pricing']['product_pricing_seosanal'] = array(
+    '#prefix' => '<div><input type="checkbox" name="seosonal-pricing" id="seosonal-pricing"><h5>Special Seasonal Price</h5>',
+    '#suffix' => '</div>',
+  );
+   $form['product_pricing']['season_rate[0][label]'] = array(
+    '#type' => 'textfield',
+	'#prefix' => '<div class="quantity product_season_rate" id="product_season_rate">',
+	'#title' => t('Rate Label').'<span class="form-required"> *<span>', 
+    '#default_value' => isset($pricingData['season_rate_label']) ? $pricingData['season_rate_label'] : NULL,
+	'#attributes' => array('placeholder'=>'Rate Label','class' => array('form-control')),
+  );
+   $form['product_pricing']['season_rate[0][price]'] = array(
+    '#type' => 'textfield',
+	'#title' => t('Rate Price').'<span class="form-required"> *<span>', 
+    '#default_value' => isset($pricingData['season_rate_amount']) ? $pricingData['season_rate_amount'] : NULL,
+	'#attributes' => array('placeholder'=>'Rate Price','class' => array('form-control','themePrice')),
+  );
+    $form['product_pricing']['season_rate[0][from-to]'] = array(
+    '#type' => 'textfield',
+    '#title' => t('From - To').'<span class="form-required"> *<span>', 
+	  '#attributes' => array('placeholder'=>'From - To',
+		'class' => array('form-control','daterangepicker2'),
+	  ),
+/*  	'#suffix' => '</div>', */
+    '#default_value' => isset($pricingData['high_season_rate_dates']) ? $pricingData['high_season_rate_dates'] : NULL,
+  );
+  $form['product_pricing']['add_new'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit" href="#" id="addRate">Add Rate</a>',
+		'#suffix' => '</div></div>',
+	);
+  } 
+  
+
+
+	
+	
+ /* if(count($values["season_rate_label_extra"])>0)
+{
+
+ foreach ($values["season_rate_label_extra"] as $key => $value)
+{
+
+ $form['product_pricing']['season_rate_label_extra'.$key] = array(
+    '#type' => 'textfield',
+	'#prefix' => '<div class="product_season_rate" id="product_season_rate_'.$key.'">',
+	'#title' => t('Rate Label').'<span class="form-required"> *<span>', 
+    '#default_value' => ($value)?$value:'',
+	'#attributes' => array('placeholder'=>'Rate Label','class' => array('form-control'),'name'=>'season_rate_label_extra['.$key.']'),
+);
+$form['product_pricing']['season_rate_amount_extra'.$key] = array(
+    '#type' => 'textfield',
+	'#title' => t('Rate Price').'<span class="form-required"> *<span>', 
+	'#prefix' => '<div class="form-item-season-rate-amount">',
+    '#default_value' => ($values["season_rate_amount_extra"][$key])?$values["season_rate_amount_extra"][$key]:'',
+	'#attributes' => array('placeholder'=>'Rate Price','class' => array('form-control','themePrice'),'name'=>'season_rate_amount_extra['.$key.']'),
+	'#suffix' => '</div>'
+
+  );
+
+  $form['product_pricing']['high_season_rate_dates_extra'.$key] = array(
+    '#type' => 'textfield',
+ 	'#prefix' => '<div class="form-item-high-season-rate-dates">',
+    '#title' => t('From - To').'<span class="form-required"> *<span>', 
+	  '#attributes' => array('placeholder'=>'From - To','class' => array('form-control','daterangepicker2'),'name'=>'high_season_rate_dates_extra['.$key.']' ),
+ 	'#suffix' => '</div>', 
+    '#default_value' => ($values["high_season_rate_dates_extra"][$key])?$values["high_season_rate_dates_extra"][$key]:'',
+  );
+
+}
+}*/
+/******************************************************************************************************/
+	$pricingData = getPricingData($eid);
+	
+/* 	echo "<pre>";
+	print_r($pricingData); die; */
+	$i = 1;
+	if(count($pricingData)> 0){
+		$form['product_pricing']['product_pricing_type'] = array(
+			'#type' => 'select',
+			'#title' => t('Product pricing').'<span class="form-required"> *<span>',
+			'#prefix' => '<div class="product_pricing_wrapper">',
+			'#default_value' => isset($pricingData[0]['price_type']) ? $pricingData[0]['price_type'] : NULL,
+			'#attributes' => array(
+			'class' => array('form-control'),
+			),
+			'#options' => array('PER_PERSON'=>'By Person','PER_ITEM'=>'By Item','FIXED'=>'Fixed','PER_DAY' => 'By Day','PER_HOUR'=>'By Hour','PER_MINUTE'=>'By Minute')
+		);
+		foreach ($pricingData as $key => $values)
+		{
+			$class = "";
+			if($i>1){
+				$class = "product_pricing_extra";
+			}
+		if($values["price_type"] == "PER_PERSON"){
+			  $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][price_option_type]'] = array(
+				'#type' => 'select',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_PERSON '.$class.'" id="product_pricing_extra_'.$i.'">',
+				'#default_value' => isset($values['price_option_type']) ? $values['price_option_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control','price-option-type'),
+				  ),
+				'#options' => array('everyone'=>'Everyone','adult'=>'Adult','child'=>'Child','everyone'=>'Everyone',/* 'senior'=>'Senior','teenager'=>'Teenager','student'=>'Student','family-of-three'=>'Family of 3','family-of-four'=>'Family of 4','family-of-five'=>'Family of 5', 'group'=>'Group'*/)
+			  );
+			  $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="max-partners">',
+				'#suffix' => '</div>',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','price-max')),
+			  );
+			  $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][priceID]'] = array(
+				'#type' => 'hidden',
+				'#default_value' => isset($values['id']) ? $values['id'] : NULL,
+			  );
+			  
+			   $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#prefix' => '<div class="pricing-group-type">',
+				'#suffix' => '</div>',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('per-person'=>'Per person','TOTAL'=>'Total')
+			  ); 
+			if($i == 1){
+
+				$form['product_pricing']['add_new_PER_PERSON'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);	
+			}
+			else{
+				$form['product_pricing']['remove_PER_PERSON'.$i] = array(
+					'#prefix' => '<a class="btn btn-dark btn-gradient form-submit removePricing" href="#">Remove</a>',
+					'#suffix' => '</div>',
+				);					
+			}
+			 drupal_add_js('jQuery(document).ready(function () { 
+				var selecBox = jQuery("#product_pricing_extra_'.$i.' .price-option-type").val();
+				if(selecBox == "group"){
+						jQuery("#product_pricing_extra_'.$i.' .max-partners").show();
+						jQuery("#product_pricing_extra_'.$i.' .pricing-group-type").show();					
+				}	
+				else if(selecBox == "family-of-five" || selecBox == "family-of-three" || selecBox == "family-of-four"){
+						jQuery("#product_pricing_extra_'.$i.' .max-partners").hide();
+						jQuery("#product_pricing_extra_'.$i.' .pricing-group-type").show();					
+				}
+				else{
+						jQuery("#product_pricing_extra_'.$i.' .max-partners").hide();
+						jQuery("#product_pricing_extra_'.$i.' .pricing-group-type").hide();						
+				}
+			 });',
+				array('type' => 'inline', 'scope' => 'footer', 'weight' => 5)
+			  );
+/* 			if(count($pricingData) == $i){
+				break;
+			} */
+		}
+		else{
+			if($i == 1){
+			  $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][price_option_type]'] = array(
+				'#type' => 'select',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_PERSON">',
+				'#default_value' => isset($values['price_option_type']) ? $values['price_option_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control','price-option-type'),
+				  ),
+				'#options' => array('everyone'=>'Everyone','adult'=>'Adult','child'=>'Child','everyone'=>'Everyone','senior'=>'Senior','teenager'=>'Teenager','student'=>'Student','family-of-three'=>'Family of 3','family-of-four'=>'Family of 4','family-of-five'=>'Family of 5','group'=>'Group')
+			  );
+			  $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="max-partners">',
+				'#suffix' => '</div>',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','price-max')),
+			  );
+			  $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			   $form['product_pricing']['PriceOption[PER_PERSON]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#prefix' => '<div class="pricing-group-type">',
+				'#suffix' => '</div>',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('per-person'=>'Per person','TOTAL'=>'Total')
+			  ); 
+				$form['product_pricing']['add_new_PER_PERSON'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);	
+			}
+		}
+		
+
+		if($values["price_type"] == "PER_ITEM"){
+			  $form['product_pricing']['PriceOption[PER_ITEM]['.$i.'][label]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_ITEM '.$class.'">',
+				'#default_value' => isset($values['label']) ? $values['label'] : NULL,
+				'#attributes' => array('placeholder'=>'Label','class' => array('form-control','price-label')),
+			  );
+			  $form['product_pricing']['PriceOption[PER_ITEM]['.$i.'][priceID]'] = array(
+				'#type' => 'hidden',
+				'#default_value' => isset($values['id']) ? $values['id'] : NULL,
+			  );
+			  $form['product_pricing']['PriceOption[PER_ITEM]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			if($i == 1){
+
+				$form['product_pricing']['add_new_PER_ITEM'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);	
+			}
+			else{
+				$form['product_pricing']['remove__PER_ITEM'.$i] = array(
+					'#prefix' => '<a class="btn btn-dark btn-gradient form-submit removePricing" href="#">Remove</a>',
+					'#suffix' => '</div>',
+				);					
+			}
+/* 			if(count($pricingData) == $i){
+				break;
+			} */
+		}
+		else{
+			if($i == 1){
+			  $form['product_pricing']['PriceOption[PER_ITEM]['.$i.'][label]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_ITEM">',
+				'#default_value' => isset($values['label']) ? $values['label'] : NULL,
+				'#attributes' => array('placeholder'=>'Label','class' => array('form-control','price-label')),
+			  );
+
+			  $form['product_pricing']['PriceOption[PER_ITEM]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+				$form['product_pricing']['add_new_PER_ITEM'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);				  
+			}		
+		}
+		if($values["price_type"] == "FIXED"){
+			  $form['product_pricing']['PriceOption[FIXED]['.$i.'][priceID]'] = array(
+				'#type' => 'hidden',
+				'#default_value' => isset($values['id']) ? $values['id'] : NULL,
+			  );
+			  $form['product_pricing']['PriceOption[FIXED]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_FIXED '.$class.'">',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#suffix' => '</div>',
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );		
+/* 			if(count($pricingData) == $i){
+				break;
+			} */
+		}	
+		else{
+			if($i ==1){
+			  $form['product_pricing']['PriceOption[FIXED]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#suffix' => '</div>',
+				'#prefix' => '<div class="product_pricing pricetype_options_FIXED">',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			}
+		}
+
+
+		if($values["price_type"] == "PER_DAY"){	  
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][min]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_DAY '.$class.'">',
+				'#default_value' => isset($values['min']) ? $values['min'] : NULL,
+				'#attributes' => array('placeholder'=>'min','class' => array('form-control','day-min','price-min')),
+			  );
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][priceID]'] = array(
+				'#type' => 'hidden',
+				'#default_value' => isset($values['id']) ? $values['id'] : NULL,
+			  );			  
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','day-max','price-max')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('EACH'=>'Per day','TOTAL'=>'Total')
+			  );
+			if($i == 1){
+				$form['product_pricing']['add_new_PER_DAY'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);	
+			}
+			else{
+				$form['product_pricing']['remove_PER_PER_DAY'.$i] = array(
+					'#prefix' => '<a class="btn btn-dark btn-gradient form-submit removePricing" href="#">Remove</a>',
+					'#suffix' => '</div>',
+				);					
+			}
+/* 			if(count($pricingData) == $i){
+				break;
+			} */
+		}
+		else{
+			if($i == 1){
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][min]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_DAY">',
+				'#default_value' => isset($values['min']) ? $values['min'] : NULL,
+				'#attributes' => array('placeholder'=>'min','class' => array('form-control','day-min','price-min')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','day-max','price-max')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_DAY]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('EACH'=>'Per day','TOTAL'=>'Total')
+			  );
+				$form['product_pricing']['add_new_PER_DAY'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);		
+			}
+		}
+				
+
+
+		if($values["price_type"] == "PER_HOUR"){
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][min]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_HOUR '.$class.'">',
+				'#default_value' => isset($values['min']) ? $values['min'] : NULL,
+				'#attributes' => array('placeholder'=>'min','class' => array('form-control','hour-min','price-min')),
+			  );
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][priceID]'] = array(
+				'#type' => 'hidden',
+				'#default_value' => isset($values['id']) ? $values['id'] : NULL,
+			  );				  
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','hour-max','price-max')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('EACH'=>'Per hour','TOTAL'=>'Total')
+			  );		
+			if($i == 1){
+				$form['product_pricing']['add_new_PER_HOUR'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);	
+			}
+			else{
+				$form['product_pricing']['remove_PER_HOUR'.$i] = array(
+					'#prefix' => '<a class="btn btn-dark btn-gradient form-submit removePricing" href="#">Remove</a>',
+					'#suffix' => '</div>',
+				);					
+			}	
+/* 			if(count($pricingData) == $i){
+				break;
+			} */
+		}
+		else{
+			if($i == 1){
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][min]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_HOUR">',
+				'#default_value' => isset($values['min']) ? $values['min'] : NULL,
+				'#attributes' => array('placeholder'=>'min','class' => array('form-control','hour-min','price-min')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','hour-max','price-max')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_HOUR]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('EACH'=>'Per hour','TOTAL'=>'Total')
+			  );
+				$form['product_pricing']['add_new_PER_HOUR'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);
+			}
+		}
+	  
+			  
+		if($values["price_type"] == "PER_MINUTE"){
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][min]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_MINUTE '.$class.'">',
+				'#default_value' => isset($values['min']) ? $values['min'] : NULL,
+				'#attributes' => array('placeholder'=>'min','class' => array('form-control','minute-min','price-min')),
+			  );
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][priceID]'] = array(
+				'#type' => 'hidden',
+				'#default_value' => isset($values['id']) ? $values['id'] : NULL,
+			  );				  
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','minute-max','price-max')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('EACH'=>'Per minute','TOTAL'=>'Total')
+			  );	
+			if($i == 1){
+				$form['product_pricing']['add_new_PER_MINUTE'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);	
+			}
+			else{
+				$form['product_pricing']['remove_PER_MINUTE'.$i] = array(
+					'#prefix' => '<a class="btn btn-dark btn-gradient form-submit removePricing" href="#">Remove</a>',
+					'#suffix' => '</div>',
+				);					
+			}
+/* 			if(count($pricingData) == $i){
+				break;
+			} */
+		}
+		else{
+			if($i == 1){
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][min]'] = array(
+				'#type' => 'textfield',
+				'#prefix' => '<div class="product_pricing pricetype_options_PER_MINUTE">',
+				'#default_value' => isset($values['min']) ? $values['min'] : NULL,
+				'#attributes' => array('placeholder'=>'min','class' => array('form-control','minute-min','price-min')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][max]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['max']) ? $values['max'] : NULL,
+				'#attributes' => array('placeholder'=>'max','class' => array('form-control','minute-max','price-max')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][price]'] = array(
+				'#type' => 'textfield',
+				'#default_value' => isset($values['price']) ? $values['price'] : NULL,
+				'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+			  );
+			  
+			  $form['product_pricing']['PriceOption[PER_MINUTE]['.$i.'][priceGroupType]'] = array(
+				'#type' => 'select',
+				'#default_value' => isset($values['price_group_type']) ? $values['price_group_type'] : NULL,
+				  '#attributes' => array(
+					'class' => array('form-control'),
+				  ),
+				'#options' => array('EACH'=>'Per minute','TOTAL'=>'Total')
+			  );	
+				$form['product_pricing']['add_new_PER_MINUTE'] = array(
+					'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+					'#suffix' => '</div></div>',
+				);	
+			}
+		}
+			$i++;
+		}
+	$form['product_pricing']['HTML'] = array(
+		'#type' => 'markup',
+		'#suffix' => '</div>',
+	);	
+}	
+
+else{
+		 $form['product_pricing']['product_pricing_type'] = array(
+			'#type' => 'select',
+			'#title' => t('Product pricing'),
+			'#prefix' => '<div class="product_pricing_wrapper">',
+			'#default_value' => isset($values['product_pricing_type']) ? $values['product_pricing_type'] : NULL,
+			  '#attributes' => array(
+				'class' => array('form-control'),
+			  ),
+			'#options' => array('PER_PERSON'=>'By Person','PER_ITEM'=>'By Item','FIXED'=>'Fixed','PER_DAY' => 'By Day','PER_HOUR'=>'By Hour','PER_MINUTE'=>'By Minute')
+		  );
+		  $form['product_pricing']['PriceOption[PER_PERSON][1][price_option_type]'] = array(
+			'#type' => 'select',
+			'#prefix' => '<div class="product_pricing pricetype_options_PER_PERSON">',
+			'#default_value' => isset($values['product_pricing_key']) ? $values['product_pricing_key'] : NULL,
+			  '#attributes' => array(
+				'class' => array('form-control','price-option-type'),
+			  ),
+			'#options' => array('everyone'=>'Everyone','adult'=>'Adult','child'=>'Child','everyone'=>'Everyone','senior'=>'Senior','teenager'=>'Teenager','student'=>'Student','family-of-three'=>'Family of 3','family-of-four'=>'Family of 4','family-of-five'=>'Family of 5','group'=>'Group')
+		  );
+		  $form['product_pricing']['PriceOption[PER_PERSON][1][max]'] = array(
+			'#type' => 'textfield',
+			'#prefix' => '<div class="max-partners">',
+			'#suffix' => '</div>',
+			'#default_value' => isset($values['product_pricing_max']) ? $values['product_pricing_max'] : NULL,
+			'#attributes' => array('placeholder'=>'max','class' => array('form-control','price-max')),
+		  );
+		  $form['product_pricing']['PriceOption[PER_PERSON][1][price]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_value']) ? $values['product_pricing_value'] : NULL,
+			'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+		  );
+		   $form['product_pricing']['PriceOption[PER_PERSON][1][priceGroupType]'] = array(
+			'#type' => 'select',
+			'#prefix' => '<div class="pricing-group-type">',
+			'#suffix' => '</div>',
+			'#default_value' => isset($values['product_pricing_person_type']) ? $values['product_pricing_person_type'] : NULL,
+			  '#attributes' => array(
+				'class' => array('form-control'),
+			  ),
+			'#options' => array('per-person'=>'Per person','TOTAL'=>'Total')
+		  ); 
+
+			$form['product_pricing']['add_new_PER_PERSON'] = array(
+				'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+				'#suffix' => '</div></div>',
+			);	
+		  
+		  $form['product_pricing']['PriceOption[PER_ITEM][1][label]'] = array(
+			'#type' => 'textfield',
+			'#prefix' => '<div class="product_pricing pricetype_options_PER_ITEM">',
+			'#default_value' => isset($values['product_item_label']) ? $values['product_item_label'] : NULL,
+			'#attributes' => array('placeholder'=>'Label','class' => array('form-control','price-label')),
+		  );
+
+		  $form['product_pricing']['PriceOption[PER_ITEM][1][price]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_value']) ? $values['product_pricing_value'] : NULL,
+			'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+		  );
+
+			$form['product_pricing']['add_new1_PER_ITEM'] = array(
+				'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+				'#suffix' => '</div></div>',
+			);	
+			
+		  $form['product_pricing']['PriceOption[FIXED][1][price]'] = array(
+			'#type' => 'textfield',
+			'#prefix' => '<div class="product_pricing pricetype_options_FIXED">',
+			'#suffix' => '</div>',
+			'#default_value' => isset($values['product_pricing_value']) ? $values['product_pricing_value'] : NULL,
+			'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_DAY][1][min]'] = array(
+			'#type' => 'textfield',
+			'#prefix' => '<div class="product_pricing pricetype_options_PER_DAY">',
+			'#default_value' => isset($values['product_pricing_min']) ? $values['product_pricing_min'] : NULL,
+			'#attributes' => array('placeholder'=>'min','class' => array('form-control','day-min','price-min')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_DAY][1][max]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_max']) ? $values['product_pricing_max'] : NULL,
+			'#attributes' => array('placeholder'=>'max','class' => array('form-control','day-max','price-max')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_DAY][1][price]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_value']) ? $values['product_pricing_value'] : NULL,
+			'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_DAY][1][priceGroupType]'] = array(
+			'#type' => 'select',
+			'#default_value' => isset($values['product_pricing_day_type']) ? $values['product_pricing_day_type'] : NULL,
+			  '#attributes' => array(
+				'class' => array('form-control'),
+			  ),
+			'#options' => array('EACH'=>'Per day','TOTAL'=>'Total')
+		  );
+
+			$form['product_pricing']['add_new1_PER_DAY'] = array(
+				'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+				'#suffix' => '</div></div>',
+			);	
+			
+		  $form['product_pricing']['PriceOption[PER_HOUR][1][min]'] = array(
+			'#type' => 'textfield',
+			'#prefix' => '<div class="product_pricing pricetype_options_PER_HOUR">',
+			'#default_value' => isset($values['product_pricing_min']) ? $values['product_pricing_min'] : NULL,
+			'#attributes' => array('placeholder'=>'min','class' => array('form-control','hour-min','price-min')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_HOUR][1][max]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_max']) ? $values['product_pricing_max'] : NULL,
+			'#attributes' => array('placeholder'=>'max','class' => array('form-control','hour-max','price-max')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_HOUR][1][price]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_value']) ? $values['product_pricing_value'] : NULL,
+			'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_HOUR][1][priceGroupType]'] = array(
+			'#type' => 'select',
+			'#default_value' => isset($values['product_pricing_day_type']) ? $values['product_pricing_day_type'] : NULL,
+			  '#attributes' => array(
+				'class' => array('form-control'),
+			  ),
+			'#options' => array('EACH'=>'Per hour','TOTAL'=>'Total')
+		  );
+
+			$form['product_pricing']['add_new1_PER_HOUR'] = array(
+				'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+				'#suffix' => '</div></div>',
+			);	
+			
+		  $form['product_pricing']['PriceOption[PER_MINUTE][1][min]'] = array(
+			'#type' => 'textfield',
+			'#prefix' => '<div class="product_pricing pricetype_options_PER_MINUTE">',
+			'#default_value' => isset($values['product_pricing_min']) ? $values['product_pricing_min'] : NULL,
+			'#attributes' => array('placeholder'=>'min','class' => array('form-control','minute-min','price-min')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_MINUTE][1][max]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_max']) ? $values['product_pricing_max'] : NULL,
+			'#attributes' => array('placeholder'=>'max','class' => array('form-control','minute-max','price-max')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_MINUTE][1][price]'] = array(
+			'#type' => 'textfield',
+			'#default_value' => isset($values['product_pricing_value']) ? $values['product_pricing_value'] : NULL,
+			'#attributes' => array('placeholder'=>'Price','class' => array('form-control','themePrice')),
+		  );
+		  
+		  $form['product_pricing']['PriceOption[PER_MINUTE][1][priceGroupType]'] = array(
+			'#type' => 'select',
+			'#default_value' => isset($values['product_pricing_day_type']) ? $values['product_pricing_day_type'] : NULL,
+			  '#attributes' => array(
+				'class' => array('form-control'),
+			  ),
+			'#options' => array('EACH'=>'Per minute','TOTAL'=>'Total')
+		  );		  
+		  
+			$form['product_pricing']['add_new1_PER_MINUTE'] = array(
+				'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit addPricing" href="#">Add another</a>',
+				'#suffix' => '</div></div>',
+			);	
+	$form['product_pricing']['HTML'] = array(
+		'#type' => 'markup',
+		'#suffix' => '</div>',
+	);			
+}
+ $form['product_pricing']['base_price']=array(
+                '#type'=>'textfield',
+				'#title'=>'Base Price',
+				'#default_value' => isset($listingData['base_price']) ? $listingData['base_price'] : NULL,
+				'#required'=>true,
+				'#attributes' => array('placeholder'=>'Base Price','class' => array('form-control','themePrice')),
+  );
+  /***********************************************************************/
+  $form['product_pricing']['quantity-heading'] = array(
+    '#prefix' => '<div><h2>Quantity</h2>',
+    '#suffix' => '</div>',
+  );
+ 
+  $form['product_pricing']['product_pricing_quantity'] = array(
+    '#type' => 'select',
+	'#title' => 'Quantity',
+	'#prefix' => '<div class="quantity product_pricing_quantity">',
+    '#default_value' => isset($values['quantity_required']) ? $values['quantity_required'] : NULL,
+	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+	'#options' => array('Quantity not required','Quantity Required')
+  ); 
+  
+  $form['product_pricing']['quantity_min'] = array(
+    '#type' => 'textfield',
+	'#title' => 'Min.',
+	  '#attributes' => array('placeholder'=>'Min.',
+		'class' => array('form-control'),
+	  ),
+    '#default_value' => isset($values['quantity_min']) ? $values['quantity_min'] : NULL,
+  );
+  
+  $form['product_pricing']['quantity_max'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Max.',
+    '#default_value' => isset($values['quantity_max']) ? $values['quantity_max'] : NULL,
+	  '#attributes' => array('placeholder'=>'Max.',
+		'class' => array('form-control'),
+	  ),
+	  	'#suffix' => '</div>',
+  );
+  
+ /*  $form['product_pricing']['quantity_label'] = array(
+    '#type' => 'markup',
+	'#markup' => '<h4>Quantity Label</h4>',
+	'#prefix'=>'<div class="quantity-label">'
+
+  );
+    $form['product_pricing']['quantity_label_singular'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Singular',
+    '#default_value' => isset($pricingData[0]['quantity_label_singular']) ? $pricingData[0]['quantity_label_singular'] : NULL,
+	  '#attributes' => array('placeholder'=>'Participant',
+		'class' => array('form-control'),
+	  ),
+	  
+  );
+  $form['product_pricing']['quantity_label_plural'] = array(
+    '#type' => 'textfield',
+	'#title' => 'Plural',
+	'#suffix' => '</div>',
+	'#attributes' => array('placeholder'=>'Participants','class' => array('form-control')),
+   '#default_value' => isset($pricingData[0]['quantity_label_plural']) ? $pricingData[0]['quantity_label_plural'] : NULL,
+	  
+  ); */
+
+  /*************************************************************************************************************************************/
+
+  $form['product_pricing']['offers_and_discounts'] = array(
+    '#prefix' => '<div><h2>Offers a Discounts</h2>',
+     '#suffix' => '</div>', 
+  );
+  
+  if($earlyBirdData)
+  {
+  $form['product_pricing']['early_birds'] = array(
+    '#prefix' => '<div><input type="checkbox" name="early_birds_check"  id= "early_birds_check" value="early-bird" checked><h5>Early Birds</h5>',
+
+  );
+    $class="early-birds-show";
+  }
+  else
+  {
+  $form['product_pricing']['early_birds'] = array(
+    '#prefix' => '<div><input type="checkbox" name="early_birds_check"  id= "early_birds_check" value="early-bird"><h5>Early Birds</h5>',
+
+  );
+    $class="early-birds-hide";
+  }
+ 
+  $form['product_pricing']['early_birds_time_value'] = array(
+    '#type' => 'textfield',
+		'#prefix' => '<div class="early-birds primary '.$class.'">',
+    '#title' => t('If booking'),
+	  '#attributes' => array('placeholder'=>'Days or Months',
+		'class' => array('form-control'),
+	  ),
+    '#default_value' => isset($earlyBirdData['time_value']) ? $earlyBirdData['time_value'] : NULL,
+  );
+ 
+  $form['product_pricing']['early_birds_time_type'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($earlyBirdData['time_key']) ? $earlyBirdData['time_key'] : NULL,
+	'#options' => array('day'=>'Day','week'=>'Week','month'=>'Month'),
+  );
+
+  $form['product_pricing']['early_birds_price_value'] = array(
+    '#type' => 'textfield',
+	'#attributes' => array('placeholder'=>'Price',
+		'class' => array('form-control','themePrice'),
+	),
+    '#title' => t('prior to Arrival date'),
+//	'#required' => TRUE,
+    '#default_value' => isset($earlyBirdData['amount']) ? $earlyBirdData['amount'] : NULL,
+  );
+  
+  $form['product_pricing']['early_birds_price_type'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($earlyBirdData['discount_by']) ? $earlyBirdData['discount_by'] : NULL,
+	'#options' => array('%'=>'Amount in %','$'=>'Amount in $'),
+	'#suffix' => '<h4>'.t('on total Amount').'</h4></div>',
+  );
+
+  	/* $form['product_pricing']['schedule_type_early_bids'] = array(
+		'#type' => 'select',
+		'#title' => 'Apply to schedule',
+		'#default_value' => isset($values['schedule_type_early_bids']) ? $values['schedule_type_early_bids'] : NULL,
+		  '#attributes' => array(
+			'class' => array('form-control'),
+		  ),
+		'#suffix' => '</div>',
+		'#options' => array('1'=>'schedule 1','2'=>'schedule 2')
+	);  */
+	
+/*   $form['product_pricing']['early_birds']['total_amount'] = array( 
+     '#markup' => '',
+	//'#title'=> t('(in %) refunded on the entire stay'),
+    '#suffix' => '</div>',
+  ); */
+	 if(!empty($LastMinuteData))
+	{
+  $form['product_pricing']['last_minutes'] = array(
+    '#prefix' => '<div><input type="checkbox" name="last_minutes_check" id="last_minutes_check" value="last-minute" checked><h5>Last Minute</h5>',
+    '#suffix' => '</div>',
+  ); 
+  }
+  else{
+  $form['product_pricing']['last_minutes'] = array(
+    '#prefix' => '<div><input type="checkbox" name="last_minutes_check" id="last_minutes_check" value="last-minute"><h5>Last Minute</h5>',
+    '#suffix' => '</div>',
+  ); 
+  }
+ 
+  $form['product_pricing']['last_minutes_time_value'] = array(
+    '#type' => 'textfield',
+	'#prefix' => '<div class="early-birds last_minutes">',
+    '#title' => t('If booking'),
+	  '#attributes' => array('placeholder'=>'Days or Months',
+		'class' => array('form-control'),
+	  ),
+    '#default_value' => isset($LastMinuteData['time_value']) ? $LastMinuteData['time_value'] : NULL,
+  );
+ 
+  $form['product_pricing']['last_minutes_time_type'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($LastMinuteData['time_key']) ? $LastMinuteData['time_key'] : NULL,
+	'#options' => array('hour'=>'hour','day'=>'day'),
+  );
+
+  $form['product_pricing']['last_minutes_price_value'] = array(
+    '#type' => 'textfield',
+	'#attributes' => array('placeholder'=>'Price',
+		'class' => array('form-control','themePrice'),
+	), 
+    '#title' => t('prior to Arrival date'),
+
+	//'#required' => TRUE,
+    '#default_value' => isset($LastMinuteData['amount']) ? $LastMinuteData['amount'] : NULL,
+  );
+  
+  $form['product_pricing']['last_minutes_price_type'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($LastMinuteData['discount_by']) ? $LastMinuteData['discount_by'] : NULL,
+	'#options' => array('%'=>'Amount in %','$'=>'Amount in $'),
+	'#suffix' => '<h4>'.t('on total Amount').'</h4></div>',
+  );
+
+/*   $form['product_pricing']['last_minutes']['total_amount'] = array( 
+     '#markup' => '</div><h4>'.t('on total Amount').'</h4>',
+	//'#title'=> t('(in %) refunded on the entire stay'),
+    '#suffix' => '</div>',
+  );   */
+ 
+  	/* $form['product_pricing']['schedule_type_last_minutes'] = array(
+		'#type' => 'select',
+		'#title' => 'Apply to schedule',
+		'#default_value' => isset($values['schedule_type_last_minutes']) ? $values['schedule_type_last_minutes'] : NULL,
+		  '#attributes' => array(
+			'class' => array('form-control'),
+		  ),
+		'#suffix' => '</div>',
+		'#options' => array('1'=>'schedule 1','2'=>'schedule 2')
+	);  */
+  
+  if($offer_24_Data)
+  {
+  $form['product_pricing']['24_hour_offer'] = array(
+    '#prefix' => '<div><input type="checkbox" name="24_hour_offer_check" id="24_hour_offer_check" value="24_hour_offer" checked><h5>24 Hour Offer</h5>',
+    '#suffix' => '</div>',
+  );
+  }
+  else
+  {
+  $form['product_pricing']['24_hour_offer'] = array(
+    '#prefix' => '<div><input type="checkbox" name="24_hour_offer_check" id="24_hour_offer_check" value="24_hour_offer"><h5>24 Hour Offer</h5>',
+    '#suffix' => '</div>',
+  );
+ }
+ $priceData=unserialize($offer_24_Data['amount']);
+ /*  echo "<pre>";
+ print_r($priceData);
+ die; */
+ $dateData=unserialize($offer_24_Data['date']);
+  
+  $form['product_pricing']['24_hour_offer']['offer_24_hour_offer_date'] = array(
+    '#type' => 'textfield',
+	'#prefix' => '<div class="early-birds-hour-offer" id="early-birds-hour-offer">',
+    '#title' => t('If booking made on'),
+	  '#attributes' => array('placeholder'=>'Date',
+		'class' => array('form-control','datepicker'),
+	  ),
+    '#default_value' => isset($dateData['offer_24_hour_offer_date']) ? $dateData['offer_24_hour_offer_date'] : NULL,
+  );
+
+  $form['product_pricing']['24_hour_offer']['offer_24_hour_price_value'] = array(
+    '#type' => 'textfield',
+	'#attributes' => array('placeholder'=>'Price',
+		'class' => array('form-control'),
+	),
+/*     '#title' => t('prior to Arrival date'), */
+	//'#required' => TRUE,
+   '#default_value' => isset($priceData['offer_24_hour_price_value']) ? $priceData['offer_24_hour_price_value'] : NULL,
+  );
+  
+   $form['product_pricing']['24_hour_offer']['24_hour_offer_price_type'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($offer_24_Data['discount_by']) ? $offer_24_Data['discount_by'] : NULL,
+	//'#options' => array('%'=>'Amount in %','$'=>'Amount in $'),
+	'#options' => array('%'=>'Amount in %'),
+	'#suffix' => '<h4>'.t('on total Amount').'</h4>',
+  ); 
+
+  $form['product_pricing']['24_hour_offer']['add_new_date'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit" href="#" id="addPeriodEXP">Add Period</a>',
+		'#suffix' => '</div></div>',
+	); 
+	
+/****************************************************************************************************************/
+if(count($dateData['24_hour_offer_date_extra'])>0)
+{
+/* echo "<pre>";
+print_r($dateData['24_hour_offer_date_extra']);
+die; */
+foreach($dateData['24_hour_offer_date_extra'] as $key=>$value)
+{
+
+$form['product_pricing']['24_hour_offer']['offer_24_hour_date_extra['.$key.']'] = array(
+    '#type' => 'textfield',
+	'#prefix' => '<div class="early-birds-hour-offer  extra-offer" id="early-birds-hour-offer"><div class="offer-datepicker">',
+   /*  '#title' => t('If booking made on'), */
+	  '#attributes' => array('placeholder'=>'Date',
+		'class' => array('form-control','datepicker'),
+	  ),
+  '#default_value' => isset($value) ? $value : NULL,
+  '#suffix'=>'</div>'
+  );
+ 
+  $form['product_pricing']['24_hour_offer']['offer_24_hour_price_value_extra['.$key.']'] = array(
+    '#type' => 'textfield',
+	'#attributes' => array('placeholder'=>'Price',
+		'class' => array('form-control extra-price'),
+	),
+/*     '#title' => t('prior to Arrival date'), */
+	//'#required' => TRUE,
+  '#default_value' => isset($priceData['24_hour_offer_price_value_extra'][$key]) ? $priceData['24_hour_offer_price_value_extra'][$key] : NULL,
+'#prefix'=>'<div class="offer-price">',
+'#suffix'=>'</div>' 
+ );
+  
+   $form['product_pricing']['24_hour_offer']['24_hour_offer_price_type_extra['.$key.']'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+ //   '#default_value' => isset($offer_24_Data['discount_by']) ? $offer_24_Data['discount_by'] : NULL,
+	//'#options' => array('%'=>'Amount in %','$'=>'Amount in $'),
+	'#options' => array('%'=>'Amount in %'),
+	'#suffix' => '<h4>'.t('on total Amount').'</h4>',
+  ); 
+
+  $form['product_pricing']['24_hour_offer']['rem_extra_date['.$key.']'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit extra-remove" href="#" id="remPeriodEXP-extra">Remove</a>',
+		'#suffix' => '</div></div>',
+	);
+}
+}	
+/****************************************************************************************************************/	
+  
+  
+	$form['metaID'] = array(
+		'#type' => 'hidden',
+		'#default_value' => isset($pricingData["meta_id"])?$pricingData["meta_id"]:'',
+	);
+  
+	$form['page'] = array(
+		'#type' => 'hidden',
+		'#default_value' => 'product_rules'
+	);
+	
+	  $form['save'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Save'),
+	'#prefix'=>'<div class="price-save">',
+	'#suffix'=>'</div>'
+  );
+    
+	return $form;
+
+}
+
+function product_rules_form($form, &$form_state){
+	$metaID = arg(3);
+	$rules = getRulesDetails($metaID);
+    $values = unserialize($rules["value1"]);
+	$exprienceReq=unserialize($values['experience_rules']);
+
+/**************************************************************************************/
+	global $user;  
+    $eid = arg(3);
+	
+	if($eid!="")
+	{
+	$OverviewData = getOverviewData($eid);
+	if(empty($OverviewData))
+		{
+		drupal_set_message(t('No Listing data found'),'error');
+		drupal_goto('product/add/overview');
+		}
+		else if($user->uid!=$OverviewData['uid']){
+
+		drupal_set_message(t('You have not access to view Listing data'),'error');
+		drupal_goto('product/add/overview');
+		}
+	}
+	/**************************************************************************************/
+	$form['product_rules'] = array(
+		'#prefix' => '<div><h2>Rules & Policies</h2>',
+		'#suffix' => '</div>',
+	);
+
+	$form['product_rules']['ruleshtml'] = array(
+		'#type' => 'markup',
+		'#markup' => '<h3>'.t('Rules').'</h3>',
+	);
+	/* $form['product_rules']['experience_rules'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Experience Requirements'),
+		'#default_value' => isset($values['experience_rules']) ? $values['experience_rules'] :  '',
+		'#attributes' => array(
+		'class' => array('form-control'),
+		),
+	); */
+	$form['product_rules']['experience_rules[]'] = array(
+		'#type' => 'textfield',
+		'#title' => t("Experience Requirements"),
+		'#prefix' => '<div class="experience-require" id="experience-require">',
+		'#default_value' => isset($exprienceReq[0]) ? trim($exprienceReq[0]) : '',
+		  '#attributes' => array('placeholder'=>'Experience Requirements',
+			'class' => array('form-control experience-rules'),
+		  ),
+		  '#maxlength' =>140,
+		);
+
+ 	$form['product_rules']['add_experience'] = array(
+		'#prefix' => '<div class="add-experience"><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#"  id="addIncExp">Add another</a>',
+		'#suffix' => '</div></div>',
+	);
+	if($exprienceReq)
+	{
+	if(count($exprienceReq>1))
+	{
+	unset($exprienceReq[0]);
+	$undata=($exprienceReq);
+	
+	 foreach ($undata as $key=>$value)
+	 {
+	 $form['product_rules']['experience_rules['.$key.']'] = array(
+			'#type' => 'textfield',
+			//'#title' => t("What's included"),
+			'#prefix' => '<div class="experience-require">',
+			'#default_value' => isset($value) ?trim($value) : '',
+			 '#attributes' => array('placeholder'=>'Experience Requirements',
+			'class' => array('form-control experience-rules'),
+		  ),
+		  '#maxlength' =>140,
+		);
+		$form['product_rules']['add_experience['.$key.']'] = array(
+		'#prefix' => '<div class="add-experience"><a class="btn btn-dark btn-gradient form-submit add-extra-submit" href="#" id="remIncExp">Remove</a>',
+		'#suffix' => '</div></div>',
+	);
+	  }
+	 }
+	}
+	$form['product_rules']['other_information'] = array(
+		'#type' => 'textarea',
+		'#title' => t("Other Information"),
+		'#default_value' => isset($values['other_information']) ? $values['other_information'] : '',
+		  '#attributes' => array(
+			'class' => array('form-control'),
+		  ),
+	);
+ /*  $form['product_rules']['experience_manual'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Experience Manual'),
+	'#default_value' => isset($values['experience_manual']) ? $values['experience_manual'] : '',
+ 	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+  );
+ */
+
+/************************************************************************/
+  $form['product_rules']['CancellationPolicies'] = array(
+ '#type' => 'markup',
+ '#markup' => '<h3>'.t('Cancellation Policies').'</h3>',
+);
+/* $form['product_rules']['expected_arrival_time'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Expected Arrival Time'),
+		'#default_value' => isset($values['expected_arrival_time']) ? $values['expected_arrival_time'] :  '',
+		'#attributes' => array(
+		'class' => array('form-control timepicker'),
+		),
+		'#prefix'=>'<div class="expected-time">',
+	);
+
+	$form['product_rules']['expected_dept_time'] = array(
+		'#type' => 'textfield',
+		
+		'#title' => t('Expected Departure Time'),
+		'#default_value' => isset($values['expected_dept_time']) ? $values['expected_dept_time'] :  '',
+		'#attributes' => array(
+		'class' => array('form-control timepicker'),
+		),
+		'#suffix'=>'</div>' 
+	);*/
+$form['product_rules']['security_deposit'] = array(
+		'#type' => 'textfield',		
+		'#title' => t('Security Deposit'),
+		'#default_value' => isset($values['security_deposit']) ? $values['security_deposit'] :  '',
+		'#attributes' => array(
+		'class' => array('form-control'),'placeholder'=>t('amount')
+		),
+		'#prefix'=>'<div class="security-deposit">',
+	);
+	$form['product_rules']['security_options'] = array(
+'#type' => 'select',
+//'#title' => t('Cancellation Policies'),
+'#default_value' => isset($values['security_options']) ? $values['security_options'] : '',
+  '#attributes' => array(
+	'class' => array('form-control'),
+  ),
+'#options'=>array('amount_in_$'=>'in $','booking_%'=>'Booking in %'),
+'#suffix'=>'</div>'
+);	
+
+$form['product_rules']['cancellation_policies_type'] = array(
+'#type' => 'select',
+'#title' => t('Cancellation Policies'),
+'#default_value' => isset($values['cancellation_policies_type']) ? $values['cancellation_policies_type'] : 0,
+  '#attributes' => array(
+	'class' => array('form-control'),
+  ),
+'#options'=>array('Relaxed'=>'Relaxed','Flexible'=>'Flexible','Moderate'=>'Moderate','Strict'=>'Strict','Super-Strict'=>'Super Strict','Custom'=>'Custom'),
+/* '#required' => TRUE */
+);
+/* 
+  
+$form['product_rules']['cancellation_policy_entire'] = array(  
+	'#prefix' => '<div class="cancelation-policy-entire-stay">',	
+  );
+ $form['product_rules']['cancellation_policy_entire_prior_day'] = array( 
+  //'#prefix' => '<div class="numbers-row">',
+    '#type' => 'textfield',
+ 	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+	'#default_value' => isset($values['entire_prior_day']) ? $values['entire_prior_day'] : 1,
+ 	 '#title' => t('If travelers cancel'),
+   //   '#suffix' => '</div>',	 
+  ); 
+   $form['product_rules']['cancellation_policy_entire_prior_amount'] = array( 
+  // '#prefix' => '<div class="numbers-row">',
+    '#type' => 'textfield',
+ 	 '#title' => t('days prior to arrival date Amount '),
+ 	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+	 '#default_value' => isset($values['entire_prior_amount']) ? $values['entire_prior_amount'] : 1,
+   //   '#suffix' => '</div>',	 
+  ); 
+  $form['product_rules']['cancellation_policy_entire_amount_refund'] = array( 
+     '#markup' => '<h4>'.t('(in %) refunded on the entire stay').'</h4>',
+	//'#title'=> t('(in %) refunded on the entire stay'),
+    '#suffix' => '</div>',
+  );
+  /**/
+/*  $form['product_rules']['cancellation_policy_pending'] = array(  
+	'#prefix' => '<div class="cancelation-policy-pending-stay">',	
+  );
+ $form['product_rules']['cancellation_policy_pending_day'] = array( 
+  //'#prefix' => '<div class="numbers-row">',
+    '#type' => 'textfield',
+ 	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+ 	 '#title' => t('If travelers cancel'),
+	 '#default_value' => isset($values['policy_pending_day']) ? $values['policy_pending_day'] : 1,
+	//   '#suffix' => '</div>',	
+  ); 
+   $form['product_rules']['cancellation_policy_pending_amount_after_arrival'] = array( 
+   //  '#prefix' => '<div class="numbers-row">',
+    '#type' => 'textfield',
+ 	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+ 	 '#title' => t('days after arrival date Amount '),
+	 '#default_value' => isset($values['policy_pending_amount_after_arrival']) ? $values['policy_pending_amount_after_arrival'] : 1,
+	//    '#suffix' => '</div>',	 
+  ); 
+  $form['product_rules']['cancellation_policy_pending_amount_refund'] = array( 
+     '#markup' => '<h4>'.t('(in %) refunded on the pending stay duration').'</h4>',
+	//'#title'=> t('(in %) refunded on the entire stay'),
+    '#suffix' => '</div>',
+  );*/
+  
+  $form['product_rules']['cancellation_policy_entire'] = array(  
+	'#prefix' => '<div class="custom-policy">',	
+  ); 
+ $form['product_rules']['product_rules_custom'] = array(
+		'#prefix' => '<div><h4>Guests will receive their full refundable deposit plus:</h4>',
+		'#suffix' => '</div>',
+	);
+$form['product_rules']['amount_week']=array(
+'#prefix' => '<div class="amount-week">',
+    '#type' => 'textfield',
+ 	  '#attributes' => array(
+		'class' => array('form-control'),'placeholder'=>'amount'
+	  ),
+	'#default_value' => isset($values['amount_week']) ? $values['amount_week'] : 1,
+ 	 '#title' => t('A'),
+);	
+$form['product_rules']['amount_week_rental']=array(
+    '#type' => 'textfield',
+ 	  '#attributes' => array(
+		'class' => array('form-control')
+	  ),
+	'#default_value' => isset($values['amount_week_rental']) ? $values['amount_week_rental'] : 1,
+ 	 '#title' => t('(in %) refund of their paid rental costs if they cancel at least'),
+);	
+$form['product_rules']['amount_week_select']=array(
+    '#type' => 'select',
+ 	  '#attributes' => array(
+		'class' => array('form-control')
+	  ),
+	'#default_value' => isset($values['amount_week_select']) ? $values['amount_week_select'] :'',
+ 	'#options'=>array('weeks'=>'Weeks','months'=>'Months'),
+	'#suffix'=>'<h4>prior to reservation</h4></div>'
+);	 
+/**********************************************/
+$form['product_rules']['amount_day']=array(
+'#prefix' => '<div class="amount-day">',
+    '#type' => 'textfield',
+ 	  '#attributes' => array(
+		'class' => array('form-control'),'placeholder'=>'amount'
+	  ),
+	'#default_value' => isset($values['amount_day']) ? $values['amount_day'] : 1,
+ 	 '#title' => t('A'),
+);	
+$form['product_rules']['amount_day_rental']=array(
+    '#type' => 'textfield',
+ 	  '#attributes' => array(
+		'class' => array('form-control')
+	  ),
+	'#default_value' => isset($values['amount_day_rental']) ? $values['amount_day_rental'] : 1,
+ 	 '#title' => t('(in %) refund of their paid rental costs if they cancel at least'),
+);	
+$form['product_rules']['amount_day_select']=array(
+    '#type' => 'select',
+ 	  '#attributes' => array(
+		'class' => array('form-control')
+	  ),
+	'#default_value' => isset($values['amount_day_select']) ? $values['amount_day_select'] :'',
+ 	'#options'=>array('days'=>'Days'),
+	'#suffix'=>'<h4>prior to reservation</h4></div></div>'
+);
+    $form['product_rules']['agreement'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Agreement'),
+	'#description'=>t('Only for confirmed reservations'),
+	'#default_value' => isset($values['agreement']) ? $values['agreement'] : '',
+ 	  '#attributes' => array(
+		'class' => array('form-control'),
+	  ),
+  );
+
+/************************************************************************/
+
+  $form['metaID'] = array(
+	'#type' => 'hidden',
+	'#default_value' => isset($rules["meta_id"]) ? $rules["meta_id"] : null,
+  );
+  
+  $form['page'] = array(
+	'#type' => 'hidden',
+	'#default_value' => 'product_extra'
+  );
+  
+	/*$form['back'] = array(
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+		'#value' => t('Back')
+	);*/
+
+	$form['save'] = array(
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+		'#value' => t('Save')
+	);
+
+	return $form;
+	
+}
+function product_booking_info_form($form, &$form_state){
+
+  $form['back'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Back')
+  );
+  
+  $form['next'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Next')
+  );
+    
+  return $form;
+}
+
+function product_catalogs_form($form, &$form_state){
+  $values = isset($form_state['multistep_values']['product_catalogs']) ? $form_state['multistep_values']['product_catalogs'] : array();
+  
+  $form['product_catalogs']['onilne_bookings'] = array(
+    '#prefix' => '<div class="onilne-bookings"><h3>Online bookings</h3>',
+
+  );
+  
+  $form['product_catalogs']['onilne_bookings_tours'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('TOURS'),
+	'#suffix' => '</div>',
+  );
+  
+  $form['product_catalogs']['partners'] = array(
+    '#prefix' => '<div class="partners"><h3>Partners</h3>',
+
+  );
+  
+  $form['product_catalogs']['my_partners'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('My partners'),
+	'#suffix' => '</div>',
+	'#prefix' => '<div class="my-partners">',
+  );
+  
+  $form['product_catalogs']['my_partners_commission'] = array(
+    '#type' => 'textfield',
+    '#title' => t('COMMISSION'),
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+	'#default_value' => isset($values['my_partners_commission']) ? $values['my_partners_commission'] : NULL,
+	'#suffix' => '</div>',
+  );
+  
+  
+  $form['product_catalogs']['gloobers_community'] = array(
+    '#prefix' => '<div class="gloobers-community"><h3>Gloobers Community</h3>',
+
+  );
+  
+  $form['product_catalogs']['distribute'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Distribute'),
+	'#suffix' => '</div>',
+	'#prefix' => '<div class="distribute">',
+  );
+  
+  $form['product_catalogs']['distribute_commission'] = array(
+    '#type' => 'textfield',
+    '#title' => t('COMMISSION'),
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+	'#default_value' => isset($values['distribute_commission']) ? $values['distribute_commission'] : NULL,
+	'#suffix' => '</div>',
+  );
+  
+  $form['back'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Back')
+  );
+  
+  $form['next'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Next')
+  );
+    
+  return $form;
+}
+
+function product_location_form($form, &$form_state){
+	$values = isset($form_state['multistep_values']['product_location']) ? $form_state['multistep_values']['product_location'] : array();
+
+  $form['product_location'] = array(
+    '#prefix' => '<div><h2>Location</h2>',
+    '#suffix' => '</div>',
+  );
+  
+	$form['product_location']['address'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Search address'),
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+		'#default_value' => isset($values['address']) ? $values['address'] : NULL,
+	);	
+
+	$form['product_location']['find'] = array(
+		'#prefix' => '<a href="javascript:void(0)" style="color:#018fe2" class="find-address">Find',
+		'#suffix' => '</a>',
+	);
+
+	$form['product_location']['map'] = array(
+		'#prefix' => '<div id="mapCanvas"> 
+					<div id="infoPanel">
+						<div id="markerStatus"></div>
+						<div id="info"></div>
+					<div id="address"></div>',
+		'#suffix' => '</div></div>',
+	);	
+	
+
+	$form['product_location']['show_map'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Show map in confirmation emails'),
+	);
+  
+	  $form['page'] = array(
+		'#type' => 'hidden',
+		'#default_value' => 'product_scheduling'
+	  );
+	$form['back'] = array(
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+		'#value' => t('Back')
+	);
+  
+	$form['next'] = array(
+	
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+		'#value' => t('Next')
+	);
+    
+	return $form;
+}
+
+function product_subscription_form($form, &$form_state){
+	global $user;  
+    $eid = arg(3);
+	
+	if($eid!="")
+	{
+		$values = getOverviewData($eid);
+		if(empty($values))
+			{
+			drupal_set_message(t('No Listing data found'),'error');
+			drupal_goto('product/add/overview');
+			}
+			else if($user->uid!=$values['uid']){
+
+			drupal_set_message(t('You have not access to view Listing data'),'error');
+			drupal_goto('product/add/overview');
+			}
+	}
+  $values = getProductSubscriptionData($eid);
+  
+  $form['product_subscription']['subscription_text'] = array(
+    '#prefix' => '<div><h2>Listing Subscription </h2>',
+    '#suffix' => '</div>',
+  );
+ 
+  $form['product_subscription']['free'] = array(
+    '#type' => 'radio',
+	'#prefix' =>'<div class="priceblock">',
+	'#title' => 'Classic - Free',
+	'#suffix' => '<h2>Totally Free</h2></div>',
+    '#default_value' => isset($values['free']) ? $values['free'] : NULL,
+	'#required' => TRUE
+  ); 
+  
+  $form['product_subscription']['Silver'] = array(
+    '#type' => 'radio',
+	'#prefix' =>'<div class="priceblock">',
+	'#title' => 'Silver',
+    '#suffix' => '<h2>$29/Month</h2></div>',
+    '#default_value' => isset($values['Silver']) ? $values['Silver'] : NULL,
+	'#required' => TRUE
+  ); 
+  
+  $form['product_subscription']['Gold'] = array(
+    '#type' => 'radio',
+	'#prefix' =>'<div class="priceblock">',
+	'#title' => 'Gold',
+    '#suffix' => '<h2>$59/Month</h2></div>',
+    '#default_value' => isset($values['Gold']) ? $values['Gold'] : NULL,
+	'#required' => TRUE
+  ); 
+  
+  
+  $form['metaID'] = array(
+	'#type' => 'hidden',
+	'#default_value' => isset($values['meta_id']) ? $values['meta_id'] : NULL,
+  );
+ 
+  
+  $form['next'] = array(
+    '#type' => 'submit',
+	'#attributes' => array('class'=>array('btn btn-dark btn-gradient')),
+    '#value' => t('Save')
+  );
+    
+  return $form;
+}
+
+function product_scheduling_form($form, &$form_state){
+ $schedulingData=getSchedulingData(arg(3));
+ $sessionData=getSchedulingSessionData(arg(3));
+ $pricingData = getPricingData(arg(3));
+ $discountData = getDiscountData(arg(3));
+ 
+/**************************************************************************************/
+	global $user;  
+    $eid = arg(3);
+	$values = getOverviewData($eid);
+	if(($eid))
+	{
+	if(empty($values))
+		{
+		drupal_set_message(t('No Listing data yet Created'),'error');
+		drupal_goto('product/add/overview');
+		}
+		else if($user->uid!=$values['uid']){
+
+		drupal_set_message(t('You have not access to view Listing data'),'error');
+		drupal_goto('product/add/overview');
+		}
+	}
+	/**************************************************************************************/
+/*  echo "<pre>";
+ print_r($discountData); die; */
+ 
+  $form['product_scheduling'] = array(
+    '#prefix' => '<div><h2>Scheduling</h2>',
+    '#suffix' => '</div>',
+  );
+ 
+	$form['product_scheduling']['price-settings'] = array(
+		'#type' => 'markup',
+		'#markup' => '<h3>'.t('Dates Available').'</h3>',
+/* 		'#prefix' => '<div class="quantity" id="session">', */
+	);
+	
+  $form['product_scheduling']['Product[bookingMode]'] = array(
+    '#type' => 'select',
+    '#title' => t('Dates available').'<span class="form-required"> *</span>',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#default_value' => isset($schedulingData['bookingMode']) ? $schedulingData['bookingMode'] : NULL,
+	'#options' => array('INVENTORY'=>'Fixed date & time','DATE_ENQUIRY'=>'Any date - Accept enquiries for any date','NO_DATE'=>'Date not required for booking'),
+/* 	'#required' => TRUE */
+  );
+  
+   $form['product_scheduling']['Product[inventoryMode]'] = array(
+    '#type' => 'select',
+	'#prefix' => '<div class="product-availability">',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#title' => t('Availability').'<span class="form-required"> *</span>',
+    '#default_value' => isset($schedulingData['inventoryMode']) ? $schedulingData['inventoryMode'] : NULL,
+	'#options' => array('SESSION_SEATS'=>'Limited - Fixed limit per session','FREE_SALE'=>'Unlimited - Free sale'/* ,'RESOURCES'=>'Limited - By resources' */),
+  ); 
+  
+   $form['product_scheduling']['Product[defaultQuantity]'] = array(
+    '#type' => 'textfield',
+	'#attributes' => array('placeholder'=>'Limit',
+		'class' => array('form-control'),
+	),
+    /* '#title' => 'Limit', */
+    '#suffix' => '</div>',
+    '#default_value' => isset($schedulingData['defaultQuantity']) ? $schedulingData['defaultQuantity'] : 10,
+  );
+  
+
+  $form['product_scheduling']['Product[bookingTimeMode]'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#title' => t('Times available').'<span class="form-required"> *</span>',
+    '#default_value' => isset($schedulingData['bookingTimeMode']) ? $schedulingData['bookingTimeMode'] : NULL,
+	'#options' => array('FIXED'=>'Fixed times','TIME_ENQUIRY'=>'Any time - Allow customer to choose a time','NO_TIME'=>'Time not required for booking'),
+  );
+  
+  $form['product_scheduling']['Product[bookingFixedTimes][0]'] = array(
+    '#type' => 'textfield',
+	'#attributes' => array(
+		'class' => array('form-control','timepicker'),
+	),
+	'#prefix' => '<div class="time-available" id="time-available">',
+    '#title' => t('Available time').'<span class="form-required"> *</span>',
+    '#default_value' => isset($schedulingData['bookingFixedTimes']) ? $schedulingData['bookingFixedTimes'] : NULL,
+  );
+
+	$form['product_scheduling']['add_new1'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit" href="#" id="addTime">Add another</a>',
+		'#suffix' => '</div></div>',
+	);
+  
+  $form['product_scheduling']['Product[confirmMode]'] = array(
+    '#type' => 'select',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+	'#prefix' => '<div class="product-confirm-booking">',
+    '#title' => t(' Confirm bookings'),
+    '#default_value' => isset($schedulingData['confirmMode']) ? $schedulingData['confirmMode'] : NULL,
+	'#options' => array('AUTOCONFIRM'=>'Automatically','MANUAL'=>'Manually'),
+  );
+  
+  $form['product_scheduling']['confirm_booking_value'] = array(
+    '#type' => 'textfield',
+    '#title' => 'after',
+	'#attributes' => array(
+		'class' => array('form-control'),
+	),
+    '#description' => 'Participants',
+    '#suffix' => '</div>',
+   // '#default_value' => isset($schedulingData['confirm_booking_value']) ? $schedulingData['confirm_booking_value'] : NULL,
+  );
+ 
+ if($pricingData[0]["price_type"] == "PER_DAY" || $pricingData[0]["price_type"] == "PER_HOUR" || $pricingData[0]["price_type"] == "PER_MINUTE"){
+	  $form['product_scheduling']['Product[durationType]'] = array(
+		'#type' => 'select',
+		'#attributes' => array(
+			'class' => array('form-control'),
+		),
+		'#title' => t('Duration').'<span class="form-required"> *</span>',
+		'#prefix' => '<div class="duration-wrapper">',
+		'#default_value' => isset($schedulingData['durationType']) ? $schedulingData['durationType'] : NULL,
+		'#options' => array('Any'=>'Any duration','LIST'=>'Choose from a list'),
+	  );
+	  
+	  $form['product_scheduling']['Product[minDuration]'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder'=>'Min',
+			'class' => array('form-control'),
+		),
+		'#prefix' => '<div class="min-max-duration">',
+		'#title' => t('Min').'<span class="form-required"> *</span>',
+		'#description' => t('days'),
+		'#default_value' => isset($schedulingData['minDuration']) ? $schedulingData['minDuration'] : NULL,
+	  );
+	  
+	  $form['product_scheduling']['Product[maxDuration]'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder'=>'Max',
+			'class' => array('form-control'),
+		),
+		'#title' => t('Max').'<span class="form-required"> *</span>',
+		'#description' => t('days'),
+		'#suffix' => '</div></div>',
+		'#default_value' => isset($schedulingData['maxDuration']) ? $schedulingData['maxDuration'] : NULL,
+	  );
+	 
+	  $form['product_scheduling']['DurationOption[0][durationLabel]'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder'=>'Label',
+			'class' => array('form-control'),
+		),
+		'#prefix' => '<div class="choose-list-duration" id="choose-list-duration">',
+		/* '#title' => t('Label'), */
+		'#default_value' => isset($schedulingData['durationLabel']) ? $schedulingData['durationLabel'] : NULL,
+	  );
+	  
+	  $form['product_scheduling']['DurationOption[0][durationValue]'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder'=>'Duration',
+			'class' => array('form-control'),
+		),
+		/* '#title' => t('Duration'), */
+		'#default_value' => isset($schedulingData['durationValue']) ? $schedulingData['durationValue'] : NULL,
+	  );
+	  
+		$form['product_scheduling']['add_duration'] = array(
+			'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit" href="#" id="addDuration">Add another</a>',
+			'#suffix' => '</div></div></div>',
+		);
+
+	  $form['product_scheduling']['Product[allowSpanning]'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Allow spanning'),
+		'#description' => t('Allow bookings to span over periods without session (I.e. overnight, over weekends, over lunch breaks)'),
+		'#default_value' => isset($schedulingData['allowSpanning']) ? $schedulingData['allowSpanning'] : NULL,
+	  );
+  
+  }
+  else{
+  
+	  $form['product_scheduling']['Product[duration]'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder'=>'Minutes or Hours',
+			'class' => array('form-control'),
+		),
+		'#prefix' => '<div class="product-estimate-duration">',
+		'#title' => t('Estimated duration').'<span class="form-required"> *</span>',
+		'#default_value' => isset($schedulingData['duration']) ? $schedulingData['duration'] : NULL,
+	  );
+	  
+	  $form['product_scheduling']['Product[durationUnit]'] = array(
+		'#type' => 'select',
+		'#attributes' => array(
+			'class' => array('form-control'),
+		),
+		'#default_value' => isset($schedulingData['durationUnit']) ? $schedulingData['durationUnit'] : NULL,
+		'#suffix' => '</div>',
+		'#options' => array('MINUTES'=>'Minutes','HOURS'=>'Hours','DAYS'=>'Days'),
+	  );
+  }
+ 
+  $form['product_scheduling']['Product[subscriptionID]'] = array(
+    '#type' => 'hidden',
+	'#default_value' => isset($schedulingData['id']) ? $schedulingData['id'] : NULL,
+  );
+  
+	$form['product_scheduling']['Sessions-settings'] = array(
+		'#type' => 'markup',
+		'#markup' => '<h3>'.t('Sessions settings').'</h3>',
+		'#prefix' => '<div class="quantity" id="session-wrapper">',
+	);
+	$form['product_scheduling']['start-session-HTML-start'] = array(
+		'#type' => 'markup',
+		'#markup' => '<h4>'.t('From').'<span class="form-required"> *</span></h4>',
+		'#prefix' => '<div id="start-session-wrapper">',
+	);
+
+  $form['product_scheduling']['Session[startDate]'] = array(
+    '#prefix' => '<div class="session-from-to"><div class="session-from">',
+	'#type' => 'textfield',
+ 	'#title' => t('Date'),
+    '#default_value' => isset($form_state["input"]["Session"]["startDate"]) ? $form_state["input"]["Session"]["startDate"]: NULL,
+	  '#attributes' => array('placeholder'=>'From',
+		'class' => array('form-control','datepicker'),
+	  ),
+		'#suffix' => '</div>'
+  );
+  if(!isset($pricingData[0]["price_type"]) || $pricingData[0]["price_type"] == "PER_PERSON" || $pricingData[0]["price_type"] == "PER_ITEM" || $pricingData[0]["price_type"] == "FIXED"){
+	  $startTime=date("g:i a", strtotime($sessionData['startTime']));
+	  $form['product_scheduling']['Session[startTime]'] = array(
+		'#prefix' => '<div class="session-from">',
+		'#type' => 'textfield',
+		'#title' => t('Time'),
+	   // '#default_value' => isset($sessionData['startTime']) ? $startTime : NULL,
+		  '#attributes' => array('placeholder'=>'From',
+			'class' => array('form-control','timepicker'),
+		  ),
+			'#suffix' => '</div>'
+	  ); 
+		$form['product_scheduling']['start-session-HTML-start1'] = array(
+			'#type' => 'markup',
+			'#markup' => '<h4>'.t('To').'<span class="form-required"> *</span></h4>',
+		);
+		$endTime=date("g:i a", strtotime($sessionData['endTime']));
+	  $form['product_scheduling']['Session[endTime]'] = array(
+	  '#prefix' => '<div class="session-from">',
+		'#type' => 'textfield',
+		'#title' => t('Time'),
+	   // '#default_value' => isset($sessionData['endTime']) ? $endTime : NULL,
+		  '#attributes' => array('placeholder'=>'To',
+			'class' => array('form-control','timepicker'),
+		  ),
+			'#suffix' => '</div>'
+	  ); 
+	  $form['product_scheduling']['Session[endDate]'] = array(
+	  '#prefix' => '<div class="session-from">',
+		'#type' => 'textfield',
+		'#title' => t('Date'), 
+		'#default_value' => isset($form_state["input"]["Session"]["endDate"]) ? $form_state["input"]["Session"]["endDate"]: NULL,
+		  '#attributes' => array('placeholder'=>'To',
+			'class' => array('form-control','datepicker'),
+		  ),
+			'#suffix' => '</div></div>'
+	  );
+		
+	  $form['product_scheduling']['all_day_session'] = array(
+		'#type' => 'checkboxes',
+
+		'#options' => array('all-day' => "All Day"),
+	   // '#default_value' => isset($sessionData['all_day_session']) ? $sessionData['all_day_session'] : NULL,
+		/* '#required' => TRUE */
+	  );
+	}
+	$form['product_scheduling']['start-session-HTML-end'] = array(
+		'#type' => 'markup',
+		'#suffix' => '</div>',
+	); 
+	
+	$form['product_scheduling']['Session[repeatPeriod]'] = array(
+		'#type' => 'select',
+		'#title' => t('Repeat sessions').'<span class="form-required"> *</span>',
+		'#attributes' => array(
+		'class' => array('form-control'),
+		),
+		'#default_value' => isset($values['repeat_session']) ? $values['repeat_session'] : NULL,
+		'#options' => array('DoNOt'=>'Do not repeat','Minute'=>'Repeat minute by minute','Hourly'=>'Repeat Hourly','Daily'=>'Repeat Daily','Weekly'=>'Repeat Weekly','MONTHLY'=>'Repeat monthly','YEARLY'=>'Repeat yearly'),
+	);
+  
+  $minutes = array();
+  for($i=5;$i<95;$i=$i+5){
+	$minutes[$i] = $i;
+  }
+	$form['product_scheduling']['repeat-session-HTML-start1'] = array(
+		'#type' => 'markup',
+		'#prefix' => '<div class="repeat-session-HTML">',
+	); 
+	$form['product_scheduling']['Session[repeatEveryMinute]'] = array(
+		'#type' => 'select',
+		'#title' => t('Every'),
+		'#options' => $minutes,
+		'#description' => t('(minutes)'),
+		'#prefix' => '<div class="repeat_session repeatEveryMinute">',
+		'#default_value' => isset($values['repeat_session_every_minutes']) ? $values['repeat_session_every_minutes'] : NULL,
+		'#attributes' => array('placeholder'=>'Minutes',
+		'class' => array('form-control'),
+		'#suffix' => '</div>'
+		),
+	);
+ 
+  $hours = array();
+  for($i=1;$i<25;$i=$i+1){
+	$hours[$i] = $i;
+  }
+  
+  $form['product_scheduling']['Session[repeatEveryHour]'] = array(
+    '#type' => 'select',
+    '#options' => $hours,
+ 	'#title' => t('Every'),
+	'#description' => t('(hours)'),
+ 	'#prefix' => '<div class="repeat_session repeatEveryHour">',
+    '#default_value' => isset($values['repeat_session_every_hours']) ? $values['repeat_session_every_hours'] : NULL,
+	  '#attributes' => array('placeholder'=>'Hours',
+		'class' => array('form-control'),
+	  ),
+	'#suffix' => '</div>'
+  );
+  
+  if($pricingData[0]["price_type"] == "PER_DAY"){
+			 drupal_add_js('jQuery(document).ready(function () {
+					jQuery("#edit-session-repeatperiod").val("Daily").attr("selected","selected");
+					jQuery(".form-item-Session-repeatPeriod").hide();
+					jQuery(".form-item-Product-maxDuration .description, .form-item-Product-minDuration .description").text("days");
+					jQuery(".form-item-Session-repeatEveryDay").hide();
+			 });',
+				array('type' => 'inline', 'scope' => 'header', 'weight' => 5)
+			  );
+  }
+  else if($pricingData[0]["price_type"] == "PER_HOUR"){
+			 drupal_add_js('jQuery(document).ready(function () { 
+					jQuery("#edit-session-repeatperiod").val("Hourly").attr("selected","selected");
+					jQuery(".form-item-Session-repeatPeriod").hide();
+					jQuery(".form-item-Session-repeatEveryHour").hide();
+					jQuery(".form-item-Product-maxDuration .description, .form-item-Product-minDuration .description").text("hours");
+			 });',
+				array('type' => 'inline', 'scope' => 'header', 'weight' => 5)
+			  );	
+  }
+  else if($pricingData[0]["price_type"] == "PER_MINUTE"){
+			 drupal_add_js('jQuery(document).ready(function () {
+					jQuery("#edit-session-repeatperiod").val("Minute").attr("selected","selected");
+					jQuery(".form-item-Session-repeatPeriod").hide();
+					jQuery(".form-item-Session-repeatEveryMinute").hide();
+					jQuery(".form-item-Product-maxDuration .description, .form-item-Product-minDuration .description").text("mins");
+					
+			 });',
+				array('type' => 'inline', 'scope' => 'header', 'weight' => 5)
+			  );	
+  }
+ 
+  $days = array();
+  for($i=1;$i<31;$i=$i+1){
+	$days[$i] = $i;
+  }
+  
+  $form['product_scheduling']['Session[repeatEveryDay]'] = array(
+    '#type' => 'select',
+    '#options' => $days,
+ 	'#title' => t('Every'),
+	'#description' => t('(days)'),
+ 	'#prefix' => '<div class="repeat_session repeatEveryDay">',
+    '#default_value' => isset($values['repeat_session_every_days']) ? $values['repeat_session_every_days'] : NULL,
+	  '#attributes' => array('placeholder'=>'Days',
+		'class' => array('form-control'),
+	  ),
+	'#suffix' => '</div>'
+  );
+
+  $form['product_scheduling']['Session[repeatEveryWeek]'] = array(
+    '#type' => 'select',
+    '#options' => $days,
+ 	'#title' => t('Every'),
+	'#description' => t('(weeks)'),
+ 	'#prefix' => '<div class="repeat_session repeatEveryWeek">',
+    '#default_value' => isset($values['repeat_session_every_days']) ? $values['repeat_session_every_days'] : NULL,
+	  '#attributes' => array('placeholder'=>'Days',
+		'class' => array('form-control'),
+	  ),
+	'#suffix' => '</div>'
+  );
+
+  $form['product_scheduling']['Session[repeatEveryMonth]'] = array(
+    '#type' => 'select',
+    '#options' => $days,
+ 	'#title' => t('Every'),
+	'#description' => t('(months)'),
+ 	'#prefix' => '<div class="repeat_session repeatEveryMonth">',
+    '#default_value' => isset($values['repeat_session_every_days']) ? $values['repeat_session_every_days'] : NULL,
+	  '#attributes' => array('placeholder'=>'Days',
+		'class' => array('form-control'),
+	  ),
+	'#suffix' => '</div>'
+  );
+
+  $form['product_scheduling']['Session[repeatEveryYear]'] = array(
+    '#type' => 'select',
+    '#options' => $days,
+ 	'#title' => t('Every'),
+	'#description' => t('(years)'),
+ 	'#prefix' => '<div class="repeat_session repeatEveryYear">',
+    '#default_value' => isset($values['repeat_session_every_days']) ? $values['repeat_session_every_days'] : NULL,
+	  '#attributes' => array('placeholder'=>'Days',
+		'class' => array('form-control'),
+	  ),
+	'#suffix' => '</div>'
+  );
+  
+  $form['product_scheduling']['Session[endRepeatDate]'] = array(
+    '#type' => 'textfield',
+ 	'#title' => t('Until').'<span class="form-required"> *</span>',
+    '#default_value' => isset($form_state["input"]["Session"]["endRepeatDate"]) ? $form_state["input"]["Session"]["endRepeatDate"]: NULL,
+	  '#attributes' => array('placeholder'=>'Date',
+		'class' => array('form-control','datepicker'),
+	  ),
+ 	'#suffix' => '</div>'
+  );
+	$form['product_scheduling']['repeat-session-HTML-end1'] = array(
+		'#type' => 'markup',
+		'#suffix' => '</div>',
+	); 
+ 	$form['product_scheduling']['repeat-session-HTML-start'] = array(
+		'#type' => 'markup',
+		'#markup' => '<h4>'.t('On').'</h4>',
+		'#prefix' => '<div id="repeat-session-wrapper">',
+	);
+
+	$weekdays = array('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
+	foreach($weekdays as $key=>$value){
+		$form['product_scheduling']['Session[repeaton]['.$value.']'] = array(
+		'#type' => 'checkbox',
+		'#prefix' => '<div class="rep-sessions">',
+		'#title' => t($value),
+		'#default_value' => isset($extraDetails['repeat_session_on_'.$value]) ? $extraDetails['repeat_session_on_'.$value] : NULL,
+
+		);
+	  
+		$form['product_scheduling']['Session[repeatfrom]['.$value.']'] = array(
+		'#type' => 'textfield',
+		'#title' => t('From'),
+		'#default_value' => isset($values['session_repeats_from_'.$value]) ? $values['session_repeats_from_'.$value] : NULL,
+		  '#attributes' => array('placeholder'=>'From',
+			'class' => array('form-control','timepicker'),
+		  ),
+		);
+	  
+		$form['product_scheduling']['Session[repeatto]['.$value.']'] = array(
+		'#type' => 'textfield',
+		'#title' => t('To'),
+		'#suffix' => '</div>',
+		'#default_value' => isset($values['session_repeats_to_'.$value]) ? $values['session_repeats_to_'.$value] : NULL,
+		  '#attributes' => array('placeholder'=>'To',
+			'class' => array('form-control','timepicker'),
+		  ),
+		);
+	}
+
+  	$form['product_scheduling']['repeat-session-HTML-end'] = array(
+		'#type' => 'markup',
+		'#suffix' => '</div>',
+	);
+	
+	if(count($pricingData)>0){
+		$form['product_scheduling']['pricing-HTML'] = array(
+			'#type' => 'markup',
+			'#markup' => '<h3>Pricing</h3>',
+			'#prefix' => '<div class="schedule-pricing-wrapper">'
+		);
+		$i =1;
+		foreach($pricingData as $key=>$val){
+			if($val["label"] != null){
+				$title = $val["label"];
+			}
+			else if($val["price_option_type"] != null){
+				$title = $val["price_option_type"];
+			}
+			else if($val["min"] != null){
+				$title = $val["min"] ." to ". $val["max"] ." days (".$val['price_group_type'].")";
+			}
+			else{
+				$title = $val["quantity_label_plural"];
+			}
+			$form['product_scheduling']['Session[hiddenprice]['.$key.'][schedulePrice]'] = array(
+			'#type' => 'textfield',
+			'#title' => t($title),
+			'#default_value' => isset($val['price']) ? $val['price'] : NULL,
+			  '#attributes' => array('placeholder'=>'Price','disabled'=>'disabled',
+				'class' => array('form-control'),
+			  ),
+			);	
+			$form['product_scheduling']['Session[hiddenprice]['.$key.'][basePrice]'] = array(
+			'#type' => 'hidden',
+			'#default_value' => isset($val['price']) ? $val['price'] : NULL,
+			);
+
+			$form['product_scheduling']['Session[hiddenprice]['.$key.'][title]'] = array(
+			'#type' => 'hidden',
+			'#default_value' => $title,
+			);
+			
+			$form['product_scheduling']['Session[hiddenprice]['.$key.'][id]'] = array(
+			'#type' => 'hidden',
+			'#default_value' => isset($val['id']) ? $val['id'] : NULL,
+			);			
+		}
+		$form['product_scheduling']['another-pricing'] = array(
+		'#type' => 'checkbox',
+		'#suffix' => '</div>',
+		'#title' => t('Use another pricing for this schedule'),
+		//'#default_value' => isset($extraDetails['repeat_session_on_'.$value]) ? $extraDetails['repeat_session_on_'.$value] : NULL,
+
+		);
+	}
+	
+	if(count($discountData)>0){
+		$form['product_scheduling']['discount-HTML'] = array(
+			'#type' => 'markup',
+			'#markup' => '<h3>Offers & Discounts</h3>',
+			'#prefix' => '<div class="schedule-discount-wrapper">'
+		);
+		$i =1;
+		foreach($discountData as $key=>$val){
+
+ 			if($val["offer_type"] == "24 Hour Offer"){
+				$newArray = unserialize($val['amount']);
+
+				$m = 100;
+				foreach($newArray as $key1=>$val1){
+					$form['product_scheduling']['Session[discountAmt]['.$m.'][scheduleDiscount]'] = array(
+						'#type' => 'textfield',
+						'#title' => t($val["offer_type"]),
+						'#prefix' => '<div class="schedule-discount-inner-wrapper">',
+						'#default_value' => isset($val1['price']) ? $val1['price'] : NULL,
+						'#attributes' => array('placeholder'=>'Price','disabled'=>'disabled',
+						'class' => array('form-control'),
+						),
+					);						
+					$form['product_scheduling']['Session[discountAmt]['.$m.'][scheduleDiscountDate]'] = array(
+						'#type' => 'textfield',
+						'#suffix' => '</div>',
+						'#default_value' => isset($val1['date']) ? $val1['date'] : NULL,
+						'#attributes' => array('placeholder'=>'Date','disabled'=>'disabled',
+						'class' => array('form-control','datepicker'),
+						),
+					);		
+					$form['product_scheduling']['Session[discountAmt]['.$m.'][baseDiscount]'] = array(
+						'#type' => 'hidden',
+						'#default_value' => isset($val1['price']) ? $val1['price'] : NULL,
+					);	
+					$form['product_scheduling']['Session[discountAmt]['.$m.'][baseDiscountDate]'] = array(
+						'#type' => 'hidden',
+						'#default_value' => isset($val1['date']) ? $val1['date'] : NULL,
+					);						
+					$m++;
+				}
+			} 
+			else{
+				$form['product_scheduling']['Session[discountAmt]['.$key.'][scheduleDiscount]'] = array(
+					'#type' => 'textfield',
+					'#title' => t($val["offer_type"]),
+					'#prefix' => '<div class="schedule-discount-inner-wrapper">',
+					'#default_value' => isset($val['amount']) ? $val['amount'] : NULL,
+					'#attributes' => array('placeholder'=>'Price','disabled'=>'disabled',
+					'class' => array('form-control'),
+					),
+				);	
+				$form['product_scheduling']['Session[discountAmt]['.$key.'][baseDiscount]'] = array(
+					'#type' => 'hidden',
+					'#default_value' => isset($val['amount']) ? $val['amount'] : NULL,
+				);	
+				$form['product_scheduling']['Session[discountAmt]['.$key.'][baseDiscountType]'] = array(
+					'#type' => 'hidden',
+					'#default_value' => isset($val['discount_by']) ? $val['discount_by'] : NULL,
+				);	
+				$form['product_scheduling']['Session[discountAmt]['.$key.'][scheduleDiscountType]'] = array(
+					'#type' => 'select',
+					'#attributes' => array(
+						'class' => array('form-control'),
+					),
+					'#default_value' => isset($val['discount_by']) ? $val['discount_by'] : NULL,
+					'#options' => array('%'=>'Amount in %','$'=>'Amount in $'),
+					'#suffix' => '<h4>'.t('on total Amount').'</h4></div>',
+				);	
+				
+			}
+		}	
+		$form['product_scheduling']['another-discount'] = array(
+		'#type' => 'checkbox',
+		'#suffix' => '</div>',
+		'#title' => t('Use another discount for this schedule'),
+		//'#default_value' => isset($extraDetails['repeat_session_on_'.$value]) ? $extraDetails['repeat_session_on_'.$value] : NULL,
+
+		);
+	}
+/*    $form['product_scheduling']['repeat_session_weekly_on'] = array(
+		'#type' => 'select',
+		'#title' => t('On'),
+		'#attributes' => array(
+			'class' => array('form-control'),
+		),
+		'#default_value' => isset($extraDetails['repeat_session_weekly_on']) ? $extraDetails['repeat_session_weekly_on'] : NULL,
+		'#options' => array('Monday'=>'Monday','Tuesday'=>'Tuesday','Wednesday'=>'Wednesday','Thursday'=>'Thursday','Friday'=>'Friday','Saturday'=>'Saturday','Sunday'=>'Sunday'),
+
+	);  */
+ 
+/* 	$form['product_scheduling']['add_new'] = array(
+		'#prefix' => '<div><a class="btn btn-dark btn-gradient form-submit" href="#" id="addSession">Add another</a>',
+		'#suffix' => '</div></div></div>',
+	); */
+	
+/*   $form['product_scheduling']['product_color'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Product Color',
+    '#required' => TRUE,
+	'#attributes' => array(
+		'class' => array('form-control','colorpicker'),
+	),
+    '#default_value' => isset($values['product_color']) ? $values['product_color'] : NULL,
+  ); */
+ 
+  $form['page'] = array(
+	'#type' => 'hidden',
+	'#default_value' => 'product_pricing'
+  );
+
+  $scheduleSessionData = getScheduleSessionData(arg(3));
+  
+  if($schedulingData['bookingMode'] == "INVENTORY" && !empty($scheduleSessionData)){
+
+	$form['product_scheduling']['Session[scheduleID]'] = array(
+		'#type' => 'hidden',
+		'#default_value' => isset($schedulingData['id']) ? $schedulingData['id'] : NULL,
+	);
+
+	$form['save'] = array(
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient add-another-schedule')),
+		'#value' => t('Add another schedule')
+	);  
+  }
+  else if($schedulingData['bookingMode'] == "INVENTORY"){
+		$form['product_scheduling']['Session[scheduleID]'] = array(
+			'#type' => 'hidden',
+			'#default_value' => isset($schedulingData['id']) ? $schedulingData['id'] : NULL,
+		);  
+		$form['save'] = array(
+			'#type' => 'submit',
+			'#attributes' => array('class'=>array('btn btn-dark btn-gradient save-schedule')),
+			'#value' => t('Save')
+		); 
+  }
+  else{
+	  $form['save'] = array(
+		'#type' => 'submit',
+		'#attributes' => array('class'=>array('btn btn-dark btn-gradient save-schedule')),
+		'#value' => t('Save')
+	  ); 
+  }
+    
+  return $form;
+}
+
+function add_calendar_events(){
+	echo json_encode($_POST); die;
+}
+
+function package_payment_form($form, &$form_state){
+	global $user;
+	$form = array();
+	$countries = getCountryListWithIsoCode();
+    $traveller =user_load($user->uid);	
+	$current_year=date("Y");
+	$expiration_year=array();
+	$form['#attributes'] = array('onsubmit' => 'return validate_booking();' );
+	for($i=$current_year;$i<($current_year+20);$i++)
+	{
+	$expiration_year[$i]=$i;
+	}
+	$monthCount=array();
+	for($i=1;$i<=12;$i++)
+	{
+	$monthCount[$i]=$i;
+	}
+	if($userDetails->field_first_name["und"][0]["value"] != ""){
+	$name= ucwords($userDetails->field_first_name["und"][0]["value"]." ".$userDetails->field_last_name["und"][0]["value"]);
+	}else{
+	$name= ucwords($userDetails->name);
+	}
+
+	$form['markup-contact-details'] = array(
+	'#type' => 'markup',
+	'#markup' => '<div class="card-no address-area left-col-payment"><h1 class="gray-bg">Billing Address</h1>',
+	
+	);
+	
+	$form['first_name'] = array(
+	'#type' => 'textfield',
+	'#title' => 'Name',
+	'#size' => '30',
+	'#required'=>true,
+	"#attributes" => array("class" =>array('loc input-col half','form-control'),'placeholder'=>'First Name'),
+	'#default_value'=>($traveller->field_first_name)?$traveller->field_first_name["und"][0]["value"]:$_SESSION['first_name'],
+	'#prefix'=>'<div class="row-form">',
+	
+	);
+	
+	$form['last_name'] = array(
+	'#type' => 'textfield',
+	/* '#title' => 'Last Name', */
+	'#size' => '30',
+	'#required'=>true,
+	'#default_value'=>($traveller->field_last_name)?$traveller->field_last_name["und"][0]["value"]:$_SESSION['last_name'],
+	"#attributes" => array("class" =>array('loc input-col half move-right','form-control'),'placeholder'=>'Last Name'),
+	'#suffix'=>'</div>',
+	);
+	
+	
+	$form['email'] = array(
+	'#type' => 'textfield',
+	'#title' => 'Email',
+	'#size' => '30',
+	'#required'=>true,
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'Email'),
+	'#default_value'=>($traveller->mail)?$traveller->mail:$_SESSION['email'],
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',
+	);
+	$form['company'] = array(
+	'#type' => 'textfield',
+	'#title' => t('Company'),
+	'#size' => '30',
+	'#default_value'=>$_SESSION['company'],
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'Company'),
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',
+	);
+	
+	$form['address'] = array(
+	'#type' => 'textfield',
+	'#title' => 'Address',
+	'#size' => '30',
+	'#default_value'=>$_SESSION['address'],
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'Address'),
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',
+	);
+
+	$form['city'] = array(
+	'#type' => 'textfield',
+	'#title' => 'City/Town/Suburb',
+	'#size' => '30',
+	'#default_value'=>$_SESSION['city'],
+	'#required'=>true,
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'City/Town/Suburb'),
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',
+	);
+
+	$form['state'] = array(
+	'#type' => 'textfield',
+	'#title' => 'State',
+	'#size' => '30',
+	'#required'=>true,
+	'#default_value'=>$_SESSION['state'],
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'State'),
+	);
+    $form['country'] = array(
+	'#type' => 'select',
+	'#title' => t('Country'),
+	'#options' => $countries,
+	'#default_value'=>$_SESSION['country'],
+	'#prefix'=>'<div class="row-form">',
+	'#required'=>true,
+	'#suffix'=>'</div>',
+ 	"#attributes" => array("class" =>array('form-control')),
+	);	
+	
+	$form['zipcode'] = array(
+	'#type' => 'textfield',
+	'#title' => 'Postcode/ZIP',
+	'#size' => '30',
+	'#required'=>true,
+	'#default_value'=>$_SESSION['zipcode'],
+	'#prefix'=>'<div class="row-form">',
+	'#maxlength'=>10,
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'Postcode/ZIP'),
+	'#suffix' => '</div><div class="row-form">                            	
+								
+                            </div>'
+	);
+	
+	/* $form['message'] = array(
+    '#type' => 'textarea',
+	'#attributes' => array(
+		'class' => array('form-control','input-col','form-control'),'placeholder' => t('Message')),
+	'#default_value'=>$_SESSION['message'],	
+	
+    '#title' => t('Enter Your Message to'." ".$name),
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>'
+	
+	  ); */
+	$form['phone_number'] = array(
+	'#type' => 'textfield',
+	'#title' => 'Confirm Phone Number',
+	'#size' => '20',
+	'#required'=>true,
+	'#default_value'=>$_SESSION['phone_number'],
+	'#maxlength'=>15,
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'Phone Number'),
+	'#prefix'=>'<div class="row-form">',
+	'#suffix' => '</div>'
+	);  
+	$form['markup-payment-details'] = array(
+	'#type' => 'markup',
+	'#markup' => '</div><div class="card-no address-area left-col-payment"><h1 class="gray-bg">Payment</h1>',
+	);
+
+	/* $form['booking-country'] = array(
+	'#type' => 'select',
+	'#title' => 'Country',
+	'#options' => $countries,
+ 	"#attributes" => array("class" =>array('pay-select')),
+     '#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',	
+	); */
+	
+	$form['payment_type'] = array(
+	'#type' => 'select',
+	'#title' => 'Payment Type',
+	/* '#options' => array('paypal'=>'PayPal','credit-card'=>'Credit card'), */
+	'#options' => array('credit-card'=>'Credit card'),
+	 "#attributes" => array("class" =>array('pay-select','form-control')),
+    '#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',	 
+	);	
+	
+	
+	$form['credit_card_type'] = array(
+	'#type' => 'select',
+	'#title' => 'Credit Card Type',
+	'#options' => array('visa'=>'Visa','master_card'=>'Master Card','discover'=>'Discover'),
+	 "#attributes" => array("class" =>array('pay-select','form-control')), 
+	 '#prefix'=>'<div class="credit-card-details"><div class="row-form">',
+	'#suffix'=>'</div>',
+	);	
+
+	$form['credit_card_no'] = array(
+	'#type' => 'textfield',
+	'#title' => 'Credit Card No.',
+	'#size' => '30',
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div>',
+	"#attributes" => array("class" =>array('card-no input-col','form-control'),'placeholder'=>'Credit Card No.','autocomplete' => 'off'),
+	);	
+
+	$form['credit_expiration_month'] = array(
+	'#type' => 'select',
+	'#prefix' => '<div class="card-exp-month"><div class="row-form">',
+	//'#suffix'=>'</div>',
+	'#title' => 'Expiration Date',
+	'#options' => $monthCount,
+	"#attributes" => array("class" =>array('loc','half','form-control')),
+	);	
+	
+	
+	$form['credit_expiration_year'] = array(
+	'#type' => 'select',	
+	//'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'</div></div>',
+	'#options' =>$expiration_year,
+	"#attributes" => array("class" =>array('loc','half','move-right','form-control')),
+	);	
+	
+	
+	$form['credit_varification_no'] = array(
+	'#type' => 'textfield',
+	'#title' => 'Card Varification No',
+	'#size' => '30',
+	'#prefix'=>'<div class="row-form">',
+	'#suffix'=>'<div class="row-form"></div></div></div>',
+	"#attributes" => array("class" =>array('loc input-col','form-control'),'placeholder'=>'Card Varification No'),
+	);	
+	
+	$form['terms_checkbox'] = array(
+    '#type' => 'checkboxes',
+	'#prefix' => '<div class="row-form"><div class="terms-check">',
+    //'#title' => t('I hereby agree on Gloobers Terms & Conditions.'),
+	 '#options' => array('terms'=>'<p>'.t('I hereby agree on Gloobers Terms & Conditions.').'</p>'),
+	'#suffix'=>'</div></div>'
+  );
+	
+	$form['amount'] = array(
+	'#type' => 'hidden',
+	'#default_value' => isset($_GET['total-amount'])?$_GET['total-amount']:0,
+	);
+	/*****************************************************************************/
+	$form['booking_on'] = array(
+	'#type' => 'hidden',
+	'#default_value' => isset($_GET['booking-on'])?$_GET['booking-on']:'',
+	);
+
+	$form['submit'] = array(
+	'#type' => 'submit',
+	'#value' => t('PAY NOW'),
+	'#size' => '30',
+	"#attributes" => array("class" =>array('btn', 'btn-dark', 'btn-gradient', 'form-submit')),
+	'#prefix'=>'<div class="row-form"><div class="terms-check">',
+	'#suffix'=>'</div></div></div>'
+	);		
+	
+	return $form;
+}
+
+function getListingPackages(){
+	$packages = array();
+	$query = db_select('gbl_listing_packages','p')
+			->fields('p')
+			->execute();
+	while($data = $query->fetchAssoc()){
+		$packages[] = $data;
+	}
+	return $packages;
+}
+
+function getPackageDetails($packageID){
+	$query = db_select('gbl_listing_packages','p')
+			->fields('p')
+			->condition('id',$packageID)
+			->execute();
+	return $query->fetchAssoc();
+}
+
+function getListingPackageById($listID){
+	$packages = array();
+	$query = db_select('gbl_packages_transactions','t')
+			->fields('t')
+			->condition('listing_id',$listID)
+			->execute();
+	while($data = $query->fetchAssoc()){
+		$packages[] = $data;
+	}
+	return $packages;
+}
+function setFreeSubscription($listId=null)
+{
+$listId=arg(3);
+$query=db_update('gbl_experience_list')
+       ->fields(array('package_id'=>3))
+       ->condition('eid',$listId);
+$result=$query->execute();
+if($result)
+{
+drupal_set_message('Your Listing has been subscribed for Economy Class Successfully');
+drupal_goto('product/add/success/'.$listId);
+}	   
+}

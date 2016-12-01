@@ -1,0 +1,2802 @@
+<?php
+/**
+@description :  SEETING UP MENUS AND THEIR CALLBACK FUNCTION . CLEAR CACHE FROM BACKEND IS MUST
+@retutn : Menu item will be functional once you setup the menu here
+@modified on : 2015/04/10
+**/
+function advisor_menu(){
+    $items['finder']=array(
+       // 'title' => 'Gloobers Finder',
+        'page callback' => 'advisors_list',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/user']=array(
+    // 'title' => 'Advisors',
+        'page callback' => 'advice_users',
+        'access arguments' => array('access content'), 
+        'page_arguments' => array(2),
+        'access callback' => true, 
+        //'access callback' => 'user_is_logged_in',
+        'type' => MENU_CALLBACK,
+    );
+    $items['advice/request/received']=array(
+        // 'title' => 'Advisors',
+        'page callback' => 'show_Advice_Request_Receieved',
+        'access arguments' => array('access content'), 
+        'access callback' => true, 
+        //'access callback' => 'user_is_logged_in',
+        'type' => MENU_CALLBACK,
+    );
+    $items['create/advice/list']=array(
+        // 'title' => 'Advisors',
+        'page callback' => 'advisor_create_list',
+        'access arguments' => array('access content'), 
+        'access callback' => true, 
+        //'access callback' => 'user_is_logged_in',
+        'type' => MENU_CALLBACK,
+    );
+    $items['advice/request']=array(
+        //'title' => 'Request Recieved', 
+        'page callback' => 'recieve_request',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    ); 
+    $items['advice/ajax/post_request']=array(
+        'title' => 'Post Request',
+        'page callback' => 'post_request',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    ); 
+    $items['advice/ajax/adv_notification_count']=array(
+        'title' => 'Notification Count',
+        'page callback' => 'adv_notification_count',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    ); 
+    $items['advice/ajax/decline_request']=array(
+        'title' => 'Decline Request',
+        'page callback' => 'decline_request',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    ); 
+    $items['advice/travel_guide']=array(
+        
+        'page callback' => 'trevel_guide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/save_trevel_guide']=array(
+        'title' => 'Trevel Guide',
+        'page callback' => 'save_trevel_guide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/ajax/getGuideByID']=array(
+        'title' => 'Trevel Guide',
+        'page callback' => 'getGuideByID',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/ajax/addToGuide']=array(
+        'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'addToGuide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/ajax/removelistingguide']=array(
+        'title' => 'Remove Listing to Travel Guide',
+        'page callback' => 'removelistingguide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/recommendation']=array(
+       // 'title' => 'Recommendations',
+        'page callback' => 'widget_listing',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/delete_guide']=array(
+        'title' => 'Recommendations',
+        'page callback' => 'delete_guide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    
+    $items['advice/notification']=array(
+       // 'title' => 'Recommendations',
+        'page callback' => 'notification',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    
+    $items['advice/my_request']=array(
+        //'title' => 'Recommendations',
+        'page callback' => 'my_request',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+ $items['advice/readnotifications']=array(
+        
+        'page callback' => 'readnotifications',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+  $items['advice/viewrecommendation/%']=array(
+       // 'title' => 'Recommendations',
+        'page callback' => 'viewrecommendation',
+        'page_arguments' => array(3),
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    
+   $items['advice/ajax/edit_my_recommendation']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'edit_my_recommendation',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+	$items['advice/addlisttoGuide']=array(
+       // 'title' => 'Recommendations',
+        'page callback' => 'addListToGuide',
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    //  27 aug 2015 //
+
+    $items['advice/ajax/adviceListToUser']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'adviceListToUser',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advisor/ajax/travelguides']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'travelguides',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/create_travel_guide']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'create_travel_guide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/recommend/%/%/%']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'recommendation_listing',
+        'page_arguments' => array(3),
+        'page_arguments' => array(4),
+        'page_arguments' => array(5),
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/ajax/write_comment']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'write_comment',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );	
+     // Add guide for a particulor traveller //
+    
+    $items['advice/ajax/addguide_to_traveller']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'addguide_to_traveller',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/ajax/removelisting']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'removelisting',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/validate_recommendation']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'validate_recommendation',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/ajax/validate_recommendation']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'validate_ajax_recommendation',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['advice/create-travel-guide']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'createtravelguide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['gbrs/guide/%']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'travelguide',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    // --- Travel Guide Profile Section ----- // 
+    
+    $items['travel_guide/profile/%']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'travel_guide_profile',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+	
+    $items['advisor_sharing/request_id/%']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'advisor_sharing_request',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+	
+	$items['ajax/unread_counter']=array(
+        //'title' => 'Add Listing to Travel Guide',
+        'page callback' => 'unreadCountnotifications',
+        'access arguments' => array('access container'),
+        'access callback' => true, 
+        'type' => MENU_NORMAL_ITEM,
+    );
+	return $items;
+}
+
+function advisor_theme(){
+  $module_path = drupal_get_path('module', 'advisor');  
+    return array(
+        'advisors_list' => array(
+          'template' => 'advisors_list',
+          'path' => $module_path.'/templates',
+        ),
+        'advice_request_receive' => array(
+        'template' => 'advice_request_receive',
+        'path' => $module_path.'/templates',
+        ),
+        'advisors_listing_boards' => array(
+        'template' => 'advisors_listing_boards',
+        'path' => $module_path.'/templates',
+        ),
+        'recieve_request' => array(
+        'template' => 'recieve_request',
+        'path' => $module_path.'/templates',
+        ),
+        'trevel_guide' => array(
+        'template' => 'trevel_guide',
+        'path' => $module_path.'/templates',
+        ),
+        'widget_listing' => array(
+        'template' => 'widget_listing',
+        'path' => $module_path.'/templates',
+        ),
+        'listing_into_guide' => array(
+        'template' => 'listing_into_guide',
+        'path' => $module_path.'/templates',
+        ),
+        'travel_guide_list' => array(
+        'template' => 'travel_guide_list',
+        'path' => $module_path.'/templates',
+        ),
+        'notification' => array(
+        'template' => 'notification',
+        'path' => $module_path.'/templates',
+        ),
+        'my_request' => array(
+        'template' => 'my_request',
+        'path' => $module_path.'/templates',
+        ),
+        'viewrecommendation' => array(
+        'template' => 'viewrecommendation',
+        'path' => $module_path.'/templates',
+        ),
+        'edit_travel_guide' => array(
+        'template' => 'edit_travel_guide',
+        'path' => $module_path.'/templates',
+        ),
+         'create_travel_guide' => array(
+        'template' => 'create_travel_guide',
+        'path' => $module_path.'/templates',
+        ),
+        'recommendation_listing' => array(
+        'template' => 'recommendation_listing',
+        'path' => $module_path.'/templates',
+        ),
+        'validate_recommendation' => array(
+        'template' => 'validate_recommendation',
+        'path' => $module_path.'/templates',
+        ),
+        'createtravelguide'=>array(
+        'template' => 'createtravelguide',
+        'path'=>$module_path.'/templates',
+        ),
+        'travelguide'=>array(
+        'template' => 'travelguide',
+        'path'=>$module_path.'/templates',
+        ),
+        'travel_guide_profile'=>array(
+        'template' => 'travel_guide_profile',
+        'path'=>$module_path.'/templates',
+        ),
+        'advisor_sharing_request'=>array(
+        'template' => 'advisor_sharing_request',
+        'path'=>$module_path.'/templates',
+        ),
+        
+    );
+}
+  
+
+/**
+@description :  GET THE LIST OF ADVISOR AND SEARCH FROM GLOOBER FINDER.
+@retutn : An Array or object accordingly
+@modified on : 2015/04/10
+*/
+function advisors_list(){
+    $perPageResult=6;
+    global $user;
+    //send to login page if user is not logged in
+	if(!$user->uid){
+        drupal_goto('login');
+    } 
+    
+    //Check if the ajax hit made or normal through page redirected.
+    //If ajax search is made then json encoded data will be send otherwise reload theme "advisor_list page".
+    if(check_is_ajax()){
+       $advList = getAdvisorsList();
+    }else{
+        //Call related function that will retrive data. You can pass return type like "array/object/json".
+        //and then result will be retrived in same format that you have passed. Default will be array type
+        $tripType  = getTripType();
+        return theme('advisors_list',array('tripType'=>$tripType));
+    }
+}
+
+/**
+@description :  GET THE LIST OF ADVISOR AND SEARCH FROM GLOOBER FINDER.
+@retutn : An Array/object/json/html . Default will be HTML
+@modified on : 2015/04/10
+*/
+function getAdvisorsList($returnType = 'html'){
+    
+    //get native user first of all
+    global $user;
+    
+    $pageLimitOffset = 0;
+    $pageSize = 8;
+    $users=array();
+    $query=db_select('users','usr');
+    $query->join('gbl_users_meta','meta','meta.uid=usr.uid');
+    $query->fields('meta');
+    $query->fields('usr',array('picture'));
+    $query->condition('usr.uid', $user->uid,'!=');
+    foreach($_POST['counselors'] as $counselors){
+        switch ($counselors){
+            case 'facebook_friend':
+                break;
+            case 'other_gloobers':
+                break;
+            case 'with_mutual_interest':
+                //GET THIS USER PASSION ID FROM DB S THAT IT CAN BE CHECKED WITH OTHERS
+                $query->join('gbl_users_passions','passion','passion.uid=usr.uid');
+                //$query->condition('passion.pid', $nids, 'IN');
+                $query->where('passion.pid IN(select pid from {gbl_users_passions} where uid = :uid)', array(':uid' => $user->uid));
+                break;
+            case 'have_been_there':
+                $query->join('gbl_booking','booking','booking.uid=usr.uid');
+                $query->condition('booking.arrive_at_date',date('Y-m-d'),'<=' );
+                break;
+            case 'locals':
+                //Perform condtions for users local users (NATIVE USERS)
+                $locationInfo = getLocations($_POST['trip_loction']);
+                if(!empty($locationInfo)){
+                    if(isset($locationInfo['country']) && $locationInfo['country']){
+                        $query->condition(db_or()->condition('meta.country',$locationInfo['country_short'],'like')->condition('meta.country',$locationInfo['country'],'like'));
+                    }
+                    if(isset($locationInfo['state']) && $locationInfo['state']){
+                        $query->condition(db_or()->condition('meta.state',$locationInfo['state_short'],'like')->condition('meta.state',$locationInfo['state'],'like'));
+                    }
+                    if(isset($locationInfo['city']) && $locationInfo['city']){
+                        $query->condition('meta.city',$locationInfo['city'],'like');
+                    }
+                }
+                break;
+        }
+    }
+    $query->groupBy('usr.uid');
+    $query->range($pageLimitOffset, $pageSize);
+    $result=$query->execute();
+    
+    //PERFORM OPERATIONS FOR RETURN TYPE RESULT SET . THAT USER WANTS IN DESIRED FORMAT
+    switch ($returnType){
+        case 'array':
+            $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $resultSet = $result->fetchAll();
+            break;
+        case 'json':
+            $resultSet = json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+            break;
+        case 'html':
+            $advisorList = $result->fetchAll(PDO::FETCH_ASSOC);
+            $resultSet = generateAdvisorsDOM($advisorList);
+            break;
+    }    
+    
+    
+}
+/**
+@description :  Built the dom structure for advisor 
+@retutn : Json With Dom
+@modified on : 2015/04/10
+*/
+function generateAdvisorsDOM($advisorList = array()){
+    $data['html'] = theme('advisors_listing_boards',array('advisorList'=>$advisorList,'counselors'=>$_POST['counselors']));
+    $data['status'] = 'success';
+    echo json_encode($data);
+}
+
+/**
+@description : Get location like "city,state,adress,latitude and logtitude" etc
+@param: hit the google map api with your input address and then search exact locations from  googleMapAPI
+@retutn : Return an array like 
+<code>
+    Array
+    (
+        [formatted_address] => London Bridge, London SE1, UK
+        [lat] => 51.5078788
+        [lng] => -0.0877321
+        [address] => London
+        [address_short] => London
+        [city] => Greater London
+        [city_short] => Gt Lon
+        [country] => United Kingdom
+        [country_short] => GB
+    )
+</code>
+@modified on : 2015/04/10
+*/
+function getLocations($address){
+    $locationInfoStack = array();
+    $address = preg_replace('/\s+/', '%', $address);
+    $geocode=file_get_contents('http://maps.google.com/maps/api/geocode/json?address='.$address.'&sensor=false');
+    $output= json_decode($geocode);		
+    if(!empty($output) && $output->status=='OK'){
+        
+        //Get basic info from formatted object
+        $locationInfoStack['formatted_address'] = ($output->results[0]->formatted_address) ? $output->results[0]->formatted_address : $address;
+        $locationInfoStack['lat'] = $output->results[0]->geometry->location->lat;
+        $locationInfoStack['lng'] = $output->results[0]->geometry->location->lng;
+        
+        //Get Country state and other local info
+        $addressStack  = ($output->results[0]->address_components);
+        foreach($addressStack as $addressList){
+            switch ($addressList->types[0]){
+                case 'locality';
+                    $locationInfoStack['address'] = $addressList->long_name;
+                    $locationInfoStack['address_short'] = $addressList->short_name;
+                    break;
+                case 'administrative_area_level_2';
+                    $locationInfoStack['city'] = $addressList->long_name;
+                    $locationInfoStack['city_short'] = $addressList->short_name;
+                    break;
+                case 'administrative_area_level_1';
+                    $locationInfoStack['state'] = $addressList->long_name;
+                    $locationInfoStack['state_short'] = $addressList->short_name;
+                    break;
+                case 'country';
+                    $locationInfoStack['country'] = $addressList->long_name;
+                    $locationInfoStack['country_short'] = $addressList->short_name;
+                    break;
+            }
+        }
+        return ($locationInfoStack);
+    }
+}
+
+/**
+@description :  Get all trip type. Return type give you result that you want.
+@retutn : An Array or object accordingly
+@modified on : 2015/04/10
+*/
+function getTripType($returnType = 'array' ){
+    $query = db_select('gbl_advisor_trip_type','triptype');
+    $query->fields('triptype');
+    $result=$query->execute();
+    
+    switch ($returnType){
+        case 'array':
+            $tripStack= $result->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $tripStack=$result->fetchAll();
+            break;
+        case 'json':
+            $result = $result->fetchAllKeyed();
+            $tripStack = json_encode($result);
+            break;
+        default :
+            break;
+    }
+    return ($tripStack);
+}
+
+
+/**
+ * @description : Check if request is an AJAX call
+ * @param string $script script path
+ */
+function check_is_ajax() {
+  $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
+  strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+  if(!$isAjax) {
+    return FALSE;
+  }else{
+      return TRUE;
+  }
+}
+
+
+/**
+ * @description : GET MUTUAL PASSIONS
+ * @param string $script script path
+ */
+function getMutualPassion($uid , $returnType = 'array') {
+    
+    global $user;
+    $query=db_select('gbl_users_passions','usr_passion');
+    $query->join('gbl_passions','passion','passion.pid=usr_passion.pid');
+    $query->fields('usr_passion',array('uid'));
+    $query->fields('passion',array('pid','passion','fid','fid_thumb'));
+    $query->where('usr_passion.pid IN(select pid from {gbl_users_passions} where uid = :uid)', array(':uid' => $user->uid));
+    $query->condition('usr_passion.uid',$uid,'=' );
+    $result=$query->execute();
+    
+    //PERFORM OPERATIONS FOR RETURN TYPE RESULT SET . THAT USER WANTS IN DESIRED FORMAT
+    switch ($returnType){
+        case 'array':
+            $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $resultSet = $result->fetchAll();
+            break;
+        case 'json':
+            $resultSet = json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+            break;
+    }
+    return $resultSet;    
+}
+
+
+
+/**
+ * @description : RATING,VISITED COUNTRY AND REVIEWS AND GUIDED
+ * @param string $script script path
+ * @RETURN An array/object/json based n supplied argument
+ */
+function getAdvisorInfo($uid , $returnType = 'array') {
+    
+    global $user;
+    
+    $query = db_query("SELECT * FROM (
+                    (
+                      SELECT count(DISTINCT(b.country)) as country_visited FROM `gbl_booking` a 
+                      LEFT JOIN gbl_experience_list b ON a.lid=b.eid
+                      WHERE a.`uid`='".$uid."' and a.`booking_status`='booked' and arrive_at_date<=now() 
+                    ) as country_visit,
+                    (
+                      SELECT count(*) as review_count FROM `gbl_listing_reviews` WHERE uid='".$uid."'
+                    ) as review_count,
+                    (
+                      SELECT avg(value) as rating_avg FROM `gbl_listing_reviews` WHERE uid='".$uid."'
+                    ) as rating
+
+                    )");
+    
+    //PERFORM OPERATIONS FOR RETURN TYPE RESULT SET . THAT USER WANTS IN DESIRED FORMAT
+    switch($returnType){
+        case 'array':
+            $resultSet = $query->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $resultSet = $query->fetchAll();
+            break;
+        case 'json':
+            $resultSet = json_encode($query->fetchAll(PDO::FETCH_ASSOC));
+            break;
+    }
+    
+    return $resultSet;
+    
+}
+
+/**
+ * @description : RECIEVE REQUEST PAGE 
+ * @param Recieve request from the user regarding advice
+ * @RETURN An array/object/json based n supplied argument
+ */
+function recieve_request($advUID = 0 , $returnType = 'array') {
+    global $user;
+    $sender = arg(2);
+    $receiepnt = arg(3);
+    $sender_id = base64_decode($sender);
+    $sender_id =  str_replace("gloobe__"," ",$sender_id);
+    $receiepnt_id = base64_decode($receiepnt);
+   
+    if(isset($sender_id) && !empty($receiepnt_id)){
+
+        db_update('gbl_notifications')->fields(array('read_status' => 1))
+                                                ->condition('recipient_id',$receiepnt_id)
+                                                 ->condition('sender_id',$sender_id)
+                                                ->execute();
+
+
+    }
+    //send to login page if user is not logged in
+    /* if(!$user->uid){
+        drupal_goto('login');
+    } */
+    
+    $uid = $user->uid;
+    //GET REQUESTS/MESSAGES/USER INFO/MUTUAL PASSION AND USER GUIDE OF A USER
+    $query=db_select('gbl_advice_location_request','advloc');
+    $query->join('gbl_advisor_request','advreq','advloc.rid=advreq.rid');
+    $query->join('users','user','user.uid=advloc.traveller_uid');
+    $query->join('gbl_users_meta','gum' ,'user.uid=gum.uid');
+    $query->join('gbl_advisor_trip_type','trip','trip.trip_id=advloc.trip_type');
+    $query->fields('advloc');
+    $query->fields('gum');
+    $query->fields('advreq',array('aid','message'));
+    $query->fields('user',array('uid','name','mail','picture'));
+    $query->fields('trip',array('trip_type'));
+    $query->orderBy('aid', 'DESC');
+    $query->condition('advloc.advisor_uid',$uid,'=' );
+
+    if($advUID){
+
+        $advUID = isVaildEncodeString(base64_decode($advUID));
+        $query->condition('advloc.traveller_uid',$advUID,'=' );
+    }
+   
+  //print $query; exit;
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+  //echo "<pre>";print_r($resultSet);exit;
+    return theme('recieve_request',array('requestList'=>$resultSet));
+    
+}
+
+function edit_my_recommendation(){
+    global $user;
+    $uid = $user->uid;
+    $recommend_id = $_POST['traveller_id'];
+    $location_req_id = $_POST['location_req_id'];
+//echo $recommend_id.'<br/>'.$location_req_id.'<br/>'.$uid;exit;
+    $query = db_select('gbl_advise_listing','gal');
+    $query->fields('gal',array('listing_id','advice_comment'));
+    $query->condition('gal.owner_id',$uid,'=' );
+    $query->condition('gal.request_id',$location_req_id,'=' );
+    $query->condition('gal.recommend_for_uid',$recommend_id,'=');
+    //$query->condition('gal.guide_id','0','!=');
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+	//echo "<pre>";print_r($resultSet);exit;
+	
+    if(empty($resultSet)){
+      /*$response['message'] = 'No recommendation';
+        $response['status'] = 'error';
+       echo json_encode($response);
+        exit;*/
+
+        echo "No recommendation Found";
+        exit;
+     }
+    foreach ($resultSet as $value){
+     
+                            $photos = getPhotosData($value['listing_id']);
+                            $basePrice = getBasePrice($value['listing_id']);
+                            $OverviewData = getOverviewData($value['listing_id']);
+                            $locationDetail = getListingData($value['listing_id']);
+
+          echo  '<div class="col-xs-12 col-sm-4 col-md-4  listing">  
+                    <div class="block">'; 
+                    
+                                            if (count($photos) > 0) {
+                                                //foreach ($photos as $imgKey => $photo) {
+                                                    $photo = unserialize($photos[0]["value1"]);
+                                                    $file = file_load($photo["fid"]);
+                                                    $imgpath = $file->uri;
+                                                    $style = 'experience_topranked_large';
+
+                                                    // if ($imgKey == 0) {
+                                                    //     $listingResultJson[$key]['photo'] = image_style_url($style, $imgpath);
+                                                    // }
+                                                    // $noImage = base_path() . drupal_get_path('theme', 'gloobers') . '/images/img/place1.png';
+                                                    
+                                                  
+                                                    echo '<img src="'.image_style_url($style, $imgpath).'" alt="place" onError="imgError(this)" class= "img-height"/>';
+                                                                                                      
+                                                //}
+                                            } else {
+                                                     
+                                                    echo '<img src="'.base_path() .drupal_get_path("theme", "gloobers").'"/images/img/place1.png" alt="place" class="img-height" />';
+                                                     
+                                                }
+                                             
+                                echo '<div class="listdetail">
+                                        <div class="click"><a href="#" class="listicon"><span></span><span></span><span></span></a></div>
+                                            <div class="listview">
+                                                <ul>
+                                                   
+                                                    <li><a href="javascript:void(0);" class="delete_listing_li" data-listing-id="'.$value['listing_id'].'" data-recommend-id="'.$recommend_id.'" data-location-req-id="'.$location_req_id.'"><i class="fa fa-plus"></i>Remove listing</a></li>
+                                                   
+                                                </ul>
+                                            </div>
+                                    </div>';
+                                    echo '<div class="tagsec">
+                                        <div class="price">
+                                            <p>$ '.$basePrice["base_price"].'</p>
+                                        </div>
+                                    </div>';
+                                    echo '<div class="clientpic">';
+                                         $pic_data = user_load($OverviewData['uid']);  
+
+                                        $file = file_load($pic_data->picture->fid);
+                                        $imgurl = $file->uri; 
+                                        $style = "homepage_header";
+
+                                        if(!empty($imgurl)){  
+                                        echo '<img alt=" " src="'.image_style_url($style, $imgurl).'"></a>';
+                                        }
+                                        else {
+                                         print '<img src="' . base_path() . drupal_get_path('theme', $GLOBALS['theme']) . '/images/no-profile-male-img.jpg" class="absolute-left-content img-circle size-img" alt="display pic" />'; 
+                                        } 
+                                   echo '</div></div>';
+                               
+                                echo  '<div class="headingsec">
+                                        <h2>'.$OverviewData['title'].'</h2>
+                                        <p>'.$locationDetail['city'].' '.",".' '.$locationDetail['state'].'</p>
+                                        </div> ';   
+
+                                echo '<div class="comments"><textarea onblur="write_your_comment
+                                ('.$value['listing_id'].','.$recommend_id.','.$location_req_id.'); "cols="" placeholder="Write your comment to....." id="textarea_'.$value['listing_id'].'" name="textarea" rows="">'.$value['advice_comment'].'</textarea></div></div>';
+
+                                
+                            echo '</div>';          
+    }
+	exit;
+                       
+}
+
+/**
+ * @description : GET THE COUNT OF ADVISOR REQUEST
+ * @param count of request that are posted through user for advisor. Ajax hit will be scheduled every 1 min
+ * @RETURN an array with success and unsuccessful result
+ */
+function adv_notification_count(){
+    global $user;
+    $uid = $user->uid;
+    
+    $responseStore = array();
+    $result = db_select('gbl_advice_location_request', 'advLoc')
+            ->fields('advLoc')
+            ->condition('advLoc.advisor_uid',$uid,'=')
+            ->condition('advLoc.status',1,'=')
+            ->execute()->rowCount();
+    $responseStore['count'] = $result;
+    $responseStore['status'] = 'success';
+    return (json_encode($responseStore));
+}
+
+/**
+ * @description : POST REQUEST DATA AND INSTER INTO CORROSPODING TABLES
+ * @param Store data into "gbl_advice_location_request and gbl_advisor_request"
+ * @RETURN an array with success and unsuccessful result
+ */
+function post_request(){
+    global $user;
+    parse_str($_POST['filter_advisor_input'], $searcharray);
+    $advisorId = base64_decode($_POST['advisor_uid']);
+    $trevellerid = $user->uid;
+	$requestLink=$_POST['requestLink'].'&triptype='.$_POST['triptype'].'&traveler='.$_POST['traveler'].'&start_date='.$_POST['start_date'].'&end_date='.$_POST['end_date'].'&overall_budget='.$_POST['overall_budget'].'&looking_for='.$_POST['looking_for'];
+    $response  = array();
+    $data['traveller_uid'] = $user->uid;
+    $data['advisor_uid'] = base64_decode($_POST['advisor_uid']);
+    $data['destination'] = trim($_POST['destination'])?trim($_POST['destination']):'';
+    $data['trip_type'] = ($_POST['triptype'])?$_POST['triptype']:'1';
+    
+    if(empty($_POST['start_date'])){
+        $_POST['start_date']= date("Y-m-d");
+    }
+    if(empty($_POST['end_date'])){
+        $_POST['end_date']= date("Y-m-d");
+    }
+    
+	$data_from_date = isset($_POST['start_date'])&& !empty($_POST['start_date'])?date('Y-m-d',strtotime($_POST['start_date'])):null;
+     $data_to_date = isset($_POST['end_date'])&& !empty($_POST['end_date'])?date('Y-m-d',strtotime($_POST['end_date'])):null;
+
+    $data['from_date'] = $data_from_date;
+    $data['to_date'] = $data_to_date;
+	$data['travellers']=$_POST['traveler'];
+	$data['listing_type'] = 'experience';
+    $data['status'] = 1;
+    $data['created'] = strtotime(date('Y-m-d h:i:s'));
+    
+	
+    //chek if same user has already send the requet for same destination 
+    $query=db_select('gbl_advice_location_request','request_location');
+    $query->fields('request_location');
+    $query->condition('request_location.traveller_uid', $data['traveller_uid'], '=');
+    $query->condition('request_location.advisor_uid', $data['advisor_uid'], '=');
+    $query->condition('request_location.destination', $data['destination'], 'like');
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+   
+    if(!empty($resultSet)){
+        $response['message'] = 'You have already send the request for same location';
+        $response['status'] = 'error';
+        echo json_encode($response);
+        die;
+    }else{
+	
+		//Save records for location/request details
+		$requestId = db_insert('gbl_advice_location_request')->fields($data)->execute();
+		if ($requestId) { 
+			$messageStore['rid'] = $requestId;
+			$messageStore['traveller_uid'] = $data['traveller_uid'];
+			$messageStore['advisor_uid'] = $data['advisor_uid'];
+			$messageStore['message'] = (stripslashes($_POST['message']))?stripslashes($_POST['message']):'';
+			$messageStore['status'] = '1';
+			$messageStore['created'] = strtotime(date('Y-m-d h:i:s'));
+			$messageStore['modified'] = strtotime(date('Y-m-d h:i:s'));
+			
+			db_insert('gbl_advisor_request')->fields($messageStore)->execute();
+			
+			//POST DATA TO NOTIFICATION TABLE.
+			$notification['recipient_id'] = $data['advisor_uid'];
+			$notification['post_type'] = '1';
+			$notification['noti_msg'] = $messageStore['message'];
+			$notification['noti_url'] = 'advice/request';
+			$notification['notification_time'] = time();
+			// TRip Data for email sending
+			$TripRequestData=array();
+			$TripRequestData['trip_type']=triptype($data['trip_type']);
+			$TripRequestData['destination']=$data['destination'];
+			$TripRequestData['travellers']=$data['travellers'];
+			$TripRequestData['budget']=$_POST['budget'];
+			$TripRequestData['requestLink']=$requestLink;
+			postIntoNotification($notification,$TripRequestData);
+			
+			$response['message'] = 'Request successfully send';
+			$response['status'] = 'success';
+			
+			
+		}
+		echo json_encode($response);
+		die;
+	
+	}
+}
+
+/**
+ * @description : DECLINE BY ADVISOR TO CLIENT
+ * @param Store data into "gbl_advice_location_request and gbl_advisor_request"
+ * @RETURN an array with success and unsuccessful result
+ */
+function decline_request(){
+    global $user;
+    $requester_id = $_POST['requester_id'];
+    $rid = base64_decode($_POST['requestID']);
+    $response = array();
+    $requestId = db_update('gbl_advice_location_request')->fields(array(
+                    'status' => 2
+                ))->condition('rid', $rid)->execute();
+
+        if ($requestId) {
+
+            db_update('gbl_advisor_request')->fields(array(
+                    'message_decline' => stripslashes($_POST['message'])
+            ))->condition('rid', $rid)->execute();
+             $query1=db_insert('gbl_notifications')
+            ->fields(array('sender_id'=>$user->uid,'recipient_id'=>$requester_id,'post_type'=>'declined request','noti_msg'=>'Declined request','noti_url'=>'advice/my_request','read_status'=>0,
+            'notification_time'=>time()
+            ));
+            $result1=$query1->execute();
+            
+           $response['message'] = 'Request successfully Declined';
+           $response['status'] = 'success';
+           $response['label'] = 'DECLINED';
+           $response['elt'] = $rid;
+        }else{
+           $response['message'] = 'Request did not successfully Declined';
+           $response['status'] = 'error';
+        }
+        
+    echo json_encode($response);
+    die;
+    
+}
+
+/**
+ * @description : RECOMMENDED USERS LIST FOR TREVEL GUIDE. ONLY SHOWS THE LIST OF USER THOSE FOR TREVELLER SEND A REQUEST FOR ADVICE
+ * @param Put and fetch the data from "gbl_advice_location_request" Table and join with "users" Table
+ * @RETURN array/object/json as expected as developer
+ */
+function recommendUsers($returnType='json'){
+    global $user;
+    
+    $query = db_select('gbl_advice_location_request','req_location');
+    $query->join('users','usr','usr.uid=req_location.traveller_uid');
+    $query->join('gbl_users_meta','gum','usr.uid=gum.uid');
+    $query->fields('req_location',array('destination'));
+    $query->fields('usr');
+    $query->fields('gum');
+    $query->condition('req_location.advisor_uid', $user->uid,'=');
+    $query->groupBy('req_location.traveller_uid');
+    $result=$query->execute();
+    
+    //PERFORM OPERATIONS FOR RETURN TYPE RESULT SET . THAT USER WANTS IN DESIRED FORMAT
+    switch ($returnType){
+        case 'array':
+            $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $resultSet = $result->fetchAll();
+            break;
+        case 'json':
+            $resultSet = json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+            break;
+    }
+    return $resultSet;
+    
+}
+
+/**
+ * @description : GET THE LIST OF TREVEL GUIDE OF LOGGED IN USER
+ * @param Put and fetch the data from "gbl_trevel_guide" Table
+ * @RETURN array/object/json as expected as developer
+ */
+function getListTrevelGuide($requestId = NULL, $returnType='array'){
+    global $user;
+    $query = db_select('gbl_trevel_guide','tguide');
+    //$query->join('users','usr','usr.uid=tguide.recommend_for_uid');
+    $query->fields('tguide');
+    //$query->fields('usr',array('uid','name','mail'));
+    $query->condition('tguide.owner', $user->uid,'=');
+    $query->condition('tguide.trash', 1,'=');
+    //$query->condition('tguide.is_public','yes','=');
+    if(isset($_POST['tgid'])){
+        $query->condition('tguide.tgid',$_POST['tgid'],'=');
+    }
+    if($requestId){
+        $query->condition('tguide.tgid',$requestId,'=' );
+    }
+    //print $query; die;
+    $result=$query->execute();
+    
+    //PERFORM OPERATIONS FOR RETURN TYPE RESULT SET . THAT USER WANTS IN DESIRED FORMAT
+    switch ($returnType){
+        case 'array':
+            $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $resultSet = $result->fetchAll();
+            break;
+        case 'json':
+            $resultSet = json_encode($result->fetchAssoc());
+            break;
+    }
+    
+   return $resultSet;
+}
+
+/**
+ * @description : GET TREVELLER GUIDE BY ID
+ * @param Put and fetch the data from "gbl_trevel_guide" Table
+ * @RETURN array/object/json as expected as developer
+ */
+function getGuideByID(){
+    if($_POST['returnType']=='json'){
+        //echo getListTrevelGuide('json');
+        
+     echo getListTrevelGuide($_POST['tgid'],$_POST['returnType']);
+      
+    }else{
+        return getListTrevelGuide();
+    }
+    
+}
+
+
+/**
+ * @description : CREATE NEW AND VIEW EXISTING TREVEL GUIDE OF A USERS
+ * @param Put and fetch the data from "gbl_trevel_guide" Table.
+ * @RETURN Put a Dom structure for trvel guide view
+ */
+function trevel_guide($rid = null){
+    global $user;
+  
+    //send to login page if user is not logged in
+   /*  if(!$user->uid){
+        drupal_goto('login');
+    } */
+    //Put request ID into session for next time
+    if(!isset($_SESSION['requestID'])){
+        $_SESSION['requestID'] = $rid;
+    }
+    //check if the id is there otherwise Drupal not found call
+    /*if(strlen($_SESSION['requestID'])<=0) {
+            drupal_not_found();
+    }*/
+    $recommendUsers = recommendUsers();
+
+    $guideList = getListTrevelGuide();
+	$guideListDOM = theme('travel_guide_list',array('tGuideList'=>$guideList,'editable'=>'TRUE'));
+	//get the treveller list and other information
+    return theme('trevel_guide',array('tGuideListDOM'=>$guideListDOM,'recommendUsers'=>$recommendUsers,'requestId'=>$rid));
+}
+
+
+// function save_trevel_guide(){
+//     global $user;
+//    // echo "<pre>";print_r($_POST);die;
+//     //Form post add/edit trevel guide as per ID
+    
+
+//     if(!empty($_POST)){
+//         if($_FILES['guide_image']){
+//                // print_r($_FILES);
+
+//                $filepath = 'public://products';
+//                 $fileName = time()."_".$_FILES["guide_image"]["name"];
+//                 if(move_uploaded_file($_FILES["guide_image"]["tmp_name"],$_SERVER["DOCUMENT_ROOT"].base_path()."sites/default/files/products/".$fileName)){
+//                 $file = file_load($_SERVER["DOCUMENT_ROOT"].base_path()."/sites/default/files/products/".$fileName);
+//                 $file->uid = $user->uid;
+//                 $file->filename = $fileName;
+//                 $file->uri = $filepath."/".$fileName;
+//                 $file->status = FILE_STATUS_PERMANENT;
+//             $result = file_save($file);
+//                 $fileId = $result->fid;
+//                 $photoData["text"] = "";
+//                 $photoData["fid"] = $fileId;
+//                                 }
+//                 }
+        
+//         //if $_POST['tgid'] is blank then add otherwise update
+//         if(!isset($_POST['update_tgid'])){
+            
+//             //Check for file if cover page has been uploaded
+               
+//             //SETTING UP FIELDS TO INSERT
+//             $data['owner'] = $user->uid;
+//             //$data['request_id'] = base64_decode($_SESSION['requestID']);
+//             //$data['recommend_for_uid'] = $_POST['recommendedUsers'];
+//             $data['listings'] = '';
+//             $data['title'] = addslashes($_POST['title']);
+//             $data['description'] = addslashes($_POST['description']);
+//             $data['picture'] = 0;
+//             $data['is_public'] = $_POST['is_public'];
+//             $data['modified'] = time();
+//             $data['created'] = time();
+//             $data['trash'] = 1;
+//             $data['fid'] = $photoData["fid"];
+           
+//             //chek if same trevel guide has already been into database 
+//             $query=db_select('gbl_trevel_guide','tguide');
+//             $query->fields('tguide');
+//             $query->condition('tguide.owner', $data['owner'], '=');
+//             $query->condition('tguide.title', $data['title'], '=');
+//             $result=$query->execute();
+//             $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+//             if(!empty($resultSet)){
+//                 $notify['message'] = 'Trevel Guide Already Exist';
+//                 $notify['status'] = 'danger';
+//             }else{
+//                 //HANDLING FOR INSERTION SET MESAGES ACCORDINGLY
+//                 try {
+//                     $requestId = db_insert('gbl_trevel_guide')->fields($data)->execute();
+//                     if ($requestId) {
+//                         $notify['message'] = 'Trevel Guide Successfully Added';
+//                         $notify['status'] = 'success';
+                        
+//                         //POST DATA TO NOTIFICATION TABLE.
+//                         // $notification['recipient_id'] = $data['recommend_for_uid'];
+//                         // $notification['post_type'] = '2';
+//                         // $notification['noti_msg'] = 'Added a Trevel Guide - '.$data['title'];
+//                         // $notification['noti_url'] = 'advice/request';
+//                         // $notification['notification_time'] = time();
+//                         // postIntoNotification($notification);
+                    
+//                     }
+//                 }
+//                 catch (PDOException $e) {
+//                     $notify['message'] = 'ERROR! CAUSE OF: '.$e->getMessage();
+//                     $notify['status'] = 'danger';
+//                 }
+//             }
+//         }
+//         //Update Existing Treveller Guide
+//         else if(isset($_POST['update_tgid']) && !empty($_POST['update_tgid'])){
+           
+//             //$data['recommend_for_uid'] = $_POST['recommendedUsers'];
+//             //$data['listings'] = '';
+//             $data['title'] = addslashes($_POST['title']);
+//             $data['description'] = addslashes($_POST['description']);
+//             $data['picture'] = 0;
+//             $data['is_public'] = $_POST['is_public'];
+//             $data['modified'] = time();
+//             $data['fid'] = $photoData["fid"];
+//             $data['trash'] = 1;
+//             $requestId = db_update('gbl_trevel_guide')->fields($data)->condition('tgid', $_POST['update_tgid'])->execute();
+//             if($requestId){
+//                 $notify['message'] = 'Trevel Guide successfully updated';
+//                 $notify['status'] = 'success';
+//             }else{
+//                 $notify['message'] = 'Trevel Guide did not updated successfully';
+//                 $notify['status'] = 'danger';
+//             }
+//         }
+//     }else{
+//         $notify['message'] = 'Nothing To Submit';
+//         $notify['status'] = 'danger';
+//     }
+    
+//     $_SESSION['notify'] = $notify;
+//     //call trevel guide for trevel page rendering
+//     drupal_goto('advice/travel_guide');
+// }
+function save_trevel_guide(){
+
+   
+    global $user,$base_url;
+  
+    // if(($_FILES['guide_image']['name'] == '')){
+    //     drupal_set_message(t('Please select the file.'), 'error');
+    //     drupal_goto('advice/create-travel-guide');
+    // }
+    if(empty($_POST['title'])){
+        drupal_set_message(t('Please fill the travel guide title.'), 'error');
+        drupal_goto('advice/create-travel-guide');
+    }
+    if(empty($_POST['description'])){
+        drupal_set_message(t('Please fill the description.'), 'error');
+        drupal_goto('advice/create-travel-guide');
+    }
+    if(empty($_POST['subtitle'])){
+        drupal_set_message(t('Please fill the travel guide subtitle.'), 'error');
+        drupal_goto('advice/create-travel-guide');
+    }
+    if(empty($_POST['recommendedfor'])){
+        drupal_set_message(t('Please select the recommended for.'), 'error');
+        drupal_goto('advice/create-travel-guide');
+    }
+    if(!empty($_POST)){
+         if($_FILES['guide_image'] &&!empty($_FILES['guide_image']["name"])){
+                $filepath = 'public://products';
+                $fileName = time()."_".$_FILES["guide_image"]["name"];
+                if(move_uploaded_file($_FILES["guide_image"]["tmp_name"],$_SERVER["DOCUMENT_ROOT"].base_path()."sites/default/files/products/".$fileName)){
+                $file = file_load($_SERVER["DOCUMENT_ROOT"].base_path()."/sites/default/files/products/".$fileName);
+                $file->uid = $user->uid;
+                $file->filename = $fileName;
+                $file->uri = $filepath."/".$fileName;
+                $file->status = FILE_STATUS_PERMANENT;
+                $result = file_save($file);
+                $fileId = $result->fid;
+                $photoData["text"] = "";
+                $photoData["fid"] = $fileId;
+                }
+        }
+    
+        //if $_POST['tgid'] is blank then add otherwise update
+        
+        if(!isset($_POST['update_tgid'])){
+           
+            //Check for file if cover page has been uploaded
+            if($_POST['privacy'] == 'public'){
+                $privacy = 'yes';
+            }else{
+                $privacy = 'no';
+            }
+            $data['owner'] = $user->uid;
+            //$data['request_id'] = base64_decode($_SESSION['requestID']);
+            //$data['recommend_for_uid'] = $_POST['recommendedUsers'];
+            $data['listings'] = '';
+            $data['title'] = addslashes($_POST['title']);
+            $data['description'] = addslashes($_POST['description']);
+            $data['picture'] = 0;
+            $data['is_public']= $privacy;
+            $data['subtitle']=addslashes($_POST['subtitle']);
+            $data['destination']=addslashes($_POST['destination']);
+            $data['recommended_for']=$_POST['recommendedfor'];
+            $data['modified'] = time();
+            $data['created'] = time();
+            $data['trash'] = 1;
+            if($_FILES['guide_image'] &&!empty($_FILES['guide_image']["name"])){
+            $data['fid'] = $photoData["fid"];
+        }
+            
+           
+            //chek if same trevel guide has already been into database 
+            $query=db_select('gbl_trevel_guide','tguide');
+            $query->fields('tguide');
+            $query->condition('tguide.owner', $data['owner'], '=');
+            $query->condition('tguide.title', $data['title'], '=');
+
+            $result=$query->execute();
+           $num_of_results = $result->rowCount(); 
+          
+            if($num_of_results > 0){
+                $notify['message'] = 'Travel Guide Already Exist';
+                $notify['status'] = 'danger';
+            }else{
+                    $requestId = db_insert('gbl_trevel_guide')->fields($data);
+                    $lastId = $requestId->execute();
+                    $guide_link = $base_url.'/gbrs/guide/'.base64_encode($lastId);
+                    $query = db_update("gbl_trevel_guide")
+                                ->fields(array('guide_url'=>$guide_link))
+                                ->condition('tgid',$lastId)
+                                ->condition('owner',$user->uid);
+                    $result = $query->execute();
+                    if ($requestId) {
+                        $notify['message'] = 'Travel Guide Successfully Added';
+                        $notify['status'] = 'success';
+                    }
+            }
+
+        }
+        //Update Existing Treveller Guide
+        else if(isset($_POST['update_tgid']) && !empty($_POST['update_tgid'])){
+            //echo "<pre>";print_r($_POST);die;
+            //$data['recommend_for_uid'] = $_POST['recommendedUsers'];
+            //$data['listings'] = '';
+            if($_POST['privacy'] == 'public'){
+                $privacy = 'yes';
+            }else{
+                $privacy = 'no';
+            }
+            $data['title'] = addslashes($_POST['title']);
+            $data['description'] = addslashes($_POST['description']);
+            $data['picture'] = 0;
+            $data['is_public']= $privacy;
+            $data['subtitle']=addslashes($_POST['subtitle']);
+            $data['destination']=$_POST['destination'];
+            $data['recommended_for']=$_POST['recommendedfor'];
+            $data['modified'] = time();
+            if($_FILES['guide_image'] &&!empty($_FILES['guide_image']["name"])){
+            $data['fid'] = $photoData["fid"];
+        }
+            $data['trash'] = 1;
+            //$data['fid'] = $photoData["fid"];
+            $requestId = db_update('gbl_trevel_guide')->fields($data)->condition('tgid', $_POST['update_tgid']);
+            $requestId->execute();
+            $lastId = $_POST['update_tgid'];
+            if($requestId){
+                $notify['message'] = 'Travel Guide successfully updated';
+                $notify['status'] = 'success';
+            }else{
+                $notify['message'] = 'Travel Guide did not updated successfully';
+                $notify['status'] = 'danger';
+            }
+        }
+    }else{
+        $notify['message'] = 'Nothing To Submit';
+        $notify['status'] = 'danger';
+    }
+    
+    $_SESSION['notify'] = $notify;
+    //call trevel guide for trevel page rendering
+    //drupal_goto('advice/travel_guide');
+    drupal_goto('advice/create-travel-guide', array('query'=>array('tgid'=>$lastId)));
+}
+
+/**
+ * @description : ADD LISTING TO TRAVEL GUIDE
+ * @param Put listing's id's to "gbl_trevel_guide" Table.
+ * @RETURN return bool as flag
+ */
+function addToGuide(){
+    /*echo "<pre>";
+    print_r($_POST);
+    die;*/
+    $tguide = $_POST['guideName'];
+    $listingID = base64_decode($_POST['_listingGuideId']);
+    $response = array();
+    global $user;
+    
+    $query=db_select('gbl_trevel_guide','guide');
+    $query->fields('guide',array('listings','tgid'));
+    $query->condition('guide.tgid',$tguide,'=' );
+    //$query->condition('guide.listings','%'.$listingID.'%','LIKE');
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+    $Listing  = $resultSet[0]['listings'];
+
+    if (strpos($Listing,$listingID) !== false) {
+       
+        $response['message'] = 'Listing already Added';
+        echo json_encode($response);
+        exit;
+
+    }
+    if($resultSet[0]['listings'] == ""){ $comma='';}else{ $comma=',';}
+    $query = db_query("UPDATE `gbl_trevel_guide` SET `listings`= CONCAT(listings,'".$comma."".$listingID."') WHERE `tgid` = ".$tguide);
+             $response['message'] = 'Listing Successfully Added To Guide';
+             $response['status'] = 'success'; 
+
+    echo json_encode($response);
+    die;
+}
+
+function removelistingguide(){
+    global $user;
+
+    $travel_guide_id = base64_decode($_POST['travel_guide_id']);
+    $listing_id = $_POST['listing_id'];
+
+    $query = db_select('gbl_trevel_guide','g');
+    $query->fields('g',array('listings'));
+    $query->condition('tgid',$travel_guide_id);
+    $query->condition('owner',$user->uid);
+    $result=$query->execute();
+    $listings=$result->fetchField();
+    $list = explode(',', $listings);
+    $remove_key = array_search($listing_id , $list);
+    if($remove_key==''){
+        $response['message'] = 'This listing does not exit';
+        $response['status'] = 'error';
+    
+    }
+
+    else{
+
+        unset($list[$remove_key]);
+
+    $list = implode(',',$list);
+    $query = db_update('gbl_trevel_guide')->fields(array('listings' => $list ))
+                                            ->condition('tgid', $travel_guide_id)
+                                            ->condition('owner', $user->uid)   
+                                            ->execute();
+
+    db_update('gbl_advise_listing')->fields(array('guide_id' => '0' ))
+                                           ->condition('owner_id', $user->uid)  
+                                            ->condition('listing_id',$listing_id)  
+                                            ->execute();                                        
+    
+        if($query){
+            $response['message'] = 'Deleted successfully';
+            $response['status'] = 'success';
+        }
+        else{
+            $response['message'] = 'Some error occour';
+            $response['status'] = 'error';
+    
+        }
+    }
+    echo json_encode($response);
+    exit;
+}
+
+
+/**
+ * @description : VIEW RECOMMENDATION 
+ * @param view the list of recommendations
+ * @RETURN return bool as flag
+ */
+function widget_listing($tgid){
+    global $user;
+    $tgid = ($tgid) ? base64_decode($tgid) : 0;
+    $listingsResult = recommendationListings($tgid);
+
+    
+    $userdetails = user_load($user->uid);
+    $locationDetails = getRequestByGuide($tgid);
+    $listingHTML = theme('widget_listing',array('listingResult'=>$listingsResult,'locationDetails'=>$locationDetails));
+    return theme('listing_into_guide',array('listingHTML'=>$listingHTML,'userDetails'=>$userdetails,'locationDetails'=>$locationDetails));
+}
+
+/**
+ * @description : GET REQUETS DATA BY TREVEL GUIDE
+ * @param get location status using trevel guide
+ * @RETURN array/object/json
+ */
+function getRequestByGuide($tgid = 0 , $returnType='array'){
+    $query=db_select('gbl_trevel_guide','guide');
+    $query->join('gbl_advice_location_request','advloc','advloc.rid=guide.request_id');
+    $query->join('gbl_advisor_request','advreq','guide.request_id=advreq.rid');
+    $query->join('users','user','user.uid=advloc.traveller_uid');
+    $query->join('gbl_advisor_trip_type','trip','trip.trip_id=advloc.trip_type');
+    $query->fields('guide',array('listings','request_id'));
+    $query->fields('advloc');
+    $query->fields('advreq',array('message'));
+    $query->fields('user',array('uid','name','mail','picture'));
+    $query->fields('trip',array('trip_type'));
+    if($tgid){
+        $query->condition('guide.tgid',$tgid,'=' );
+    }
+    
+    $result=$query->execute();
+    switch ($returnType){
+        case 'array':
+            $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $resultSet = $result->fetchAll();
+            break;
+        case 'json':
+            $resultSet = json_encode($result->fetchAssoc());
+            break;
+    }
+    return $resultSet;
+}
+
+
+function recommendationListings($tgid, $returnType='array'){
+    global $user;
+    $result = db_query("SELECT `gbl_experience_list`.*, 
+                        `users`.name, `users`.mail,`users`.picture as `profile_pic`,
+                        `gbl_experience_type`.experience_type,
+                        `gbl_experience_category`.category_name
+                        FROM `gbl_experience_list`
+                        LEFT JOIN `users` ON `users`.uid= `gbl_experience_list`.uid
+                        LEFT JOIN `gbl_experience_type` ON `gbl_experience_type`.id = 
+                        `gbl_experience_list`.experience_type
+                        LEFT JOIN `gbl_experience_category` ON `gbl_experience_category`.cid = 
+                        `gbl_experience_list`.experience_category
+                        WHERE eid IN(
+                            SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(t.`listings`, ',', n.n), ',', -1) 
+                            value FROM `gbl_trevel_guide` t CROSS JOIN 
+                            (
+                                SELECT a.N + b.N * 10 + 1 n
+                                 FROM 
+                                (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL 
+                                SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL 
+                                SELECT 8 UNION ALL SELECT 9) a
+                                                           ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL 
+                                SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL 
+                                SELECT 8 UNION ALL SELECT 9) b
+                                ORDER BY n
+                            ) n
+                         WHERE n.n <= 1 + (LENGTH(t.listings) - LENGTH(REPLACE(t.listings, ',', ''))) and t.tgid='$tgid'
+                         ORDER BY value
+                        )");
+    
+    //PERFORM OPERATIONS FOR RETURN TYPE RESULT SET . THAT USER WANTS IN DESIRED FORMAT
+    switch ($returnType){
+        case 'array':
+            $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+            break;
+        case 'object':
+            $resultSet = $result->fetchAll();
+            break;
+        case 'json':
+            $resultSet = json_encode($result->fetchAssoc());
+            break;
+    }
+    
+    return $resultSet;
+}
+
+function delete_guide($gId){
+    global $user;
+    $requestId = isVaildEncodeString(base64_decode($gId));
+    if(!$requestId){
+        drupal_not_found();
+    }
+    $request = db_update('gbl_trevel_guide')->fields(array(
+                    'trash' => 0
+                ))->condition('tgid', $requestId)->execute();
+    if($request){
+        $notify['message'] = 'Travel Guide successfully Deleted';
+        $notify['status'] = 'success';
+    }else{
+        $notify['message'] = 'Travel Guide did not Deleted successfully';
+        $notify['status'] = 'danger';
+    }
+    $_SESSION['notify'] = $notify;
+    
+    //call trevel guide for trevel page rendering
+    drupal_goto('advice/travel_guide');
+}
+
+/**
+ * @description : CHECK BASE64 ENCODED PARAMTER TO DECODE WITH DEFINED DELIMETERS 
+ * @param 
+ * @RETURN array/object/json
+ */
+function isVaildEncodeString($string){
+    $delimeter = 'gloobe__';
+    $store = explode('__', $string);
+    if(count($store)<=0 && $store[0]!=$delimeter) 
+        return FALSE;
+    else
+        return $store[1];
+}
+
+/**
+ * @description : GET NOTIFICATIONS 
+ * @param 
+ * @RETURN array/object/json
+ */
+/* function postIntoNotification($param = array()){ 
+    global $user;
+    $param['sender_id'] = $user->uid;
+    $requestId = db_insert('gbl_notifications')->fields($param)->execute();
+    if ($requestId)
+        return TRUE;
+    else
+        return FALSE;
+} */
+function postIntoNotification($param = array(),$TripRequestData=array()){ 
+	//echo "<pre>";Print_r($param);exit;
+    global $user,$base_url;
+    $param['sender_id'] = $user->uid;
+	$traveller = user_load($user->uid);
+    if (!empty($traveller->field_first_name)) {
+        $travellername = $traveller->field_first_name['und'][0]['value'] . "  " . $traveller->field_last_name['und'][0]['value'];
+    } else {
+        $travellername = $traveller->name;
+    }
+    //14paril2014
+    $add_content="and has an overall budget of $".$TripRequestData['budget'];  
+    if(empty($TripRequestData['trip_type']) || empty($TripRequestData['travellers'])){
+        $TripRequestData['requestLink']=$base_url.'/search-destination/'.urlencode($TripRequestData['destination']);
+        $add_content="";
+    }
+    //end 14 april2014
+	//$requestLink=
+	// Help Email send to Advisor
+	$advisior_data = user_load($param['recipient_id']);
+	//echo "<pre>";Print_r($advisior_data->picture->fid);exit;
+	$DpID=$traveller->picture->fid;
+	if ($traveller->picture != ""){
+		$file = file_load($DpID);
+		$imgpath = $file->uri;
+		$style = "homepage_header";
+		/*$DpImage= '<img class="img-circle size-img" src="'.image_style_url($style, $imgpath).'" style="border-radius:50%;border:2px solid #efefef;width:70px;height:70px">';*/
+
+        $DpImage='<img src="'.image_style_url($style, $imgpath).'" alt="" title="" style="border-radius:50%;border:2px solid #efefef" />';
+
+	}else{
+		/*$DpImage=  '<img src="' . base_path().drupal_get_path('theme', $GLOBALS['theme']).'/images/no-profile-male-img.jpg" class="img-circle size-img"  style="border-radius:50%;border:2px solid #efefef;width:70px;height:70px"/>';*/        
+        $DpImage='<img src="'.$base_url.'/'.drupal_get_path('theme', $GLOBALS['theme']).'/images/no-profile-male-img.jpg" alt="" title="" style="border-radius:50%;border:2px solid #efefef" />';
+	}
+
+
+	if(!empty($advisior_data ->field_first_name['und'][0]['value'])){
+
+		$advisor_name =  $advisior_data->field_first_name['und'][0]['value'];
+	}
+	$title = 'Hi ' . ucfirst($advisor_name) . ',<br/>';
+	$module = 'advisor';
+	$key = 'User_request_sending_to_Advisor';
+	$to_email = $advisior_data->mail;
+	$subject = 'Request received';
+	$body= '<tr><td><center>'.$DpImage.' </center>
+    <p style="width:100%;"><center><a href="'.$TripRequestData['requestLink'].'" style="color:#139ABC;text-decoration:none;" target="_blank">View request details</a></center></p>
+    </td>
+  </tr>
+  
+  <tr>
+    <td><h3 style="font-size:18px;font-weight:600;margin:10px 0"><center>Your help is required !</center></h3></td>
+  </tr>
+  
+  <tr>
+    <td>
+    <p style="text-align:left">Hi '.ucfirst($advisor_name).',<br />
+    It seems that '.ucfirst($travellername).', another tribe member needs your help to help him plan a '.$TripRequestData['trip_type'].' trip to '.$TripRequestData['destination'].'. S/he\'s looking for an experience '.$add_content.'. You can help in planing her/his trip with your precious recommendations and get rewarded for the recommendations s/he will follow. 
+     </p>
+    
+    <p style="text-align:left">You can view this request'."'s".' details in your dashboard : <a href="'.$base_url.'/dashboard" style="color:#139ABC;text-decoration:none;" target="_blank">requests received</a> </p>
+    
+    <p style="text-align:left">This request will expire in 24 hours, if you cant help this member, you can always <a href="'.$base_url.'/advice/request" style="color:#139ABC;text-decoration:none;" target="_blank">decline this request</a>  </p>
+    </td>
+  </tr>'; 
+
+	sendAdvisorRequestEmail($module,$key,$to_email,$subject,$title,$body);
+	//End Email
+	$requestId = db_insert('gbl_notifications')->fields($param)->execute();
+    if ($requestId)
+        return TRUE;
+    else
+        return FALSE;
+}
+function sendAdvisorRequestEmail($module,$key,$to_email,$subject,$title,$body=NULL){
+
+	//$messageTitle		=	'<h3 style="font-weight:500;font-size:20px">'.$title.'</h3><br />';
+	$messageHtml		=	'<div>'.$body.'</div>';	
+	$params				=	array();
+	//send this in email
+	$message			=	drupal_mail($module,$key, $to_email, language_default(),$params, NULL, FALSE);
+	$message['subject'] = $subject;
+    $message['body'] 	= array();
+    $message['body'][] 	= $messageHtml;
+	$message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
+	//$message['headers']['from']='welcome@gloobers.com';
+	$message['from']='noreply@gloobers.com'; 
+	$system 			= 	drupal_mail_system($module, $key);
+	$message = $system->format($message);
+	if($system->mail($message))
+	{
+		return true;
+	}
+	else{
+		return FALSE;
+	}
+}
+
+/**
+ * @description : GET NOTIFICATIONS 
+ * @param 
+ * @RETURN array/object/json
+ */
+// function notification($isAccess = 0 , $returnType='array'){
+	
+//     global $user;
+// 	if(!$user->uid){
+// 		drupal_goto('login');
+	
+// 	}else{
+// 		$query=db_select('gbl_notifications','notification');
+// 		$query->join('users','user','user.uid=notification.sender_id');
+// 		$query->fields('notification');
+// 		$query->fields('user',array('uid','name','mail','picture'));
+// 		$query->condition('notification.recipient_id',$user->uid,'=');
+// 		$result=$query->execute();
+// 		$resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+		
+// 		if(check_is_ajax()){
+// 			$count['count'] = count($resultSet);
+// 			echo json_encode($count);
+// 			die;
+// 		}else if($isAccess>=1){
+// 			$count['count'] = count($resultSet);
+// 			return json_encode($count);
+// 		}else{
+// 			$serialiseStore = array();
+// 			foreach ($resultSet as $value){
+// 				$serialiseStore[$value['post_type']][] = $value;
+// 			}
+// 			return theme('notification',array('notificationList'=>$serialiseStore));
+// 		}
+// 	}
+    
+// }
+function notification($isAccess = 0 , $returnType='array'){
+
+    global $user,$base_url;
+    if(!$user->uid){
+        drupal_goto('login');
+    
+    }else{
+        $query=db_select('gbl_notifications','notification');
+        $query->join('users','user','user.uid=notification.sender_id');
+        $query->fields('notification');
+        $query->fields('user',array('uid','name','mail','picture'));
+        $query->condition('notification.recipient_id',$user->uid,'=');
+		$query->orderBy('notification_time','DESC');
+        //$query->condition('notification.read_status',0,'=');
+        $result=$query->execute();
+        $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+        /////// 12april2016
+        $count_notification = getNotificationsCount();
+        /////// end 12april2016
+        $data = array();
+        if(check_is_ajax()){
+            $html = " ";
+            foreach ($resultSet as  $value) {
+                $html.= "<li class='unread'>";
+                if($value['post_type']=='recommend listing') {
+                $html.= "<a href=".$base_url."/".$value['noti_url'].">"; 
+                } else if($value['post_type']=='declined request') { 
+                $html.=  "<a href=".$base_url."/".$value['noti_url'].">";   
+                } else { 
+                $html.= "<a href=".$base_url."/advice/request/".base64_encode('gloobe__'.$value['sender_id']).">";   
+                }  
+                $notificationDetail = user_load($value['sender_id']);
+                  if ($notificationDetail->picture != "") {
+                  $file = file_load($notificationDetail->picture->fid);
+                  $imgpath = $file->uri;
+                  $style = "homepage_header";
+                  $html.= '<img class="absolute-left-content img-circle size-img" src="' . image_style_url($style, $imgpath) . '" alt="display pic">';
+                  }else{
+                  $html.= '<img src="' . base_path() . drupal_get_path('theme', $GLOBALS['theme']) . '/images/no-profile-male-img.jpg" class="absolute-left-content img-circle size-img" alt="display pic" />';
+                  } 
+                $html.=  "<strong>";
+                $html.=  $notificationDetail->field_first_name['und'][0]['value'] ; 
+                $html.=  "</strong> ";
+                $html.=  $value['noti_msg'];  
+                $notify_time = $value['notification_time'];
+                $html.=  "<span class='small-caps'>";
+                $html.=  humanTiming($notify_time).' ago'; 
+                $html.=  "</span>";
+                $html.=  " </a></li>";
+        
+            }
+            $data["count"] = $count_notification;
+            $data['html'] = $html;
+            echo json_encode($data);
+            die;
+        }else if($isAccess>=1){
+            $count['count'] = $count_notification;
+                        $data["count"] = $count;
+            $data["data"] = $resultSet;
+            return json_encode($data);
+        }else{
+            $serialiseStore = array();
+            foreach ($resultSet as $value){
+                $serialiseStore[$value['post_type']][] = $value;
+            }
+            
+            return theme('notification',array('notificationList'=>$serialiseStore));
+        }
+    }
+    
+}
+/**
+ * @description : GET UREADS NOTIFICATIONS  COUNT
+ * @param 
+ * @RETURN array/object/json
+ */
+function unread_notification($isAccess = 0 , $returnType='array'){
+
+    global $user;
+    // echo "<pre>";
+    // print_r($user); die;
+    /*  if(!$user->uid){
+        drupal_goto('login');
+    } */
+    $query=db_select('gbl_notifications','notification');
+    $query->join('users','user','user.uid=notification.sender_id');
+    $query->fields('notification');
+    $query->fields('user',array('uid','name','mail','picture'));
+    $query->condition('notification.read_status','0');
+    $query->condition('notification.recipient_id',$user->uid,'=');
+
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+    
+    if(check_is_ajax()){
+        $count['count'] = count($resultSet);
+        echo json_encode($count);
+        die;
+    }else if($isAccess>=1){
+        $count['count'] = count($resultSet);
+        return json_encode($count);
+    }else{
+        $serialiseStore = array();
+        foreach ($resultSet as $value){
+            $serialiseStore[$value['post_type']][] = $value;
+        }
+        return theme('notification',array('notificationListCountUnread'=>$serialiseStore));
+    }
+    
+}
+/**
+ * @description : GET REQUEST
+ * @param 
+ * @RETURN array/object/json
+ */
+// function my_request($isAccess = 0 , $returnType='array'){
+//     global $user;
+    
+//     //send to login page if user is not logged in
+//     if(!$user->uid){
+//         drupal_goto('login');
+//     }
+
+//     $uid = $user->uid;
+//     //GET REQUESTS/MESSAGES/USER INFO/MUTUAL PASSION AND USER GUIDE OF A USER
+//     $query = db_select('gbl_trevel_guide','tguide');
+//     $query->join('gbl_advice_location_request','advloc','advloc.rid=tguide.request_id');
+//     $query->join('gbl_advisor_request','advreq','tguide.request_id=advreq.rid');
+//     $query->join('users','user','user.uid=advloc.advisor_uid');
+//     $query->join('gbl_advisor_trip_type','trip','trip.trip_id=advloc.trip_type');
+//     $query->fields('tguide');
+//     $query->fields('advloc');
+//     $query->fields('advreq',array('message'));
+//     $query->fields('user',array('uid','name','mail','picture'));
+//     $query->fields('trip',array('trip_type'));
+//     $query->condition('tguide.recommend_for_uid',$uid,'=' );
+//     $query->condition('tguide.trash',1,'=' );
+    
+//     if($advUID){
+//         $advUID = isVaildEncodeString(base64_decode($advUID));
+//         $query->condition('advloc.traveller_uid',$advUID,'=' );
+//     }
+    
+//     $result=$query->execute();
+//     $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+//    /* echo "<pre>";
+//     print_r($resultSet);
+//     die; */
+//     return theme('my_request',array('requestList'=>$resultSet));
+// }
+// -------------------------------------------------------------------------------// 
+
+function readnotifications(){
+    global $user;
+    
+    //send to login page if user is not logged in
+    if(!$user->uid){
+        drupal_goto('login');
+    }
+
+    //echo "<pre>"; print_r($_REQUEST);die;
+    $recipientid = $_REQUEST['recipientid']; 
+    //UPDATE `gbl_notifications` SET `read_status` = '0' WHERE `gbl_notifications`.`nid` =1;
+    
+     $result = db_update('gbl_notifications')->fields(array('read_status' => 1))
+                                                ->condition('recipient_id',$recipientid )
+                                                ->execute();
+    echo $result;exit;
+}
+
+// --------------------- View Recommendation -------------------------//
+
+function viewrecommendation($isAccess = 0 , $returnType='array'){
+    global $user;
+    $id= arg(2);
+    $query=db_select('gbl_trevel_guide','g');
+        $query->fields('g',array('owner','request_id','recommend_for_uid','listings'));
+        $query->condition('owner',$id,'=');
+
+        $query->condition('recommend_for_uid',$user->uid,'=');
+
+        $result=$query->execute();
+        $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+        if($isAccess==0){
+           
+            return theme('viewrecommendation',array('recomendlist'=>$resultSet));
+        }else if($isAccess>=1){
+            
+            $resultSet=json_encode($resultSet);
+            return theme('viewrecommendation',array('recomendlist'=>$resultSet));
+        }
+}
+
+function experiencelistingdata(){
+    global $user;
+    $eid = 94;
+    $query=db_select('gbl_experience_list','gel');
+    $query->condition('gel.eid',$eid,'=');
+    $query->fields('gel');
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+    return $resultSet;
+}
+function addListToGuide(){
+		global $user;
+		$uid=$user->uid;
+		$guideId=$_REQUEST['guideId'];
+		$listing_id=$_REQUEST['listing_id'];
+		//$listing_id='77';
+		$query=db_select('gbl_trevel_guide','t');
+		$query->fields('t',array('listings'));
+		$query->condition('t.tgid', $guideId);
+		$result=$query->execute();
+		$result=$result->fetchField();
+		$listings=explode(',',$result);
+		if(in_array($listing_id,$listings)){
+			echo "Notadded";exit;
+		}else{
+			//echo "Added this listing to that Guide";exit;
+			array_push($listings,$listing_id);
+		}
+		$listings=implode(',',$listings);
+		
+		$updateGuide=db_update('gbl_trevel_guide')
+		->fields(array('listings'=>$listings))
+		->condition('tgid',$guideId)->execute();
+		echo "Added";exit;
+		
+ }
+
+// 27 Aug 2015//
+ function adviceListToUser(){
+    global $user,$base_url;
+    $user_id  = base64_decode($_POST['user_id']);
+    $listing_id  = $_POST['listing_id'];
+    $request_id = base64_decode($_POST['request_id']);    
+
+    $query=db_select('gbl_advise_listing','u')
+          ->fields('u')
+          ->condition('recommend_for_uid',$user_id,'=')
+          ->condition('listing_id',$listing_id,'=')
+          ->condition('request_id',$request_id,'=')
+          ->condition('owner_id',$user->uid,'=');
+   $result=$query->execute();
+   $num_of_results = $result->rowCount();
+	if($num_of_results >  0 ){
+        $response['message'] = 'This Listing is already added';
+        $response['status'] = 'error';
+        echo json_encode($response);
+        die;
+    }else{
+    $query=db_insert('gbl_advise_listing')
+          ->fields(array('owner_id'=>$user->uid,'request_id'=>$request_id ,'recommend_for_uid'=>$user_id ,'listing_id'=>$listing_id
+            )); 
+        $result=$query->execute();
+
+    $query1=db_insert('gbl_notifications')
+          ->fields(array('sender_id'=>$user->uid,'recipient_id'=>$user_id,'post_type'=>'recommend listing','noti_msg'=>'Recommend listing','noti_url'=>'advice/recommend/'.base64_encode($user->uid).'/'.base64_encode($user_id).'/'.base64_encode($request_id),'read_status'=>0,
+            'notification_time'=>time()
+            ));
+    
+     $result1=$query1->execute();    
+        if($result){
+            $response['message'] = 'Listing successfully added';
+            $response['status'] = 'success';
+			
+			//Send Email To traveler
+			$traveler=user_load($user_id);
+			if(!empty($traveler->field_first_name['und'][0]['value'])){
+				$traveler_name =  $traveler->field_first_name['und'][0]['value'];
+			}else{
+				$traveler_name =  $traveler->name;
+			}
+			$Advisor=user_load($user->uid);
+			if(!empty($Advisor->field_first_name['und'][0]['value'])){
+				$Advisor_name =  $Advisor->field_first_name['und'][0]['value'];
+			}else{
+				$Advisor_name =  $Advisor->name;
+			}
+			$Advisor_DpID=$Advisor->picture->fid;
+			if ($Advisor->picture != ""){
+				$Advisor_file = file_load($Advisor_DpID);
+				$Advisor_file_imgpath = $Advisor_file->uri;
+				$Advisor_file_style = "new-reservation";
+				$Advisor_DpImage_path=image_style_url($Advisor_file_style, $Advisor_file_imgpath);				
+			}else{
+				$Advisor_DpImage_path=$base_url.'/'.drupal_get_path('theme', $GLOBALS['theme']) . '/images/no-profile-male-img.jpg';				
+			}
+
+			$overviewData=getOverviewData($listing_id);
+			$photosData = getPhotosData($listing_id);
+			if(!empty($photosData)){
+				$Listing_photo=unserialize($photosData[0]['value1']);
+				$listingImage_fid=$Listing_photo['fid'];
+				$listingImage = file_load($listingImage_fid);
+				$listingImage_imgpath = $listingImage->uri;
+				$listing_style = "new-reservation";
+				$src = image_style_url($listing_style, $listingImage_imgpath);
+			}else{
+				$src=$base_url.'/sites/all/themes/gloobers_new/images/listing_img.jpg';
+			}
+			//Email Code
+			$title = '';
+			$module = 'advisor';
+			$key = 'traveler_receive_recomendation';
+			$to_email = trim($traveler->mail);
+			//$to_email='testing.testing139@gmail.com';
+			$subject = 'New Recomendation Received';
+            $body= '<table width="650" border="5" bordercolor="efefef" cellspacing="0" cellpadding="0" align="center" style="border-color:#efefef; border-collapse: collapse;table-layout: fixed;Margin-left: auto;Margin-right: auto;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;">
+
+            <tr>
+            <td>
+
+            <table style="font-family:"lucida_sansregular", sans-serif, Arial, Helvetica;font-size:14px;color:#000;line-height:24px;text-align:center;margin:auto;letter-spacing:2px;padding:1%;background:#fff;box-sizing:border-box;border-collapse:separate;max-width:620px;border:5px solid #efefef">
+            <tr>
+            <td><center> <img src="http://gloobers.com/sites/all/themes/gloobers2/images/logo.png" alt="Gloobers::Be friendly. Travel for free" title="Gloobers::Be friendly. Travel for free" width="300" /> </center> </td>
+            </tr>
+
+            <tr>
+            <td>
+            <table style="width:100%;padding:0px 5%;box-sizing:border-box">
+            <tr>
+            <td bgcolor="#000000" style="background:#000 url('.$src.') no-repeat 100% 100%;background-size:cover;width:50%;vertical-align:middle;padding:0">         
+
+            <h3 style="color:#fff;font-weight:bold;text-shadow:3px 1px 2px #333;font-size:20px;margin:0"><center>'.$overviewData['title'].'</center></h3>
+            <p style="color:#fff;font-weight:400;text-shadow:1px 1px 1px #333;margin:0px 0 10px"><center style="color:#fff;">'.$overviewData['state'].', '.$overviewData['country'].'</center></p>
+
+            </td>
+
+            <td style="width:50%;padding:10px;vertical-align:top">
+            <p style="text-align:left; color:#000; font-size:14px;width:240px;"><i>This place is tailormade for you. Try the salmon during  breakfast, its really a one  of a lifetime experience.  Hope youll enjoy. </i></p>
+            <img src="'.$Advisor_DpImage_path.'" alt="" width="58" height="58" title="" style="border-radius:50%;border:2px solid #efefef; width:58px; height:55px; float:right; margin-top: -35px;" />
+            </td>
+            </tr>
+
+            <tr>
+            <td colspan="2"> </td>
+            </tr>
+
+            </table>
+            </td>
+            </tr>
+
+            <tr>
+            <td><h3 style="font-size:18px;font-weight:600;margin:10px 0"><center style=" color:#000;"> You received a new recommendation ! </center> </h3></td>
+            </tr>
+
+            <tr>
+            <td>
+            <p style="text-align:left;  color:#000;">Hi '.ucfirst($traveler_name).',<br />
+            You received a new recommendation from '.ucfirst($Advisor_name).', '.$overviewData['title'].'. You can view the details of this recommendation in your dashboard or see all the recommendations received for this request.</p>
+
+            <p style="text-align:left;"><a href="'.$base_url.'/advice/my_request" style="color:#139ABC;text-decoration:none;" target="_blank">View all the recommendations received</a></p>
+
+            <p style="text-align:left;  color:#000;">You can now choose the recommendation that you think is the best and confirm your reservation. Obviously you can use your gloobies to fund the trip.</p>
+
+            <p style="text-align:left;  color:#000;">
+            If you encounter any trouble, Our support team is always happy to assist you. 
+            <a href="mailto:'.SUPPORT_EMAIL_ID.'" style="color:#139ABC;text-decoration:none;" target="_blank">'.SUPPORT_EMAIL_ID.' </a>  </p>
+            </td>
+            </tr>  <tr>
+            <td><p style="text-align:left;  color:#000;">Cheers,</p></td>
+            </tr>
+
+            <tr>
+            <td><p style="text-align:left;  color:#000;">The Gloobers team</p></td>
+            </tr>
+
+            <tr>
+            <td>
+            <p style="text-align:left">
+            <img src="http://gloobers.com/img/signature.png" alt="Gloobers::Be friendly. Travel for free" title="Gloobers::Be friendly. Travel for free" />
+            </p>
+            </td>
+            </tr>
+            </td>
+            </tr>
+
+            </table>
+            </table>';
+              
+			sendAdvisorRequestEmail($module,$key,$to_email,$subject,$title,$body);
+        }else{
+            $response['message'] = 'There is some error occour';
+            $response['status'] = 'error';
+        }
+        echo json_encode($response);
+        die;
+    }    
+}
+
+function addguide_to_traveller(){
+    global $user;
+    $recmmend_for_uid = $_POST['traveller_id'];
+    $location_req_id = $_POST['location_req_id'];
+    $travel_guide_id = $_POST['travel_guide_id'];
+    
+    $query=db_select('gbl_advise_listing','u')
+          ->fields('u')
+          ->condition('recommend_for_uid',$recmmend_for_uid,'=')
+          ->condition('guide_id',$travel_guide_id,'=')
+          ->condition('request_id',$location_req_id,'=')
+          ->condition('owner_id',$user->uid,'=');
+
+        $result=$query->execute();
+        $num_of_results = $result->rowCount();
+    if($num_of_results > 0){
+        $response['message'] = 'This Travel guide is already added';
+        $response['status'] = 'error';
+        echo json_encode($response);
+        die;
+
+    }else{
+            $query = db_select('gbl_trevel_guide','g');
+            $query->fields('g',array('listings','title','destination'));
+            $query->condition('tgid',$travel_guide_id);
+            // print $query; die;
+            $result=$query->execute();
+            $listings=$result->fetchField();
+
+            if(empty($listings)){  
+                $response['message'] = 'This guide have no listing';
+                $response['status'] = 'error';
+                echo json_encode($response);
+                exit;
+            }
+          
+            $list = explode(',', $listings); 
+             
+            foreach ($list as $value) {
+                    $query=db_insert('gbl_advise_listing')
+                          ->fields(array('owner_id'=>$user->uid,'request_id'=>$location_req_id ,'recommend_for_uid'=>
+                            $recmmend_for_uid,'guide_id'=>$travel_guide_id,'listing_id'=>$value
+                            )); 
+                        $result=$query->execute();
+            }
+
+             /*updated 30 may 2016*/
+            
+            $query1=db_insert('gbl_notifications')
+            ->fields(array('sender_id'=>$user->uid,'recipient_id'=>$recmmend_for_uid,'post_type'=>'recommend listing','noti_msg'=>'Recommend listing','noti_url'=>'advice/recommend/'.base64_encode($user->uid).'/'.base64_encode($recmmend_for_uid).'/'.base64_encode($location_req_id),'read_status'=>0,
+            'notification_time'=>time()
+            ));
+            $query1->execute();
+           
+            /*end updated 30 may 2016*/
+               
+            if($result){
+                $response['message'] = 'Added successfully';
+                $response['status'] = 'success';
+
+            /*updated 30 may 2016*/
+            /*
+            //Send Email To traveler
+            $traveler=user_load($recmmend_for_uid);
+            if(!empty($traveler->field_first_name['und'][0]['value'])){
+                $traveler_name =  $traveler->field_first_name['und'][0]['value'].' '.$traveler->field_last_name['und'][0]['value'];
+            }else{
+                $traveler_name =  $traveler->name;
+            }
+            $Advisor=user_load($user->uid);
+            if(!empty($Advisor->field_first_name['und'][0]['value'])){
+                $Advisor_name =  $Advisor->field_first_name['und'][0]['value'].' '.$Advisor->field_last_name['und'][0]['value'];
+            }else{
+                $Advisor_name =  $Advisor->name;
+            }
+            $Advisor_DpID=$Advisor->picture->fid;
+            if ($Advisor->picture != ""){
+                $Advisor_file = file_load($Advisor_DpID);
+                $Advisor_file_imgpath = $Advisor_file->uri;
+                $Advisor_file_style = "new-reservation";
+                $Advisor_DpImage_path=image_style_url($Advisor_file_style, $Advisor_file_imgpath);              
+            }else{
+                $Advisor_DpImage_path=$base_url.'/'.drupal_get_path('theme', $GLOBALS['theme']) . '/images/no-profile-male-img.jpg';                
+            }
+
+            //$overviewData=getOverviewData($listing_id);
+            $photosData = getPhotosData($travel_guide_id);
+            if(!empty($photosData)){
+                $Listing_photo=unserialize($photosData[0]['value1']);
+                $listingImage_fid=$Listing_photo['fid'];
+                $listingImage = file_load($listingImage_fid);
+                $listingImage_imgpath = $listingImage->uri;
+                $listing_style = "new-reservation";
+                $src = image_style_url($listing_style, $listingImage_imgpath);
+            }else{
+                $src=$base_url.'/sites/all/themes/gloobers_new/images/listing_img.jpg';
+            }
+            //Email Code
+            $title = '';
+            $module = 'advisor';
+            $key = 'traveler_receive_recomendation';
+            $to_email = trim($traveler->mail);
+            //$to_email='testing.testing139@gmail.com';
+            $subject = 'New Recomendation Received';
+            $body= '<table width="650" border="5" bordercolor="efefef" cellspacing="0" cellpadding="0" align="center" style="border-color:#efefef; border-collapse: collapse;table-layout: fixed;Margin-left: auto;Margin-right: auto;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;">
+
+            <tr>
+            <td>
+
+            <table style="font-family:"lucida_sansregular", sans-serif, Arial, Helvetica;font-size:14px;color:#000;line-height:24px;text-align:center;margin:auto;letter-spacing:2px;padding:1%;background:#fff;box-sizing:border-box;border-collapse:separate;max-width:620px;border:5px solid #efefef">
+            <tr>
+            <td><center> <img src="http://gloobers.com/sites/all/themes/gloobers_new/images/logo.png" alt="Gloobers::Be friendly. Travel for free" title="Gloobers::Be friendly. Travel for free" width="300" /> </center> </td>
+            </tr>
+
+            <tr>
+            <td>
+            <table style="width:100%;padding:0px 5%;box-sizing:border-box">
+            <tr>
+            <td style="background:#000 url('.$src.') no-repeat 100% 100%;background-size:cover;width:50%;vertical-align:middle;padding:0">         
+
+            <h3 style="color:#fff;font-weight:bold;text-shadow:3px 1px 2px #333;font-size:20px;margin:0"><center>'.$listings['title'].'</center></h3>
+            <p style="color:#fff;font-weight:400;text-shadow:1px 1px 1px #333;margin:0px 0 10px"><center style="color:#fff;">'.$listings['destination'].'</center></p>
+
+            </td>
+
+            <td style="width:50%;padding:10px;vertical-align:top">
+            <p style="text-align:left; color:#000; font-size:14px;width:240px;"><i>This place is tailormade for you. Try the salmon during  breakfast, its really a one  of a lifetime experience.  Hope youll enjoy. </i></p>
+            <img src="'.$Advisor_DpImage_path.'" alt="" title="" style="border-radius:50%;border:2px solid #efefef; width:58px; height:55px; float:right; margin-top: -35px;" />
+            </td>
+            </tr>
+
+            <tr>
+            <td colspan="2"> </td>
+            </tr>
+
+            </table>
+            </td>
+            </tr>
+
+            <tr>
+            <td><h3 style="font-size:18px;font-weight:600;margin:10px 0"><center style=" color:#000;"> You received a new recommendation ! </center> </h3></td>
+            </tr>
+
+            <tr>
+            <td>
+            <p style="text-align:left;  color:#000;">Hi '.ucfirst($traveler_name).',<br />
+            You received a new recommendation from '.ucfirst($Advisor_name).', '.$listings['title'].'. You can view the details of this recommendation in your dashboard or see all the recommendations received for this request.</p>
+
+            <p style="text-align:left;"><a href="'.$base_url.'/advice/my_request" style="color:#139ABC;text-decoration:none;" target="_blank">View all the recommendations received</a></p>
+
+            <p style="text-align:left;  color:#000;">You can now choose the recommendation that you think is the best and confirm your reservation. Obviously you can use your gloobies to fund the trip.</p>
+
+            <p style="text-align:left;  color:#000;">
+            If you encounter any trouble, Our support team is always happy to assist you. 
+            <a href="mailto:'.SUPPORT_EMAIL_ID.'" style="color:#139ABC;text-decoration:none;" target="_blank">'.SUPPORT_EMAIL_ID.' </a>  </p>
+            </td>
+            </tr>  <tr>
+            <td><p style="text-align:left;  color:#000;">Cheers,</p></td>
+            </tr>
+
+            <tr>
+            <td><p style="text-align:left;  color:#000;">The Gloobers team</p></td>
+            </tr>
+
+            <tr>
+            <td>
+            <p style="text-align:left">
+            <img src="http://gloobers.com/img/signature.png" alt="Gloobers::Be friendly. Travel for free" title="Gloobers::Be friendly. Travel for free" />
+            </p>
+            </td>
+            </tr>
+            </td>
+            </tr>
+
+            </table>
+            </table>';
+              
+            sendAdvisorRequestEmail($module,$key,$to_email,$subject,$title,$body);
+            */
+            /*end updated 30 may 2016*/
+            }else{
+                    $response['message'] = 'There is some error occour';
+                    $response['status'] = 'error';
+            }
+            echo json_encode($response);
+            die;  
+        }    
+}
+
+function removelisting(){
+    global $user;
+    $traveller_id = $_POST['traveller_id'];
+    $listing_id = $_POST['listing_id'];
+    $location_req_id = $_POST['location_req_id'];
+
+   $query= db_delete('gbl_advise_listing')
+        ->condition('owner_id', $user->uid,'=')
+        ->condition('recommend_for_uid', $traveller_id,'=')
+        ->condition('request_id', $location_req_id,'=')
+        ->condition('listing_id', $listing_id,'=')
+        
+        ->execute();
+    if($query){
+        $response['message'] = 'Listing successfully deleted';
+        $response['status'] = 'success';
+    }else{
+
+        $response['message'] = 'There is some error occour';
+        $response['status'] = 'error';
+        
+    }
+    echo json_encode($response);
+    die;   
+    
+}
+function travelguides(){
+    global $user,$base_url;
+    $val = $_POST['val'];
+    
+    $query=db_select('gbl_trevel_guide','gtg');
+    $query->condition('gtg.owner',$user->uid,'=');
+    if($val == 'public'){
+        $query->condition('gtg.is_public','yes','=');
+    }
+    if($val == 'private'){
+        $query->condition('gtg.is_public','no','=');
+    }
+    $query->condition('gtg.trash','0','!=');
+    $query->fields('gtg');
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+    if(count($resultSet) > 0 ){
+
+
+    //echo "<pre>";print_r($resultSet);die;
+    foreach ($resultSet as  $guide) {
+          
+
+            echo"<div class='col-xs-12 col-sm-6 col-md-6 travelblock'>"; 
+                     $file = file_load($guide['fid']);
+                                        $imgurl = $file->uri; 
+                                        $style = "guide_image";
+
+                                    if(!empty($imgurl)){  
+                                        echo '<a href="'.$base_url.'/travel_guide/profile/'.$guide['tgid'].'"><img alt=" " src="'.image_style_url($style, $imgurl).'"></a>';
+                                        }else{
+
+                                         echo '<a href="'.$base_url.'/travel_guide/profile/'.$guide['tgid'].'">
+                                            <img src="'.$base_url . '/' . drupal_get_path('theme', 'gloobers_new'). '/images/default_travel_guide_img.jpg"></a>
+                                        ';
+
+                                    }
+
+
+                        
+                        echo "<div class='listdetail' style='color: #fff;font-size: 13px;padding: 5px;border-radius: 3px;'>";
+                if($guide['listings'] !=''){
+
+                                    $listings = ltrim($guide['listings'],',');
+
+                                    $listings = explode(',', $listings);
+                                   
+                                    $sizeOflist=sizeof($listings); 
+                                    echo    $sizeOflist;
+
+                        }else{
+
+                                 echo "0";
+                            }
+
+            echo "</div>";
+            echo "<a href ='".$base_url."/travel_guide/profile/".$guide['tgid']."'><div class='guidesec'>
+                        
+                            <h3>".$guide['title']."</h3>
+                             <p class='text'>".substr($guide['description'], 0,60).'...'."</p>
+                            <div class='topspace'>
+                                <p>Recommended for :<br>
+                                    <span>".triptype($guide['recommended_for'])."</span>
+                                </p>
+                            </div>
+                       
+                </div></a>
+                ";
+            
+            echo "<div class='edit_class'>";
+             
+
+                echo "<a href='".$base_url."/advice/create-travel-guide?tgid=".$guide['tgid']."' >Edit</a> |"; //onclick='editTrevelGuide(".$guide['tgid'].")'
+               
+                echo '<a href="'.$base_url.'/advice/delete_guide/'. base64_encode('gloobe__'.$guide['tgid']).'">Delete
+                    </a>';
+
+                            
+
+        echo "</div>";     
+            
+
+            echo '</div>';
+
+}
+}
+else{
+    echo"<div class='col-xs-12 col-sm-12 col-md-12 travelblock'>"; 
+    echo "<div class='blankrow'>No Record found </div>";
+    echo '</div>';
+}
+
+
+exit;
+}
+
+function create_travel_guide(){
+
+    if(isset($_REQUEST['tgid'])){
+        $travel_guide_id = base64_decode($_REQUEST['tgid']);
+        $data = getListTrevelGuide($travel_guide_id);
+        $userdetails = user_load($user->uid);
+        $listingsResult = recommendationListings($travel_guide_id);
+        $locationDetails = getRequestByGuide($travel_guide_id);
+        $listingHTML = theme('edit_travel_guide',array('listingResult'=>$listingsResult,'locationDetails'=>$locationDetails));
+    }
+
+    return theme('create_travel_guide',array('data'=>$data,'listingHTML'=>$listingHTML));
+}
+
+function recommendation_listing(){
+    global $user,$base_url;
+    $advisor_id= base64_decode(arg(2));
+    $traveller_id =base64_decode(arg(3)); 
+    $location_req_id =base64_decode(arg(4));
+
+
+    $query = db_select('gbl_advice_location_request','galr');
+    $query->join('gbl_advisor_trip_type','trip','trip.trip_id=galr.trip_type');
+    $query->fields('galr',array('destination','from_date','to_date','travellers','listing_type','traveller_uid','advisor_uid','status'));
+    $query->fields('trip',array('trip_type'));
+    $query->condition('galr.advisor_uid',$advisor_id,'=' );
+    $query->condition('galr.traveller_uid',$traveller_id ,'=' );
+    $query->condition('galr.rid',$location_req_id ,'=' );
+    $run=$query->execute();
+    $traveller_recommend_data = $run->fetchAll(PDO::FETCH_ASSOC);
+    //echo "<pre>";print_r($traveller_recommend_data);die;
+    
+    $query = db_select('gbl_advise_listing','gal');
+    $query->fields('gal',array('listing_id','advice_comment','owner_id'));
+    $query->condition('gal.owner_id',$advisor_id,'=' );
+    $query->condition('gal.request_id',$location_req_id,'=' );
+    $query->condition('gal.recommend_for_uid', $traveller_id ,'=');
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+     if(isset($advisor_id) && !empty($traveller_id)){
+
+        db_update('gbl_notifications')->fields(array('read_status' => 1))
+                                                ->condition('recipient_id',$traveller_id)
+                                                 ->condition('sender_id',$advisor_id)
+                                                ->execute();
+
+
+    }
+
+    return theme('recommendation_listing',array('data'=>$resultSet ,'traveller_recommend_data'=>
+        $traveller_recommend_data));
+
+}
+
+// for writing comment advising
+
+function write_comment(){
+    global $user;
+   
+    $listing_id = $_POST['listing_id'];
+    $recommend_for_uid = $_POST['recommend_for_uid'];
+    $location_req_id = $_POST['request_id'];
+     $comment_data =$_POST['comment_data'];
+    $query = db_update('gbl_advise_listing')
+                ->fields(array("advice_comment"=>$comment_data))
+                ->condition('owner_id',$user->uid,'=')
+                ->condition('recommend_for_uid',$recommend_for_uid,'=')
+                ->condition('request_id',$location_req_id,'=')
+                ->condition('listing_id',$listing_id,'=');
+              
+    $result = $query->execute();
+
+    if($result){
+        $response['message'] = 'Recommendation successfully updated';
+        $response['status'] = 'success';
+    }
+    // else{
+    //     $response['message'] = 'There is some error occour';
+    //     $response['status'] = 'error';    
+    // }
+    echo json_encode($response);
+    exit;
+
+}
+
+function my_request(){
+    global $user;
+    $uid = $user->uid;
+    
+    $query = db_select('gbl_advisor_request','gar');
+    $query->join('gbl_advice_location_request','galr','gar.rid=galr.rid');
+    $query->join('gbl_advisor_trip_type','gat','gat.trip_id = galr.trip_type');
+    $query->fields('gar',array('traveller_uid','advisor_uid','message','rid'));
+    $query->fields('galr',array('destination','from_date','to_date','travellers','listing_type','status'));
+    $query->fields('gat',array('trip_type'));
+    $query->condition('gar.traveller_uid',$uid,'=' );
+    //$query->condition('tguide.trash',1,'=' );
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+    //echo "<pre>";print_r($resultSet);die;
+     return theme('my_request',array('requestList'=>$resultSet));
+  }
+
+
+  // ---- 7 sep 2015 
+
+  function validate_recommendation(){
+    global $user;
+    
+  
+    //-- followed Recommendation
+    $data = array();
+    $query = db_select('gbl_advise_listing','gal');
+    $query->fields('gal',array('recommend_for_uid'));
+    $query->condition('gal.owner_id',$user->uid,'=' );
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($resultSet as $value) {
+        $data[]=$value['recommend_for_uid'];
+    }
+    $followed = array_unique($data);
+    $no_of_followed = count($followed);
+    
+
+    // -----All recommendations -----------------// 
+    
+    $today = date("Y-m-d");
+    $query = db_select('gbl_advise_listing','gal');
+    $query->innerJoin('gbl_booking','gb','gal.listing_id=gb.lid');
+    $query->fields('gal',array('owner_id','request_id','recommend_for_uid','listing_id'));
+    $query->fields('gb',array('arrive_at_date','arrive_at_time','advisor_credits_assigned'));
+    $query->condition('gal.owner_id',$user->uid,'=' );
+    $query ->where("gal.owner_id = gb.advisor_id");
+
+    $query->range(0,6);
+    if(isset($_GET['recommendation']) && $_GET['recommendation']=='reviewed'){
+        $query->condition('gb.arrive_at_date',$today,'<=');
+    }
+    if(isset($_GET['recommendation']) && $_GET['recommendation']=='pending' ){
+        $query->condition('gb.arrive_at_date',$today,'>');
+    }
+    //print $query; exit;
+    $data=$query->execute();
+    $all_data = $data->fetchAll(PDO::FETCH_ASSOC);
+    //echo "<pre>";print_r($all_data); exit;
+    
+    $query1 = db_select('gbl_advise_listing','gal');
+    $query1->innerJoin('gbl_booking','gb','gal.listing_id=gb.lid');
+    $query1->fields('gal',array('owner_id','request_id','recommend_for_uid','listing_id'));
+    $query1->fields('gb',array('arrive_at_date','arrive_at_time','advisor_credits_assigned'));
+    $query1->condition('gal.owner_id',$user->uid,'=' );
+   
+    if(isset($_GET['recommendation']) && $_GET['recommendation']=='reviewed'){
+        $query1->condition('gb.arrive_at_date',$today,'<=');
+    }
+    if(isset($_GET['recommendation']) && $_GET['recommendation']=='pending' ){
+        $query1->condition('gb.arrive_at_date',$today,'>');
+    }
+
+    $data1= $query1->execute();
+    $num_of_results = $data1->rowCount();
+
+
+    return theme('validate_recommendation',array('no_of_followed'=>$no_of_followed,'all_recommendation'=>
+        $all_data ,'num_of_results'=>$num_of_results ));
+}
+
+function validate_ajax_recommendation(){
+      global $user;
+    $total_records = $_POST['total_records'];
+    $record_limit = $_POST['record_limit'];
+    $page_no = $_POST['page_no'];
+    $search_filter = $_POST['search_filter'];
+    
+    $start = ($page_no * $record_limit);
+    $end   = $record_limit;
+    $today = date("Y-m-d");
+    $query = db_select('gbl_advise_listing','gal');
+    $query->innerJoin('gbl_booking','gb','gal.listing_id=gb.lid');
+    $query->fields('gal',array('owner_id','request_id','recommend_for_uid','listing_id'));
+    $query->fields('gb',array('arrive_at_date','arrive_at_time','advisor_credits_assigned'));
+    $query->condition('gal.owner_id',$user->uid,'=' );
+    
+    $query->range($start,$end);
+    
+    if($search_filter =='reviewed'){
+        $query->condition('gb.arrive_at_date',$today,'<=');
+    }
+    else if($search_filter =='pending' ){
+        $query->condition('gb.arrive_at_date',$today,'>');
+    }
+
+    $data=$query->execute();
+    $all_data = $data->fetchAll(PDO::FETCH_ASSOC);
+    
+   
+    
+      foreach ($all_data as $value) { 
+      $photos = getPhotosData($value['listing_id']);
+      $pic_data = user_load($value['recommend_for_uid']);
+      $traveller_name = $pic_data->field_first_name['und'][0]['value'];
+     
+      $OverviewData = getOverviewData($value['listing_id']);
+      $locationDetail = getListingData($value['listing_id']);
+
+    echo "<div class='col-xs-12 col-sm-4 col-md-4'>
+            <div class='reviewbox'>
+            <div class='reviewblock'>";
+           if(!empty($photos[0]['value1'])){ 
+            $photo = unserialize($photos[0]["value1"]);
+             $file = file_load($photo["fid"]);
+             $imgpath = $file->uri;
+             $style = 'experience_topranked_large';
+             echo '<img src="'.image_style_url($style, $imgpath).'" alt="place" onError="imgError(this)" class= "img-height"/>';
+            }
+            else {
+             echo '<img src="'.$base_url . '/' . drupal_get_path('theme', 'gloobers'). '/images/img1.jpg" alt="" title=""/>';
+            } 
+            echo "<div class='reviewinfo'>
+            <div class='user_pic'>";
+           
+              $file = file_load($pic_data->picture->fid);
+              $imgurl = $file->uri; 
+              $style = "homepage_header";
+              if(!empty($imgurl)){  
+                        echo '<img alt=" " src="'.image_style_url($style, $imgurl).'"></a>';
+                     }
+             else{ 
+           
+            echo '<img src="'.$base_url . '/' . drupal_get_path('theme', 'gloobers'). '/images/no-profile-male-img.jpg" alt="" title="" />';
+            } 
+          echo "</div>
+          <p>";
+             if($search_filter=='pending' ){
+            echo "<strong>Pending</strong>";
+             }
+               else if($search_filter =='reviewed'){
+            echo "<strong>Reviewed</strong>";
+             } 
+             if(!empty($value['advisor_credits_assigned'])){echo $value['advisor_credits_assigned'];}else { echo '0';} 
+             
+                  
+            $today = date("Y-m-d");
+            if(strtotime($today) >= strtotime($value['arrive_at_date'])){
+              echo "Credits earned";
+            }else{
+              echo "credits to earn";
+            }
+            echo "</p>";
+          echo "<h4 class='text-uppercase'>";
+             echo $OverviewData['title']; 
+            echo "</h4>";
+          echo "<h5>"; echo $locationDetail['city'].' '.",".' '.$locationDetail['state']; 
+          echo "</h5>";
+        echo "</div> 
+      </div> 
+      <div class='revpara'>";
+      
+      echo "<p>This listing has been booked but the service has not been operated yet. Yours credits will be credited as soon as ".ucwords($traveller_name)."  will  be back from trip.</p>";
+      
+      echo "</div> 
+    </div> 
+  </div> ";
+  } 
+
+ 
+
+    
+exit;
+}
+
+function total_credit_for_advisor(){
+	global $user;
+   	$uid=$user->uid;
+  	$query=db_select('gbl_booking');
+  	$query->addExpression('SUM(advisor_credits_assigned)', 'sum');
+	$query->condition('advisor_id', $uid, '=');
+	$result = $query->execute();
+	$total_credit_for_advisor=$result->fetchField();
+    return $total_credit_for_advisor;
+}
+function createtravelguide(){
+  
+    global $user;
+    $query = db_select('gbl_advisor_trip_type','gatr');
+    $query->fields('gatr');
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+   
+   
+
+    if(isset($_REQUEST['tgid'])){
+        $id = $_REQUEST['tgid'];
+        $query =db_select('gbl_trevel_guide','gtg');
+        $query->fields('gtg');
+        $query->condition('gtg.tgid',$id,'=');
+        $query->condition('gtg.owner',$user->uid,'=');
+
+        $data = $query->execute();
+        $travel_guide_data = $data->fetchAll(PDO::FETCH_ASSOC);
+    }
+    return theme('createtravelguide', array('triptype'=>$resultSet ,'travel_guide_data'=>$travel_guide_data));
+}
+
+function travelguide(){
+    global $user,$base_url;
+    $travelguide_id = base64_decode(arg(2));
+    $query = db_select('gbl_trevel_guide','gtg');
+    $query->fields('gtg');
+    $query->condition('gtg.tgid',$travelguide_id,'=' );
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+   
+   
+    return theme('travelguide',array('guidedata'=>$resultSet));
+}
+function triptype($id){
+    global $user,$base_url;
+    $query = db_select('gbl_advisor_trip_type','g');
+    $query->fields('g',array('trip_type'));
+    $query->condition('trip_id',$id);
+    $result=$query->execute();
+    $tripname=$result->fetchField();
+    return $tripname;
+}
+
+// --------Travel Guide Profile Section ------------------//
+
+
+function travel_guide_profile(){
+    global $user;
+    $uid=$user->uid;
+    if(!$uid){
+        drupal_goto('login');
+    }
+
+    $tgid = arg(2);
+    $query =db_select('gbl_trevel_guide','g');
+    $query->fields('g');
+    $query->condition('tgid',$tgid);
+    $result=$query->execute();
+    $resultSet = $result->fetchAll(PDO::FETCH_ASSOC);
+    
+    $user_passion = getUserPassionList($uid);
+
+    // find latest Two guide of owner //
+
+    $query =db_select('gbl_trevel_guide','g');
+    $query->fields('g');
+    $query->condition('owner',$uid);
+    $query->orderBy('tgid', 'DESC');
+    $query->range(0,2);
+    $guide=$query->execute();
+    $otherguide = $guide->fetchAll(PDO::FETCH_ASSOC);
+    
+    return theme('travel_guide_profile',array('guidedata'=>$resultSet,'passionlist'=>$user_passion ,'otherguide'=>$otherguide ));
+}
+
+
+
+// ----------------End ------------------------------------//
+function advisor_sharing_request(){
+    global $user;
+    if(!$user->uid){
+        $dest = drupal_get_destination();
+        $_SESSION['destination']  = $dest["destination"];
+        drupal_goto('login',$dest);
+    }
+
+   $finder_advisor_id = arg(2);
+   $destination = $_GET['destination'];
+   $triptype = $_GET['triptype'];
+   $traveler = $_GET['traveler'];
+   $start_date = $_GET['start_date'];
+   $end_date = $_GET['end_date'];
+   $looking_for = $_GET['looking_for'];
+   $overall_budget = $_GET['overall_budget'];
+
+   return theme('advisor_sharing_request');
+
+}
+function unreadCountnotifications(){
+	global $user;
+	$getUnreadNot=db_select('gbl_notifications','n')->fields('n')->condition('recipient_id',$user->uid)
+	->condition('read_status','0');
+	$result_getUnreadNot=$getUnreadNot->execute();
+	//$result_getUnreadNot=$result_getUnreadNot->fetchAll(PDO::FETCH_ASSOC);
+	//echo "<pre>";Print_r($result_getUnreadNot);exit;
+    $noti_count = $result_getUnreadNot->rowCount();
+	if(!empty($noti_count)){
+		$update_status=db_update('gbl_notifications')->fields(array('read_status'=>1))->condition('recipient_id',$user->uid);
+		$update_statusR=$update_status->execute();
+		//$update=$noti_count;
+        $update='';
+	}else{
+		$update='';
+	
+	}
+	echo $update;
+	exit;
+}
+?>

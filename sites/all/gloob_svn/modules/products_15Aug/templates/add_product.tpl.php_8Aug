@@ -1,0 +1,196 @@
+<?php 
+	global $user,$base_url;
+?>
+
+<?php
+	if(!empty($photos)){
+?>
+<div class="photos-wrapper">
+<?php
+		$i = 1;
+		foreach($photos as $photo){
+			$photo 	= unserialize($photo["value1"]);
+			$style 	= "thumbnail";
+			$file 	= file_load($photo["fid"]);
+			$imgpath = $file->uri;
+?>
+	<div id="photo-content<?php echo $i++; ?>" class="photo-content">
+	<div class="plupload_file_action1">
+		<input type="hidden" class="fileID" value="<?php echo $photo["fid"]; ?>">
+		<div class="plupload_action_icon ui-icon ui-icon-circle-minus"> </div>
+	</div>
+		<div class="image"><img src="<?php print image_style_url($style, $imgpath) ?>"></div>
+		<div class="text">
+			<input type="hidden" class="fileID" value="<?php echo $photo["fid"]; ?>">
+			<textarea class="highlights"><?php echo $photo["text"]; ?></textarea>
+		</div>
+	</div>
+<?php 
+		}
+?>
+</div>
+<div class="product-form-wrapper">
+<?php
+	}
+	print drupal_render($productForm);
+?>
+</div>
+
+<?php 
+	if($extrasListing){
+?>
+<div class="row product-extra">
+        <div class="col-md-12">
+          <div class="panel">
+            <div class="panel-heading">
+              <div class="panel-title"> Product Extras </div>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Name and description</th>
+                      <th>Type</th>
+                      <th>Cost</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+				<?php 
+					foreach($extras as $extra){
+						$extra1 	= unserialize($extra["value1"]);
+				?>
+                    <tr>
+                      <td><?php echo $extra1["title"]; ?><br/><?php echo $extra1["description"]; ?></td>
+                      <td><?php echo $extra1["price-key"]; ?></td>
+                      <td><?php echo $extra1["price-type"]; ?><?php echo $extra1["price"]; ?></td>
+                      <td><a href="<?php echo $base_url; ?>/product/extra/edit/<?php echo $extra["listing_id"]; ?>/<?php echo $extra["meta_id"]; ?>">Change</a> | <a href="<?php echo $base_url; ?>/product/extra/delete/<?php echo $extra["listing_id"]; ?>/<?php echo $extra["meta_id"]; ?>">Remove</a></td>
+                    </tr>
+				<?php 
+					}
+				?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+</div>
+
+<?php }?>
+<script>
+	var jq=jQuery.noConflict();
+	jq(document).ready(function(){
+		jq(".nav-tabs li").click(function(){
+			var target = jq(this).find("a").attr("id");
+			switch(target){
+				case "product_details":
+					break;
+				case "product_service":
+
+					break;	
+				case "product_rules":
+
+					break;
+				case "product_pricing":
+
+					break;	
+				case "product_subscription":
+
+					break;
+				case "product_extra":
+
+					break;	
+				case "product_amenities":
+
+					break;
+				case "product_location":
+
+					break;	
+				case "product_scheduling":
+					break;
+					
+			}
+			jq( "#product-add-form" ).submit();
+		});
+	}); 
+</script>	
+<script>
+var jq = jQuery.noConflict();
+    jq(function () {	
+		jq(".plupload_file_action1").click(function(){
+		/* return false; */
+			var fileID = jq(this).find(".fileID").val();
+			var menuchahidihaiid = jq(this).parent().attr("id");
+
+			jConfirm("Are you sure you wish to delete this photo? It's a nice one! ", 'Delete Photo', function(r) {
+				if (r == true)
+				{
+					jq.ajax({
+						beforeSend: function(){
+							jq("#"+menuchahidihaiid).parent().append('<span style="color:green;font-weight:bold;font-size:15px;" class="ajax-running">Deleting...</span>');
+						},
+						complete: function(){
+							jq("#"+menuchahidihaiid).parent().find(".ajax-complete").delay(1500).fadeOut('slow');
+							jq("#"+menuchahidihaiid).delay(3000).fadeOut('slow');
+						},
+						type: "POST",
+						url: "http://localhost/gloobers/product/add/images?action=delete-photo",
+						data: { "fileID": fileID}
+					})
+					.done(function( data ) {
+						jq("#"+menuchahidihaiid).parent().find(".ajax-running").hide();
+						jq("#"+menuchahidihaiid).parent().append('<span style="color:green;font-size:15px;font-weight:bold;" class="ajax-complete">Deleted</span>');
+					});
+					
+/* 					self.removeFile($(e.target).closest('.plupload_file').attr('id'));
+					e.preventDefault(); */
+				}
+
+			});	
+		});
+		
+			jq( ".highlights" ).blur(function() {	
+				var fileID = jq(this).parent().find('.fileID').val();
+				var customText = jq(this).val();
+			
+				var menuchahidihaiid = jq(this).parent().parent().attr("class");
+				jq.ajax({
+					beforeSend: function(){
+						jq("."+menuchahidihaiid).parent().append('<span style="color:green;font-weight:bold;font-size:15px;" class="ajax-running">Saving...</span>');
+					},
+					complete: function(){
+						jq("."+menuchahidihaiid).parent().find(".ajax-complete").delay(2000).fadeOut('slow');
+					},
+					type: "POST",
+					url: "http://localhost/gloobers/product/add/images?action=add-text",
+					data: { "fileID": fileID, "customText": customText }
+				})
+				.done(function( data ) {
+					jq("."+menuchahidihaiid).parent().find(".ajax-running").hide();
+					jq("."+menuchahidihaiid).parent().append('<span style="color:green;font-size:15px;font-weight:bold;" class="ajax-complete">Saved</span>');
+				});
+			});
+			
+})
+ 
+</script>
+</script>	
+<script src="http://yui.yahooapis.com/3.17.2/build/yui/yui-min.js"></script>
+<script>
+YUI().use('pjax', function (Y) {
+	var pjax = new Y.Pjax({
+		container: '.container',
+		contentSelector: '.content',
+		linkSelector: '#product_photos,#product_overview,#product_amenities,#product_location'
+		});
+		pjax.on('navigate', function (e) {
+			this.get('container').addClass('add-product-loading');
+		});
+		pjax.on(['error', 'load'], function (e) {
+			this.get('container').removeClass('add-product-loading');
+		});
+	});
+</script>

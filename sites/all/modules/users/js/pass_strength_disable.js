@@ -1,0 +1,1 @@
+Drupal.behaviors.password.attach = function (context, settings) {};

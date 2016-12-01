@@ -1,0 +1,1 @@
+http://www.sharingdata.com/twitterOauthwithImagePost/callback.php?msg=I+am+checking+image&media=http://www.sharingdata.com/twitterOauthwithImagePost/walkswithme.png&redirect=1

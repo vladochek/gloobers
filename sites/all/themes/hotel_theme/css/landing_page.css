@@ -1,0 +1,1018 @@
+@charset "utf-8";
+/* CSS Document */
+*, *:after, *:before { -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+/**** landding page Css 10-06-2015 *********/
+*{ margin:0px; padding:0px;}
+body{font-family: 'lucida_granderegular'; background-size:100%; background:#f4f4f4;}
+a{ outline:0px !important; text-decoration:none; color:#666;}
+.wrapper{ position:absolute; top:0; left:0px; width:100%; z-index:999; height:100%;}
+.container{ position:relative; }
+.slider_heading{position:absolute; top:200px; color:#fff; left:0; font-size:33px; text-shadow:1px 0px 5px #000; font-family: 'lucida_grandebold';}
+.slider_subtitle{position:absolute; top:250px; color:#fff; left:0; font-size:24px; text-shadow:1px 0px 2px #000; font-family: 'lucida_granderegular'; line-height:30px;}
+
+.landing_menu{ float:left; width:100%; padding-right:15px;}
+.landing_menu ul{ float:right;}
+.landing_menu li{ float:left; list-style:none; color:#fff; margin:20px 20px; }
+.landing_menu li:last-child{ margin-right:0px;}
+.landing_menu li a{ color:#FFF; font-size:18px; font-family: 'lucida_granderegular'; float:right; text-shadow:1px 0px 3px #000; cursor:pointer; text-transform:none;}
+
+.latter {  color: #388fc4;  font-size: 16px;  line-height: 40px;  margin-right: 15px;}
+.map{ width:100%; margin:0 auto; margin-bottom:0px; border-top:1px solid #dfdcd5; border-right:1px solid #ffffff;}
+.smallmap{ width:100%; margin:0 auto; margin-bottom:40px; border-top:1px solid #dfdcd5; border-right:1px solid #ffffff;}
+
+
+.search_place{ max-width:730px; margin:0 auto; width:100%;}
+.search_place input{ border:2px solid #373737; width:100%; height:40px; padding-left:10px; font-size:16px;}
+.search_place select{ border:2px solid #373737; width:100%; height:40px; padding-left:10px;}
+.tagsfilter{ float:left; width:100%; margin:15px 0px; padding-bottom:20px; clear:both;}
+
+/**** End Step 1 Css start *********/
+
+/**** 19-june -2015 Step 3css *********/
+/****  elect box css *********/
+.sbHolder{	background-color: #fff;	border: solid 2px #919191;	font-size: 16px;	font-weight: normal;	height: 40px;	position: relative;	width: 100%; float:left; margin-bottom:20px;}
+.sbHolder:focus .sbSelector{	}
+.sbSelector{	display: block;	height: 40px;	left: 0;	line-height: 30px;	outline: none;	overflow: hidden;	position: absolute;	text-indent: 10px;	top: 0;	width: 100%; line-height:40px;}
+.sbSelector:link, .sbSelector:visited, .sbSelector:hover{	color: #373737;	outline: none;	text-decoration: none;}
+.sbToggle{	background: url(../img/select-icons.png) 0 -114px no-repeat;	display: block;	height: 40px;	outline: none;	position: absolute;	right: 0;	top: 0;	width: 30px;}
+.sbToggle:hover{	background: url(../img/select-icons.png) 0 -165px no-repeat;}
+.sbToggleOpen{	background: url(../img/select-icons.png) 0 -12px no-repeat;}
+.sbToggleOpen:hover{	background: url(../img/select-icons.png) 0 -62px no-repeat;}
+.sbHolderDisabled{	background-color: #fff;	border: solid 1px #515151;}
+.sbHolderDisabled .sbHolder{	}
+.sbHolderDisabled .sbToggle{	}
+.sbOptions{	background-color: #fff;	border: solid 1px #373737;	list-style: none;	left: -1px;	margin: 0;	padding: 0;	position: absolute;	top: 30px;	width: 100%;	z-index: 1;	overflow-y: auto;}
+.sbOptions li{	padding: 0 7px;}
+.sbOptions a{border-bottom: dotted 1px #373737;	display: block;	outline: none;	padding: 7px 0 7px 3px;}
+.sbOptions a:link, .sbOptions a:visited{	color: #373737;	text-decoration: none;}
+.sbOptions li:hover, .sbOptions a:hover,.sbOptions a:focus,.sbOptions a.sbFocus{color: #000;background:#efefef}
+.sbOptions li.last a{	border-bottom: none;}
+.sbOptions .sbDisabled{	border-bottom: dotted 1px #373737;	color: #999;	display: block;	padding: 7px 0 7px 3px;}
+.sbOptions .sbGroup{	border-bottom: dotted 1px #373737;	color: #EBB52D;	display: block;	font-weight: bold;	padding: 7px 0 7px 3px;}
+.sbOptions .sbSub{	padding-left: 17px;}
+/**** tags  Css *********/
+.tagmanagerTag{ padding:5px 15px; background:#e6e6e6; float:left !important; font-size:16px; margin:20px 10px 0px 15px; border:2px solid #373737;}
+.tagmanagerRemoveTag{ color:#333333; font-size:24px; margin-left:10px;}
+.tagmanagerTag:hover{ background:#979797; border-color:#363636; color:#fff; cursor:pointer;}
+.tagmanagerTag:hover .tagmanagerRemoveTag{ color:#fff;}
+
+
+.passview {
+  float: left;
+  padding: 50px 0;
+  width: 100%;
+}
+.passview .passblock {
+  float: left;
+  margin-bottom: 30px;
+  position: relative;
+}
+.passview .passblock img {
+  float: left;
+  width: 100%;
+}
+.contblock {
+	width:90px; margin:0 auto;
+	display:block;
+}
+.contblock i {
+  float: left;
+  margin-top: 30px;
+  text-align: center;
+  width: 100%;
+}
+.contblock i img{ width:100% !important;}
+
+.grid figure h2 {
+  bottom: 20%;
+  color: #ffffff;
+  font-size: 28px;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  text-align:center;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  text-transform:uppercase;
+}
+
+/* Common style */
+.grid { float:left; width:100%; margin-bottom:30px;}
+.grid figure {
+	position: relative;
+	float: left;
+	overflow: hidden;
+	margin: 15px 0;
+	max-height: 360px;
+	width: 100%;
+	text-align: center;
+	cursor: pointer;
+}
+
+.grid figure img {
+	position: relative;
+	display: block;
+	min-height: 100%;
+	width: 100%;
+}
+
+
+
+.grid figure figcaption,
+.grid figure figcaption > a {
+	position: absolute;
+	bottom: 5px;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+
+
+/* Individual effects */
+
+
+
+/*---------------*/
+/***** Layla *****/
+/*---------------*/
+
+
+figure.effect-layla figcaption {
+	padding: 3em;
+}
+
+figure.effect-layla figcaption::before,
+figure.effect-layla figcaption::after {
+	position: absolute;
+	content: '';
+	opacity: 0;
+}
+
+figure.effect-layla figcaption::before {
+	top: 40px;
+	right: 30px;
+	bottom: 40px;
+	left: 30px;
+	border-top: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	-webkit-transform: scale(0,1);
+	transform: scale(0,1);
+	-webkit-transform-origin: 0 0;
+	transform-origin: 0 0;
+}
+
+figure.effect-layla figcaption::after {
+	top: 30px;
+	right: 50px;
+	bottom: 30px;
+	left: 50px;
+	border-right: 1px solid #fff;
+	border-left: 1px solid #fff;
+	-webkit-transform: scale(1,0);
+	transform: scale(1,0);
+	-webkit-transform-origin: 100% 0;
+	transform-origin: 100% 0;
+}
+
+figure.effect-layla h2 {
+	padding-top: 26%;
+	-webkit-transition: -webkit-transform 0.35s;
+	transition: transform 0.35s;
+}
+
+figure.effect-layla p {
+	padding: 0.5em 2em;
+	text-transform: none;
+	-webkit-transform: translate3d(0,-10px,0);
+	transform: translate3d(0,-10px,0);
+}
+
+
+
+figure.effect-layla img,
+figure.effect-layla figcaption::before,
+figure.effect-layla figcaption::after,
+figure.effect-layla p {
+	-webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+	transition: opacity 0.35s, transform 0.35s;
+}
+
+
+figure.effect-layla:hover figcaption::before,
+figure.effect-layla:hover figcaption::after {
+	opacity: 1;
+	-webkit-transform: scale(1);
+	transform: scale(1);
+}
+
+figure.effect-layla:hover h2,
+figure.effect-layla:hover p {
+	opacity: 1;
+	-webkit-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+}
+
+figure.effect-layla:hover figcaption::after,
+figure.effect-layla:hover h2,
+figure.effect-layla:hover p,
+figure.effect-layla:hover img {
+	-webkit-transition-delay: 0.15s;
+	transition-delay: 0.15s;
+}
+
+.spep5{ float:left; width:100%; margin-bottom:30px;}
+.spep5 .step_link{ margin:0 auto; width:700px;}
+.spep5 .step_link p{ text-align:center; margin-top:50px;}
+.step_link input {
+  border: 1px solid #373737;
+  font-size: 16px;
+  height: 40px;
+  padding-left: 10px;
+  width: 100%;
+}
+.socil_icon{ margin-top:50px; float:left;}
+.socil_icon i{ border-radius:100%; border:1px solid #000; width:40px; height:40px; font-size:24px; text-align:center; padding:8px; display:block; margin:0 auto; color:#000000;}
+.step_link .socil_icon p{ text-align:center; width:100%; font-size:18px; margin-top:10px;}
+.socil_icon a:hover i{ color:#fea000; border-color:#fea000; }
+.socil_icon a:hover p{ color:#fea000; }
+/**** end 19-june -2015 Step 3css *********/
+.user_img{ width:50px; height:50px; overflow:hidden; border-radius:50%; border:1px solid #fff; float:right;}
+.user_img img{ width:100%;}
+.grid figure figcaption{ opacity:0.5;}
+.grid figure:hover figcaption{ opacity:1;}
+.about_me{ float:left; width:100%;}
+.about_me textarea{ width:100%; padding:20px 10px; resize:none; min-height:360px; border:2px solid #474747; margin:0px 0px 30px 0px; font-size:16px; line-height:20px;}
+.about_me h3{
+    color: #333333;
+    font-family: "lucida_grandebold";
+    font-size: 30px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    text-align:left;
+}
+.about_me aside h3{ margin-top:0px; text-align:center;}
+.about_me aside .home_town input{ float:left; height:40px; background:#fff; border:2px solid #474747; float:left; width:100%; padding-left:10px; margin-bottom:20px; font-size:18px;}
+.verifications{ float:left; width:100%;}
+.verifications h3{
+    color: #333333;
+    font-family: "lucida_grandebold";
+    font-size: 30px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    text-align:center;
+}
+.verifications_title{ text-align:center; font-size:22px;  font-family: 'lucida_grandebold'; float:left; width:100%; color:#333333;}
+.verifications_cont{ text-align:center; font-size:18px;  font-family: 'lucida_granderegular'; float:left; width:100%; margin:15px 0px; color:#00803f;}
+.verifications_total{ text-align:center; font-size:60px;  font-family: 'lucida_grandebold'; float:left; width:100%; margin:15px 0px; color:#333333;}
+.resend{ width:100%; text-align:center; margin:25px 0px;}
+/**** end 23-june -2015 css *********/
+
+/**** 24-june -2015  css *********/
+.paddng_left{ padding-left:0px;}
+.paddng_right{ padding-right:0px;}
+.no_paddng{ padding:0px;}
+/**** end 24-june -2015 css *********/
+.passport{ float:left; width:100%;}
+.passport h3{
+    color: #333333;
+    font-family: "lucida_grandebold";
+    font-size: 30px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    text-align:center;
+}
+.passport .search_place{ max-width:100%;}
+.passport .search_place .title{ float:left; width:100%; min-height:30px; display:block; color: #333333; font-family: "lucida_grandebold";   font-size: 30px;    margin-bottom: 15px; font-size:24px;}
+.passport .map{ float:left; width:100%; max-width:100%;}
+
+.share_link{ width:100% !important; float:left;}
+
+
+ul.nav li.dropdown{transition: all 0.5s ease;}
+
+.main_menu{ float:left; width:100%;}
+
+/**** Menu Css *********/
+.nav_main_menu{ float:left; width:100%; background:#fff; margin-top:0px; border-bottom:2px solid #8b8b8b;  padding: 5px 50px;}
+.nav_main_menu ul{ float:left; width:100%; margin-bottom:0px; position:relative; }
+.nav_main_menu ul li{ list-style:none; display:inline-block; padding:35px; float:left; margin-top:0px;}
+.nav_main_menu ul li a{ font-size:18px; color:#333333;}
+.nav_main_menu ul li a:hover{ color:#fea200;}
+.showhide{ display:none;}
+
+
+.nav_main_menu ul li ul{ display:none;}
+.nav_main_menu ul li:hover ul{ display:block; position:absolute; width:100%; left:0; background:#fff; z-index:999;}
+.nav_main_menu ul li:hover ul li{ display:block; padding:25px 30px;}
+.togelsubmenu{ display:none;}
+
+
+.slidediv{ display:block}
+
+
+.dropdown{transition: all 0.4s ease-in 0s;}
+
+.passions, .invitation{ background:#fff; float:left; width:100%;}
+.passions h3 {
+  color: #333333;
+  font-family: "lucida_grandebold";
+  font-size: 30px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  text-align: center;
+}
+.passions figure { border-radius:100%; width:270px; height:270px;}
+.passions figure .contblock {
+  display: block;
+  margin: 0 auto;
+  width: 70px;
+}
+.passions figure h2{ bottom:25%; font-size:20px;}
+.passions .edit{ width:100%; text-align:center; float:left; padding-bottom:40px; color:#388fc4; font-size:20px;}
+.passions .contblock i{ margin-top:0px;}
+
+.passions .grid figure figcaption, .passions .grid figure figcaption > a {
+  bottom: 10%;
+  height: 70%;
+  left: 0%;
+  position: absolute;
+  width: 100%;
+}
+
+/**** End menu  Css *********/
+
+/**** Account Setting page Css *********/
+.account_setting{ float:left; width:100%; position:relative;}
+.account_setting h3 {  color: #333333;  font-family: "lucida_grandebold";  font-size: 30px;  margin-bottom: 30px;  margin-top: 30px;  text-align: center;}
+.account_setting fieldset { margin-bottom:40px;}
+input {
+  border: 2px solid #373737;
+  font-size: 16px;
+  height: 40px;
+  padding-left: 10px;
+  width: 100%;
+}
+/*** sidbar CSS ***/
+
+.sidebar_menu{ width:18%; background:#333333; float:left; padding:20px 0px; margin-bottom:50px; margin-left:0px;}
+.sidebar_menu ul li{ width:100%; float:left; list-style:none;}
+.sidebar_menu ul li a{ color:#fff; padding:20px; float:left;}
+.account_setting_page{ width:100%;  float:left;}
+.account_setting h2{ margin-bottom:20px; float:left; width:100%;}
+
+/**  **/
+.complete{ color:#14a037;}
+.pandding{ color:#e87b06;}
+.table{ border:1px solid #ddd;}
+
+
+.sidebar_icone{ padding-left:20px; color:#fff; cursor:pointer;}
+.account_section{ float:left; position:relative; width:100%; margin:0px;}
+.sidebar_btn{ background:#333333; padding:10px 15px; float:left; color:#fff;}
+
+.account_setting_page h3 {
+  float: left;
+  margin: 15px 0;
+  width: 100%;
+}
+.account_setting_page fieldset { margin-bottom:15px;}
+/**** Responsive  Css *********/
+
+@media 
+(-webkit-min-device-pixel-ratio: 2), 
+(min-resolution: 192dpi) { 
+    /* Retina-specific stuff here */
+	.container-fluid{ padding:0px 50px;}
+}
+
+
+
+/* 1.25 dpr */
+@media 
+(-webkit-min-device-pixel-ratio: 1.25), 
+(min-resolution: 120dpi){ 
+    /* Retina-specific stuff here */
+}
+
+/* 1.3 dpr */
+@media 
+(-webkit-min-device-pixel-ratio: 1.3), 
+(min-resolution: 124.8dpi){ 
+    /* Retina-specific stuff here */
+}
+
+/* 1.5 dpr */
+@media 
+(-webkit-min-device-pixel-ratio: 1.5), 
+(min-resolution: 144dpi){ 
+    /* Retina-specific stuff here */
+}
+
+
+
+/* ----------- Non-Retina Screens ----------- */
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 1) { 
+}
+
+/* ----------- Retina Screens ----------- */
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) { 
+  .container-fluid{ padding:0px 50px;}
+}
+
+
+@media screen and (max-width:1305px) {
+	
+			.nav-tabs2 > li > a {
+    margin: 5px 1px;
+}
+
+}
+
+
+
+/* ----------- Normal Screens ----------- */
+
+@media screen and (max-width:1200px) {
+	
+			.nav-tabs2 > li > a {
+    margin: 5px 1px;
+}
+
+	
+.passions figure { border-radius:100%; width:240px; height:240px;}
+.nav_main_menu ul li{padding: 25px 16px;}
+header .nav.navbar-nav a{ font-size:13px; 
+
+}
+.sidesec .booking-sec .booksec .travelsec {
+    float: right;
+    margin: 10px 10px 30px;
+    width: 94%;
+}
+		
+.parap {
+    color: #424242;
+    float: left;
+    font-family: "Khula",sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+.sbHolder{	background-color: #fff;	border: solid 2px #919191;	font-size: 16px;	font-weight: normal;	height: 40px;	position: relative;	width: 100%; float:left;  margin-bottom:20px;}
+
+
+@media screen and (max-width:1024px) {
+	#slide{ margin-right:25px}
+	
+	
+	}
+	
+	
+	@media screen and (max-width:1023px) {
+		
+		
+		
+	.padding_left {
+    padding-left:none;
+    }
+
+
+.padding_right{
+    padding-left:none;
+    }
+		
+		
+		
+		
+	.leftcolbar .bookingpanel .status .onesecl {
+    max-width:100%;
+    text-align:center;
+    width: 100%;
+	font-size: 18px;
+}
+
+
+.leftcolbar .bookingpanel .status .onesecc { max-width:100%;  width: 100%; margin-bottom:20px; font-size: 18px;}
+		
+.leftcolbar .bookingpanel .status .onesecr { max-width:100%;  width: 100%; text-align:center; margin-bottom:20px; font-size: 18px;}	
+		.leftcolbar .rooms_type .pix_text {
+			
+    color: #2e2e2e;
+   
+    font-size: 18px;
+    padding-bottom: 5px;
+    padding-top: 2px;
+    text-align: center;
+}
+
+.leftcolbar .rooms_type {
+    float: left;
+    padding: 10px 100px;
+    width: 100%;
+}
+
+.leftcolbar .rooms_type p {
+    color: #2e2e2e;
+   
+    font-size: 19px;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    text-align: center;
+}
+		.dropdwonmenu{ display:block; -moz-transition: opacity 0.4s ease-in-out;
+    -o-transition: opacity 0.4s ease-in-out;
+    -webkit-transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.4s ease-in-out;}
+		.dropdwonmenu_remove{ display:none; -moz-transition: opacity 0.4s ease-in-out;
+    -o-transition: opacity 0.4s ease-in-out;
+    -webkit-transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.4s ease-in-out;}
+	.showhide{ display:block; padding:25px; cursor:pointer;}
+.nav_main_menu ul li{ width:100%; text-align:center;}
+.nav_main_menu ul li:hover ul{ display:none;}
+.nav_main_menu ul li:hover .togelsubmenu{ display:block;}
+.togelsubmenu {
+  cursor: pointer;
+  display: block;
+}
+.nav_main_menu ul li ul, .nav_main_menu ul li:hover ul{ position:inherit; float:left;}
+
+.nav_main_menu ul li ul.dropdwonmenu1{ display:block;}
+		.nav_main_menu ul li ul.dropdwonmenu_remove1{ display:none;}
+
+
+
+#nav > li {
+        float: none;
+        border-bottom: 0;
+        margin-bottom: 0;
+    }
+    #nav ul.subs {
+        position: relative;
+        top: 0;
+    }
+    #nav li:hover ul.subs {
+        display: none;
+    }
+    #nav li #s1:target + ul.subs,
+    #nav li #s2:target + ul.subs {
+        display: block;
+    }
+
+    #nav ul.subs > li {
+        display: block;
+        width: auto;
+    }
+	
+	.sidebar_menu {
+  background: #333333 none repeat scroll 0 0;
+  float: left;
+  margin-bottom: 50px;
+  padding: 20px 0;
+  width: 30%;
+}
+.account_setting_page {
+  float: left;
+  width: 100%;
+}
+	.nav-tabs2 > li > a {
+        margin: 5px 1px;
+   
+}
+	
+
+
+	}
+
+@media screen and (max-width:767px) {
+
+	
+	
+	.leftcolbar .rooms_type {
+    float: left;
+    padding: 10px 50px;
+    width: 100%;
+}
+	
+	.sidesec .optionalsec {
+    float: left;
+    background: none repeat scroll 0% 0% #F9F9F9;
+    width: 100%;
+    border: 1px solid #D6D6D6;
+    padding: 25px 3%;
+    margin: 193px 0px 0px;
+}
+	
+.leftcolbar .rooms_type .pix_text {
+    color: #2e2e2e;
+   
+    font-size: 18px;
+    padding-bottom: 5px;
+    text-align:center;
+}
+
+
+.leftcolbar .bookingpanel .progress .value3 {
+    color: #000;
+    font-size: 23px;
+    font-weight: 700;
+    position: absolute;
+    text-align: center;
+    top: 30px;
+    width: 30%;
+}
+.leftcolbar .bookingpanel .progress .value4 {
+    color: #000000;
+    font-size: 54px;
+    font-weight: 700;
+    position: absolute;
+    right: -23px;
+    text-align: center;
+    top: 26px;
+}
+	
+		.leftcolbar .rooms_type .pix_text {
+    color: #2e2e2e;
+   
+    font-size: 18px;
+    padding-bottom: 5px;
+	 text-align:center;
+	 padding-top:2px;
+}
+
+.leftcolbar .rooms_type p {
+    color: #2e2e2e;
+   
+    font-size: 19px;
+    padding-bottom: 15px;
+	padding-top:15px;
+	text-align:center;
+}
+	
+	
+	.leftcolbar .bookingpanel .progress .value1 {
+    color: #000;
+    font-size: 25px;
+    font-weight: 700;
+    left: 1px;
+    position: absolute;
+    text-align: left;
+    top: 34px;
+    width: 40%;
+}
+
+.leftcolbar .bookingpanel .progress .value1 .fa-map-marker {
+    bottom: -27px;
+    color: #39b54a;
+    font-size: 52px;
+    left: -32px;
+    position: absolute;
+}
+
+	
+	.leftcolbar .bookingpane2 .progress .value1 {
+    color: #000;
+    font-size: 23px;
+    font-weight: 700;
+    left: 1px;
+    position: absolute;
+    text-align: left;
+    top: 34px;
+    width: 40%;
+}
+
+	
+	.leftcolbar .bookingpanel .progress .value1 {
+    color: #000;
+    font-size: 23px;
+    font-weight: 700;
+    left: 1px;
+    position: absolute;
+    text-align: left;
+    top: 34px;
+    width: 40%;
+}
+
+.leftcolbar .bookingpanel .progress .value1 .fa-map-marker {
+    bottom: -27px;
+    color: #39b54a;
+    font-size: 52px;
+    left: -32px;
+    position: absolute;
+}
+.leftcolbar .bookingpanel .progress .value2 {
+    color: #000;
+    font-size: 23px;
+    font-weight: 700;
+    position: absolute;
+    text-align: center;
+    top: 30px;
+    width: 30%;
+}
+.leftcolbar .bookingpanel .progress .value2 .fa-map-marker {
+    bottom: -33px;
+    color: #F0AD4E;
+    font-size: 54px;
+    left: -23px;
+    position: absolute;
+}
+
+.leftcolbar .bookingpanel .progress .value3 .fa-map-marker {
+    bottom: -33px;
+    color: #d9534f;
+    font-size: 54px;
+    left: -10px;
+    position: absolute;
+}
+
+.leftcolbar .bookingpanel .progress .value4 .fa-map-marker {
+    color: #a9a9a9;
+    font-size: 54px;
+	.leftcolbar .bookingpanel .progress .value4 .fa-map-marker {
+    color: #a9a9a9;
+    font-size: 54px;
+}
+
+.leftcolbar .bookingpanel .progress .value4 {
+    color: #000000;
+    font-size: 23px;
+    font-weight: 700;
+    position: absolute;
+    right: -23px;
+    text-align: center;
+    top: 28px;
+}
+
+
+.leftcolbar .bookingpanel .progress .value3 {
+    color: #000;
+    font-size: 23px;
+    font-weight: 700;
+    position: absolute;
+    text-align: center;
+    top: 30px;
+    width: 30%;
+}
+	
+	.landing_menu ul {
+  float: none;
+  margin: 0 auto;
+  width: 125px;
+}
+.landing_menu li{ margin:5px 10px;}
+
+.slider_subtitle {
+  color: #fff;
+  font-family: "Open Sans",sans-serif;
+  font-size: 16px;
+  left: 0;
+  position: absolute;
+  text-shadow: 1px 2px 1px #212121;
+  top: 155px;
+  left: 10px;
+}
+.slider_heading {
+  color: #fff;
+  font-family: "Open Sans",sans-serif;
+  font-size: 25px;
+  left: 10px;
+  position: absolute;
+  text-shadow: 1px 2px 1px #212121;
+  top: 120px;
+}
+
+.landing_menu{ padding-right:0px;}
+.search_place, .map{ max-width:90%; margin:0px 5%;}
+.search_place input, .search_place .sbHolder{ margin-bottom:20px;}
+.search_place .button{ width:100%; text-align:center;}
+.spep5 .step_link{ width:90%; margin:0px 5%;}
+.button{ width:100%; text-align:center;}
+.step_link input{ margin-bottom:15px;}
+
+.paddng_left{ padding-left:15px;}
+.about_me h3{ text-align:center;}
+.passport .search_place {
+  max-width: 90%;
+}
+.passport .map {
+  float: left;
+  max-width: 100%;
+  width: 90%;
+}
+
+.share_link {
+  float: left;
+  width: 90% !important;
+}
+		
+	.search_place, .map {
+    max-width: 100%;
+    margin: 0px;
+}
+
+}
+
+
+@media screen and (max-width:579px) {
+	
+	
+			
+.leftcolbar .bookingpanel .status .onesecl {font-size: 14px;}
+
+.leftcolbar .bookingpanel .status .onesecc { font-size: 14px;}
+		
+.leftcolbar .bookingpanel .status .onesecr { font-size: 14px;}	
+	
+
+	.nav-tabs2 > li {
+    border-left:none;
+	border-bottom: 2px solid rgb(95, 95, 95);
+    width: 100%;
+}
+	
+	
+	.uploader {
+    padding:0px;
+}
+	
+	
+}
+
+
+@media screen and (max-width:479px) {
+	
+	.leftcolbar .rooms_type {
+    float: left;
+    padding: 10px 0px;
+    width: 100%;
+}
+
+	
+	
+	.nav-tabs2 > li {
+    border-left:none;
+	border-bottom: 2px solid rgb(95, 95, 95);
+    width: 100%;
+}
+	
+	.leftcolbar .rooms_type .pix_text {
+    color: #2e2e2e;
+   
+    font-size: 16px;
+    padding-bottom: 5px;
+    padding-top: 2px;
+    text-align: center;
+}
+	
+		
+	.leftcolbar .bookingpanel .progress .value1 {
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
+    left: 1px;
+    position: absolute;
+    text-align: left;
+    top: 34px;
+    width: 40%;
+}
+
+.leftcolbar .bookingpanel .progress .value1 .fa-map-marker {
+    bottom: -27px;
+    color: #39b54a;
+    font-size: 44px;
+    left: -32px;
+    position: absolute;
+}
+.leftcolbar .bookingpanel .progress .value2 {
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
+    position: absolute;
+    text-align: center;
+    top: 30px;
+    width: 30%;
+}
+.leftcolbar .bookingpanel .progress .value2 .fa-map-marker {
+    bottom: -33px;
+    color: #F0AD4E;
+    font-size: 44px;
+    left: -23px;
+    position: absolute;
+}
+
+.leftcolbar .bookingpanel .progress .value3 .fa-map-marker {
+    bottom: -33px;
+    color: #d9534f;
+    font-size: 44px;
+    left: -10px;
+    position: absolute;
+}
+
+.leftcolbar .bookingpanel .progress .value4 .fa-map-marker {
+    color: #a9a9a9;
+    font-size: 44px;
+	.leftcolbar .bookingpanel .progress .value4 .fa-map-marker {
+    color: #a9a9a9;
+    font-size: 54px;
+}
+.leftcolbar .bookingpanel .progress .value4 {
+    color: #000000;
+    font-size: 54px;
+    font-weight: 700;
+    position: absolute;
+    right: -23px;
+    text-align: center;
+    top: 35px;
+}
+
+.leftcolbar .bookingpanel .progress .value4 {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 700;
+    position: absolute;
+    right: -23px;
+    text-align: center;
+    top: 28px;
+}
+
+
+.leftcolbar .bookingpanel .progress .value3 {
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
+    position: absolute;
+    text-align: center;
+    top: 30px;
+    width: 30%;
+}
+
+	
+	.carousel-indicators {
+	background:#000;
+	border:1px solid #fff;
+	width:20px;
+    top: 5%;
+    left: 10%;
+    list-style: outside none none;
+    margin-left: -8%;
+    padding-left: 0;
+    position: absolute;
+    text-align: center;
+    z-index: 16;
+	height:55px;
+}
+
+.carousel-indicators li {
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid #fff;
+    border-radius: 0px;
+    cursor: pointer;
+    display: inline-block;
+    height: 7px;
+	padding-bottom:0px;
+    margin: 1px;
+    text-indent: -999px;
+    width: 10px;
+	float:none;
+}
+
+.carousel-indicators .active {
+    background-color: #fff;
+    height: 7px;
+    margin: 0;
+    width: 10px;
+}
+
+.topbar_heading {
+    color: #424242;
+    font-size: 18px;
+    font-weight: lighter;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align:center;
+}
+
+.top_heading {
+    color: #414141;
+    font-family: "Khula",sans-serif;
+    font-size: 32px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+.search_place, .map {
+    max-width: 100%;
+    margin: 0px;
+}
+}
+

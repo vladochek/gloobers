@@ -1,0 +1,1 @@
+var placeSearch,autocomplete,marker,map,location_info,jq=jQuery.noConflict();jq(document).ready(function(){function e(){var e=new google.maps.places.Autocomplete(document.getElementById("edit-keys"),{types:[]});google.maps.event.addListener(e,"place_changed",function(){})}e()});

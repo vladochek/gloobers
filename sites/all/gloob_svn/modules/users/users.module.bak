@@ -1,0 +1,1215 @@
+<?php
+function users_menu() {
+	$items = array();
+	$items['user/register'] = array(
+	/* 'title' => 'Sign up', */
+	'page callback' => 'user_register',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);
+	$items['login'] = array(
+	/* 'title' => 'Sign in', */
+	'page callback' => 'user_custom_login',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);
+	$items['user/edit'] = array(
+		//'title' => "User Edit",
+		'page callback' => "user_edit_profile", 
+		'access callback' => true, 
+		'type' => MENU_NORMAL_ITEM, 
+		'weight' => '11', 
+	);
+/* $items['user/dashboard'] = array(
+	'title' => 'Dashbaord',
+	'page callback' => 'user_dashboard',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);  */
+	$items['privacy'] = array(
+	'title' => 'Privacy Policies',
+	'page callback' => 'privacy',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); 
+	$items['profile/view/%'] = array(
+	'title' => 'User Profile View',
+	'page callback' => 'user_profile_viewById',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); 
+	/* $items['user/profile'] = array(
+	'title' => 'Manage Profile',
+	'page callback' => 'user_profile',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);  */
+	$items['user/profile'] = array(
+	//'title' => 'Manage Profile',
+	'page callback' => 'user_profile_view',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);
+	$items['user/password'] = array(
+	//'title' => 'Manage Profile',
+	'page callback' => 'user_request_password',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);
+	$items['user/change-password'] = array(
+	  'title' => t('Change password'),
+	  'description' => t('You can change your password here.'),
+	  'page callback' => 'change_password',
+	  'access arguments' => array('access content'),
+	);
+	
+	$items['invite'] = array(
+	'page callback' => 'invite_people',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); 
+	
+	$items['send/invitation'] = array(
+	'page callback' => 'send_invitation',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); 
+	
+	/* $items['user/profile/upload'] = array(
+	'page callback' => 'user_profile_upload',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);  */
+
+	/* $items['user/profile/crop'] = array(
+	'page callback' => 'user_profile_crop',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); */
+    $items['user/update/picture'] = array(
+	'page callback' => 'user_update_picture',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	);	
+	$items['myprofile'] = array(
+	'page callback' => 'my_profile',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); 
+	$items['mypasttrips'] = array(
+	'page callback' => 'my_past_trips',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); 
+	$items['ajax/login']= array(
+	'page callback' => 'ajaxlogin',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+	);
+	$items['ajax/register']= array(
+	'page callback' => 'ajax_register',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+	);
+/***************17March**************/
+	$items['passionviews']= array(
+	'page callback' => 'passionView',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+	);
+	/****************18march_2015**********/
+	$items['dashboard'] = array(
+	'title' => 'Dashbaord',
+	'page callback' => 'user_dashboard',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	); 
+	
+	return $items;
+}
+function user_register() {
+  $user_register_form = drupal_get_form('user_register_form');
+  return theme( 'user_register', array( 'user_register_form' => $user_register_form ) );
+}
+
+
+/************alter table after insert,update and Delete**********/
+
+function users_user_insert(&$edit, $account, $category) {
+/***************************************************************/
+if(isset($_REQUEST["invitedBy"]) && $_REQUEST["invitedBy"] != ""){
+		$userID = base64_decode($_REQUEST["invitedBy"]);
+		
+		$query = db_update("users")
+				 ->fields(array('invited_by'=>$userID))
+				->condition('uid',$account->uid);
+		$result = $query->execute();
+	}
+/***************************************************************/
+
+ $type = "";
+$types = array();
+/* foreach($account->field_account_type['und'] as $key=>$value){
+	$types[$key] = $value['value'];
+} */
+
+//$type=$types[0];
+
+
+
+/***************************************************************/
+$result = db_insert('gbl_users_meta')->fields(array('uid'=>$account->uid,'name'=>$account->name,'first_name'=>$account->field_first_name['und'][0]['value'],
+						    'last_name'=>$account->field_last_name['und'][0]['value'],'mail'=>$account->mail,'created'=>time()
+							)					   
+						   )                 
+                           ->execute();
+	
+}
+function users_user_update(&$edit, $account, $category) {
+
+$country=$state=$city=$role=$type = $about_yourself="";
+$types = array();
+$fid=0;
+foreach($account->field_account_type['und'] as $key=>$value){
+	$types[$key] = $value['value'];
+}
+
+$type=$types[0];
+/* echo "<pre>";
+print_r($account);
+die; */
+/* if(!empty($account->roles))
+{	
+	$key = array_keys($account->roles);
+	$role=$key[0];
+
+} */
+
+ if(!empty($account->field_city))
+{
+$city=$account->field_city['und'][0]['value'];
+}
+if(!empty($account->field_state))
+{
+$state=$account->field_state['und'][0]['value'];
+}
+if(!empty($account->field_country))
+{
+$country=$account->field_country['und'][0]['value'];
+}
+if(!empty($account->field_about_yourself))
+{
+$about_yourself=$account->field_about_yourself['und'][0]['value'];
+}
+
+
+$result = db_update('gbl_users_meta')
+                           ->fields(array('name'=>$account->name,'first_name'=>$account->field_first_name['und']['0']['value'],
+						    'last_name'=>$account->field_last_name['und'][0]['value'],'mail'=>$account->mail,
+							'city'=>$city,'state'=>$state,'country'=>$country,'about_yourself'=>$about_yourself,
+							'user_type'=>$type,'modified'=>time(),/* 'role'=>$role */
+							)  		   
+						   )
+                           ->condition('uid', $account->uid,'=')
+                           ->execute();
+		
+						   
+	if(($account->picture) == 0)
+	{
+	$fid=$account->original->picture->fid;
+	}
+	else
+	{
+	$fid=$account->picture;
+	}
+
+if(empty($fid))
+{
+$fid=0;
+}				   
+$result1 = db_update('users')
+	->fields(array('picture'=>$fid))
+	->condition('uid', $account->uid,'=')
+	->execute();
+}
+ function users_user_delete($account) {
+  db_delete('gbl_users_meta')->condition('uid', $account->uid)->execute();
+ } 
+
+function user_custom_login() {
+	
+	global $user,$base_url;
+	if($user->uid){
+		if(isset($_SESSION['destination'])){
+			if(strpos($_SESSION['destination'],'search')>-1){
+				$des = $base_url.'/experience';
+			}
+			else{
+				$des = $_SESSION['destination'];
+			}
+			unset($_SESSION['destination']);
+			drupal_goto($des);
+		}
+		else{
+             drupal_goto($base_url);  			  
+			//$_GET['destination'] = '';
+		}
+	}
+	else{
+		return theme( 'user_login');
+	}
+}
+
+function users_theme() {
+  $module_path = drupal_get_path('module', 'users');
+
+   return array(
+    'user_register' => array(
+      'template' => 'user_register',
+      'path' => $module_path.'/templates',
+    ),
+    'user_login' => array(
+      'template' => 'user_login',
+      'path' => $module_path.'/templates',
+    ),
+    'user_dashboard' => array(
+      'template' => 'user_dashboard',
+      'path' => $module_path.'/templates',
+    ),
+    'user_profile' => array(
+      'template' => 'profile',
+      'path' => $module_path.'/templates',
+    ),
+    'invite_people' => array(
+      'template' => 'invite_people',
+      'path' => $module_path.'/templates',
+    ),
+	'user_profile_view' => array(
+      'template' => 'user_profile_view',
+      'path' => $module_path.'/templates',
+    ),
+	'privacy' => array(
+      'template' => 'privacy',
+      'path' => $module_path.'/templates',
+    ),
+	
+   'user_edit' => array(
+	  'path' => drupal_get_path('module', 'users').'/templates',
+	  'template' => 'user_edit',
+	  'render element' => 'form'
+	),
+   'user_password' => array(
+	  'path' => drupal_get_path('module', 'users').'/templates',
+	  'template' => 'user_password',
+	  'render element' => 'form'
+	),
+	'user_profile_viewById' => array(
+      'template' => 'user_profile_viewById',
+      'path' => $module_path.'/templates',
+    ),
+	'my_profile' => array(
+      'template' => 'my_profile',
+      'path' => $module_path.'/templates',
+    ),
+	'my_past_trips' => array(
+      'template' => 'my_past_trips',
+      'path' => $module_path.'/templates',
+    ),
+	'user_passion' => array(
+      'template' => 'user_passion',
+      'path' => $module_path.'/templates',
+    ),
+  );
+}
+
+
+function user_dashboard(){
+	global $user;
+	$userId=$user->uid;
+	
+	unset($_SESSION['destination']);
+	$changePassForm = users_render_user_pass_change_form();
+	$userListing=getuserlistdata();
+	
+	$OverviewData=getOverviewData($userListing['eid']);
+	$userpassion = getUserPassionList($userId);
+	$data=array('userpassions'=>$userpassion,
+				'changePassForm'=>$changePassForm,
+				'userListing'=>$userListing
+			);
+	return theme( 'user_dashboard',$data);
+}
+
+function user_profile(){
+	return theme( 'user_profile');
+}
+
+ function users_render_user_pass_change_form() {
+
+    global $user;
+
+    if (!user_is_logged_in()) {
+        drupal_access_denied();
+    }
+
+    module_load_include('inc', 'user', 'user.pages');
+    $form = drupal_get_form('user_profile_form', $user);
+
+    $request_new = l(t('Request new password'), 'user/password', array('attributes' => array('title' => t('Request new password via e-mail.'))));
+    $current_pass_description = t('Enter your current password to change the %pass. !request_new.', array('%pass' => t('Password'), '!request_new' => $request_new));
+
+    $form['account']['current_pass']['#description'] = $current_pass_description;    
+
+    unset(
+      $form['account']['name'],
+      $form['account']['mail'],
+      $form['account']['status'],
+      $form['account']['roles'],
+      $form['field_acconut_type'],
+      $form['field_city'],
+      $form['field_u_s_state'],
+      $form['field_zipcode'],
+      $form['field_country'],
+      $form['locale'],
+      $form['l10n_client'],
+      $form['picture'],
+      $form['overlay_control'],
+      $form['contact'],
+      $form['timezone'],
+      $form['ckeditor'],
+      $form['metatags'],
+      $form['redirect']
+      );
+
+    return $form;
+}
+
+
+function users_user_login(&$edit, $account){
+global $user;	
+// Don't redirect on password reset.
+  $current_menu_item = menu_get_item();
+  if ($current_menu_item['path'] == 'user/reset/%/%/%') {
+    return;
+  }
+
+	
+	$userDetails = user_load($user->uid);
+	
+
+	if($userDetails->access == 0){
+	
+		$query=db_insert('gbl_reward_points')
+		  ->fields(array('uid'=>$user->uid,
+						'travel_credits'=>10
+			));	 
+		$result=$query->execute();
+
+		$query=db_select('users','u')
+		  ->fields('u',array('invited_by'))
+		  ->condition('uid',$user->uid);
+		$result=$query->execute();
+		$data = $result->fetchAssoc();
+		if($data["invited_by"]){
+			$query=db_insert('gbl_reward_points')
+			  ->fields(array('uid'=>$data["invited_by"],
+							'travel_credits'=>10
+				));	 
+			$result=$query->execute();			
+		}
+		
+	}
+	if(isset($_SESSION['destination'])){
+		$_GET['destination'] = $_SESSION['destination'];
+		unset($_SESSION['destination']);
+	}
+	else{
+		$_GET['destination'] = '';
+	}
+}
+
+ 
+function users_form_alter(&$form, &$form_state, $form_id) {
+global $user;
+/**********************************************/
+ /* if ($form_id == 'user_login_block' || $form_id == 'user_login') {
+    $options = array('query' => array('destination' => 'user/dashboard'), 'external' => FALSE);
+    $form['#action'] = url(current_path(), $options);
+
+	//echo $form['#action'];die;
+	//unset($form['#action']);
+  } */
+ /******************************/
+$zipcode=$country=$city=$usState=$accountType="";
+ if($form_id == 'user_profile_form') {	        
+            $userData = user_load($user->uid);
+		 	/*   echo "<pre>";
+			print_r($userData);
+			echo"hr";
+			print_r($form);
+			die;  */ 
+			
+          
+if(!empty($userData->field_about_yourself))
+{
+$about_yourself=$userData->field_about_yourself['und'][0]['value'];
+}
+if(!empty($userData->field_city))
+{
+$city=$userData->field_city['und'][0]['value'];
+}
+if(!empty($userData->field_state))
+{
+$state=$userData->field_state['und'][0]['value'];
+}
+
+if($userData->field_country)
+{
+$country=$userData->field_country['und'][0]['iso2'];
+}
+
+if(isset($userData->field_acconut_type))
+{
+$accountType=$userData->field_acconut_type['und'][0]['value'];
+}
+
+			$form['field_acconut_type']['und']['#default_value'] = $accountType;
+			$form['field_country']['und']['#default_value'] = $country;
+			//$form['field_about_yourself']['und'][0]['value']['#default_value'] = $about_yourself;
+			$form['field_city']['und'][0]['value']['#default_value'] = $city;
+			//$form['field_state']['und'][0]['value']['#default_value'] = $state;
+			//$form['field_first_name']['und'][0]['value']['#default_value']=$userData->field_first_name['und'][0]['value'];
+			//$form['field_last_name']['und'][0]['value']['#default_value']=$userData->field_last_name['und'][0]['value'];				  		
+    }
+	/**************Remove description of fields from user register form**************************************/
+  if($form['#form_id'] == 'user_register_form') {
+	  /******************************/
+	
+/****************************************************/	
+     
+	   unset($form['account']['name']['#description']);
+       unset($form['account']['mail']['#description']);
+       unset($form['account']['pass']['#description']);
+	   $form['actions']['submit']['#value']=t('Sign up');
+  }
+  //|| $form_id == 'user_profile_form'
+}  
+
+
+/* functions to send emails */
+function sendNotificationEmail($module,$key,$to_email,$subject,$title,$body=NULL){
+
+	$messageTitle		=	'<h3 style="font-weight:500;font-size:20px">'.$title.'</h3><br />';
+	$messageHtml		=	'<div>'.$messageTitle.$body.'</div>';	
+	$params				=	array();
+	//send this in email
+	$message			=	drupal_mail($module,$key, $to_email, language_default(),$params, NULL, FALSE);
+	$message['subject'] = $subject;
+    $message['body'] 	= array();
+    $message['body'][] 	= $messageHtml;
+	$message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
+	$system 			= 	drupal_mail_system($module, $key);
+	$message = $system->format($message);
+	if($system->mail($message))
+	{
+		return true;
+	}
+	else{
+		return FALSE;
+	}
+}
+
+function send_invitation(){
+
+	global $user,$base_url;
+	
+	$query=db_insert('gbl_invited_users')
+	  ->fields(array('invited_by'=>$user->uid,
+					'invited_to_email'=>"product_subscription_data",
+					'invited_date'=>time()
+		));	 
+	$result=$query->execute();
+
+	$title	=	'Hello,<br/>';
+	$body			=	ucfirst($user->name).' has invited you to join Gloobers.<br/>
+						 If you are interested follow the below link to join<br/> 
+						   <a href="'.$base_url.'/user/register">Join Gloobers </a><br/>Thanks<br/>Gloobers Team';
+	$module			=	'users';
+	$key			=	'invitation_to_outside_user_to_join_gloobers';
+	$to_email 		= 	'testing.testing139@gmail.com';
+	$subject		=	'Invitation to join Gloobers';		
+	if(sendNotificationEmail($module,$key,$to_email,$subject,$title,$body)){
+		echo "Invitation sent"; die;
+	}
+	else{
+		echo "Error in sending invitation"; die;
+	}
+			
+}
+
+function invite_people(){
+	$invitationForm = drupal_get_form('invite_people_form');
+	return theme( 'invite_people',array('invitationForm'=>$invitationForm));
+}
+
+function invite_people_form($form, &$form_state){
+
+ $form['emails'] = array(
+    '#type' => 'textfield',
+    //'#title' => t("Add friend's email addresses"),
+	'#description' => t('Seperate multiple emails with commas'),
+    '#default_value' => isset($form_state["values"]['emails']) ?$form_state["values"]['emails']: '',
+	  '#attributes' => array(
+		'class' => array('form-control'),
+		'placeholder' => "Add friend's email addresses"
+	  ),
+	//'#required' => TRUE
+  ); 
+
+  $form['send'] = array(
+    '#type' => 'submit',
+    '#value' => t('Send'),
+	  '#attributes' => array(
+		'class' => array('btn-sign'),
+	  ),	
+  );
+  
+  return $form;
+}
+
+function invite_people_form_submit($form, &$form_state){
+	global $user,$base_url;
+	
+	$emails = $form_state["values"]["emails"];
+	$emails = explode(",",$emails);
+	$invitedEmails = array();
+	foreach($emails as $key=>$value){
+	
+		$query=db_select('gbl_invited_users','i')
+		  ->fields('i')
+		  ->condition('invited_by',$user->uid)
+		  ->condition('invited_to_email',$value,'like');
+		$result=$query->execute();
+		if(!$result->rowCount()){
+			$query=db_insert('gbl_invited_users')
+			  ->fields(array('invited_by'=>$user->uid,
+							'invited_to_email'=>$value,
+							'invited_date'=>time()
+				));	 
+			$result=$query->execute();
+			
+			$userDetails = user_load($user->uid);
+			
+			$uID = $user->uid;
+			$hash = base64_encode($uID);  
+
+			$title	=	'Invited By '.$userDetails->name.'<br/>';
+			$body			= 	'        <tr style="padding-bottom:40px; ">
+        	<td style="text-align:center;">
+            	<p style="float:left; text-align:left; font-size:14px; padding:5px 152px; color:#606060; font-weight:normal; font-family:Verdana, Geneva, sans-serif;">You Have Been Invited To Join Gloobers Account</p> </td>
+			</tr>
+			 <tr align="center" style="padding-top:40px;">
+        	<td style="text-align:center; ">
+            	<a style="display:inline-block; margin-top:20px; color:#dd4f36; text-decoration:underline; font-size:14px; font-weight:600; " href="#">What is Gloobers?</a>
+            </td>
+        </tr>
+        <tr>
+        	<td style="padding:40px 0; text-align:center;">
+            	 <span style="float:left; width:80%; margin:0px 10%; text-align:center; "><img style="max-width:100%;" src="http://dev.gloobers.com/sites/default/files/border.png" alt="border" /></span>
+                 
+            </td>
+        </tr>
+        <tr style="padding-bottom:40px; ">
+        	<td style="text-align:center;">
+            	<p style="float:left; text-align:left; font-size:14px; padding:5px 20px; color:#606060; font-weight:normal; font-family:Verdana, Geneva, sans-serif;">Already use Gloobers?You\'ll be able to use same login to join gloobers account.Or,you can create a new login to join this account.</p> 
+<table width="40%" align="center" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td style="background:#06c6ed; color:#fff; padding:15px 10px; cursor:pointer; text-align:center;"><a style="color:#fff; text-decoration:none; font-weight:bold; display:block; text-align:center;" href="'.$base_url.'/login?invitedBy='.$hash.'">JOIN GLOOBERS</a></td>
+  </tr>
+</tbody></table>
+                
+            </td>
+       </tr>
+       <tr>
+        	<td style="text-align:center;">
+            	<span style="float:left; width:80%; margin:0px 10%; margin-top:20px;"><img style="max-width:100%;" src="http://dev.gloobers.com/sites/default/files/border.png" alt="border" /></span>
+               
+            </td>
+        </tr>';
+			$module			=	'users';
+			$key			=	'invitation_to_outside_user_to_join_gloobers';
+			$to_email 		= 	$value;
+			$subject		=	'Invitation to join Gloobers';		
+			sendNotificationEmail($module,$key,$to_email,$subject,$title,$body);
+		}
+		else{
+			$invitedEmails[] = $value;
+		}
+	}
+	if(count($invitedEmails)>0){
+		drupal_set_message('You have already invited few of your friends.');
+	}
+	else{
+		drupal_set_message('You have successfully invited your friends.');
+	}
+}
+/************************************************************************************************/
+function user_profile_view()
+{
+$messages=getMessageList();
+$messageCount=getNewMessageListCount();
+return theme('user_profile_view',array('messages'=>$messages,'messageCount'=>$messageCount));
+}
+
+function getMessageList()
+{
+global $user;
+$message=array();
+$query=db_select('pm_message','pm');
+$query->join('pm_index', 'pi', 'pm.mid = pi.mid');
+$query->fields('pm')
+      ->fields('pi');
+$query->condition('pi.recipient',$user->uid,'=')
+       ->condition('pi.deleted',0,'=')
+	   ->condition('author',$user->uid,'!=');
+/* $query->addExpression('MIN(timestamp)'); */	
+$query->orderBy('timestamp','DESC');
+$query->groupBy('thread_id'); 
+$result=$query->execute();
+while($data=$result->fetchAssoc())
+{
+$message[]=$data;
+}	   
+	return $message;  
+}
+function getNewMessageListCount()
+{
+global $user;
+$message=array();
+$query=db_select('pm_message','pm');
+$query->join('pm_index', 'pi', 'pm.mid = pi.mid');
+$query->fields('pm')
+      ->fields('pi');
+$query->condition('pi.recipient',$user->uid,'=')
+       ->condition('pi.deleted',0,'=') 
+       ->condition('is_new',1,'=')  
+	   ->condition('author',$user->uid,'!=');
+//$query->groupBy('thread_id'); 
+$result=$query->execute();   
+return $result->rowCount();  
+}
+
+function privacy()
+{
+return theme('privacy');
+}
+
+function user_edit_profile(){
+	global $user;
+
+	return theme('user_edit');
+}
+
+function user_request_password(){
+	global $user;
+
+	return theme('user_password');
+}
+function pager_array_splice($data, $limit = 9, $element = 0) {
+  global $pager_page_array, $pager_total, $pager_total_items;
+  $page = isset($_GET['page']) ? $_GET['page'] : '';
+
+  // Convert comma-separated $page to an array, used by other functions.
+  $pager_page_array = explode(',', $page);
+
+  // We calculate the total of pages as ceil(items / limit).
+  $pager_total_items[$element] = count($data);
+  $pager_total[$element] = ceil($pager_total_items[$element] / $limit);
+  $pager_page_array[$element] = max(0, min((int)$pager_page_array[$element], ((int)$pager_total[$element]) - 1));
+  return array_slice($data, $pager_page_array[$element] * $limit, $limit, TRUE);
+}
+
+function users_form_user_pass_alter(&$form,&$form_state){
+	$form['#submit'][] = 'users_user_pass_submit';
+}
+function users_user_pass_submit(&$form,&$form_state){
+global $language;
+  $account = $form_state['values']['account'];
+ $mail = _user_mail_notify('password_reset', $account, $language);
+  if (!empty($mail)) {
+    watchdog('user', 'Password reset instructions mailed to %name at %email.', array('%name' => $account->name, '%email' => $account->mail));
+    //drupal_set_message(t('Your password has been reset.Check your Email for further Instructions.'));
+  }
+	$form_state['redirect'] = 'login';
+	return;
+}
+/*********************************************************************************/
+function user_profile_viewById()
+{
+$userId=arg(2);
+$userDetails=getUserDetails($userId);
+$userPassions=getUserPassionList($userId);
+$pastTrips=getPastTrips($userId);
+$listings=getAllListingByuser($userId);
+return theme('user_profile_viewById',array('userDetails'=>$userDetails,'userPassions'=>$userPassions,'pastTrips'=>$pastTrips,'listings'=>$listings));
+}
+/***********************************************************************************/
+function getUserDetails($userId)
+{
+$query=db_select('gbl_users_meta','gum')
+       ->fields('gum')
+	   ->condition('uid',$userId);
+$result=$query->execute();
+return $result->fetchAssoc();	   
+	   
+}
+/***********************Added for jcrop on 9 dec******************************************************/
+function users_pics_form($form, &$form_state) {
+  
+  // Attach User Picture upload
+	$form['profile_picture'] = array(
+	'file_managed_container' => array(
+		//'#prefix' => "<div class='coloum'>",
+		//'#suffix' => '</div>',
+		'file_managed_element' => array(
+			'#type' => 'managed_file',
+			'#title' => t('Profile picture'),
+			'#description' => t('Allowed extensions: png,jpg,jpeg'),
+			'#default_value' => (isset($foo->picture->fid) ? $foo->picture->fid : ''),
+			'#upload_location' => 'public://users/pictures',
+			'#upload_validators' => array(
+			'file_validate_extensions' => array('png jpg jpeg'),
+			// Pass the maximum file size in bytes
+			// 'file_validate_size' => array(MAX_FILE_SIZE*1024*1024),
+			),
+		),
+	),
+	);
+
+  $form['submit'] = array('#type' => 'submit','#value' => t('Submit'));
+
+  return $form;
+}
+function users_pics_form_submit($form, &$form_state) { 
+	global $user;
+	if($form_state["values"]["file_managed_element"]){
+		$result = db_update('users')
+			->fields(array('picture'=>$form_state["values"]["file_managed_element"]))
+			->condition('uid', $user->uid,'=')
+			->execute();
+		if ($result){
+			drupal_set_message(t('Profile picture uploaded successfully.'));
+		}
+	}
+
+}
+function user_update_picture(){
+	$random = rand();
+
+	$dataUrl = $_POST['dataURL'];
+	/**********************************************/
+	//remove base_path() on live
+$output_filename = $_SERVER["DOCUMENT_ROOT"].base_path()."sites/default/files/users/pictures/croppeduserImg_".$random;
+
+$what = getimagesize($dataUrl);
+$fileSize = $what['bits'];
+//$size=$what['bits']/8;
+switch(strtolower($what['mime']))
+{
+    case 'image/png':
+       
+		$type = '.png';
+        break;
+    case 'image/jpeg':
+       
+		$type = '.jpeg';
+        break;
+    case 'image/jpg':
+       
+		$type = '.jpeg';
+        break;
+    case 'image/gif':
+        
+		$type = '.gif';
+        break;
+    default: die('0');
+}
+
+	$image = explode('base64,',$dataUrl); 
+	$decodedData = base64_decode($image[1]);
+$fp = fopen($output_filename.$type, 'w');
+$resultset = fwrite($fp, $decodedData);
+fclose();
+$viewPath = $base_url."/sites/default/files/users/pictures/croppeduserImg_".$random;
+$uri = "public://users/pictures/croppeduserImg_".$random.$type;
+
+/*****************************************************************/
+	global $user; 
+	if(!$resultset)
+	{
+		die('file writing failed');
+	}
+	else{
+		$account = user_load($user->uid);
+		
+		if($account->picture->fid){
+		 /********************************************************/
+		 $file = file_load($account->picture->fid);
+		 $path = $file->uri;
+		 $url=drupal_realpath($path);
+		 unlink($url);
+		 /**********************************************************/
+		 
+		$query=db_delete('file_managed')->condition('fid',$account->picture->fid,'=')->execute();
+		}
+		
+		$query = db_insert("file_managed")
+					 ->fields(array('uid'=>$user->uid,'filename'=>"croppeduserImg_".$random,'uri'=>$uri,'filemime'=>$what['mime'],'filesize'=>$fileSize,'status'=>1,'timestamp'=>time()));
+			$result = $query->execute();	
+			
+			$query = db_update("users")
+					 ->fields(array('picture'=>$result))
+					 ->condition('uid',$user->uid);
+			$result = $query->execute();
+			echo $result; exit;
+		
+	}
+}
+/*********************************************************************************************************/
+function my_profile()
+{
+$descriptionForm=drupal_get_form('user_description_form');
+$passionForm=drupal_get_form('user_passion_form');
+return theme('my_profile',array('descriptionForm'=>$descriptionForm,'passionForm'=>$passionForm));
+}
+function getPassionList()
+{
+$passion=array();
+$query=db_select('gbl_passions','gp')
+       ->fields('gp');
+$result =$query->execute();
+while($data=$result->fetchAssoc())
+{
+$passion[]=$data;
+} 
+return $passion;  
+}
+function user_description_form($form,&$form_state)
+{
+global $user;
+$userData=getUserDetails($user->uid);
+
+$form = array();
+$form['about_yourself'] = array(
+	'#type' => 'textarea',
+	'#title'=>t('About Yourself'),
+	'#size' => '30',
+    '#default_value'=>($userData['about_yourself'])?$userData['about_yourself']:'',
+	'#required'=>true
+	
+	);
+	$form['save'] = array(
+	'#type' => 'submit',
+	'#attributes' => array('class'=>array('btn-bg')),
+	'#value' => 'save'
+	);
+
+	return $form;
+}
+function user_description_form_submit($form,&$form_state)
+{
+global $user;
+$query=db_update('gbl_users_meta')
+       ->fields(array('about_yourself'=>$form_state['values']['about_yourself']))
+	   ->condition('uid',$user->uid); 
+$result=$query->execute();
+if($result)
+{
+drupal_set_message('Description Data Saved Successfully');
+}	   
+
+}
+function user_passion_form($form,&$form_state)
+{
+global $user;
+$form = array();
+$passions=getPassionList();
+$userPassions=getUserPassionList($user->uid);
+foreach($userPassions as $uPassion)
+{
+$up[]=$uPassion['pid'];
+}
+$form['passion']['title']=array(
+'#prefix'=>'<div class="passions"><h2>Choose Your Passions</h2>'
+);
+foreach($passions as $passion)
+{
+
+if($passion['fid'])
+	{
+	$file = file_load($passion['fid']);
+	$imgsrc='<img src="'.file_create_url($file->uri).'" alt="passion logo" width="50px">';
+	}
+	else
+	{
+	$imgsrc='<img src="" alt="No passion logo">';
+	}
+$form['passion'][$passion['pid']] = array(
+'#type' => 'checkbox',
+'#value'=>(in_array($passion['pid'],$up))?1:0,
+'#title'=>$imgsrc.$passion['passion'],
+//'#options'=>array($passion['pid']=>$imgsrc.$passion['passion']),
+'#name' => $passion['pid'],
+
+);
+}
+if($userPassions)
+{
+$form['submit'] = array(
+'#type' => 'submit',
+'#value' => t('Update'),
+);
+}
+else
+{
+$form['submit'] = array(
+'#type' => 'submit',
+'#value' => t('Save'),
+);
+$form['passion']['titleEnd']=array(
+'#suffix'=>'</div>'
+);
+}
+return $form;
+}
+function user_passion_form_submit($form,&$form_state)
+{
+global $user;
+if($form_state["values"]["op"]=="Update")
+{
+$query=db_delete('gbl_users_passions')
+          ->condition('uid',$user->uid,'=')
+          ->execute();
+/*****************************************/
+foreach($_REQUEST as $key=>$value)
+	{
+		if (is_numeric($key))
+		{
+		$query=db_insert('gbl_users_passions');
+		$query->fields(array('uid'=>$user->uid,'pid'=>$key));
+		$result=$query->execute();			
+		}
+	}
+	  drupal_set_message('Passion data updated successfully');
+/****************************************************************/
+
+}
+else
+{
+	foreach($_REQUEST as $key=>$value)
+	{
+		if (is_numeric($key))
+		{
+		$query=db_insert('gbl_users_passions');
+		$query->fields(array('uid'=>$user->uid,'pid'=>$key));
+		$result=$query->execute();			
+		}
+		
+	}
+	  drupal_set_message('Passion data saved successfully');
+}	  
+}
+function getUserPassionList($userId=null)
+{
+$passion=array();
+$query=db_select('gbl_users_passions','gup');
+$query->join('gbl_passions', 'gp','gp.pid = gup.pid');
+$query->fields('gup',array('pid'));
+$query->fields('gp',array('passion','fid','fid_thumb'))
+       ->condition('uid',$userId);
+$result=$query->execute();
+while($data=$result->fetchAssoc())
+{
+$passion[]=$data;
+}   
+return $passion;       
+}
+function my_past_trips()
+{
+global $user;
+$bookings=getPastTrips($user->uid);
+$bookingsCount=getPastTripsCount($user->uid);
+$reviewForm=drupal_get_form('listing_review_form');
+$output = '';
+$bookings = pager_array_splice($bookings, 10);
+$output .= theme('pager', array('quantity' => 10));
+return theme('my_past_trips',array('bookings'=>$bookings,'bookingsCount'=>$bookingsCount,'pagination'=>$output,'reviewForm'=>$reviewForm));
+}
+//all trips whose arrival date is crossed and status is booked or complete
+function getPastTrips($userId)
+{
+$bookings=array();
+$query=db_select('gbl_experience_list','gel');
+$query->join('gbl_booking', 'gb', 'gb.lid = gel.eid');
+$query->fields('gel',array('title','list_type','city','state','zipcode','country','address1','address2','short_description'));
+$query->fields('gb');
+$query ->where("gb.arrive_at_date < now()");
+$query->condition('gb.uid',$userId,'=');
+$query->condition(db_or()->condition('gb.booking_status','refund_request','!=')->condition('gb.booking_status','refunded','!='));
+$query->orderBy('gb.created','DESC');
+$result=$query->execute();
+while($data=$result->fetchAssoc())
+{
+$bookings[]=$data;
+}
+return $bookings;
+}
+function getPastTripsCount($userId)
+{
+$query=db_select('gbl_experience_list','gel');
+$query->join('gbl_booking', 'gb', 'gb.lid = gel.eid');
+$query->fields('gel',array('title','list_type','city','state','zipcode','country','address1','address2'));
+$query->fields('gb');
+$query ->where("gb.arrive_at_date < now()");
+$query->condition('gb.uid',$userId,'=');
+$query->condition(db_or()->condition('gb.booking_status','refund_request','!=')->condition('gb.booking_status','refunded','!='));
+$query->orderBy('gb.created','DESC');
+$result=$query->execute();
+return $result->rowCount();
+}
+function getNotificationsCount()
+{
+global $user;
+$query=db_select('gbl_notifications','uc');
+	$query->fields('uc')
+			->condition('recipient_id',$user->uid)
+			->condition('read_status',0);
+	$result = $query->execute();
+	$noti_count = $result->rowCount();
+	return $noti_count;
+}
+function getNotifications($range=null)
+{
+$data=array();
+global $user;
+$query=db_select('gbl_notifications','uc');
+	$query->fields('uc')
+			->condition('recipient_id',$user->uid)
+			->condition('read_status',0)
+			->orderBy('nid','DESC');
+	if($range)
+    {	
+    $query->range(0,$range);
+	}
+	$result = $query->execute();
+	while($record = $result->fetchAssoc()) {
+	$data[]=$result;
+	}
+	return $data;
+}
+function users_user_logout()
+{
+	drupal_set_message(t('Thanks for visiting, come again!'));
+    session_destroy();
+    drupal_goto();
+}
+/*****Login user through ajax************************/
+function ajaxlogin($user=null,$pass=null)
+{
+	$response=array();
+	$email=trim(check_plain($_POST['user']));
+	$userDetail=user_load_by_mail($email);
+	if(empty($userDetail))
+	{
+	 $response['failure']='ERR_email';
+   	 echo json_encode($response);
+	 die;
+	}
+	$username=$userDetail->name;
+	$password =trim(check_plain($_POST['pass']));	
+	 if ($uid = user_authenticate($username, $password)) {
+      global $user;
+      $user = user_load($uid);
+      $login_array = array ('name' => $username);
+      user_login_finalize($login_array);
+	  $response['success']='1';
+	  echo json_encode($response);
+	  die;
+    }
+  else 
+  {
+	 $response['failure']='0';
+   	 echo json_encode($response);
+	 die;
+  }	
+}
+/*****************************Disable password strenther in user register form*****************************/
+function users_form_user_register_form_alter(&$form, &$form_state) {
+  $form['#attached']['js'][] = drupal_get_path('module', 'users') . '/js/pass_strength_disable.js';
+  }
+/**********************************************************************************/
+function ajax_register($email=null,$pass=null)
+{ 
+	$email=trim(check_plain($_POST['email']));
+	$pass=trim(check_plain($_POST['pass']));	
+	//check with email user already register
+	$user_Details=user_load_by_mail($email);	
+	if($user_Details)
+	{
+	//user already exist	
+	$response['failure']='Err_already_exist';
+	echo json_encode($response);
+	die;
+	}
+    else 
+	{	
+	//generate unique username	
+		$userName=explode("@",$email);
+		$user_unique=$userName[0];
+		//If already username  Exist		
+		   $isUserExists = false;
+		   do{
+			   $user_unique = $user_unique.rand(0,9999);
+			   $loadUserByName=user_load_by_name($user_unique);
+			   if($loadUserByName)
+			   {						
+				  $isUserExists = true; 
+			   }
+			   else{				   
+				   $isUserExists = false;
+			   }
+		   }while($isUserExists);
+		   //save user in database;  
+		if($user_unique)
+		{ 		
+		  $fields = array(
+				'name' => $user_unique,
+				'mail' => $email,
+				'pass' => $pass,
+				'status' => 1,
+				'init' => $email,
+				'roles' => array(
+				  DRUPAL_AUTHENTICATED_RID => 'authenticated user',
+				),
+			);
+		$account = user_save('', $fields);
+		$account->password = $fields['pass'];
+		drupal_mail('users', 'register_no_approval_required', $email, NULL, array('account' => $account), variable_get('site_mail'),TRUE);
+			 if($account)
+			 {
+				 /****************Login user after register**************************************/ 
+				  if ($uid = user_authenticate($user_unique, $pass)) {
+					  $form_state['uid'] = $uid; 
+                       user_login_submit(array(), $form_state);
+					  $response['success']='1';
+   	                  echo json_encode($response);			  
+					  die;
+					  
+					}
+					
+				 /******************************************************/ 
+				
+			 }
+		}
+  	}
+}	

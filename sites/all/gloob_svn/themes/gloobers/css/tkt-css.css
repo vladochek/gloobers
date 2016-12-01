@@ -1,0 +1,38 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{line-height:normal; margin:0; padding:0; text-decoration:none; outline:none; border:0; list-style:none; box-sizing:border-box;}
+img{max-width:100%; border:0;}
+body {font-family: 'Lato', sans-serif;}
+.dr-tkt-outer {width:1600px; margin:0 auto;padding:20px;border:1px solid #000;float:left;}
+
+.dr-tkt-outer .tkt-info-col {float:left; width:65%; padding:0px; border-right:3px dashed #222; background-size:100% 100%; min-height:385px; position:relative;}
+.tkt-header {float:left; width:100%; padding-top:10px;}
+.tkt-header a.brand-icon {float:left; max-width:180px; width:100%;  margin-left: 10px;}
+.tkt-header .tkt-number {float:right;}
+.tkt-header .tkt-number p {float:left; padding:0px 10px ; letter-spacing:10px; color:#fff; margin-top:10px; font-size:25px;}
+.gen-tkt-info {float:right; padding:10px; margin-top:20px;}
+.gen-tkt-info p {color:#fff; float:right; clear:both; font-size:25px; font-weight:300; margin-bottom:10px;}
+.travel-term {float:right; padding-top:10px; width:100%; }
+.travel-term p {float:right; color:#fff; font-weight:300;}
+.travel-term p span {padding-top:20px; font-size:16px; display:inline-block; padding-right:10px;} 
+.tkt-manuals {float:left; width:100%; background:#111; background:rgba(0,0,0, 0.7); left: 0;position: absolute; bottom:0;}
+.tkt-manuals .col-left-info { float:left; width:60%;}
+.tkt-manuals .col-left-info p {padding:10px; color:#fff; font-size:17px; font-weight:300;}
+.tkt-manuals .col-right-info {float:right; width:40%; text-align:right; margin-top:20px; padding-right:10px;}
+.tkt-manuals .col-right-info img {max-width:80%;}
+
+.dr-user-col {float:left; width:35%; background:#fff; position:relative; min-height:385px; *min-height:370px;}
+.dr-flip {position:absolute; left:0; top:0; height:100%; width:80%; transform:rotate(-90deg); -ms-transform:rotate(-90deg); -webkit-transform:rotate(-90deg); -o-transform:rotate(-90deg); -moz-transform:rotate(-90deg);}
+.right-info {float:left; width:80%;}
+.tkt-number {float:left; padding-top: 20px;}
+.tkt-number p {padding:10px; color:#000; font-size:22px; letter-spacing:10px;}
+.tkt-number p.head{padding:0 10px; margin-top:10px;}
+.tkt-number p.head span{font-size:24px; }
+.tkt-number p span {font-size:20px;}
+.tkt-number p span, .tkt-number p.head {letter-spacing:normal; padding-top: 20px; }
+.dr-flip .bar-code {float:left; width:20%; padding:10px; margin-top: 20px;}
+.dr-event-time {width:100%; float:left; padding-top: 60px;}
+.dr-col-half {float:left; width:50%;}
+.dr-col-half p {color:#000; font-size:24px; padding:10px;}
+.dr-col-half p span {font-size:20px; margin-top:-10px; display:inline-block;}

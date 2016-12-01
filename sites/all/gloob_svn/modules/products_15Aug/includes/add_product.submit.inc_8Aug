@@ -1,0 +1,340 @@
+<?php
+
+/**
+ * @file 
+ * Handles the form submission of the customer survey form
+ */
+
+
+/**
+ * Handles what to do with the submitted form depending on what stage has been
+ * completed.
+ * 
+ * @see customer_survey_form()
+ * @see customer_survey_form_validate()
+ * 
+ * @param type $form
+ * @param type $form_state 
+ */
+function product_add_form_submit($form, &$form_state) {
+
+/*  	echo "<pre>";
+	print_r($form_state); die;  */
+  
+  switch ($form_state['stage']) {
+    
+
+    default:
+      $form_state['multistep_values'][$form_state['stage']] = $form_state['values'];
+      $form_state['new_stage'] = product_add_move_to_next_stage($form, $form_state);
+     break;
+ 
+  } 
+
+  if (isset($form_state['complete'])) drupal_goto('complete-page');   
+  
+  if ($form_state['triggering_element']['#value'] == 'Back') {
+    $form_state['new_stage'] = product_add_move_to_previous_stage($form, $form_state);
+  } 
+  
+  if (isset($form_state['multistep_values']['form_build_id'])) {
+    $form_state['values']['form_build_id'] = $form_state['multistep_values']['form_build_id'];
+  }
+  $form_state['multistep_values']['form_build_id'] = $form_state['values']['form_build_id'];
+  $form_state['stage'] = $form_state['new_stage'];
+  
+  $form_state['rebuild'] = TRUE;
+    
+	drupal_goto('product/add/page/'.$form_state['stage']);
+}
+
+function product_add_complete() {
+    
+  return 'Product has beed added';  
+    
+}
+
+function product_photos_form_submit($form, &$form_state){
+	global $user;
+	$photoData = array();
+/* 	echo "<pre>";
+	print_r($_SESSION["imagesData2"]); die; */
+	if(isset($_SESSION["imagesData2"]) && !empty($_SESSION["imagesData2"])){
+		$filepath = 'public://products';
+		foreach($_SESSION["imagesData2"] as $key=>$value){
+			
+			$file = file_load($_SERVER["DOCUMENT_ROOT"]."/gloobers/sites/default/files/products/".$value["files"]);
+			$file->uid = $user->uid;
+			$file->filename = $value["files"];
+			$file->uri = $filepath."/".$value["files"];
+			$file->status = FILE_STATUS_PERMANENT;
+			$result = file_save($file);
+			
+			$fileId = $result->fid;
+			$photoData["text"] = $value["data"]["customValue"];
+			$photoData["fid"] = $fileId;
+			
+		    $query=db_insert('gbl_listing_meta')
+			  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+							'key1'=>"photo_data",
+							'value1'=>serialize($photoData)
+				));	 
+			$result=$query->execute();		
+			
+		}
+		unset($_SESSION["imagesData2"]);
+		drupal_set_message("Photos uploaded sucessfully.");
+		drupal_goto("product/add/extra/".arg(3));
+	}
+}
+
+function product_extra_form_submit($form, &$form_state){
+	$extraData = array();
+	$extraData["title"] = $form_state["values"]["new_extra"];
+	$extraData["description"] = $form_state["values"]["product_extra_description"];
+	$extraData["price"] = $form_state["values"]["extra_price_value"];
+	$extraData["price-type"] = $form_state["values"]["extra_price_type"];
+	$extraData["price-key"] = $form_state["values"]["extra_price_key"];
+	
+	if($form_state["values"]["metaID"]){
+		$query=db_update('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_extra",
+						'value1'=>serialize($extraData)
+			))
+			->condition('meta_id',$form_state["values"]["metaID"]);	 
+		$result=$query->execute();	
+		if($result){
+			drupal_set_message("Product extra value updated sucessfully.");
+			drupal_goto("product/add/pricing/".arg(3));		
+		}
+	}
+	else{
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_extra",
+						'value1'=>serialize($extraData)
+			));	 
+		$result=$query->execute();	
+		if($result){
+			drupal_set_message("Product extra value saved sucessfully.");
+			drupal_goto("product/add/pricing/".arg(3));		
+		}	
+	}
+}
+
+function product_pricing_form_validate($form, &$form_state) {
+	$early_birds_time_value = $form_state["values"]["early_birds_time_value"];
+	if (strlen(trim($early_birds_time_value)) > 0){
+		if (!is_numeric($early_birds_time_value)) {
+		  form_set_error("early_birds_time_value", t('Days or months must be Numeric'));
+		}
+	}
+	$last_minutes_time_value = $form_state["values"]["last_minutes_time_value"];
+	if (strlen(trim($last_minutes_time_value)) > 0){
+		if (!is_numeric($last_minutes_time_value)) {
+		  form_set_error("last_minutes_time_value", t('Days or months must be Numeric'));
+		}
+	}
+
+	$hour_offer_price_value = $form_state["values"]["24_hour_offer_price_value"];
+	if (strlen(trim($hour_offer_price_value)) > 0){
+		if (!is_numeric($hour_offer_price_value)) {
+		  form_set_error("24_hour_offer_price_value", t('Price field must be Numeric'));
+		}
+	}
+	$early_birds_price_value = $form_state["values"]["early_birds_price_value"];
+	if (strlen(trim($early_birds_price_value)) > 0){
+		if (!is_numeric($early_birds_price_value)) {
+		  form_set_error("early_birds_price_value", t('Price field must be Numeric'));
+		}
+	}	
+
+	$last_minutes_price_value = $form_state["values"]["last_minutes_price_value"];
+	if (strlen(trim($last_minutes_price_value)) > 0){
+		if (!is_numeric($last_minutes_price_value)) {
+		  form_set_error("last_minutes_price_value", t('Price field must be Numeric'));
+		}
+	}
+
+	$product_pricing_value = $form_state["values"]["product_pricing_value"];
+	if (strlen(trim($product_pricing_value)) > 0){
+		if (!is_numeric($product_pricing_value)) {
+		  form_set_error("product_pricing_value", t('Price field must be Numeric'));
+		}
+	}		
+}
+
+function product_pricing_form_submit($form, &$form_state){
+/*      	echo "<pre>";
+	print_r($form_state["values"]); die;   */
+	if($form_state["values"]["product_pricing_type"] == "PER_PERSON"){
+		if($form_state["values"]["product_pricing_key"] == "family-of-three" || $form_state["values"]["product_pricing_key"] == "family-of-four" || $form_state["values"]["product_pricing_key"] == "family-of-five"){
+			$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+			$product_pricing["product_pricing_key"]	 = $form_state["values"]["product_pricing_key"];
+			$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];
+			$product_pricing["product_pricing_person_type"]	 = $form_state["values"]["product_pricing_person_type"];
+		}
+		else if($form_state["values"]["product_pricing_key"] == "both"){
+			$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+			$product_pricing["product_pricing_key"]	 = $form_state["values"]["product_pricing_key"];
+			$product_pricing["product_pricing_max_participants"]	 = $form_state["values"]["product_pricing_max_participants"];
+			$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];
+			$product_pricing["product_pricing_person_type"]	 = $form_state["values"]["product_pricing_person_type"];
+		}
+		else{
+			$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+			$product_pricing["product_pricing_key"]	 = $form_state["values"]["product_pricing_key"];
+			$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];		
+		}
+	}
+	else if($form_state["values"]["product_pricing_type"] == "PER_ITEM"){
+		$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+		$product_pricing["product_item_label"]	 = $form_state["values"]["product_item_label"];
+		$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];
+	}
+	else if($form_state["values"]["product_pricing_type"] == "FIXED"){
+		$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+		$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];
+	}
+	else if($form_state["values"]["product_pricing_type"] == "PER_DAY"){
+		$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+		$product_pricing["product_pricing_min"]	 = $form_state["values"]["product_pricing_min"];
+		$product_pricing["product_pricing_max"]	 = $form_state["values"]["product_pricing_max"];
+		$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];
+		$product_pricing["product_pricing_day_type"]	 = $form_state["values"]["product_pricing_day_type"];
+	}
+	else if($form_state["values"]["product_pricing_type"] == "PER_HOUR"){
+		$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+		$product_pricing["product_pricing_min"]	 = $form_state["values"]["product_pricing_min"];
+		$product_pricing["product_pricing_max"]	 = $form_state["values"]["product_pricing_max"];
+		$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];
+		$product_pricing["product_pricing_hour_type"]	 = $form_state["values"]["product_pricing_hour_type"];
+	}
+	else if($form_state["values"]["product_pricing_type"] == "PER_MINUTE"){
+		$product_pricing["product_pricing_type"] = $form_state["values"]["product_pricing_type"];
+		$product_pricing["product_pricing_min"]	 = $form_state["values"]["product_pricing_min"];
+		$product_pricing["product_pricing_max"]	 = $form_state["values"]["product_pricing_max"];
+		$product_pricing["product_pricing_value"]	 = $form_state["values"]["product_pricing_value"];
+		$product_pricing["product_pricing_minute_type"]	 = $form_state["values"]["product_pricing_minute_type"];
+	}
+	
+	$product_pricing["quantity_min"] = $form_state["values"]["quantity_min"];
+	$product_pricing["quantity_max"] = $form_state["values"]["quantity_max"];
+	
+	$product_pricing["early_birds_time_value"] 		= $form_state["values"]["early_birds_time_value"];
+
+	$product_pricing["early_birds_time_type"] 		= $form_state["values"]["early_birds_time_type"];
+	$product_pricing["early_birds_price_value"] 	= $form_state["values"]["early_birds_price_value"];
+	$product_pricing["early_birds_price_type"] 		= $form_state["values"]["early_birds_price_type"];
+	
+	$product_pricing["last_minutes_time_value"] 	= $form_state["values"]["last_minutes_time_value"];
+	$product_pricing["last_minutes_time_type"] 		= $form_state["values"]["last_minutes_time_type"];
+	$product_pricing["last_minutes_price_value"]	= $form_state["values"]["last_minutes_price_value"];
+	$product_pricing["last_minutes_price_type"] 	= $form_state["values"]["last_minutes_price_type"];
+	
+	$product_pricing["24_hour_offer_date"] 			= $form_state["values"]["24_hour_offer_date"];
+	$product_pricing["24_hour_offer_price_value"] 	= $form_state["values"]["24_hour_offer_price_value"];
+	$product_pricing["24_hour_offer_price_type"] 	= $form_state["values"]["24_hour_offer_price_type"];
+	
+	if($form_state["values"]["metaID"]){
+		$query=db_update('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_pricing_data",
+						'value1'=>serialize($product_pricing)
+			))
+			->condition('meta_id',$form_state["values"]["metaID"]);	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product pricing data updated sucessfully.");
+			drupal_goto("product/add/rules/".arg(3));		
+		}	
+	}
+	else{
+	
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_pricing_data",
+						'value1'=>serialize($product_pricing)
+			));	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product pricing data saved sucessfully.");
+			drupal_goto("product/add/rules/".arg(3));		
+		}
+	}
+}
+
+function product_subscription_form_submit($form, &$form_state){
+
+	if($form_state["values"]["metaID"]){
+		$query=db_update('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_subscription_data",
+						'value1'=>$form_state["values"]["subscription_value"]
+			))
+		->condition('meta_id',$form_state["values"]["metaID"]);	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product subscription data updated sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		}
+	}
+	else{	
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_subscription_data",
+						'value1'=>$form_state["values"]["subscription_value"]
+			));	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product subscription data saved sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		}
+	}
+}
+
+
+function product_rules_form_submit($form, &$form_state){
+
+	$rulesData = array();
+	$rulesData["experience_rules"] = $form_state["values"]["experience_rules"];
+	$rulesData["experience_manual"] = $form_state["values"]["experience_manual"];
+	$rulesData["entire_prior_day"] = $form_state["values"]["cancellation_policy_entire_prior_day"];
+	$rulesData["entire_prior_amount"] = $form_state["values"]["cancellation_policy_entire_prior_amount"];
+	$rulesData["cancellation_policies_type"] = $form_state["values"]["cancellation_policies_type"];
+	$rulesData["policy_pending_day"] = $form_state["values"]["cancellation_policy_pending_day"];
+	$rulesData["policy_pending_amount_after_arrival"] = $form_state["values"]["cancellation_policy_pending_amount_after_arrival"];
+	
+	if($form_state["values"]["metaID"]){
+		$query=db_update('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_cancellation_data",
+						'value1'=>serialize($rulesData)
+			))
+		->condition('meta_id',$form_state["values"]["metaID"]);	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product cancellation rules updated sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		}
+	}
+	else{	
+		$query=db_insert('gbl_listing_meta')
+		  ->fields(array('listing_id'=>isset($_SESSION['product_id'])?$_SESSION['product_id']:arg(3),
+						'key1'=>"product_cancellation_data",
+						'value1'=>serialize($rulesData)
+			));	 
+		$result=$query->execute();	
+		
+		if($result){
+			drupal_set_message("Product cancellation rules data saved sucessfully.");
+			drupal_goto("product/add/subscription/".arg(3));		
+		}
+	}
+}
