@@ -1340,7 +1340,7 @@ $query->condition('pi.recipient',$user->uid,'=')
        ->condition('pi.deleted',0,'=')
 	   ->condition('author',$user->uid,'!=');
 $query->orderBy('timestamp','DESC');
-$query->groupBy('thread_id'); 
+$query->groupBy('thread_id');
 $result=$query->execute();
 while($data=$result->fetchAssoc())
 {

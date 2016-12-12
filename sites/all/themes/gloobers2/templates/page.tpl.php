@@ -102,7 +102,7 @@ fclose($timezonefile);
 
 
 if (in_array('administrator', $user->roles)) {
-    
+
 }
 $status = getUserDetails($user->uid);
 $query=db_select('fboauth_users','fb');
@@ -117,7 +117,7 @@ $facebook_user_name_first=$facebook_user_name[0];
 if(empty($facebook_login)){
 	if(($status['confirm_status'] == 'no') && ($path != 'user/confirm')){
 		drupal_goto('user/confirm');
-	} 
+	}
 }
 $userDetails = user_load($user->uid);
 $listingId = arg(3);
@@ -157,7 +157,7 @@ $count_notification = getNotificationsCount();
   $baseURL = "<?php echo $base_url; ?>";
   $productId = "<?php echo arg(3); ?>";
 </script>
-<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/photos') !== false) { ?> 
+<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/photos') !== false) { ?>
 <script type="text/javascript">
     $baseURL = "<?php echo $base_url; ?>";
     //$flashPath= $baseURL+"/<?php echo libraries_get_path('plupload') . '/js/plupload.flash.swf'; ?>";
@@ -183,14 +183,14 @@ $count_notification = getNotificationsCount();
 			cb(true);
 		}
 	});
-	
+
 	function bytesToSize(bytes) {
 	   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 	   if (bytes == 0) return '0 Byte';
 	   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
 	   return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 	};
-	
+
 </script>
 <style>
     .calinfo > p {
@@ -198,7 +198,7 @@ $count_notification = getNotificationsCount();
     }
 </style>
 <?php }?>
-<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/location') !== false) { ?> 
+<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/location') !== false) { ?>
 <!--script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&language=en"></script-->
 <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en"></script>
 <?php }?>
@@ -287,7 +287,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                                             }
                                             ?>
                                             </div>
-                                            
+
                                         </a>
                                         <ul aria-labelledby="drop4" class="dropdown-menu">
                                             <div class="nav-dropdown-heading">Notifications <?php
@@ -295,11 +295,11 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                                                     echo "(";
                                                     echo $count_notification;
                                                     echo ")";
-                                                } 
+                                                }
                                                 ?>
                                                 </div>
                                             <div class="nav-dropdown-content">
-                                                <ul id="noti_ajax_data">   
+                                                <ul id="noti_ajax_data">
                                                 <?php if (!empty($notifications)) {
                                                     foreach ($notifications as $value) {
                                                         ?>
@@ -308,19 +308,19 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 
                                                             <a href="<?php echo $base_url.'/'.$value['noti_url']; ?>">
 
-                                                            <?php } else if($value['post_type']=='declined request') { ?>    
+                                                            <?php } else if($value['post_type']=='declined request') { ?>
 
                                                             <a href="<?php echo $base_url.'/'.$value['noti_url']; ?>">
 
-                                                            <?php } else if($value['post_type']=='requests received') { ?>  
+                                                            <?php } else if($value['post_type']=='requests received') { ?>
 
-                                                            <a href="<?php  echo $base_url.'/'.$value['noti_url'].'/'.base64_encode('gloobe__'.$value['sender_id']).'/'.base64_encode($value['recipient_id'])?>"> 
+                                                            <a href="<?php  echo $base_url.'/'.$value['noti_url'].'/'.base64_encode('gloobe__'.$value['sender_id']).'/'.base64_encode($value['recipient_id'])?>">
                                                             <?php }else { ?>
 
                                                             <a href="<?php echo $base_url.'/advice/notification'; ?>">
 
-                                                            <?php  } ?> 
-                                                            
+                                                            <?php  } ?>
+
                                                             <?php
                                                             $notificationDetail = user_load($value['sender_id']);
                                                             if ($notificationDetail->picture != "") {
@@ -342,8 +342,8 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                                                                 }
                                                             } else {
                                                                 ?>
-                                                        <li> -- No  Notification -- </li> 
-                                                    <?php } ?>       
+                                                        <li> -- No  Notification -- </li>
+                                                    <?php } ?>
                                             </div>
 											 <?php if (!empty($notifications)) { ?>
                                             <li><a href="<?php echo $base_url; ?>/advice/notification" class="notifications_btn">See all notifications</a></li>
@@ -353,7 +353,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                                     <li class="dropdown" id="fat-menu">
                                         <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#" id="drop3">
                                             <div class="user_name"><?php
-											
+
                                                     if (strlen($userDetails->field_first_name['und'][0]['value']) > 10) {
                                                         $dots = '..';
                                                     } else {
@@ -380,7 +380,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                                             <li><a tabindex="0" role="button" href="<?php echo $base_url; ?>/mytrips"><i class="fa fa-plane"></i>Trips</a></li>
                                             <li>
 											<a tabindex="0" role="button" href="<?php echo $base_url; ?>/advice/my_request"><i class="fa fa-calendar"></i>Recommendation
-											</a> 
+											</a>
 											</li>
                                             <li><a tabindex="0" role="button" href="<?php echo $base_url; ?>/user_profile"><i class="fa fa-user"></i>Profile</a></li>
                                             <li><a tabindex="0" role="button" href="<?php echo $base_url; ?>/user/account_settings"><i class="fa fa-user"></i>Account</a></li>
@@ -404,7 +404,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
             <div class="col-lg-12 no_paddng">
                 <div class="nav_main_menu">
                     <a class="showhide pull-right">MENU <i class="fa fa-bars"></i></a>
-                    <ul class="dropdwonmenu_remove"> 
+                    <ul class="dropdwonmenu_remove">
                     <li><a class="<?php
                             if (strpos($_SERVER['REQUEST_URI'], '/dashboard') !== false) {
                                 echo $class_select_menu = 'select_menus';
@@ -431,7 +431,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                                } else {
                                    echo $class_select_menu = '';
                                }
-                               ?>" href="<?php echo $base_url; ?>/mytrips"> 
+                               ?>" href="<?php echo $base_url; ?>/mytrips">
 							   Trips
 						</a>
                     </li>
@@ -468,12 +468,12 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                             }
                             ?>" href="<?php echo $base_url; ?>/bookings"> Reservations  </a>
                     </li>-->
-                        
-                       
-                        
+
+
+
 
                     </ul>
-                </div> 
+                </div>
 
             </div>
         </div>
@@ -482,13 +482,13 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
     <?php
 } $eid = arg(3);
 ?>
-<!-- End: Main --> 
+<!-- End: Main -->
 <?php $cls = '';?>
-<!-- End: Main --> 
+<!-- End: Main -->
 <?php if(($current_path != 'manage/listing') && (!strpos($_SERVER['REQUEST_URI'], 'bookings'))) { ?>
 <section class="account_section experience_section">
   <?php if($current_path != 'mytrips'){ $tripWrapper="wrapper";  }else{ $tripWrapper="tripwrapper"; } ?>
-    <?php if($current_path != 'mytrips'){echo ' <div class="activity_title"><h3>Create an activity</h3></div>';}?>   
+    <?php if($current_path != 'mytrips'){echo ' <div class="activity_title"><h3>Create an activity</h3></div>';}?>
      <div id="<?php echo $tripWrapper; ?>">
 		<?php if($current_path != 'mytrips'){ ?>
         <div id="sidebar-wrapper">
@@ -545,11 +545,11 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 						if(isset($PhotosData) && !empty($PhotosData)){
 							if ($eid != ""){ $eids="/" . $eid;}
 							$hrefExists=$base_url.'/product/add/amenities'. $eids;
-			
+
 						}else{
 							$hrefExists='javascript:void(0);';
 						}
-						
+
                   ?> class="<?php echo $cls.$vis; ?>" href="<?php echo $hrefExists; ?>">Amenties</a>
                 </li> -->
                 <li>
@@ -568,7 +568,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 							$vis="";
                             $hrefExists='javascript:void(0);';
 						}
-						
+
                   ?> class="<?php echo $cls.$vis; ?>" href="<?php echo $hrefExists; ?>">Location</a>
                 </li>
                 <li>
@@ -586,7 +586,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 							$vis="";
                             $hrefExists='javascript:void(0);';
 						}
-						
+
                   ?> class="<?php echo $cls.$vis; ?>" href="<?php echo $hrefExists; ?>">Rates and availabilities </a>
                 </li>
                 <li>
@@ -604,7 +604,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                             $vis="";
                              $hrefExists='javascript:void(0);';
                         }
-                       
+
                   ?> class="<?php echo $cls.$vis; ?>" href="<?php echo $hrefExists; ?>">Calendar </a>
                 </li>
                 <li>
@@ -622,7 +622,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 							$vis="";
                             $hrefExists='javascript:void(0);';
 						}
-						
+
                   ?> class="<?php echo $cls.$vis; ?>" href="<?php echo $hrefExists; ?>">Optional services</a>
                 </li>
                 <li>
@@ -640,7 +640,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 							$vis="";
                              $hrefExists='javascript:void(0);';
 						}
-						
+
                   ?> class="<?php echo $cls.$vis; ?>" href="<?php echo $hrefExists; ?>">Rules and policies</a>
                 </li>
                 <li>
@@ -658,7 +658,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 							$vis="";
                             $hrefExists='javascript:void(0);';
 						}
-						
+
                   ?> class="<?php echo $cls.$vis; ?>" href="<?php echo $hrefExists; ?>">Ranking plan</a>
                 </li>
 			</ul>
@@ -720,7 +720,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
                 break;
             case (strpos($_SERVER['REQUEST_URI'], '/profile/view') !== false):
                 $var_bootstrap = '12';
-                break; 
+                break;
 
 
             default:
@@ -747,7 +747,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 <?php endif; ?>
 <?php print render($page['content']); ?>
                         </div>
-                    </div> <!-- End Col -->	
+                    </div> <!-- End Col -->
                 </div>
             </div>
         </div>
@@ -767,7 +767,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
           }else{
 			$cls = "";
 		  }
-		  
+
           ?> class="<?php echo $cls; ?>" class="<?php if($current_path == 'manage/listing'){ echo "active_sidebar";} ?>" href="<?php echo $base_url; ?>/manage/listing">My listings</a></li>
 <li><a <?php
           if (strpos($_SERVER['REQUEST_URI'], '/bookings?booking_status=upcoming_reservation') !== false) {
@@ -798,7 +798,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 <?php endif; ?>
 <?php print render($page['content']); ?>
                         </div>
-                    </div> <!-- End Col --> 
+                    </div> <!-- End Col -->
                 </div>
             </div>
         </div>
@@ -807,23 +807,23 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/autocomplete.js
 
 
 
-<?php } ?> 
+<?php } ?>
 
 <?php
 //echo '<p style="color:red;">'.strpos($_SERVER['REQUEST_URI'],'product/add/photos').'</p>';exit;
 print render($page['footer']);
 ?>
-<!-- End: Main --> 
+<!-- End: Main -->
 <?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/subscription') !== false) { ?>
 <script src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery-1.12.3.min.js' ?>"></script>
 <script src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/ion.rangeSlider.js' ?>"></script>
 <?php } else { ?>
-   <script src="//code.jquery.com/jquery-1.11.0.min.js"></script> 
+   <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <?php }?>
 
 
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
 <?php if ((strpos($_SERVER['REQUEST_URI'], 'product/add/photos')) == false) { ?>
     <script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $front_end_theme_with_new_header) . '/js/bootstrap.min.js' ?> "></script>
@@ -834,17 +834,17 @@ print render($page['footer']);
 <!-- <script src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.meanmenu.js' ?>"></script> -->
 <script src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.leanModal.min.js' ?>"></script>
 
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/uniform.min.js' ?>"></script> 
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/uniform.min.js' ?>"></script>
 <script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/main.js' ?>"></script>
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/custom.js' ?>"></script> 
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/vendor/plugins/daterange/moment.min.js' ?>"></script> 
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/custom.js' ?>"></script>
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/vendor/plugins/daterange/moment.min.js' ?>"></script>
 <script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/vendor/plugins/daterange/daterangepicker.js' ?>"></script>
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/vendor/plugins/timepicker/bootstrap-timepicker.min.js' ?>"></script> 
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/vendor/plugins/datepicker/bootstrap-datepicker.js' ?>"></script> 
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/vendor/plugins/timepicker/bootstrap-timepicker.min.js' ?>"></script>
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/vendor/plugins/datepicker/bootstrap-datepicker.js' ?>"></script>
 
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.colorbox.js' ?>"></script> 
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.Jcrop.js' ?>"></script> 
-<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.SimpleCropper.js' ?>"></script> 
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.colorbox.js' ?>"></script>
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.Jcrop.js' ?>"></script>
+<script type="text/javascript" src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/js/jquery.SimpleCropper.js' ?>"></script>
 <script src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']); ?>/js/jquery.selectbox-0.2.js"></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
@@ -852,7 +852,7 @@ print render($page['footer']);
 			jQuery("select").selectbox();
 		<?php } ?>
         jQuery('.cropme').simpleCropper();
-        // Init Theme Core 	  
+        // Init Theme Core
         Core.init();
         //jQuery('.datepicker').datepicker();
         jQuery('.datetimepicker').datepicker();
@@ -910,7 +910,7 @@ print render($page['footer']);
 			}
             //jQuery("#wrapper").toggleClass("toggled");
         });
-		
+
 
         /* END */
     });
@@ -920,16 +920,16 @@ print render($page['footer']);
 		if(window_width <= 1024)
 			{
 				jQuery("#wrapper").addClass("toggled");
-				
+
 			}
 			else
 			{
 				jQuery("#wrapper").removeClass("toggled");
-				
+
 			}
-		}		
-		
-		side_bar_resize();  
+		}
+
+		side_bar_resize();
    });
 </script>
 
@@ -943,7 +943,7 @@ $library_path = _plupload_library_path();
 <script src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $front_end_theme_with_new_header); ?>/js/jquery.nicescroll.min.js"></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
-    
+
 	jQuery('ul.nav li.dropdown').hover(function(){
 		jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(500);
 		jQuery(this).addClass('open');
@@ -952,22 +952,22 @@ $library_path = _plupload_library_path();
 		jQuery(this).removeClass('open');
 	});
 	});
-    
-    jQuery(document).ready(function () {      
-       
+
+    jQuery(document).ready(function () {
+
 
 		var Cancel_policy_typ='<?php echo $Cancel_type; ?>';
 		jQuery('#new_cancellation_select').val(Cancel_policy_typ);
-            
+
             if(Cancel_policy_typ=='' || Cancel_policy_typ==0){
                 Cancel_policy_typ='Relaxed'
-            }     
-            console.log(Cancel_policy_typ);         
+            }
+            console.log(Cancel_policy_typ);
             var Cancel_policy_typ=jQuery.trim(Cancel_policy_typ);
-            var res = Cancel_policy_typ.replace(" ", "-");   
-            jQuery(".resp-tabs-container").find('#'+res).show();         
-		
-	
+            var res = Cancel_policy_typ.replace(" ", "-");
+            jQuery(".resp-tabs-container").find('#'+res).show();
+
+
 		// Slideshow 2
         jQuery("#slider2").responsiveSlides({
             auto: false,
@@ -1023,7 +1023,7 @@ $library_path = _plupload_library_path();
 
         Core.init();
 
-        // Populates theme styles for Tabs - Trash function 
+        // Populates theme styles for Tabs - Trash function
         var tabOptions = [];
         var tabToggle = jQuery(".toggle-tab-style .tab-style-option");
         var tabCount = jQuery(tabToggle).length;
@@ -1040,7 +1040,7 @@ $library_path = _plupload_library_path();
             }
         });
 
-        // Changes theme style on Tabs - Trash function 
+        // Changes theme style on Tabs - Trash function
         jQuery(tabToggle).click(function () {
             var tabStyle = $(this).attr('opt');
             var Options = tabOptions.join(" ");
@@ -1063,7 +1063,7 @@ $library_path = _plupload_library_path();
 
         //jQuery("#helpBar").stick_in_parent();
     });
-    
+
     function hide_perminute(val) {
 
         var typeTime = jQuery(val).val();
@@ -1075,7 +1075,7 @@ $library_path = _plupload_library_path();
 
         }
     }
-   
+
 
     jQuery(window).scroll(function () {
 		var document_height = jQuery(document).height();
@@ -1084,7 +1084,7 @@ $library_path = _plupload_library_path();
 		var container_height1 = footer_height + window_height;
 		var container_height2 = document_height - container_height1;
 
-		
+
         var scroll = jQuery(window).scrollTop();
         //>=, not <=
         if (scroll >= 250) {
@@ -1101,7 +1101,7 @@ $library_path = _plupload_library_path();
 				}
 <?php } ?>
 
-	
+
 
         }
 
@@ -1111,8 +1111,8 @@ $library_path = _plupload_library_path();
 			jQuery('#helpBar').css('top','0');
         }
     });
-	
-	
+
+
 
 
     function readnotifications(recipient_id) {
@@ -1159,9 +1159,9 @@ $library_path = _plupload_library_path();
     window.location.href = href;
     });
     });
-    
+
 </script>
-<?php 
+<?php
 /* These Scripts will load only when The new pricing and calendar section page will be opened */
 if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos($_SERVER['REQUEST_URI'],'product/session/edit') !== false){ ?>
 
@@ -1175,7 +1175,7 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
             var dd = today.getDate();
             var mm = today.getMonth() + 1; //January is 0!
             var yyyy = today.getFullYear();
-			
+
             if (dd < 10) {
                 dd = '0' + dd
             }
@@ -1183,7 +1183,7 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                 mm = '0' + mm
             }
             today = yyyy + '/' + mm + '/' + dd;
-		/* Full Calendar */	
+		/* Full Calendar */
 		jQuery('#calendar').fullCalendar({
 				header: {
 					left: 'prev,next',
@@ -1194,46 +1194,46 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 				editable: true,
 				eventLimit: true,
 		}); /* End Full Calendar */
-				
-		
+
+
 		/* Calendar Popup Show/Hide */
 	jQuery(document).ready(function() {
 
 		jQuery( document ).on( 'click', 'input', function() {
 		jQuery(this).removeClass('error');
 		})
-		
+
 		var count24Hourclone=jQuery('.24_hours_discounted_clone').size();
 		jQuery('.fc-event-container').click(function(){
 			jQuery('.eventpopup_lightbox').fadeIn(500);
 			jQuery(this).fadeIn(500);
 		});
-	
+
 		jQuery('.closepopup').click(function(){
 			jQuery('.eventpopup_lightbox').fadeOut(800);
-		}); 
-		/* End Calendar Popup Show/Hide */	
+		});
+		/* End Calendar Popup Show/Hide */
 
         jQuery('body').on('focus',".session_timepicker", function(){
-            
-            jQuery(this).timepicker().on('changeTime.timepicker', function(e){  
+
+            jQuery(this).timepicker().on('changeTime.timepicker', function(e){
                     ss=jQuery(this).attr('data-val');
                     pre_selected_time=jQuery('#session_startTime_'+ss).html();
 
                     selected_time=jQuery(this).val();
                     console.log('pre_selected_time='+pre_selected_time);
-                   
+
                     count_div=jQuery('.sessions_tabs_menu').length;
                     session_exists='time';
                     weekarray= [];
                     jQuery('.sessions_tabs_menu_'+ss).find('li').each(function(){
-                            if(jQuery(this).hasClass('day_active')){    
-                                weekarray.push(jQuery(this).find('.css-checkbox').val()); 
-                            } 
+                            if(jQuery(this).hasClass('day_active')){
+                                weekarray.push(jQuery(this).find('.css-checkbox').val());
+                            }
                         })
-                    console.log(weekarray); 
-                    console.log('weekarray'+weekarray.length);    
-                    if(count_div>1 && weekarray.length>0){                
+                    console.log(weekarray);
+                    console.log('weekarray'+weekarray.length);
+                    if(count_div>1 && weekarray.length>0){
 
                     jQuery('.session_timepicker').each(function(){
 
@@ -1242,13 +1242,13 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                         if(ss!=each_id){
 
                         jQuery(this).closest('.offer_icon_left').next('.hour_session_content_right').find('.sessions_tabs_menu li').each(function(){
-                                           
-                            checkday='';each_selected_time='';         
-                                      
+
+                            checkday='';each_selected_time='';
+
                                 if(jQuery(this).hasClass('day_active')){
 
-                                    each_selected_time=jQuery('#session_startTime_'+each_id).text(); 
-                                    checkday=jQuery(this).find('.css-checkbox').val();                    
+                                    each_selected_time=jQuery('#session_startTime_'+each_id).text();
+                                    checkday=jQuery(this).find('.css-checkbox').val();
                                     //convert both time into timestamp
                                     var stt = new Date("November 13, 2013 " + selected_time);
                                     stt = stt.getTime();
@@ -1260,60 +1260,60 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                                     if(stt==endt){
                                         console.log(jQuery.inArray(checkday, weekarray));
                                          if(jQuery.inArray(checkday, weekarray)>=0) {
-                                            session_exists='yes';                                                                   
-                                         } 
-                                     }                             
-                                }                  
+                                            session_exists='yes';
+                                         }
+                                     }
+                                }
                             })
-                       }         
+                       }
                     })
                   }
 
                   if(session_exists=='yes'){
                         alert('Session time '+selected_time+' already selected for same weekday');
-                        jQuery('#edit-session_starttime_'+ss).val(pre_selected_time);  
-                    } else if(session_exists=='time') {                               
+                        jQuery('#edit-session_starttime_'+ss).val(pre_selected_time);
+                    } else if(session_exists=='time') {
                         console.log("here");
                         jQuery('#session_startTime_'+ss).html(jQuery(this).val());
-                        jQuery('#edit-session_starttime_'+ss).val(jQuery(this).val());            
-                        jQuery(this).closest('.offer_icon_left').addClass('active');                
+                        jQuery('#edit-session_starttime_'+ss).val(jQuery(this).val());
+                        jQuery(this).closest('.offer_icon_left').addClass('active');
                     }
             });
 
         });
 
-		
+
 		/* End Click on calendar Date opens Popup */
-			
-	
-	
-	/* Price Section Show/Hide */	
+
+
+
+	/* Price Section Show/Hide */
 	jQuery('#edit-product-pricing-type').change(function()
-	{	         		
-		
+	{
+
 		var Price_type_byId=jQuery('#edit-product-pricing-type').val();
 		if(Price_type_byId=='PER_PERSON'){
-		
-			var person_type=jQuery('#edit-product-pricing-type').next().find('.sbSelector').html();			
+
+			var person_type=jQuery('#edit-product-pricing-type').next().find('.sbSelector').html();
 			jQuery('.sessional_price_per_person-everyone').hide();
 			jQuery('.pricetype_options_PER_ITEM').hide();
             jQuery('.pricetype_options_PER_ITEM_1').hide();
 			jQuery('.pricetype_options_PER_ITEM_qty').hide();
 			jQuery('.pricetype_options_PER_PERSON').show();
             jQuery('.pricetype_options_PER_PERSON_1').show();
-			jQuery('.pricetype_options_PER_PERSON_qty').show();			
+			jQuery('.pricetype_options_PER_PERSON_qty').show();
 			jQuery('.sessional_price_per_item').hide();
 			jQuery('#edit-product-pricing-type-sessional').val('Per Person');
 
-            /*Hide show adult/child*/          
-           
+            /*Hide show adult/child*/
+
                 if(jQuery('.product_adult_child').length==2){
                 jQuery('.amount_perAdult_div').show();
                 jQuery('.amount_perChild_div').show();
 				jQuery('.add-experience').hide();
 
                 } else{
-                if(jQuery('.product_adult_child').val()=='adult'){  
+                if(jQuery('.product_adult_child').val()=='adult'){
 
                 jQuery('.amount_perAdult_div').show();
                 jQuery('.amount_perChild_div').hide();
@@ -1323,58 +1323,58 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                 jQuery('.amount_perChild_div').show();
                 }
 
-                }                
+                }
                 jQuery('.person_Item_availability').html('Min/Max person per session<span class="form-required"> *</span>');
-			
+
 		}else{
-            jQuery("#addmore_item").hide();			
+            jQuery("#addmore_item").hide();
 			jQuery('.pricetype_options_PER_ITEM').show();
             jQuery('.pricetype_options_PER_ITEM_1').show();
 			jQuery('.pricetype_options_PER_ITEM_qty').show();
 			jQuery('.pricetype_options_PER_PERSON').hide();
             jQuery('.pricetype_options_PER_PERSON_1').hide();
-			jQuery('.pricetype_options_PER_PERSON_qty').hide();			
+			jQuery('.pricetype_options_PER_PERSON_qty').hide();
 			jQuery('.sessional_price_per_person-everyone').hide();
 			jQuery('.sessional_price_per_item').show();
 			jQuery('#edit-product-pricing-type-sessional').val('Per Item');
-			jQuery('.item_add').show();   
-            jQuery('.person_Item_availability').html('Min/Max item per session<span class="form-required"> *</span>');            
+			jQuery('.item_add').show();
+            jQuery('.person_Item_availability').html('Min/Max item per session<span class="form-required"> *</span>');
 		}
 	});
-	
+
 		if(jQuery('#edit-product-person-type').val()=='adult'){
 		jQuery('#edit-product-person-type').parent().removeClass('per_adult_child');
 		jQuery('#edit-product-person-type').parent().addClass('per_adult');
 		} else {
 		jQuery('#edit-product-person-type').parent().removeClass('per_adult');
-		jQuery('#edit-product-person-type').parent().addClass('per_adult_child');		
+		jQuery('#edit-product-person-type').parent().addClass('per_adult_child');
 		}
-		
-	jQuery('#edit-product-person-type').change(function(){	      
-		
+
+	jQuery('#edit-product-person-type').change(function(){
+
 		if(jQuery(this).val()=='adult'){
 		jQuery(this).parent().removeClass('per_adult_child');
 		jQuery(this).parent().addClass('per_adult');
         jQuery(".amount_perAdult_div").show();
-        jQuery(".amount_perChild_div").hide();  
+        jQuery(".amount_perChild_div").hide();
 		} else {
 		jQuery(this).parent().removeClass('per_adult');
-		jQuery(this).parent().addClass('per_adult_child');	
+		jQuery(this).parent().addClass('per_adult_child');
         jQuery(".amount_perAdult_div").hide();
-        jQuery(".amount_perChild_div").show();	
+        jQuery(".amount_perChild_div").show();
 		}
-        // Updated 11-02-2016 
+        // Updated 11-02-2016
         jQuery('.pricediv_clone').remove();
         if(jQuery('.additem_more').size()>1) {
-        jQuery('.additem_more').eq(1).remove();           
+        jQuery('.additem_more').eq(1).remove();
         }
-        //End Updated 11-02-2016 
+        //End Updated 11-02-2016
 		if(jQuery(this).attr('value')=='everyone'){
-			jQuery('.sessional_price_per_person-everyone').show();				
+			jQuery('.sessional_price_per_person-everyone').show();
 			jQuery('#addmore_person').hide();
 		}else{
-			jQuery('.sessional_price_per_person-everyone').hide();			
-			jQuery('#addmore_person').show();			
+			jQuery('.sessional_price_per_person-everyone').hide();
+			jQuery('#addmore_person').show();
 		}
 	});
 
@@ -1383,15 +1383,15 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
        if(Item_name==''){
            Item_name='item';
        }
-       jQuery('#Item_booking').html('Min/Max '+Item_name+' per booking<span class="form-required"> *</span>');    
-       jQuery('#Item_adult').html('Min/Max adults per '+Item_name+'<span class="form-required"> *</span>');    
-       jQuery('#Item_child').html('Min/Max children per '+Item_name+'<span class="form-required"> *</span>');  
-       jQuery('.person_Item_availability').html('Min/Max '+Item_name+' per session<span class="form-required"> *</span>'); 
-       
+       jQuery('#Item_booking').html('Min/Max '+Item_name+' per booking<span class="form-required"> *</span>');
+       jQuery('#Item_adult').html('Min/Max adults per '+Item_name+'<span class="form-required"> *</span>');
+       jQuery('#Item_child').html('Min/Max children per '+Item_name+'<span class="form-required"> *</span>');
+       jQuery('.person_Item_availability').html('Min/Max '+Item_name+' per session<span class="form-required"> *</span>');
+
 
    });
-   
-	/* End Price Section Show/Hide */	
+
+	/* End Price Section Show/Hide */
 
 	/* Offers and Disscounts Checkboxes Check Show/Hide */
 	jQuery("#last_minutes_check").click(function(){
@@ -1418,7 +1418,7 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 	/* End Offers and Disscounts Checkboxes Check Show/Hide */
 
     function scroll_to_id(element_id){
-        
+
         jQuery('html, body').animate({
         scrollTop: jQuery("#"+element_id).offset().top
         }, 2000);
@@ -1429,34 +1429,34 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 	var mySessionForm="";
 	jQuery('.submit_btn_session').click(function()
 	{
-	   
-		
+
+
 		/* Create Session Popup Custom Form Validations */
 		var Err = 0;var message_str='';
 
         var maxAvail=jQuery('#max_avail').val();
         var minAvail=jQuery('#min_avail').val();
         var products_person_max=jQuery('#products_person_max').val();
-        var product_person_min=jQuery('#product_person_min').val();  
-        
+        var product_person_min=jQuery('#product_person_min').val();
+
         var product_item_max=jQuery('#product_item_max').val();
-        var product_item_min=jQuery('#product_item_min').val();       
+        var product_item_min=jQuery('#product_item_min').val();
 
-		
+
         /*17may2016*/
-        if(maxAvail== ''){      
+        if(maxAvail== ''){
             jQuery('#max_avail').addClass('error');
             Err++;
 
-        }else if((jQuery.isNumeric(maxAvail))==false){          
+        }else if((jQuery.isNumeric(maxAvail))==false){
             jQuery('#max_avail').addClass('error');
             Err++;
 
-        }else{          
+        }else{
             jQuery('#max_avail').removeClass('error');
-            
+
         }
-        
+
         if(minAvail==''){
             jQuery("#min_avail").addClass("error");
             Err++;
@@ -1470,22 +1470,22 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
         if((maxAvail!= '') && (minAvail!='')){
             if(jQuery.isNumeric(minAvail)!=false && jQuery.isNumeric(maxAvail)!=false){
 
-                if(parseInt(maxAvail) < parseInt(minAvail)){               
-                   
+                if(parseInt(maxAvail) < parseInt(minAvail)){
+
                     jQuery("#max_avail").addClass("error");
                     jQuery("#min_avail").addClass("error");
                     jQuery("#max_avail + label").remove();
                     jQuery("#max_avail").after('<label class="error">Availability max value should be greater than availability min value</label>');
                     Err++;
                 }else{
-              
+
                     jQuery("#min_avail").removeClass("error");
                     jQuery("#max_avail").removeClass("error");
                     jQuery("#max_avail + label").remove();
                 }
-                
+
             }
-            
+
         }
 
 
@@ -1498,51 +1498,51 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 				if(jQuery(this).val()==''){
 					jQuery(this).addClass("error");
 					Err++;
-				} else if((Math.floor(jQuery(this).val()) != jQuery(this).val()) || (!jQuery.isNumeric(jQuery(this).val())) || (jQuery(this).val().indexOf('-')>=0) || (jQuery(this).val().indexOf('+')>=0)){       
+				} else if((Math.floor(jQuery(this).val()) != jQuery(this).val()) || (!jQuery.isNumeric(jQuery(this).val())) || (jQuery(this).val().indexOf('-')>=0) || (jQuery(this).val().indexOf('+')>=0)){
 					jQuery(this).addClass("error");
 					Err++;
 				}else{
 					jQuery(this).removeClass("error");
 				}
-				
+
 			});
 
              console.log("Err_person="+Err);
 
             /* 17may2016*/
 
-                if(products_person_max=='') {            
-                    jQuery("#products_person_max").addClass("error");             
-                    Err++;          
-                }else if((jQuery.isNumeric(products_person_max))==false){          
+                if(products_person_max=='') {
+                    jQuery("#products_person_max").addClass("error");
+                    Err++;
+                }else if((jQuery.isNumeric(products_person_max))==false){
                     jQuery('#products_person_max').addClass('error');
                     Err++;
                 }else{
                     jQuery("#products_person_max").removeClass("error");
                 }
 
-                if(product_person_min=='') {     
+                if(product_person_min=='') {
                     jQuery("#product_person_min").addClass("error");
-                    Err++;          
-                }else if((jQuery.isNumeric(product_person_min))==false){          
+                    Err++;
+                }else if((jQuery.isNumeric(product_person_min))==false){
                     jQuery('#product_person_min').addClass('error');
                     Err++;
-                }else{           
-                    jQuery("#product_person_min").removeClass("error");                
+                }else{
+                    jQuery("#product_person_min").removeClass("error");
                 }
 
                 if((products_person_max!= '') && (product_person_min!='')){
 
                      if(jQuery.isNumeric(products_person_max)!=false && jQuery.isNumeric(product_person_min)!=false){
 
-                        if(parseInt(products_person_max) < parseInt(product_person_min)){    
-                                                            
+                        if(parseInt(products_person_max) < parseInt(product_person_min)){
+
                             jQuery("#products_person_max").addClass("error");
                             jQuery("#product_person_min").addClass("error");
                             jQuery("#products_person_max + label").remove();
                             jQuery("#products_person_max").after('<label class="error">Occupancy max value should be greater than Occupancy min value</label>');
                             Err++;
-                        }else{           
+                        }else{
                             jQuery("#product_person_min").removeClass("error");
                             jQuery("#products_person_max").removeClass("error");
                             jQuery("#products_person_max + label").remove();
@@ -1551,28 +1551,28 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                 }
 
                 console.log("Err1="+Err);
-                
+
                 if(Err>0){
 
                     if(message_str==''){
-                       message_str="message_str"; 
-                       scroll_to_id("Rate_type"); 
+                       message_str="message_str";
+                       scroll_to_id("Rate_type");
                     }
-                        
-                  }  
-                  
-              /*session date validation*/     
+
+                  }
+
+              /*session date validation*/
             if(jQuery('#booking_type_date').val()=='INVENTORY'){
                 var max = "";
                 var min = "";
-                var startDate=jQuery('#edit-session-startdate_new_0').val();    
-                var untilDate=jQuery('#edit-session-enddate_new_0').val();         
+                var startDate=jQuery('#edit-session-startdate_new_0').val();
+                var untilDate=jQuery('#edit-session-enddate_new_0').val();
 
                 if(startDate ==''){
                     //alert("Please select start date");
                     jQuery("#edit-session-startdate_new_0").addClass("error");
                     Err++;
-                }else{            
+                }else{
                     jQuery("#edit-session-startdate_new_0").removeClass("error");
                 }
                 if(untilDate ==''){
@@ -1583,16 +1583,16 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                     jQuery("#edit-session-enddate_new_0").removeClass("error");
                 }
 
-                     if(Err>0){ 
-                            if(message_str==''){                   
+                     if(Err>0){
+                            if(message_str==''){
                                 scroll_to_id("Availability_settings");
                                 message_str="message_str";
-                             } 
-                        }           
-                
-                }  
+                             }
+                        }
 
-                /*Opening days and session hour price validation*/ 
+                }
+
+                /*Opening days and session hour price validation*/
                 var Opening_days='';
                 var arlene1 = [];
                 jQuery('.hour_session_content_right').find('.pricetype_options_PER_PERSON_1').find('.amount_perAdult_div').find('input').each(function(){
@@ -1604,12 +1604,12 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                              arlene1.push(Opening_days);
                         }else{
                             jQuery(this).removeClass("error");
-                        }                        
+                        }
                     }  else {
                         jQuery(this).removeClass("error");
                     }
-                    
-                    var child_val =jQuery(this).closest('.amount_perAdult_div').next().find('input').val(); 
+
+                    var child_val =jQuery(this).closest('.amount_perAdult_div').next().find('input').val();
                      if(child_val!=''){
                         if( (parseInt(child_val)<=0) || (Math.floor(child_val) != child_val) || (!jQuery.isNumeric(child_val)) || (child_val.indexOf('-')>=0) || (child_val.indexOf('+')>=0)){
                             jQuery(this).closest('.amount_perAdult_div').next().find('input').addClass("error");
@@ -1618,25 +1618,25 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                              arlene1.push(Opening_days);
                         }else{
                             jQuery(this).closest('.amount_perAdult_div').next().find('input').removeClass("error");
-                        }                        
+                        }
                     }  else {
                         jQuery(this).closest('.amount_perAdult_div').next().find('input').removeClass("error");
-                    }                   
+                    }
 
-                });               
+                });
 
                 console.log("Opening_days_price "+Err);
                     if(Err>0){
 
-                        if(message_str==''){                           
-                           scroll_to_id(arlene1[0]); 
-                           message_str="message_str"; 
+                        if(message_str==''){
+                           scroll_to_id(arlene1[0]);
+                           message_str="message_str";
                         }
-                        
-                  }            
+
+                  }
 
 
-		}else {           
+		}else {
 
 			var product_item_min=jQuery('#product_item_min').val();
 			var product_item_max=jQuery('#product_item_max').val();
@@ -1647,11 +1647,11 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 
 			jQuery('input[class^="amount_peritem"]').each(function(){
 				if(jQuery(this).val()==''){
-				
+
 					jQuery(this).addClass("error");
 					Err++;
 				}else if((Math.floor(jQuery(this).val()) != jQuery(this).val()) || (!jQuery.isNumeric(jQuery(this).val())) || (jQuery(this).val().indexOf('-')>=0) || (jQuery(this).val().indexOf('+')>=0)){
-				
+
 					jQuery(this).addClass("error");
 					Err++;
 				}else{
@@ -1659,36 +1659,36 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 				}
 			});
 
-            
+
 			jQuery('input[class^="item_name"]').each(function(){
 				if(jQuery(this).val()==''){
-				
+
 					jQuery(this).addClass("error");
 					Err++;
 				}else{
 					jQuery(this).removeClass("error");
 				}
 			});
-			
 
-			if(product_item_min==''){			
+
+			if(product_item_min==''){
 				jQuery('#product_item_min').addClass('error');
 				Err++;
 			}else{
 				jQuery("#product_item_min").removeClass("error");
-			} 
+			}
 			if(product_item_max==""){
-		
+
 				jQuery("#product_item_max").addClass("error");
 				Err++;
 			}else{
 				jQuery("#product_item_max").removeClass("error");
-			} 
+			}
 
-            if(product_item_min!='' && product_item_max!=''){  
-            
+            if(product_item_min!='' && product_item_max!=''){
+
                 if(parseInt(product_item_max)<parseInt(product_item_min)){
-                  
+
                     jQuery("#product_item_max").addClass("error");
                     jQuery("#product_item_min").addClass("error");
                     jQuery("#product_item_max + label").remove();
@@ -1698,13 +1698,13 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                     jQuery("#product_item_max").removeClass("error");
                     jQuery("#product_item_min").removeClass("error");
                     jQuery("#product_item_max + label").remove();
-                }     
+                }
             }
 
-			
+
 
 			if(product_item_per_adult_min==""){
-			
+
 				jQuery('#product_item_per_adult_min').addClass("error");
 				Err++;
 			}else{
@@ -1712,21 +1712,21 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 			}
 
 			if(product_item_per_adult_max==""){
-			
+
 				jQuery('#product_item_per_adult_max').addClass("error");
 				Err++;
 			}else{
 				jQuery('#product_item_per_adult_max').removeClass("error");
 			}
-            
-            if(product_item_per_adult_max!='' && product_item_per_adult_min!=''){ 
-             
+
+            if(product_item_per_adult_max!='' && product_item_per_adult_min!=''){
+
     			if(parseInt(product_item_per_adult_max) < parseInt(product_item_per_adult_min)){
     				jQuery('#product_item_per_adult_min').addClass("error");
     				jQuery('#product_item_per_adult_max').addClass("error");
                     jQuery("#product_item_per_adult_max + label").remove();
                     jQuery("#product_item_per_adult_max").after('<label class="error">Adult max value should be greater than Adult min value</label>');
-    				
+
     				Err++;
     			}else{
     				jQuery('#product_item_per_adult_min').removeClass("error");
@@ -1736,7 +1736,7 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
             }
 
 			if(product_item_per_child_min==''){
-			
+
 				jQuery('#product_item_per_child_min').addClass("error");
 				Err++;
 			}else{
@@ -1750,10 +1750,10 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 				jQuery('#product_item_per_child_max').removeClass("error");
 			}
 
-            if(product_item_per_child_min!='' && product_item_per_child_max!=''){ 
+            if(product_item_per_child_min!='' && product_item_per_child_max!=''){
 
     			if(parseInt(product_item_per_child_min)>parseInt(product_item_per_child_max)){
-    			
+
     				jQuery('#product_item_per_child_min').addClass("error");
     				jQuery('#product_item_per_child_max').addClass("error");
                     jQuery("#product_item_per_child_max + label").remove();
@@ -1770,7 +1770,7 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
            if(parseInt(product_item_per_adult_max)>parseInt(product_item_max)){
 
                 if(product_item_per_adult_max!=='' || product_item_max!=''){
-                  
+
                     jQuery('#product_item_per_adult_max').addClass("error");
                     jQuery("#product_item_per_adult_max + label").remove();
                     jQuery("#product_item_per_adult_max").after('<label class="error">"The max occupancy per item is '+product_item_max+' maximum adult can be '+product_item_max+'</label>');
@@ -1785,15 +1785,15 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 
 
             var child_max=parseInt(product_item_max)-1;
-            
+
             if(child_max>=0){
 
-                if((product_item_per_child_min!='' && product_item_per_child_max!='') && (parseInt(product_item_per_child_min)<=parseInt(product_item_per_child_max))){ 
+                if((product_item_per_child_min!='' && product_item_per_child_max!='') && (parseInt(product_item_per_child_min)<=parseInt(product_item_per_child_max))){
 
                     //if(parseInt(product_item_per_child_min)<=parseInt(product_item_per_child_max)){
 
                         if(parseInt(product_item_per_child_max)>child_max){
-                           
+
                             jQuery('#product_item_per_child_max').addClass("error");
                             jQuery("#product_item_per_child_max + label").remove();
                             jQuery("#product_item_per_child_max").after('<label class="error">The max occupancy per item is '+product_item_max+' maximum child can be '+child_max+'</label>');
@@ -1805,10 +1805,10 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 
                         }
                    // }
-                    
-                } 
-            } 
-            
+
+                }
+            }
+
             if(product_item_per_child_max!='' && product_item_per_adult_max!=''){
 
                      var total_occupancy=parseInt(product_item_per_adult_max)+parseInt(product_item_per_child_max);
@@ -1824,16 +1824,16 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                         jQuery('#product_item_per_child_max').addClass("error");
 
                          Err++;
-                         
+
                      } else {
 
-                         jQuery('#product_item_per_adult_max').removeClass("error");   
+                         jQuery('#product_item_per_adult_max').removeClass("error");
                          jQuery('#product_item_per_child_max').removeClass("error");
-                         jQuery("#product_item_per_adult_max + label").remove();                         
+                         jQuery("#product_item_per_adult_max + label").remove();
 
-                     }                                
+                     }
 
-            }  
+            }
 
             if(product_item_per_child_min!='' && product_item_per_adult_min!=''){
 
@@ -1850,39 +1850,39 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                         jQuery('#product_item_per_child_min').addClass("error");
 
                          Err++;
-                         
+
                      } else {
 
-                         jQuery('#product_item_per_adult_min').removeClass("error");   
+                         jQuery('#product_item_per_adult_min').removeClass("error");
                          jQuery('#product_item_per_child_min').removeClass("error");
-                         jQuery("#product_item_per_adult_min + label").remove();                         
+                         jQuery("#product_item_per_adult_min + label").remove();
 
-                     }                                
+                     }
 
-            }              
-                    
-            
+            }
+
+
              if(Err>0){
 
                     if(message_str==''){
-                       message_str="message_str"; 
-                       scroll_to_id("Rate_type"); 
+                       message_str="message_str";
+                       scroll_to_id("Rate_type");
                     }
-                        
-                  }  
-                  
-              /*session date validation*/     
+
+                  }
+
+              /*session date validation*/
             if(jQuery('#booking_type_date').val()=='INVENTORY'){
                 var max = "";
                 var min = "";
-                var startDate=jQuery('#edit-session-startdate_new_0').val();    
-                var untilDate=jQuery('#edit-session-enddate_new_0').val();         
+                var startDate=jQuery('#edit-session-startdate_new_0').val();
+                var untilDate=jQuery('#edit-session-enddate_new_0').val();
 
                 if(startDate ==''){
                     //alert("Please select start date");
                     jQuery("#edit-session-startdate_new_0").addClass("error");
                     Err++;
-                }else{            
+                }else{
                     jQuery("#edit-session-startdate_new_0").removeClass("error");
                 }
                 if(untilDate ==''){
@@ -1893,16 +1893,16 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                     jQuery("#edit-session-enddate_new_0").removeClass("error");
                 }
 
-                     if(Err>0){ 
-                            if(message_str==''){                   
+                     if(Err>0){
+                            if(message_str==''){
                                 scroll_to_id("Availability_settings");
                                 message_str="message_str";
-                             } 
-                        }           
-                
-                } 
-                
-                /*Opening days and session hour price validation*/ 
+                             }
+                        }
+
+                }
+
+                /*Opening days and session hour price validation*/
                 var Opening_days='';
                 var arlene1 = [];
                 jQuery('.hour_session_content_right').find('.pricetype_options_PER_ITEM_1').find('.input-group').find('input').each(function(){
@@ -1916,11 +1916,11 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                         }else{
                             jQuery(this).removeClass("error");
                         }
-                        
+
                     }else {
                             jQuery(this).removeClass("error");
-                    }   
-                    
+                    }
+
 
                 });
 
@@ -1928,35 +1928,35 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                 console.log("Opening_days_price "+Err);
                     if(Err>0){
 
-                        if(message_str==''){                           
-                           scroll_to_id(arlene1[0]); 
-                           message_str="message_str"; 
+                        if(message_str==''){
+                           scroll_to_id(arlene1[0]);
+                           message_str="message_str";
                         }
-                        
-                     }               
+
+                     }
 
 
 		}
 
-        //check opening days selected 
+        //check opening days selected
                 var arlene1 = [];
                 jQuery('.sessions_tabs_menu').each(function(){
-                  days_opning=0;  
+                  days_opning=0;
                   Opening_days='sessions_tabs_menu_'+jQuery(this).closest('.sessions_tabs_menu').attr('data-id');
 
                   jQuery(this).find('li').each(function(){
 
-                        if(jQuery(this).find(".css-checkbox").prop( "checked")==true){                     
-                            days_opning=1;                     
-                            return false; 
+                        if(jQuery(this).find(".css-checkbox").prop( "checked")==true){
+                            days_opning=1;
+                            return false;
                         }
 
-                   });                  
-                 
+                   });
+
                  if(days_opning==0){
                   jQuery('.'+Opening_days).addClass('opening_error');
                   arlene1.push(Opening_days);
-                   Err++;  
+                   Err++;
                   } else {
                   jQuery('.'+Opening_days).removeClass('opening_error');
                   }
@@ -1966,40 +1966,40 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 
                 if(Err>0){
 
-                    if(message_str==''){                           
+                    if(message_str==''){
                         jQuery('html, body').animate({
                         scrollTop: jQuery("."+arlene1[0]).offset().top - 200
                         }, 2000);
-                       message_str="message_str"; 
+                       message_str="message_str";
                     }
-                    
+
                  }
 
         //check timepicker has value
-                    var arlene1 = [];                   
+                    var arlene1 = [];
 
-                    jQuery('.session_timepicker').each(function(index,value){ 
+                    jQuery('.session_timepicker').each(function(index,value){
 
                     tt=jQuery(this).attr('data-val');
                         if(jQuery('#session_startTime_'+tt).html()=='Select time'){
 
-                             jQuery(this).closest('.offer_icon_left').addClass("error");                             
+                             jQuery(this).closest('.offer_icon_left').addClass("error");
                              session_timepicker = 'session_startTime_'+tt;
                              arlene1.push(session_timepicker);
-                             Err++;  
+                             Err++;
                         }
-                              
+
 
                     });
-                    
+
                     if(Err>0){
-                            if(message_str==''){   
+                            if(message_str==''){
 								jQuery('html, body').animate({
 								scrollTop: jQuery("#"+arlene1[0]).offset().top - 200
 								}, 2000);
                                message_str="message_str";
                             }
-                    } 
+                    }
 
                 /*seasonal price validation*/
                 if(jQuery.trim(Price_type)=='PER_PERSON') {
@@ -2011,7 +2011,7 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 
                         } else{
 
-                        if(jQuery('.product_adult_child').val()=='adult'){  
+                        if(jQuery('.product_adult_child').val()=='adult'){
 
                             style_a="exists";
                             style_c="";
@@ -2023,17 +2023,17 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 
                     }
                    var arlene1 = [];
-                   jQuery('.session_from_dtpicker').each(function(){ 
+                   jQuery('.session_from_dtpicker').each(function(){
 
                     var p=jQuery(this).attr('data-val');
 
                     if(jQuery('#session_from_'+p).val()){
-                  
+
 
                     var rate_adult=jQuery(this).closest('.seasonnal_pricing').children(':nth-child(3)').find('.amount_perAdult_div input').val();
                     var rate_child=jQuery(this).closest('.seasonnal_pricing').children(':nth-child(3)').find('.amount_perChild_div input').val();
-                       if(style_a=="exists"){ 
-                         if( (rate_adult=='') || (parseInt(rate_adult)<=0) || (Math.floor(rate_adult) != rate_adult) || (!jQuery.isNumeric(rate_adult)) || (rate_adult.indexOf('-')>=0) || (rate_adult.indexOf('+')>=0)){                
+                       if(style_a=="exists"){
+                         if( (rate_adult=='') || (parseInt(rate_adult)<=0) || (Math.floor(rate_adult) != rate_adult) || (!jQuery.isNumeric(rate_adult)) || (rate_adult.indexOf('-')>=0) || (rate_adult.indexOf('+')>=0)){
                             jQuery(this).closest('.seasonnal_pricing').children(':nth-child(3)').find('.amount_perAdult_div input').addClass('error');
                             Err++;
                             Seasonal_days = 'session_from_'+p;
@@ -2043,69 +2043,69 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
                             jQuery(this).closest('.seasonnal_pricing').children(':nth-child(3)').find('.amount_perAdult_div input').removeClass('error');
                         }
                       }
-                      if(style_c=="exists"){  
-                        if( (rate_child=='') || (parseInt(rate_child)<=0)|| (Math.floor(rate_child) != rate_child) || (!jQuery.isNumeric(rate_child)) || (rate_child.indexOf('-')>=0) || (rate_child.indexOf('+')>=0)){ 
+                      if(style_c=="exists"){
+                        if( (rate_child=='') || (parseInt(rate_child)<=0)|| (Math.floor(rate_child) != rate_child) || (!jQuery.isNumeric(rate_child)) || (rate_child.indexOf('-')>=0) || (rate_child.indexOf('+')>=0)){
                             jQuery(this).closest('.seasonnal_pricing').children(':nth-child(3)').find('.amount_perChild_div input').addClass('error');
                             Err++;
                             Seasonal_days = 'session_from_'+p;
                             arlene1.push(Seasonal_days);
                         }else {
                             jQuery(this).closest('.seasonnal_pricing').children(':nth-child(3)').find('.amount_perChild_div input').removeClass('error');
-                        } 
+                        }
                       }
 
                     }
-                        
+
 
                     });
                     console.log('arlene1 '+arlene1);
 
                     if(Err>0){
 
-                            if(message_str==''){                        
-                               scroll_to_id(arlene1[0]); 
+                            if(message_str==''){
+                               scroll_to_id(arlene1[0]);
                                message_str="message_str";
                             }
-                                
-                     } 
+
+                     }
 
                 }
                 else {
-                    
+
                var arlene1 = [];
-               jQuery('.session_from_dtpicker').each(function(){ 
+               jQuery('.session_from_dtpicker').each(function(){
                 var p=jQuery(this).attr('data-val');
 
-                if(jQuery('#session_from_'+p).val()){       
-                              
+                if(jQuery('#session_from_'+p).val()){
+
                      var rate_item=jQuery(this).closest('.select_date_from').closest('.remove_this_seasonal').find('.sessional_price_per_item').find('.rate_per_item').val();
 
                      if( (rate_item=='') || (parseInt(rate_item)<=0) || (Math.floor(rate_item) != rate_item) || (!jQuery.isNumeric(rate_item)) || (rate_item.indexOf('-')>=0) || (rate_item.indexOf('+')>=0)){
-                    
+
                             jQuery(this).closest('.select_date_from').closest('.remove_this_seasonal').find('.sessional_price_per_item').find('.rate_per_item').addClass("error");
                             Err++;
                             Seasonal_days = 'session_from_'+p;
                             arlene1.push(Seasonal_days);
                     }  else {
                         jQuery(this).closest('.select_date_from').closest('.remove_this_seasonal').find('.sessional_price_per_item').find('.rate_per_item').removeClass('error');
-                    }      
-                                
-                  }            
-                    
+                    }
+
+                  }
+
 
                 });
 
                 if(Err>0){
 
-                        if(message_str==''){                        
-                           scroll_to_id(arlene1[0]); 
+                        if(message_str==''){
+                           scroll_to_id(arlene1[0]);
                            message_str="message_str";
                         }
-                            
-                 } 
-                             
+
+                 }
+
               }
-		
+
 		if(Err>0){
 			return false;
 		}else{
@@ -2114,13 +2114,13 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 				mySessionForm =jQuery('#create_session_id').serialize();
 				jQuery('#session_data_value').val(mySessionForm);
 			/* End Create session popup form Serialize */
-			jQuery('.eventpopup_lightbox').fadeOut(800); 
+			jQuery('.eventpopup_lightbox').fadeOut(800);
 
             jQuery('.repeat_session_Hourly_HTML').find('.hours_row').each(function(){
 
             if(jQuery(this).find('.frominput')){
             jQuery(this).find('.frominput').val(jQuery('#edit-session_starttime').val());
-            jQuery(this).find('.frominput').prop('disabled', true);            
+            jQuery(this).find('.frominput').prop('disabled', true);
             }
 
             if(jQuery(this).find('.toinput')){
@@ -2129,7 +2129,7 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
             }
 
             });
-          
+
 
 			return true;
 		}
@@ -2145,10 +2145,10 @@ if(strpos($_SERVER['REQUEST_URI'],'product/add/Calendernew') !== false || strpos
 function calendar_form_validate(){
 
 		var Err=0;
-		
+
 		var arlene1 = [];
 		if(jQuery('#24_hour_offer_check').prop('checked')==true){
-			
+
 			jQuery('input[class^="offer_24_hour_offer_Data_date"]').each(function(){
 				var current_val=jQuery(this).val();
 				if(jQuery(this).val()==''){
@@ -2164,7 +2164,7 @@ function calendar_form_validate(){
 					jQuery(this).addClass("error");
                     arlene1.push(jQuery(this).attr('id'));
 					Err++;
-				
+
 				}else{
 					jQuery(this).removeClass("error");
 				}
@@ -2192,21 +2192,21 @@ function calendar_form_validate(){
                     }
                     return this.value === el.value;
                 }).length !== 0;
-                
+
             }).addClass('error');
             console.log('error_reach1 '+Err);
              if(Err>0){
-                  
+
                     jQuery('html, body').animate({
                     scrollTop: jQuery("#"+arlene1[0]).offset().top - 200
-                    }, 2000); 
+                    }, 2000);
                     //return false;
-              } 
-			
-			console.log('In 24 hour validate condition');		
+              }
+
+			console.log('In 24 hour validate condition');
 		}
 		if(jQuery('#last_minutes_check').prop('checked')==true){
-			console.log('In last_minutes_check');		
+			console.log('In last_minutes_check');
 			var timeval=jQuery('#edit-last-minutes-time-value').val();
 			var timetype=jQuery('#edit-last-minutes-time-type').val();
 			if(timeval == ''){
@@ -2215,7 +2215,7 @@ function calendar_form_validate(){
 			}else{
 				jQuery('#edit-last-minutes-time-value').removeClass('error');
 			}
-			if(timeval != ''){			
+			if(timeval != ''){
 				if(timetype=='hour'){
 					timeval=parseInt(timeval);
 					if(timeval> 144){
@@ -2251,46 +2251,46 @@ function calendar_form_validate(){
 			var price=jQuery('#edit-last-minutes-price-value').val();
             if( (parseInt(price)<=0) ||(Math.floor(price) != price) || (!jQuery.isNumeric(price)) || (price.indexOf('-')>=0) || (price.indexOf('+')>=0)){
                 jQuery('#edit-last-minutes-price-value').addClass("error");
-                
+
                  Err++;
             }else {
              jQuery('#edit-last-minutes-price-value').removeClass("error");
             }
 		}
-		
+
 		if(jQuery('#early_birds_check').prop('checked')==true){
-			console.log('In early_birds_check');	
+			console.log('In early_birds_check');
 			var timevalearly=jQuery('#edit-early-birds-time-value').val();
 			var timetypeearly=jQuery('#edit-early-birds-time-type').val();
 			if(timevalearly == ''){
 				jQuery('#edit-early-birds-time-value').addClass('error');
                 jQuery('html, body').animate({
                 scrollTop: jQuery("#Special_offers").offset().top
-                }, 2000); 
+                }, 2000);
 				Err++;
 			}else{
 				jQuery('#edit-early-birds-time-value').removeClass('error');
                 jQuery('#edit-early-birds-time-value').parent().find('span').remove();
-				
+
 			}
-			if(timevalearly != ''){	
-				console.log(timetypeearly);			
+			if(timevalearly != ''){
+				console.log(timetypeearly);
 				if(timetypeearly=='day'){
-					timevalearly=parseInt(timevalearly);	
+					timevalearly=parseInt(timevalearly);
 					if(timevalearly < 7){
 						jQuery('#edit-early-birds-time-value').addClass('error');
 						jQuery('#edit-early-birds-time-value').parent().find('span').remove();
 						jQuery('#edit-early-birds-time-value').parent().append('<span style="color:red;">Time will be greater then 7 Days in early birds offer.</span>');
                         jQuery('html, body').animate({
                         scrollTop: jQuery("#Special_offers").offset().top
-                        }, 2000); 
+                        }, 2000);
 						Err++;
 					} else if( (jQuery('#edit-early-birds-time-value').val().indexOf('-')>=0) || (jQuery('#edit-early-birds-time-value').val().indexOf('+')>=0) ){
                         jQuery('#edit-early-birds-time-value').addClass('error');
                         jQuery('#edit-early-birds-time-value').parent().find('span').remove();
                         jQuery('html, body').animate({
                         scrollTop: jQuery("#Special_offers").offset().top
-                        }, 2000); 
+                        }, 2000);
                         Err++;
                     }else{
 						jQuery('#edit-early-birds-time-value').removeClass('error');
@@ -2303,7 +2303,7 @@ function calendar_form_validate(){
 					jQuery('#edit-early-birds-price-value').addClass("error");
                     jQuery('html, body').animate({
                     scrollTop: jQuery("#Special_offers").offset().top
-                    }, 2000); 
+                    }, 2000);
 					Err++;
 			}else {
                 jQuery('#edit-early-birds-price-value').removeClass("error");
@@ -2314,7 +2314,7 @@ function calendar_form_validate(){
 		}else{
 			return true;
 		}
-		
+
 	}
 function validate_lastminutetime(){
 return true;
@@ -2325,24 +2325,24 @@ if(time_type=='day'){
 	    jQuery.extend(settings, {
 	    	rules: {
 					last_minutes_time_value: {
-					required: true, 
+					required: true,
 					digits: true,
 					max:6
 				},
 			},
-			
+
 	    });
 }else{
 
 	jQuery.extend(settings, {
 	    	rules: {
 					last_minutes_time_value: {
-					required: true, 
+					required: true,
 					digits: true,
 					max:144
 				},
 			},
-			
+
 	    });
 }
 	jQuery("#product-calendar-form").valid();
@@ -2351,13 +2351,13 @@ if(time_type=='day'){
 
 /* Updated 17-02-2016 */
 //view session data script starts here//
-jQuery(document).ready(function() {   
+jQuery(document).ready(function() {
     jQuery(".session_view_link").click(function(){
-        
-        var lis_sis = jQuery(this).attr('ses-data').split('/');        
+
+        var lis_sis = jQuery(this).attr('ses-data').split('/');
 
         if (lis_sis != "")
-            {           
+            {
              jQuery("#load-screen").css('display','block');
 
                 jQuery.ajax({
@@ -2365,10 +2365,10 @@ jQuery(document).ready(function() {
                     type: "POST",
                     data: {'listing_id':lis_sis[0], 'ses_id' : lis_sis[1]},
                     success: function (res)
-                    {   
-                                               
-                    var priceArray = jQuery.parseJSON(res);  
-                    var data =""; var person_p_i="" ;var price_p_i="";                        
+                    {
+
+                    var priceArray = jQuery.parseJSON(res);
+                    var data =""; var person_p_i="" ;var price_p_i="";
 
                     var Start_Time = priceArray.startTime;
                     var Start_Time =Start_Time.split(':');
@@ -2383,34 +2383,34 @@ jQuery(document).ready(function() {
                     }else {
                        session_date=priceArray.startDate+'/'+priceArray.endRepeatDate;
                     }
-                    
 
-                    var i =1;    
-                     jQuery.each(priceArray.pricingData,function(index,value){                           
 
-                     if(value.price_type=="PER_PERSON") {  
+                    var i =1;
+                     jQuery.each(priceArray.pricingData,function(index,value){
+
+                     if(value.price_type=="PER_PERSON") {
                          person_p_i +=  value.price_option_type.charAt(0).toUpperCase()+value.price_option_type.substr(1)+'</br>';
 
                       } else {
-                        person_p_i +=  value.label+'</br>';   
-                      }                                          
+                        person_p_i +=  value.label+'</br>';
+                      }
                       price_p_i += value.price+'</br>';
-                      
-                    i++;});                    
+
+                    i++;});
 
                    data += "<thead>"+"<tr>"+"<th>Start date/End date</th>"+"<th>Start time</th>"+"<th>End time</th>";
-                   data += " <th>Person type/Item name</th>"+"<th>Price($)</th>"+"</tr>"+"</thead>"; 
+                   data += " <th>Person type/Item name</th>"+"<th>Price($)</th>"+"</tr>"+"</thead>";
 
                     if(priceArray['pricingData'][0]['price_type']=="PER_ITEM") {
-                         priceArray['pricingData'][0]['price_type'] = "PER ITEM";    
-                         
-                    } else {
-                        priceArray['pricingData'][0]['price_type'] = "PER PERSON";    
-                    }  
-                   
-                    data += "<tr>"+"<td>"+session_date+"</td>"+"<td>"+Start_Time+"</td>"+"<td>"+End_Time+"</td>";    
+                         priceArray['pricingData'][0]['price_type'] = "PER ITEM";
 
-                    data += "</td>"+"<td>"+person_p_i+"</td>"+"<td>"+price_p_i+"</td>"+"</tr>";       
+                    } else {
+                        priceArray['pricingData'][0]['price_type'] = "PER PERSON";
+                    }
+
+                    data += "<tr>"+"<td>"+session_date+"</td>"+"<td>"+Start_Time+"</td>"+"<td>"+End_Time+"</td>";
+
+                    data += "</td>"+"<td>"+person_p_i+"</td>"+"<td>"+price_p_i+"</td>"+"</tr>";
 
                     jQuery(".edit_date_heading").html("view Session data");
                     jQuery(".session_pricing_data").html(data);
@@ -2419,18 +2419,18 @@ jQuery(document).ready(function() {
 
                     }
                 });
-            }  
+            }
     });
 
 //End session data script here//
 /* Updated 17-02-2016 ,Updated 18-02-2016, Updated 19-02-2016 */
 //view session edited date script starts here//
   jQuery(".session_editdats_link").click(function(){
-        
-        var lis_sis = jQuery(this).attr('ses-data').split('/');        
+
+        var lis_sis = jQuery(this).attr('ses-data').split('/');
 
         if (lis_sis != "")
-            {           
+            {
              jQuery("#load-screen").css('display','block');
 
                 jQuery.ajax({
@@ -2438,57 +2438,57 @@ jQuery(document).ready(function() {
                     type: "POST",
                     data: {'listing_id':lis_sis[0], 'ses_id' : lis_sis[1]},
                     success: function (res)
-                    { 
+                    {
 
                      if(res == 'null') {
                         alert("No Edited date found in this session");
                         jQuery("#load-screen").css('display','none');
                         return false;
-                      }                                                
-                    var priceArray = jQuery.parseJSON(res);  
-                    var editdate_data =""; 
+                      }
+                    var priceArray = jQuery.parseJSON(res);
+                    var editdate_data ="";
 
                     editdate_data += "<thead>"+"<tr>"+"<th>Edited date</th>"+"<th>Start time</th>"+"<th>End time</th>"+" <th>Price type</th>"+" <th>Person type/Item name</th>"+"<th>Price($)</th>"+"</tr>"+"</thead>";
                     jQuery.each(priceArray,function(index,value) {
 
                     var pricetype_p_i ="";var person_p_i = ""; var price_p_i = "";
-                       
+
                     var Start_Time = value.start_time;
                     var Start_Time =Start_Time.split(':');
                     var Start_Time = hours_am_pm(Start_Time[0]+Start_Time[1]);
-                   
+
                     var End_Time = value.end_time;
                     var End_Time =End_Time.split(':');
                     var End_Time = hours_am_pm(End_Time[0]+End_Time[1]);
 
-                    editdate_data += "<tr>"+"<td>"+value.edited_date+"</td>"+"<td>"+Start_Time+"</td>"+"<td>"+End_Time+"</td>";                   
+                    editdate_data += "<tr>"+"<td>"+value.edited_date+"</td>"+"<td>"+Start_Time+"</td>"+"<td>"+End_Time+"</td>";
                     var i=1;
-                    jQuery.each(value.pricingData,function(index,value){                     
-                      if(value.price_type=="PER_PERSON") {  
+                    jQuery.each(value.pricingData,function(index,value){
+                      if(value.price_type=="PER_PERSON") {
                        person_p_i +=  value.price_option_type.charAt(0).toUpperCase()+value.price_option_type.substr(1)+'</br>';
-                       pricetype_p_i =  "PER PERSON"; 
-                      } else {                      
+                       pricetype_p_i =  "PER PERSON";
+                      } else {
                        person_p_i +=  value.label+'</br>';
-                        pricetype_p_i =  "PER ITEM";  
-                      } 
-                                         
+                        pricetype_p_i =  "PER ITEM";
+                      }
+
                       price_p_i += value.price+'</br>';
 
-                    });                                  
+                    });
 
 
-                    editdate_data += "<td>"+pricetype_p_i+"</td>"+"<td>"+person_p_i+"</td>"+"<td>"+price_p_i+"</td>"+"</tr>";  
+                    editdate_data += "<td>"+pricetype_p_i+"</td>"+"<td>"+person_p_i+"</td>"+"<td>"+price_p_i+"</td>"+"</tr>";
 
-                    });   
-                                     
-                    jQuery(".edit_date_heading").html("View Edited Dates");               
+                    });
+
+                    jQuery(".edit_date_heading").html("View Edited Dates");
                     jQuery(".session_pricing_data").html(editdate_data);
                     jQuery('.individual_session_popup').fadeIn(500);
                     jQuery("#load-screen").css('display','none');
 
                     }
                 });
-            }  
+            }
     });
 
 //end session edited date script here//
@@ -2502,7 +2502,7 @@ jQuery('.closepopup').click(function(){
 /* End Updated 17-02-2016 */
 
 </script>
-<?php } 
+<?php }
 /* End scripts of New pricing and calendar section */
 ?>
 <script type="text/javascript">
@@ -2511,13 +2511,13 @@ jQuery(document).on('mouseenter','#drop4',function (){
 console.log('unread_counter backend');
 		jQuery.ajax({
             url: $baseUrl + '/ajax/unread_counter',
-            type: 'post',    
-            async:true,         
+            type: 'post',
+            async:true,
             beforeSend: function () {
                // preLoading('show', 'load-screen_details');
             },
               success: function (data) {
-               //jQuery('#load-screen').hide();               
+               //jQuery('#load-screen').hide();
                 /*if(data){
                 var html = '<span class="count">'+data+'</span>';
 
@@ -2525,12 +2525,12 @@ console.log('unread_counter backend');
                 jQuery('.notification_block').html(html);
 
                 }else{
-                jQuery('.notification_block').html('');        
-                jQuery(".nav-dropdown-heading").text('Notifications');      
+                jQuery('.notification_block').html('');
+                jQuery(".nav-dropdown-heading").text('Notifications');
                 }*/
 
-                jQuery('.notification_block').html('');        
-                jQuery(".nav-dropdown-heading").text('Notifications');    
+                jQuery('.notification_block').html('');
+                jQuery(".nav-dropdown-heading").text('Notifications');
             }
         });
 });
@@ -2540,22 +2540,22 @@ jQuery(document).ready(function(){
     //1 minute interval for notification
 
 
-    setInterval(function() { 
+    setInterval(function() {
         getNotifications();
     },60000);
-    
-   
+
+
 });
 
-getNotifications =  function(){  
-console.log("backend");  
+getNotifications =  function(){
+console.log("backend");
     jq.ajax({
         url: $baseUrl + '/advice/notification/',
-        type: 'post',       
+        type: 'post',
         data: {notification:1},
-        async:true, 
+        async:true,
         beforeSend: function () {
-           
+
         },
         success: function (data) {
             // var res = jQuery.parseJSON(data);
@@ -2586,7 +2586,7 @@ console.log("backend");
 <!-- Updated 12-02-2016 -->
 
 <?php //Session Edit Code
-if(strpos($_SERVER['REQUEST_URI'],'product/session/edit') !== false){	
+if(strpos($_SERVER['REQUEST_URI'],'product/session/edit') !== false){
 
 $time_range=array();
 $listId=arg(3);
@@ -2596,23 +2596,23 @@ $availableDate = getAvailbaleDatesForCal($scheduleSessionData);
 $finalDates=$availableDate;
 
 $time_ranges='';
-if($scheduleSessionData){    
-$time_ranges=unserialize($scheduleSessionData[0]['startTime']);   
+if($scheduleSessionData){
+$time_ranges=unserialize($scheduleSessionData[0]['startTime']);
 }
 
 if($time_ranges){
 
     foreach ($time_ranges as $key => $time_range) {
-        
+
         $new_time_range=''; $main_time_range='';
         foreach ($time_range['Time'] as $time_rang) {
                     $new_time_range[]=strtotime($time_rang);
-                }         
+                }
        sort($new_time_range);
 
-      
+
        foreach ($new_time_range as $new_time_rang) {
-                    $main_time_range[]=date("g:i A",$new_time_rang); 
+                    $main_time_range[]=date("g:i A",$new_time_rang);
         }
 
         $time_ranges[$key]['Time'] =$main_time_range;
@@ -2632,7 +2632,7 @@ $time_range=$time_ranges;
             var dd = today.getDate();
             var mm = today.getMonth() + 1; //January is 0!
             var yyyy = today.getFullYear();
-			
+
             if (dd < 10) {
                 dd = '0' + dd
             }
@@ -2640,13 +2640,13 @@ $time_range=$time_ranges;
                 mm = '0' + mm
             }
             today = yyyy + '/' + mm + '/' + dd;
-		/* Full Calendar */	
+		/* Full Calendar */
 		var availableDates = new Array();
         availableDates = <?php echo  json_encode($finalDates['dates']);?>;
         all_array = <?php echo  json_encode($finalDates);?>;
         //alert(all_array['NO_DATE']);
         if(all_array['NO_DATE']=='NO_DATE'){
-           availableDates=''; 
+           availableDates='';
         }
 
 		jsonObj = [];
@@ -2667,7 +2667,7 @@ $time_range=$time_ranges;
 				editable: true,
 				eventLimit: true,
 				//events: jsonObj
-				
+
 		}); /* End Full Calendar */
 		jQuery(document).ready(function(){
 
@@ -2676,7 +2676,7 @@ $time_range=$time_ranges;
             var time_range_data = new Array();
             time_range_data = <?php echo  json_encode($time_range);?>;
             availableDates_new = <?php echo  json_encode($finalDates);?>;
-            
+
             jQuery('.fc-day-number').each(function(){
 
                 var dateEach=jQuery(this).attr('data-date');
@@ -2692,11 +2692,11 @@ $time_range=$time_ranges;
                 weekdays[5] = "Friday";
                 weekdays[6] = "Saturday";
                 //alert(availableDates);
-                
+
                 var in_array_exists=jQuery.inArray(dateEach,availableDates);
-               
+
                 if(availableDates==''){
-                   
+
                     var inputDate = new Date(dateEach);
                     var dd = inputDate.getDate();
                     var mm = inputDate.getMonth() + 1; //January is 0!
@@ -2708,243 +2708,243 @@ $time_range=$time_ranges;
                     if (mm < 10) {
                     mm = '0' + mm
                     }
-                    inputDate = yyyy + '-' + mm + '-' + dd;                    
-                   
-                    if(inputDate>=availableDates_new['dates'][0] && (jQuery.inArray(new Date(inputDate).getDay(),availableDates_new['enable_days'])!== -1)){  
+                    inputDate = yyyy + '-' + mm + '-' + dd;
+
+                    if(inputDate>=availableDates_new['dates'][0] && (jQuery.inArray(new Date(inputDate).getDay(),availableDates_new['enable_days'])!== -1)){
 
                      var edited_date=jQuery(this).html();
-                                            
-                     var str=strnew=left_time_count=add_time_row='';
-                                            
-                        jQuery.each(time_range_data,function(index,day){                                                                                                       
 
-                         if(weekdays[week_day]==index){  
+                     var str=strnew=left_time_count=add_time_row='';
+
+                        jQuery.each(time_range_data,function(index,day){
+
+                         if(weekdays[week_day]==index){
 
                             y=day.Time;
-                                 
-                            if(new Date(dateEach) <= new Date()){ 
 
-                                    jQuery.each(y,function(time_index,time_val){ 
+                            if(new Date(dateEach) <= new Date()){
+
+                                    jQuery.each(y,function(time_index,time_val){
 
                                     var dt = new Date(); var cr_time = dt.getTime();
                                     var t = new Date((dt.getMonth() + 1) + "/" + dt.getDate() + "/" + dt.getFullYear() + " " + time_val);
-                                    time = t.getTime(); 
-                                                                          
-                                    if (time<cr_time) { 
+                                    time = t.getTime();
+
+                                    if (time<cr_time) {
 
                                         y = jQuery.grep(y, function(tt) {
                                         return tt != time_val;
                                         });
-                                    } 
-                                    
-                                   }); 
-                                  
-                               } 
+                                    }
+
+                                   });
+
+                               }
 
 
-                              if(y.length>0) {  
-                                var i=1;   
-                                jQuery.each(y,function(index2,value){  
-                                 
+                              if(y.length>0) {
+                                var i=1;
+                                jQuery.each(y,function(index2,value){
+
                                     if(i<=2){
                                         str +='<span class="get_time_click">'+value+'</span>';
-                                    } else {                                                            
+                                    } else {
                                         strnew +='<span class="get_time_click">'+value+'</span>';
                                         left_time_count=y.length-2;
-                                        
-                                        add_time_row='<a class="click_for_time">+'+left_time_count+' more</a>';                        
 
-                                    }  
-                                 i++;}); 
+                                        add_time_row='<a class="click_for_time">+'+left_time_count+' more</a>';
+
+                                    }
+                                 i++;});
                                } else{
-                                   add_time_row='<a href="javascript:void(0)" class="no_session">No session</a>';             
-                                }                                      
-                                                         
-                         }                           
+                                   add_time_row='<a href="javascript:void(0)" class="no_session">No session</a>';
+                                }
+
+                         }
 
                      });
 
-                        var add_newrow='<div class="add_time_row" style="display:none"><div class="close_add_time_row">x</div><div class="add_strnew">'+strnew+'</div></div>';     
-                        
+                        var add_newrow='<div class="add_time_row" style="display:none"><div class="close_add_time_row">x</div><div class="add_strnew">'+strnew+'</div></div>';
+
                         jQuery(this).html(edited_date+str+add_time_row+add_newrow);
-                        
+
                     }  else {
-                        
+
                         jQuery(this).addClass('disable_date');
-                    } 
-                    
+                    }
+
 
                 } else {
-                    
-                    if(parseInt(in_array_exists)>=0){   
-                            
-                        var edited_date=jQuery(this).html();  
+
+                    if(parseInt(in_array_exists)>=0){
+
+                        var edited_date=jQuery(this).html();
                         var str=strnew=left_time_count=add_time_row='';
 
-                        jQuery.each(time_range_data,function(index,day){ 
+                        jQuery.each(time_range_data,function(index,day){
 
-                         day.Time.sort();                                                                                   
+                         day.Time.sort();
 
-                         if(weekdays[week_day]==index){  
+                         if(weekdays[week_day]==index){
 
                             y=day.Time;
-                                 
-                            if(new Date(dateEach) <= new Date()){ 
 
-                                    jQuery.each(y,function(time_index,time_val){ 
+                            if(new Date(dateEach) <= new Date()){
+
+                                    jQuery.each(y,function(time_index,time_val){
 
                                     var dt = new Date(); var cr_time = dt.getTime();
                                     var t = new Date((dt.getMonth() + 1) + "/" + dt.getDate() + "/" + dt.getFullYear() + " " + time_val);
-                                    time = t.getTime(); 
-                                                                          
-                                    if (time<cr_time) { 
+                                    time = t.getTime();
+
+                                    if (time<cr_time) {
 
                                         y = jQuery.grep(y, function(tt) {
                                         return tt != time_val;
                                         });
-                                    } 
-                                    
-                                   }); 
-                                  
-                               } 
+                                    }
 
-                              if(y.length>0) {    
-                               
-                                var i=1;    
-                                jQuery.each(y,function(index2,value){  
-                                 
+                                   });
+
+                               }
+
+                              if(y.length>0) {
+
+                                var i=1;
+                                jQuery.each(y,function(index2,value){
+
                                     if(i<=2){
                                         str +='<span class="get_time_click">'+value+'</span>';
-                                    } else {                                                            
+                                    } else {
                                         strnew +='<span class="get_time_click">'+value+'</span>';
                                         left_time_count=y.length-2;
-                                        
-                                        add_time_row='<a class="click_for_time">+'+left_time_count+' more</a>';                        
 
-                                    }  
-                                 i++;}); 
+                                        add_time_row='<a class="click_for_time">+'+left_time_count+' more</a>';
+
+                                    }
+                                 i++;});
 
                                  } else{
-                                   add_time_row='<a href="javascript:void(0)" class="no_session">No session</a>';             
-                                }                       
-                         }                           
+                                   add_time_row='<a href="javascript:void(0)" class="no_session">No session</a>';
+                                }
+                         }
 
                      });
 
-                        var add_newrow='<div class="add_time_row" style="display:none"><div class="close_add_time_row">x</div><div class="add_strnew">'+strnew+'</div></div>';     
-                        
+                        var add_newrow='<div class="add_time_row" style="display:none"><div class="close_add_time_row">x</div><div class="add_strnew">'+strnew+'</div></div>';
+
                         jQuery(this).html(edited_date+str+add_time_row+add_newrow);
                     }  else {
-                        
+
                         jQuery(this).addClass('disable_date');
-                    } 
+                    }
                 }
-                               
+
 
             });
 
             jQuery('.click_for_time').on('click',function(){
-            jQuery('.add_time_row').hide();       
+            jQuery('.add_time_row').hide();
             jQuery(this).closest('.fc-day-number').find('.add_time_row').show();
 
-            }); 
+            });
 
             jQuery('.close_add_time_row').on('click',function(){
             jQuery(this).closest('.add_time_row').hide();
 
-            }); 
-              
+            });
+
 
           }
 
-       /*call session date get function*/   
+       /*call session date get function*/
 
-        get_calendar_dates();			
-		
+        get_calendar_dates();
+
 		jQuery('.fc-prev-button').hide();
 		jQuery(document).on('click','.fc-next-button', function(){
-		
+
 			var today = new Date(availableDates[0]);
             var dd = today.getDate();
-            var mm = today.getMonth(); 
-			var YY = today.getFullYear(); 
-			
+            var mm = today.getMonth();
+			var YY = today.getFullYear();
+
 			var selectDate=new Date('1 '+jQuery('.fc-center').find('h2').html());
-			var selectDateM = selectDate.getMonth(); 
-			var selectDateY = selectDate.getFullYear(); 
+			var selectDateM = selectDate.getMonth();
+			var selectDateY = selectDate.getFullYear();
 			jQuery('.fc-prev-button').show();
 			if(parseInt(selectDateY)>parseInt(YY)){
 				//Show Prev Button
-			
+
 			}
 			if(parseInt(selectDateY)==parseInt(YY)){
 				//Show Prev Button
 			}
 			get_calendar_dates();
 		});
-	
+
 		jQuery(document).on('click','.fc-prev-button', function(){
-		
+
 			var today = new Date();
             var dd = today.getDate();
-            var mm = today.getMonth(); 
-			var YY = today.getFullYear(); 
-			
+            var mm = today.getMonth();
+			var YY = today.getFullYear();
+
 			var selectDate=new Date('1 '+jQuery('.fc-center').find('h2').html());
-			var selectDateM = selectDate.getMonth(); 
-			var selectDateY = selectDate.getFullYear(); 
-			
+			var selectDateM = selectDate.getMonth();
+			var selectDateY = selectDate.getFullYear();
+
 			if(parseInt(selectDateY)>parseInt(YY)){
-                jQuery('.fc-prev-button').show();                
+                jQuery('.fc-prev-button').show();
             } else {
                 jQuery('.fc-prev-button').hide();
             }
-            
+
             if(parseInt(selectDateY)==parseInt(YY)){
                 if(parseInt(selectDateM)>parseInt(mm)){
                     jQuery('.fc-prev-button').show();
-                      
-                }else{                    
+
+                }else{
                     jQuery('.fc-prev-button').hide();
-                        
+
                 }
             }
-			get_calendar_dates();			
+			get_calendar_dates();
 		});
 
-        jQuery(document).on('click','.get_time_click', function() { 
-         //jQuery(document).on('click','.fc-day, .fc-day-number', function() { 
+        jQuery(document).on('click','.get_time_click', function() {
+         //jQuery(document).on('click','.fc-day, .fc-day-number', function() {
 
             jQuery("#load-screen").css('display','block');
-            var timestamp=jQuery(this).closest('.fc-day-number').attr('data-date'); 
+            var timestamp=jQuery(this).closest('.fc-day-number').attr('data-date');
             var edited_time=jQuery(this).html();
 
              jQuery( "[name='adult_price']" ).val('');
              jQuery( "[name='child_price']" ).val('');
              jQuery( "[name='item_price']" ).val('');
 
-                  
+
             if (timestamp != "")
-            {   
-          
+            {
+
                 jQuery.ajax({
                     url: $baseUrl + '/experience/ajax/getNewPricingData',
-                    type: "POST",                   
+                    type: "POST",
                     data: {selected_booking_time:edited_time,selected_booking_date:timestamp,listing_id:<?php echo arg(3); ?>},
 
                     success: function (result)
-                    {   
-                    
+                    {
+
                     var data = jQuery.parseJSON(result);
                     var status=data.status;
-                    var mydata=data.data;  
-                    var priceDetail=data.pricingDetail;  
+                    var mydata=data.data;
+                    var priceDetail=data.pricingDetail;
                     var priceType='';
-                     console.log(data);    
+                     console.log(data);
                     jQuery.each(mydata, function( index, value ) {
                       priceType=value.price_type;
-                     if(priceType == 'PER_PERSON'){ //Per person   
-                        
+                     if(priceType == 'PER_PERSON'){ //Per person
+
                             var trevellerType=value.price_option_type;
 
                             if(trevellerType=='Adult'){
@@ -2958,28 +2958,28 @@ $time_range=$time_ranges;
                             if(status=='sessional'){
 
                                 if(trevellerType=='Adult'){
-                                   
+
                                     jQuery( "[name='adult_price']" ).val(priceDetail.rate_per_adult);
                                 }else {
-                                    
+
                                     jQuery( "[name='child_price']" ).val(priceDetail.rate_per_child);
                                 }
                              }
 
-                            jQuery('.person_type_input').show();                               
+                            jQuery('.person_type_input').show();
                             jQuery('.item_type_input').remove();
 
                         }  else {
 
-                            jQuery( "[name='item_price']" ).val(value.price);                          
+                            jQuery( "[name='item_price']" ).val(value.price);
 
                             if(status=='sessional'){
-                                jQuery( "[name='item_price']" ).val(priceDetail.rate_per_item);                                 
+                                jQuery( "[name='item_price']" ).val(priceDetail.rate_per_item);
                             }
-                            
+
                             jQuery('.person_type_input').remove();
                             jQuery('.item_type_input').show();
-                        }                 
+                        }
 
                     });
 
@@ -3002,27 +3002,27 @@ $time_range=$time_ranges;
                             jQuery( "[name='price_checkbox']").attr('checked',false);
                         }
 
-                        jQuery('#edited_date_session').val(timestamp);  
+                        jQuery('#edited_date_session').val(timestamp);
                         jQuery('#edited_time_session').val(edited_time);
-                        
-                        jQuery('.eventpopup_lightbox_new').fadeIn(500);
-                        jQuery(this).fadeIn(500);            
 
-                        jQuery("#load-screen").css('display','none');  
-                        
+                        jQuery('.eventpopup_lightbox_new').fadeIn(500);
+                        jQuery(this).fadeIn(500);
+
+                        jQuery("#load-screen").css('display','none');
+
                     },
 
                     error: function(){
                     alert('request failed please try again');
-                    jQuery("#load-screen").css('display','none');  
+                    jQuery("#load-screen").css('display','none');
                     }
                 });
-            }            
+            }
 
         });
 
-    }); 
-        
+    });
+
 	/* Calendar Popup Show/Hide */
 	jQuery(document).ready(function(){
 		jQuery('.eventpopup_lightbox_new').hide();
@@ -3035,28 +3035,28 @@ $time_range=$time_ranges;
 		});
 	});
 </script>
-   
-    <script type="text/javascript">       
-    jQuery(document).ready(function() {    
-        
+
+    <script type="text/javascript">
+    jQuery(document).ready(function() {
+
         var count24Hourclone=0;
         jQuery('.fc-event-container').click(function(){
             jQuery('.eventpopup_lightbox_new').fadeIn(500);
             jQuery(this).fadeIn(500);
         });
-    
+
         jQuery('.closepopup').click(function(){
             jQuery('.eventpopup_lightbox_new').fadeOut(800);
-        }); 
-        /* End Calendar Popup Show/Hide */     
-   
+        });
+        /* End Calendar Popup Show/Hide */
+
     /* Session Popup Validations And serialization of all values */
     var mySessionForm="";
     jQuery('.submit_btn_session_edit').click(function()
-    {     
-        
+    {
+
         /* Create Session Popup Custom Form Validations */
-         var Err = 0;      
+         var Err = 0;
 
          var adult_price= jQuery( "[name='adult_price']" ).val();
          var child_price= jQuery( "[name='child_price']" ).val();
@@ -3065,72 +3065,72 @@ $time_range=$time_ranges;
         if(jQuery( "[name='adult_price']" ).length>0){
 
              if(adult_price==''){
-                 
-                jQuery( "[name='adult_price']" ).addClass('error'); 
+
+                jQuery( "[name='adult_price']" ).addClass('error');
                 jQuery( "[name='adult_price']" ).parent().parent().find('label').remove();
-                jQuery( "[name='adult_price']" ).parent().after('<label class="error">Please enter price value</label>');  
+                jQuery( "[name='adult_price']" ).parent().after('<label class="error">Please enter price value</label>');
                 Err++;
 
-              }else if((Math.floor(adult_price) != adult_price) || (!jQuery.isNumeric(adult_price)) || (adult_price.indexOf('-')>=0) || (adult_price.indexOf('+')>=0)){      
+              }else if((Math.floor(adult_price) != adult_price) || (!jQuery.isNumeric(adult_price)) || (adult_price.indexOf('-')>=0) || (adult_price.indexOf('+')>=0)){
 
-                jQuery( "[name='adult_price']" ).addClass('error'); 
-                jQuery( "[name='adult_price']" ).parent().parent().find('label').remove();     
-                jQuery( "[name='adult_price']" ).parent().after('<label class="error">Please enter valid amount</label>');    
+                jQuery( "[name='adult_price']" ).addClass('error');
+                jQuery( "[name='adult_price']" ).parent().parent().find('label').remove();
+                jQuery( "[name='adult_price']" ).parent().after('<label class="error">Please enter valid amount</label>');
                  Err++;
 
              } else {
-                 jQuery( "[name='adult_price']" ).parent().parent().find('label').remove();        
+                 jQuery( "[name='adult_price']" ).parent().parent().find('label').remove();
                  jQuery( "[name='adult_price']" ).removeClass('error');
 
              }
          }
-        
+
             if(jQuery( "[name='child_price']" ).length>0){
 
                 if(child_price==''){
-                     
-                     jQuery( "[name='child_price']" ).addClass('error');    
-                     jQuery( "[name='child_price']" ).parent().parent().find('label').remove();                
-                     jQuery( "[name='child_price']" ).parent().after('<label class="error">Please enter price value</label>');    
+
+                     jQuery( "[name='child_price']" ).addClass('error');
+                     jQuery( "[name='child_price']" ).parent().parent().find('label').remove();
+                     jQuery( "[name='child_price']" ).parent().after('<label class="error">Please enter price value</label>');
                     Err++;
 
-                  }else if((Math.floor(child_price) != child_price) || (!jQuery.isNumeric(child_price)) || (child_price.indexOf('-')>=0) || (child_price.indexOf('+')>=0)){ 
+                  }else if((Math.floor(child_price) != child_price) || (!jQuery.isNumeric(child_price)) || (child_price.indexOf('-')>=0) || (child_price.indexOf('+')>=0)){
 
-                    jQuery( "[name='child_price']" ).addClass('error');  
-                    jQuery( "[name='child_price']" ).parent().parent().find('label').remove();             
-                    jQuery( "[name='child_price']" ).parent().after('<label class="error">Please enter valid amount</label>');    
+                    jQuery( "[name='child_price']" ).addClass('error');
+                    jQuery( "[name='child_price']" ).parent().parent().find('label').remove();
+                    jQuery( "[name='child_price']" ).parent().after('<label class="error">Please enter valid amount</label>');
                      Err++;
 
                  } else {
-                     jQuery( "[name='child_price']" ).parent().parent().find('label').remove();     
+                     jQuery( "[name='child_price']" ).parent().parent().find('label').remove();
                      jQuery( "[name='child_price']" ).removeClass('error');
 
                  }
            }
-         
+
          if(jQuery( "[name='item_price']" ).length>0){
 
-              if(item_price==''){            
-                jQuery( "[name='item_price']" ).addClass('error');  
-                jQuery( "[name='item_price']" ).parent().parent().find('label').remove();                 
-                jQuery( "[name='item_price']" ).parent().after('<label class="error">Please enter price value</label>');    
+              if(item_price==''){
+                jQuery( "[name='item_price']" ).addClass('error');
+                jQuery( "[name='item_price']" ).parent().parent().find('label').remove();
+                jQuery( "[name='item_price']" ).parent().after('<label class="error">Please enter price value</label>');
                 Err++;
 
-              }else if((Math.floor(item_price) != item_price) || (!jQuery.isNumeric(item_price)) || (item_price.indexOf('-')>=0) || (item_price.indexOf('+')>=0)){ 
+              }else if((Math.floor(item_price) != item_price) || (!jQuery.isNumeric(item_price)) || (item_price.indexOf('-')>=0) || (item_price.indexOf('+')>=0)){
 
-               jQuery( "[name='item_price']" ).addClass('error');  
-               jQuery( "[name='item_price']" ).parent().parent().find('label').remove();               
-               jQuery( "[name='item_price']" ).parent().after('<label class="error">Please enter valid amount</label>');    
+               jQuery( "[name='item_price']" ).addClass('error');
+               jQuery( "[name='item_price']" ).parent().parent().find('label').remove();
+               jQuery( "[name='item_price']" ).parent().after('<label class="error">Please enter valid amount</label>');
                Err++;
 
              } else {
-                 jQuery( "[name='item_price']" ).parent().parent().find('label').remove();    
+                 jQuery( "[name='item_price']" ).parent().parent().find('label').remove();
                  jQuery( "[name='item_price']" ).removeClass('error');
 
              }
          }
-         
-       
+
+
         if(Err>0){
             return false;
         }else{
@@ -3147,13 +3147,13 @@ $time_range=$time_ranges;
     if(mySessionForm){
     console.log(mySessionForm);
     }
-   
+
 }); /* End Document dot Ready Function */
 
 </script>
 
 
-<?php } 
+<?php }
 /* End scripts of New pricing and calendar section */
 ?>
  <!--End Updated 12-02-2016 -->

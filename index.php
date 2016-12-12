@@ -20,7 +20,7 @@
 set_time_limit(0);
 define('DRUPAL_ROOT', getcwd());
 
-require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-menu_execute_active_handler();
-flush();
+@require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+@drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+@menu_execute_active_handler();
+@flush();

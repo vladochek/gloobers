@@ -1,8 +1,0 @@
-; $Id $
-name = Custom Search
-description = This is a custom module to search packages.
-core = 7.x
-
-package = "custom module"
-dependencies[] = path
-php = 5.2

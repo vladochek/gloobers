@@ -131,9 +131,9 @@ function hotel_optional_service_form_submit($form, &$form_state) {
  * query delete previous records
  * 
  */
-$query = db_delete('gbl_hotel_optional_services')
+@$query = db_delete('gbl_hotel_optional_services')
         ->condition("hotel_id", $hotel_id);
-$result = $query->execute();
+@$result = $query->execute();
 
 /* * *
  * Submit Create Room form

@@ -1,4 +1,4 @@
-<?php 
+<?php
 global $user,$base_url;
 $current_path=current_path();
 drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) .'/js/jquery.sticky.js',array('scope' => 'footer'));
@@ -12,12 +12,12 @@ $productId=arg(3);
 
 
 //if(!empty($photos)){
-if (strpos($_SERVER['REQUEST_URI'], '/product/add/photos') !== false){	
+if (strpos($_SERVER['REQUEST_URI'], '/product/add/photos') !== false){
 ?>
 <script type="text/javascript">
 jQuery( document ).ready(function(){
 jQuery('#product-details-form').addClass('Calenderform');
-//var photos_size=jQuery('.photo-content').size(); 
+//var photos_size=jQuery('.photo-content').size();
 
 });
 </script>
@@ -31,11 +31,11 @@ jQuery('#product-details-form').addClass('Calenderform');
 		foreach($photos as $photo){
 			$imgpath="";
 			$photo 	= unserialize($photo["value1"]);
-			$style 	= "medium";			
-			$file 	= file_load(trim($photo["fid"]));		
+			$style 	= "medium";
+			$file 	= file_load(trim($photo["fid"]));
 			$imgpath = $file->uri;
 			if($overviewData['main_img_fid']==$photo["fid"]){$class='checkedMain';}else{$class='';}
-			
+
 ?>
 	<div id="photo-content<?php echo $i++; ?>" class="photo-content">
 		<div class="plupload_star_action1">
@@ -52,11 +52,11 @@ jQuery('#product-details-form').addClass('Calenderform');
 			<textarea class="highlights" placeholder="What are the highlights of this photo?"><?php echo $photo["text"]; ?></textarea>
 		</div>
 	</div>
-<?php 
+<?php
 		}
 ?>
 </div>
-<?php 
+<?php
 	}
 if(!$addressListing && !$subscriptionListing && !$calendar && !$success){
 ?>
@@ -65,7 +65,7 @@ if(!$addressListing && !$subscriptionListing && !$calendar && !$success){
 	print drupal_render($productForm);
 ?>
 
-<?php 
+<?php
 }
 /* Add google map in location */
 if($addressListing){  $addrs='';$addrs='';
@@ -74,24 +74,24 @@ if($addressListing){  $addrs='';$addrs='';
 					<div class="bs_top_location">
 					<div class="col-md-12 col-sm-12 col-xs-12">
 					<h2 class="pagehead">Location</h2>						
-					</div></div> </div>';				
+					</div></div> </div>';
 			}
 			else
-			{	
+			{
 			print '<div class="col-md-12 col-sm-12 col-xs-12"><h2 class="pagehead">Location</h2>
-						</div>';				
+						</div>';
 			}
-		  
+
 			print '<div class="add-address">';
-			print '<div id="dm-map-div">';            
-			
-			print '<div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><div id="address-form">';				
+			print '<div id="dm-map-div">';
+
+			print '<div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><div id="address-form">';
 			echo  drupal_render($addressform);
 			print '</div></div>
 				
 			</div>';
-			/**********************************************************************/	
-			 		
+			/**********************************************************************/
+
 }
 //Session Edit Code
 if(strpos($_SERVER['REQUEST_URI'],'product/session/edit') !== false){
@@ -104,8 +104,8 @@ if(!$addressListing){
 <div class="col-xs-12 col-sm-12 col-md-3 help_right" id="helpBar" data-sticky_column="">
 	<div class="help_block">
 	<div class="heading_help">HELP</div>
-	
-    <?php 
+
+    <?php
 	if($overViewListing)
 	{
 	?>
@@ -141,7 +141,7 @@ if(!$addressListing){
 		<p><b><?php print t('Communication with travelers');?></b></p>
 		<p><?php print t('Communication channels available for travelers');?></p>
 		</div>
-	
+
   <?php
   }
   elseif($photosListing)
@@ -180,62 +180,62 @@ if(!$addressListing){
   }
   elseif($Calendernew)
   {
- 
+
   ?>
 	<div class="SESSION_SEATS-help" style="display:none;">
 		<p><b>Limited</b> </p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="FREE_SALE-help" style="display:none;">
 		<p><b>Unlimited</b>
 		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="YEARLY-help" style="display:none;">
 		<p><b>Yearly</b> </p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="MONTHLY-help" style="display:none;">
 		<p><b>Monthly</b> </p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="Daily-help" style="display:none;">
 		<p><b>Daily</b> </p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="Hourly-help" style="display:none;">
 		<p><b>Hourly</b></p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="Minute-help" style="display:none;">
 		<p><b>Minute</b></p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="Weekly-help" style="display:none;">
 		<p><b>Weekly</b> </p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
 	<div class="edit-session-endrepeatdate-help" style="display:none;">
 		<p><b>Untill Repeate period</b> </p>
 		<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		
+
 	</div>
-	
+
 	<div class="INVENTORY-help" style="display:none;">
 		<p><b>Fixed dates &amp; times</b></p>
 		<p>
@@ -248,12 +248,12 @@ if(!$addressListing){
 		This means that a date is required, but the customer can choose any they wish.</p>
 		<p>You cannot limit availability, blackout dates or vary your prices per period if you select this option.</p>
 	</div>
-	
+
 	<div class="NO_DATE-help" style="display:none;">
 		<p><b>Date not required</b></p>
 		<p>
 		For example if you sell open tickets that do not require a specific date.</p>
-		
+
 	</div>
 	<div class="AUTOCONFIRM-help" style="display:none;">
 		<p><b><?php print t('Automatically');?></b></p>
@@ -264,7 +264,7 @@ if(!$addressListing){
 	<div class="MANUAL-help" style="display:none;">
 		<p><b><?php print t('Manually');?></b></p>
 		<p><?php print t('Orders placed by your customers will have a "Pending supplier" status. You must manually review and confirm each order.');?>
-		</p>					
+		</p>
 	</div>
 	<div class="schedule_type-help edit-product-duration-help" style="display:none;">
 		<p><b><?php print t('Estimated duration');?></b></p>
@@ -298,29 +298,29 @@ if(!$addressListing){
 	<!---------------Last Minute----------------->
   <div class="edit-last-minutes-time-value-help" style="display:none;">
 		<p><b><?php print t('Last minute offer');?></b></p>
-		<p><?php print t('This offer can be applied when number of days less than 7 days or 144 hours.');?></p>	
+		<p><?php print t('This offer can be applied when number of days less than 7 days or 144 hours.');?></p>
   </div>
   <div class="edit-last-minutes-price-value-help" style="display:none;">
 	<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('price will be implemented according to % or amount.');?></p>	
+		<p><?php print t('price will be implemented according to % or amount.');?></p>
   </div>
- 
+
 	<!--------Early Birds------------>
    <div class="edit-early-birds-time-value-help" style="display:none;">
 		<p><b><?php print t('Early birds time');?></b></p>
-		<p><?php print t('Here you can select offer time in days,week or month.But for early days you need to set atleast 7 days.');?></p>	
-   </div> 
+		<p><?php print t('Here you can select offer time in days,week or month.But for early days you need to set atleast 7 days.');?></p>
+   </div>
    <div class="edit-early-birds-price-value-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('You can set the price of early bird offer here.');?></p>	
+		<p><?php print t('You can set the price of early bird offer here.');?></p>
    </div>
   <div class="early_birds_price_type-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('888');?></p>	
+		<p><?php print t('888');?></p>
   </div>
   <div class="schedule_type_early_bids-help" style="display:none;">
 		<p><b><?php print t('Apply to schedule');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
 	<?php
   }
@@ -329,111 +329,111 @@ if(!$addressListing){
   ?>
   <div class="PER_PERSON-help" style="display:none;">
 		<p><b><?php print t('Price Type');?></b></p>
-		<p><?php print t('Per Person');?></p>	
+		<p><?php print t('Per Person');?></p>
   </div>
   <div class="PER_ITEM-help" style="display:none;">
 		<p><b><?php print t('Price Type');?></b></p>
-		<p><?php print t('Per Item');?></p>	
+		<p><?php print t('Per Item');?></p>
   </div>
   <div class="season_rate_label-help" style="display:none;">
 		<p><b><?php print t('Rate Label');?></b></p>
-		<p><?php print t('Rate Label');?></p>	
+		<p><?php print t('Rate Label');?></p>
   </div>
    <div class="season_rate_amount-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('Enter the amount that will be charged.');?></p>	
-		<p>For example: <strong>25.00</strong></p>	
+		<p><?php print t('Enter the amount that will be charged.');?></p>
+		<p>For example: <strong>25.00</strong></p>
   </div>
   <div class="high_season_rate_dates-help" style="display:none;">
 		<p><b><?php print t('From - To');?></b></p>
-		<p><?php print t('price available period');?></p>	
+		<p><?php print t('price available period');?></p>
   </div>
   <div class="product_pricing_quantity-help" style="display:none;">
 		<p><b><?php print t('Quantity Required');?></b></p>
-		<p><?php print t('Quantity allowed for deal');?></p>	
+		<p><?php print t('Quantity allowed for deal');?></p>
   </div>
   <div class="product_pricing_type-help" style="display:none;">
 		<p><b><?php print t('Product pricing');?></b></p>
-		<p><?php print t('industry.');?></p>	
+		<p><?php print t('industry.');?></p>
   </div>
   <div class="product_pricing_key-help" style="display:none;">
 		<p><b><?php print t('Product pricing for');?></b></p>
-		<p><?php print t('industry2.');?></p>	
+		<p><?php print t('industry2.');?></p>
   </div>
   <div class="product_pricing_value-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('Enter the amount that will be charged.');?></p>	
+		<p><?php print t('Enter the amount that will be charged.');?></p>
   </div>
   <div class="schedule_type-help" style="display:none;">
 		<p><b><?php print t('Apply to schedule');?></b></p>
-		<p><?php print t('Availability is determined by the sessions you create in your calendar. If you don\'t create sessions this product will not be available.');?></p>	
+		<p><?php print t('Availability is determined by the sessions you create in your calendar. If you don\'t create sessions this product will not be available.');?></p>
   </div>
   <div class="product_pricing_quantity_type-help" style="display:none;">
 		<p><b><?php print t('Apply to schedule');?></b></p>
-		<p><?php print t('industry33.');?></p>	
+		<p><?php print t('industry33.');?></p>
   </div>
   <div class="quantity_min-help" style="display:none;">
 		<p><b><?php print t('Minimum Quantity');?></b></p>
-		<p><?php print t('Enter the minimum number of persons can arrive.');?></p>	
+		<p><?php print t('Enter the minimum number of persons can arrive.');?></p>
   </div>
   <div class="quantity_max-help" style="display:none;">
 		<p><b><?php print t('Maximum Quantity');?></b></p>
-		<p><?php print t('Enter the maximum number of persons can arrive');?></p>	
-  </div>  
+		<p><?php print t('Enter the maximum number of persons can arrive');?></p>
+  </div>
  <!-- Early Birds -->
    <div class="early_birds_time_value-help" style="display:none;">
 		<p><b><?php print t('Early birds time');?></b></p>
-		<p><?php print t('Here you can select offer time in days,week or month.But for early days you need to set atleast 7 days.');?></p>	
-  </div> 
+		<p><?php print t('Here you can select offer time in days,week or month.But for early days you need to set atleast 7 days.');?></p>
+  </div>
   <div class="early_birds_time_type-help" style="display:none;">
 		<p><b><?php print t('Maximum Quantity');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
   <div class="early_birds_price_value-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('You can set the price of early bird offer here.');?></p>	
+		<p><?php print t('You can set the price of early bird offer here.');?></p>
   </div>
   <div class="early_birds_price_type-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('888');?></p>	
+		<p><?php print t('888');?></p>
   </div>
   <div class="schedule_type_early_bids-help" style="display:none;">
 		<p><b><?php print t('Apply to schedule');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
  <!-- Last Minute -->
   <div class="last_minutes_time_value-help" style="display:none;">
 		<p><b><?php print t('Apply to schedule');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
   <div class="schedule_type_last_minutes-help" style="display:none;">
 		<p><b><?php print t('Apply to schedule');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
   <div class="last_minutes_time_type-help" style="display:none;">
 	<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
   <div class="last_minutes_price_type-help" style="display:none;">
 	<p><b><?php print t('Price');?></b></p>
-	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
 	<!-- 24 Hour Offer -->
 	  <div class="edit-offer-24-hour-offer-date-help" style="display:none;">
 		<p><b><?php print t('Price');?></b><p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
 	  </div>
 	  <div class="24_hour_offer_price_value-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
 	  </div>
 	  <div class="24_hour_offer_price_type-help" style="display:none;">
 		<p><b><?php print t('Price');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
 	  </div>
 	  <div class="schedule_type_24_hours-help" style="display:none;">
 		<p><b><?php print t('Apply to schedule');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
 	  </div>
   <?php
   }elseif($extrasListing)
@@ -441,23 +441,23 @@ if(!$addressListing){
   ?>
   <div class="extra_service-help" style="display:none;">
 	<p><b><?php print t('Optional Service');?></b></p>
-	<p><?php print t('This will be the additional services provided in the experience event.');?></p>	
+	<p><?php print t('This will be the additional services provided in the experience event.');?></p>
   </div>
    <div class="extra_price_type-help" style="display:none;">
 	<p><b><?php print t('Price');?></b></p>
-	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
   <div class="extra_price_value-help" style="display:none;">
 	<p><b><?php print t('Price');?></b></p>
-	<p><?php print t('This will be price according to each service.');?></p>	
+	<p><?php print t('This will be price according to each service.');?></p>
   </div>
   <div class="extra_price_key-help" style="display:none;">
 	<p><b><?php print t('Price');?></b></p>
-	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
-  </div> 
+	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
+  </div>
   <div class="product_extra_description-help" style="display:none;">
 	<p><b><?php print t('Description');?></b></p>
-	<p><?php print t('Please add some description of additional service.');?></p>		
+	<p><?php print t('Please add some description of additional service.');?></p>
   </div>
   <?php
   }elseif($rulesList)
@@ -465,11 +465,11 @@ if(!$addressListing){
   ?>
   <div class="edit-security-deposit-help" style="display:none;">
 	<p><b><?php print t('Security Deposit');?></b></p>
-	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+	<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
   </div>
   <div class="edit-experience-rules--help" style="display:none;">
 	<p><b><?php print t('Experience Rules');?></b></p>
-	<p><?php print t('This is set some rules to experience listings of canceling policy.');?></p>	
+	<p><?php print t('This is set some rules to experience listings of canceling policy.');?></p>
   </div>
 	<div class="policies-Relaxed-help" style="display:none;">
 		 <p><b><?php print t('Relaxed');?></b></p>
@@ -501,15 +501,15 @@ if(!$addressListing){
 	  </div>
 	  <div class="agreement-help" style="display:none;">
 		<p><b><?php print t('Agreement');?></b></p>
-		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>	
+		<p><?php print t('Lorem Ipsum is simply dummy text of the printing and typesetting industry.');?></p>
 	  </div>
 	  <div class="other_information-help" style="display:none;">
 		<p><b><?php print t('Other Information');?></b></p>
-		<p><?php print t('This is the other information of the listing.');?></p>	
+		<p><?php print t('This is the other information of the listing.');?></p>
 	  </div>
    <?php
   }
-  ?> 
+  ?>
 </div></div>
 <div class="clearfix"></div>
 
@@ -522,18 +522,18 @@ if($Calendernew){
 if(!empty($scheduleSessionData)){
 ?>
 <div class="marg_bottom_80 col_wrap border_btm">
-            <div class="col-xs-12 col-sm-12 col-md-12">   
+            <div class="col-xs-12 col-sm-12 col-md-12">
 		 <div class="help-block boader_class">
             <div class="heading_help">My Schedules</div>
-            
+
             <table class="table2">
 			<thead>
 			  <tr>
-				<th>Start/End date</th>				
+				<th>Start/End date</th>
 				<th>Price type</th>
 				<th>Person type/Item name</th>
 				<th>Price($)</th>
-				<th colspan="5">Actions</th>				
+				<th colspan="5">Actions</th>
 			  </tr>
 			</thead>
     <tbody>
@@ -542,37 +542,37 @@ if(!empty($scheduleSessionData)){
 					foreach($scheduleSessionData as $data){
 					$priceData = unserialize($data["pricingData"]);
 						$string = "";$price_type = "";
-						
+
 						foreach($priceData as $key=>$val){
 							/*if(isset($val["schedulePrice"])){
 								$price_type = $val["price_type"];
 								$string .= $val["price_type"]." ".$val["schedulePrice"]."<br/>";
 								//$string .= $val["price_type"]." ".$val["schedulePrice"]."<br/>";
-							}*/		
+							}*/
 							if($val["price_type"]=="PER_PERSON") {
-								$price_type = "PER PERSON";							
+								$price_type = "PER PERSON";
 								$type_string .= ucfirst($val["price_option_type"]).'<br>';
 								$p_i_price .= $val["price"].'<br>';
-							}	else {		
-								$price_type = "PER ITEM";							
+							}	else {
+								$price_type = "PER ITEM";
 								$type_string .= $val["label"].'<br>';
 								$p_i_price .= $val["price"].'<br>';
-							}		
+							}
 						}
 				?>
                     <tr>
                       <td><?php /* echo "<pre>";
 					  print_r($data); */
 					  if($data["startDate"] !=''){
-						/*echo date('D,M',strtotime($data["startDate"]))." ".date('d,Y',strtotime($data["startDate"])); ?><br/><?php if ($data["repeatPeriodBy"] != "DoNOt") echo "Repeat ".$data['repeatPeriodBy']." until ". date('D,M',strtotime($data["endRepeatDate"]))." ".date('d,Y',strtotime($data["endRepeatDate"]));*/	
+						/*echo date('D,M',strtotime($data["startDate"]))." ".date('d,Y',strtotime($data["startDate"])); ?><br/><?php if ($data["repeatPeriodBy"] != "DoNOt") echo "Repeat ".$data['repeatPeriodBy']." until ". date('D,M',strtotime($data["endRepeatDate"]))." ".date('d,Y',strtotime($data["endRepeatDate"]));*/
 
 						echo $data["startDate"]; ?><br/>
-						<?php if ($data["repeatPeriodBy"] != "DoNOt") echo "Repeat ".$data['repeatPeriodBy']." until ".$data["endRepeatDate"];					
+						<?php if ($data["repeatPeriodBy"] != "DoNOt") echo "Repeat ".$data['repeatPeriodBy']." until ".$data["endRepeatDate"];
 					  }else{
 						echo $data["startDate"]=date('Y-m-d');
-					  
+
 					  }					  ?>
-					  </td>	
+					  </td>
 					  <td>
 					  	<?php echo $price_type; ?>
 					  </td>
@@ -582,27 +582,27 @@ if(!empty($scheduleSessionData)){
 					  <td>
 					  	<?php echo $p_i_price; ?>
 					  </td>
-					  
-					  <td><a onclick="return confirm('Are you sure?')" href="<?php echo $base_url; ?>/product/session/delete/<?php echo $data["listing_id"]; ?>/<?php echo $data["se_id"]; ?>">Remove</a></td>
-					  
-					   <td>
-					   <?php 
 
-					   if((strtotime($data["endRepeatDate"])>=strtotime(date('Y-m-d')))) { ?> 
+					  <td><a onclick="return confirm('Are you sure?')" href="<?php echo $base_url; ?>/product/session/delete/<?php echo $data["listing_id"]; ?>/<?php echo $data["se_id"]; ?>">Remove</a></td>
+
+					   <td>
+					   <?php
+
+					   if((strtotime($data["endRepeatDate"])>=strtotime(date('Y-m-d')))) { ?>
 					   <a href="<?php echo $base_url; ?>/product/session/edit/<?php echo $data["listing_id"]; ?>/<?php echo $data["se_id"]; ?>">Edit</a>
 					   <?php }else if(($data["bookingMode"] == 'NO_DATE')){ ?>
 					   <a onclick="alert('You can not edit this session on perticular date as in this no date required so first remove this session and create new session with date ranges.');">Edit</a>
-					   
+
 					   <?php }else { ?>
 					   <a onclick="alert('As the session date is past, You can not edit this session');" style="cursor:pointer">Edit</a>
 					   <?php  } ?>
 					   </td>
 					   <td><a href="javascript:void(0)" class = "session_view_link" ses-data = "<?php echo $data["listing_id"].'/'.$data["se_id"]; ?>" >View</a></td>
-					   <?php if($data["bookingMode"] != 'NO_DATE'){ ?> 
+					   <?php if($data["bookingMode"] != 'NO_DATE'){ ?>
 					   <td><a href="javascript:void(0)" class = "session_editdats_link" ses-data = "<?php echo $data["listing_id"].'/'.$data["se_id"]; ?>" >Edited Date</a></td>
 					   <?php } ?>
                     </tr>
-		<?php $price_type ='';$type_string = '' ;$p_i_price = '';} //echo "<pre>";Print_r($priceData);exit; // End Updated 17-02-2016	?>    
+		<?php $price_type ='';$type_string = '' ;$p_i_price = '';} //echo "<pre>";Print_r($priceData);exit; // End Updated 17-02-2016	?>
 
     </tbody>
   </table>
@@ -615,27 +615,27 @@ jQuery('.pos_static').addClass('margin_remove');
 </script>
 
 <?php } }
-if($subscriptionListing){	
+if($subscriptionListing){
 	drupal_add_css(drupal_get_path('theme', $GLOBALS['theme']) .'/css/rangeSlider.css');
 
 	$slidemin=0;
 	$slidemax=100;
 
-	$Classic='';$Silver='';$Gold='';	
-	$Classic_id='';$Silver_id='';$Gold_id='';	
-	
-	if($packages){	
-	$slidemax = $packages[0]['price'];			
-	$slidemin = $packages[2]['price'];		
+	$Classic='';$Silver='';$Gold='';
+	$Classic_id='';$Silver_id='';$Gold_id='';
 
-	$Classic=$packages[2]['price'];			
-	$Silver=$packages[1]['price'];			
+	if($packages){
+	$slidemax = $packages[0]['price'];
+	$slidemin = $packages[2]['price'];
+
+	$Classic=$packages[2]['price'];
+	$Silver=$packages[1]['price'];
 	$Gold=$packages[0]['price'];
-	
-	$Classic_id=$packages[2]['id'];			
-	$Silver_id=$packages[1]['id'];			
-	$Gold_id=$packages[0]['id'];			
-	}	
+
+	$Classic_id=$packages[2]['id'];
+	$Silver_id=$packages[1]['id'];
+	$Gold_id=$packages[0]['id'];
+	}
 
 
 ?>
@@ -667,7 +667,7 @@ if($subscriptionListing){
 	 <fieldset class="marg_bottom_80"></fieldset>
 	   <fieldset class="full_width_fix">
 	   <div class="range_content"><a href=<?php echo $baseUrl.'/product/add/payment/'.arg(3).'/'.$Classic_id; ?> class="generated_link" >Publish</a></div></fieldset>
-     
+
   </div>
  </div>
 
@@ -691,27 +691,27 @@ jQuery("#price_range_bar").ionRangeSlider({
 jQuery(".irs-single, .irs-max, .irs-min").remove();
 
 jQuery("#price_range_bar").on("input change", function() {
-  
-  	
+
+
    	var slider_width =jQuery('.irs-slider').attr('style');
     slider_width=slider_width.substr('6');
-   	var check_data=slider_width.replace(';', ' ');   
-   		
+   	var check_data=slider_width.replace(';', ' ');
+
     console.log(check_data);
 
 	   if(jQuery.trim(check_data)=='0%'){
 
-	   	console.log('1');	   
+	   	console.log('1');
 	    jQuery('input[type="range"]').val(<?php echo $Classic; ?>);
 		jQuery('output').html('');
 		jQuery('.price_range_data').html(<?php echo $Classic; ?>);
 		jQuery('.price_range_content').html('The more bookings you get, the highest you show up.');
 		assign_pack('<?php echo $Classic_id; ?>');
-		
+
 		jQuery('.irs-bar').css('width','0%');
-		jQuery('.irs-slider').css('left','0%');				   
-	   		   
-	   	
+		jQuery('.irs-slider').css('left','0%');
+
+
 	   /*}else  if(jQuery.trim(check_data)=='48.4721%' || jQuery.trim(check_data)=='48.4211%'){*/
 	   } else if(jQuery.trim(check_data)>='40%' && jQuery.trim(check_data)<'80%'){
 
@@ -721,24 +721,24 @@ jQuery("#price_range_bar").on("input change", function() {
 		jQuery('.price_range_data').html(<?php echo $Silver; ?>);
 		jQuery('.price_range_content').html('more exposure than Economy listings.');
 		assign_pack('<?php echo $Silver_id; ?>');
-		
+
 		jQuery('.irs-bar').css('width',check_data);
-		jQuery('.irs-slider').css('left',check_data);	   	
+		jQuery('.irs-slider').css('left',check_data);
 
 	   }
 	   /* else if(jQuery.trim(check_data)=='96.9442%' || jQuery.trim(check_data)=='96.8421%'){*/
 	   	else if(jQuery.trim(check_data)>='80%'){
-	  	
+
 	  	console.log('3');
 	  	jQuery('input[type="range"]').val(<?php echo $Gold; ?>);
 		jQuery('output').html('75%');
 		jQuery('.price_range_data').html(<?php echo $Gold; ?>);
 		jQuery('.price_range_content').html('more exposure than Economy listings.');
 		assign_pack('<?php echo $Gold_id; ?>');
-		
+
 		jQuery('.irs-bar').css('width',check_data);
-		jQuery('.irs-slider').css('left',check_data); 
-	   	
+		jQuery('.irs-slider').css('left',check_data);
+
 	   }
 
 });
@@ -747,9 +747,9 @@ jQuery("#price_range_bar").on("input change", function() {
 
 </script>
 	</div>
-    
 
-<?php } 
+
+<?php }
 
 if(($calendar)){ ?>
 <div id="createEventModal" class="modal br-model-sept" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
@@ -794,15 +794,15 @@ if(($calendar)){ ?>
     </div>
 </div>
 <script type="text/javascript">
-	
+
 	jQuery(document).ready(function () {
 		jQuery("#available").click(function(){
-			jQuery('.form-item-product-pricing-value').show();   
+			jQuery('.form-item-product-pricing-value').show();
 		});
 	jQuery("#unavailable").click(function(){
-			jQuery('.form-item-product-pricing-value').hide();   
+			jQuery('.form-item-product-pricing-value').hide();
 		});
-		
+
   jQuery('#submitButton').on('click', function(e){
     // We don't want this to act as a link so cancel the link action
     e.preventDefault();
@@ -814,8 +814,8 @@ if(($calendar)){ ?>
 	var StartTime =  jQuery('#apptStartTime').val()
 	var EndTime = jQuery('#apptEndTime').val()
 	var AllDay = jQuery('#apptAllDay').val()
-	var price = jQuery('#edit-product-pricing-value').val();   
-	var notes = jQuery('.notes').val(); 
+	var price = jQuery('#edit-product-pricing-value').val();
+	var notes = jQuery('.notes').val();
 	var cstatus = jQuery('input[name=status]:radio:checked').attr("id");
 	jQuery.ajax({
 		type: "POST",
@@ -823,16 +823,16 @@ if(($calendar)){ ?>
 		data: { "price": price,"notes":notes,"AllDay": AllDay,"EndTime":EndTime,"StartTime":StartTime,"cstatus":cstatus}
 	})
 	.done(function( data ) {
-	
+
 	data=jQuery.parseJSON(data);
 		if(data.cstatus == "available"){
-		
+
 			var Ecolor = "#3366CC";
 			var ETcolor = "#fff";
 			var ETtitle = "Price: $"+price+"  Notes: "+notes;
 		}
 		else{
-	
+
 			var Ecolor = "#898989";
 			var ETcolor = "#000";
 			var ETtitle = "Notes: "+notes;
@@ -846,9 +846,9 @@ if(($calendar)){ ?>
 				start: new Date(jQuery('#apptStartTime').val()),
 				end: new Date(jQuery('#apptEndTime').val()),
 				allDay: (jQuery('#apptAllDay').val() == "true"),
-				eventRender: function(event, element) {     
+				eventRender: function(event, element) {
 					alert(element.find('span.fc-event-title').text());
-					element.find('span.fc-event-title').html(element.find('span.fc-event-title').text());					  
+					element.find('span.fc-event-title').html(element.find('span.fc-event-title').text());
 				},
 			},
 			true);
@@ -857,7 +857,7 @@ if(($calendar)){ ?>
 
 });
 </script>
-<?php 
+<?php
 }
 if($payment){
 	$packageDetails = getPackageDetails(arg(4));
@@ -890,9 +890,9 @@ function validate_booking()
 //alert(jQuery('form input[type=checkbox]:checked').size());
 if(jQuery("#edit-terms-checkbox-terms").prop('checked') == true){
     //do something
-jQuery(".form-checkboxes .error-message").remove();	 
+jQuery(".form-checkboxes .error-message").remove();
 }else{
-	jQuery(".form-checkboxes .error-message").remove();	 	  
+	jQuery(".form-checkboxes .error-message").remove();
 	jQuery(".form-type-checkbox").append('<div class="error-message" style="color: red;float: left;width: 100%;"><span>Please Accept Terms and Conditions</span></div>');
 	return false;
 }
@@ -915,21 +915,21 @@ jQuery("#package-payment-form").validate({
 			email:{
 			required: true,
 			email: true
-			},	
-		
-						
+			},
+
+
 		},
-	
+
 });
 });
 
-jQuery(window).load(function(){ 
-jQuery("#package-payment-form")[0].reset();  
+jQuery(window).load(function(){
+jQuery("#package-payment-form")[0].reset();
 jQuery("#edit-credit-card-no").val('');
 jQuery("#edit-credit-varification-no").val('');
 });
 
- 
+
 </script>
 <?php
 }
@@ -954,18 +954,18 @@ $experienceCategoryData=getExperienceCategoryDataById($values['experience_catego
 				data: "typeId=" + encodeURI(<?php echo $values['experience_type'];?>),
 				success: function(msg){
 					//eval(msg);
-					
+
 					jq('#edit-product-category').html("");
-					
+
 					if(msg !="0")
-					{	
-					
+					{
+
 					//jq('#edit-product-category').append(msg);
 					jq.each(msg,function(index,val){
 						var sel="";
 					if(index == <?php echo $values['experience_category']?>)
 					{
-						
+
 						sel="selected";
 					}
 					jq('#edit-product-category').append("<option value='"+index+"' "+sel+">"+val+"</option>");
@@ -973,11 +973,11 @@ $experienceCategoryData=getExperienceCategoryDataById($values['experience_catego
 					}
 					else
 					{
-					
-					
+
+
 					jq('#edit-product-category').append('<option value="0">No Category Found</option>');
 					}
-					
+
 				}
 			});
 	});
@@ -989,23 +989,23 @@ $experienceCategoryData=getExperienceCategoryDataById($values['experience_catego
  if(($success) || (arg(4)==3))
 {
 ?>
- 
+
 	<div class="thankyou-bg">
             <div class="dr-full-width-wrapper">
                 <div class="thank-you-container">
                     <div class="content-text">
 					<h2 class="pagehead">Congratulations...</h2>
 					<p class="subtitle">Your listing is now live</p>
-					<div class="cheer-more"> 
+					<div class="cheer-more">
 					<a class="btn" href="<?php echo url('experience/'.arg(3));?>">Preview listing</a>
 					<a class="btn" href="<?php echo url('manage/listing');?>">My listings</a>
-					<a class="btn" href="<?php echo url('product/add/overview');?>">Create new listing</a>	</div>								 
-                             
+					<a class="btn" href="<?php echo url('product/add/overview');?>">Create new listing</a>	</div>
+
                     </div>
                 </div>
             </div>
     </div>
-			 
+
 
 <?php
 }
@@ -1013,29 +1013,29 @@ $experienceCategoryData=getExperienceCategoryDataById($values['experience_catego
 $eid=arg(3);
 $sessionData=getListExtraPrice($eid);
 
-/*if(!empty($sessionData) && isset($sessionData)){ 
+/*if(!empty($sessionData) && isset($sessionData)){
 $checkBoxSession='<input type="checkbox" name="sesonal_price_checked" checked id="sesonal_price_checked_id" class="sesonal_price_checked css-checkbox" value="1" />';
 }else{
 $checkBoxSession='<input type="checkbox" name="sesonal_price_checked" id="sesonal_price_checked_id" class="sesonal_price_checked css-checkbox" value="1" />';
-} 
+}
 */
 ?>
 
 <!-- Updated 10-02-2016 -->
 <?php
- if (strpos($_SERVER['REQUEST_URI'], '/product/add/Calendernew') !== false) { ?>   
+ if (strpos($_SERVER['REQUEST_URI'], '/product/add/Calendernew') !== false) { ?>
 
 <?php } ?>
 <!--End Updated 10-02-2016, End Updated 17-02-2016, End Updated 19-02-2016 -->
 
-<?php 
+<?php
 	$listId=arg(3);
 	$sessId=arg(4);
 	$scheduleSessionData = getScheduleSessionPerData($listId,$sessId);
 ?>
 
 <!-- Updated 10-02-2016 -->
-<?php if (strpos($_SERVER['REQUEST_URI'], '/product/session/edit') !== false) { ?> 
+<?php if (strpos($_SERVER['REQUEST_URI'], '/product/session/edit') !== false) { ?>
 
 <!--EDIT SESSION POPUP -->
 <div class="eventpopup_lightbox_new edit-session_calander">
@@ -1052,7 +1052,7 @@ $checkBoxSession='<input type="checkbox" name="sesonal_price_checked" id="sesona
 </div>
 <input type="hidden" name="edited_date" id="edited_date_session" value="" />
 <input type="hidden" name="edited_time" id="edited_time_session" value="" />
-<fieldset class="col_wrap">	
+<fieldset class="col_wrap">
 	<!-- Per person Pricing -->
 	<div class="col-md-6 col-sm-6 col-xs-6 person_type_input">
 		<div class="col-md-12 col-sm-12 col-xs-12">
@@ -1098,12 +1098,12 @@ $checkBoxSession='<input type="checkbox" name="sesonal_price_checked" id="sesona
 
 	<!--item section-->
 		<div class="col-md-6 col-sm-6 col-xs-6 item_type_input">
-		<div class="col-md-12 col-sm-12 col-xs-12">			
+		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div class="person_type per_adult">
-			  <div class="per_adult">Item</div>	 
+			  <div class="per_adult">Item</div>
 			</div>
 		</div>
-		<div class="col-md-12 col-sm-12 col-xs-12">		
+		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div class="input-group">
 						<div class="input-group-addon">$</div>
 						<input type="text" placeholder="Amount" name="item_price"/>
@@ -1126,7 +1126,7 @@ $checkBoxSession='<input type="checkbox" name="sesonal_price_checked" id="sesona
 </form>
 
 </div> <!-- End EventPopUp_Panel -->
-</div> <!-- End EventPopUp_Lightbox -->                       
+</div> <!-- End EventPopUp_Lightbox -->
 
 <?php   }  ?>
 
@@ -1137,20 +1137,20 @@ input.error, textarea.error, select.error {
 </style>
 <script>
 	jq(document).ready(function(){
-		
+
 		/* custom tab for openning days and sessions hours */
 
-	jQuery('body').on('click', '#tabs-container .weekday_menu',function(event){	
-		
+	jQuery('body').on('click', '#tabs-container .weekday_menu',function(event){
+
 		event.preventDefault();
 
 		id=jQuery(this).closest('.sessions_tabs_menu').attr('data-id');
 
 		if(jQuery('#session_startTime_'+id).text()=='Select time'){
-			
+
 			alert("Please select session time first");
 			return false;
-		} 
+		}
 
 		selected_day=jQuery(this).find(".css-checkbox").val();
 		selected_time=jQuery('#session_startTime_'+id).text();
@@ -1158,8 +1158,8 @@ input.error, textarea.error, select.error {
 		count_div=jQuery('.sessions_tabs_menu').length;
 		session_exists='';
 		if(jQuery(this).hasClass('day_active')){
-			 jQuery(this).removeClass("day_active");				 
-			 jQuery(this).find(".css-checkbox").prop( "checked", false );	
+			 jQuery(this).removeClass("day_active");
+			 jQuery(this).find(".css-checkbox").prop( "checked", false );
 
 		}else {
 				if(count_div>1){
@@ -1171,19 +1171,19 @@ input.error, textarea.error, select.error {
 					checkday='';each_selected_time='';
 
 					if(jQuery(this).hasClass('day_active')){
-									
+
 						each_selected_time=jQuery('#session_startTime_'+each_id).text();
 						checkday=jQuery(this).find('.css-checkbox').val();
-						
+
 						//convert both time into timestamp
 						var stt = new Date("November 13, 2013 " + selected_time);
 						stt = stt.getTime();
 						var endt = new Date("November 13, 2013 " + each_selected_time);
-						endt = endt.getTime();				
+						endt = endt.getTime();
 
 						if( (selected_day==checkday) && (stt==endt)){
 							session_exists='yes';
-						}	
+						}
 					}
 				})
 			})
@@ -1191,18 +1191,18 @@ input.error, textarea.error, select.error {
 
 			if(session_exists){
 				alert('Session time '+selected_time+' already selected for weekday '+selected_day);
-			} else {		
-				jQuery(this).addClass("day_active");	
+			} else {
+				jQuery(this).addClass("day_active");
 				jQuery(this).find(".css-checkbox").prop( "checked", true );
-			}	
+			}
 		}
 
-		});	
-				
-		
-		
+		});
+
+
+
 	jq("#product-photos-form #edit-save").attr('disabled','disabled');
-	jq('#edit-product-type').on('change', function(){	
+	jq('#edit-product-type').on('change', function(){
 		jq.ajax({
 			type: "GET",
 			url: "<?php echo $base_url; ?>/product/ajax/getExperienceCategory",
@@ -1239,7 +1239,7 @@ input.error, textarea.error, select.error {
 	var nowTemp = new Date();
 	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 
-	jQuery('.session_startdt').each(function(){ 
+	jQuery('.session_startdt').each(function(){
 
 		var id=jQuery(this).attr('data-val');
 
@@ -1249,7 +1249,7 @@ input.error, textarea.error, select.error {
 			return date.valueOf() >= now.valueOf();
 		},
 		autoclose: true
-		
+
 	}).on('changeDate', function (ev){
 		if(ev.date){
 			//if (ev.date.valueOf() > checkout.datepicker("getDate").valueOf() || !checkout.datepicker("getDate").valueOf()) {
@@ -1260,7 +1260,7 @@ input.error, textarea.error, select.error {
 
 			//}
 			idd=jQuery(this).attr('data-val');
-			jQuery('#edit-session-enddate_new_'+idd).focus();		
+			jQuery('#edit-session-enddate_new_'+idd).focus();
 			jQuery('#edit-session-enddate_new_'+idd).closest('.select_date_from').addClass('active');
 			jQuery('#select_from_date_'+idd).html(jQuery('#edit-session-startdate_new_'+idd).val());
 			jQuery('#select_to_date_'+idd).html(jQuery('#edit-session-enddate_new_'+idd).val());
@@ -1269,7 +1269,7 @@ input.error, textarea.error, select.error {
 
 
 	});
-	
+
 	var checkout = jQuery('#edit-session-enddate_new_'+id).datepicker({
 			format:'yyyy-mm-dd',
 			beforeShowDay: function (date){
@@ -1283,10 +1283,10 @@ input.error, textarea.error, select.error {
 
 	}).on('changeDate', function (ev) {
 		if(ev.date){
-			id_end=jQuery(this).attr('data-val');		
+			id_end=jQuery(this).attr('data-val');
 			jQuery('#select_to_date_'+id_end).html(jQuery('#edit-session-enddate_new_'+id_end).val());
 		}
-	});  
+	});
 
 
 	jQuery('#edit-session-startdate_new_0').on('click',function(){
@@ -1300,7 +1300,7 @@ input.error, textarea.error, select.error {
  });
 
 
-   jQuery('.session_from_dtpicker').each(function(){ 
+   jQuery('.session_from_dtpicker').each(function(){
 
     	var p=jQuery(this).attr('data-val');
 
@@ -1310,11 +1310,11 @@ input.error, textarea.error, select.error {
 			return date.valueOf() >= now.valueOf();
 		},
 		autoclose: true
-		
+
 	}).on('changeDate', function (ev){
 
 		if(ev.date){
-		
+
 			//if (ev.date.valueOf() > checkout.datepicker("getDate").valueOf() || !checkout.datepicker("getDate").valueOf()) {
 
 				var newDate = new Date(ev.date);
@@ -1323,7 +1323,7 @@ input.error, textarea.error, select.error {
 
 			//}
 			idd=jQuery(this).attr('data-val');
-			jQuery('#session_to_'+idd).focus();		
+			jQuery('#session_to_'+idd).focus();
 			jQuery('#session_to_'+idd).closest('.select_date_from').addClass('active');
 			jQuery('#season_from_date_'+idd).html(jQuery('#session_from_'+idd).val());
 			jQuery('#season_to_date_'+idd).html(jQuery('#session_to_'+idd).val());
@@ -1331,7 +1331,7 @@ input.error, textarea.error, select.error {
 		}
 
 	});
-	
+
 	var checkout = jQuery('#session_to_'+p).datepicker({
 			format:'yyyy-mm-dd',
 			beforeShowDay: function (date){
@@ -1345,17 +1345,17 @@ input.error, textarea.error, select.error {
 
 	}).on('changeDate', function (ev) {
 		if(ev.date){
-			id_end=jQuery(this).attr('data-val');		
+			id_end=jQuery(this).attr('data-val');
 			jQuery('#season_to_date_'+id_end).html(jQuery('#session_to_'+id_end).val());
 	    }
 	});
 
 
-	jQuery('#session_from_0').on('click',function(){	 	
+	jQuery('#session_from_0').on('click',function(){
 	 	jQuery(this).closest('.select_date_from').addClass('active');
 
 	});
-	jQuery('#session_to_0').on('click',function(){		
+	jQuery('#session_to_0').on('click',function(){
 		jQuery(this).closest('.select_date_from').addClass('active');
 
 	});
@@ -1374,30 +1374,30 @@ input.error, textarea.error, select.error {
 			autoclose: true
 	});
 
-	
 
-    /*remove date period*/ 	
+
+    /*remove date period*/
 	jQuery('body').on('click', '.session-from-to .remove_period',function(){
 	jQuery(this).closest('.availability_main').remove();
 	jQuery(this).remove();
-	}); 
-	/*remove seasonal period*/ 	
-	jQuery('body').on('click', '.sesonal_price_div_show .remove_person_period',function(){ 
-    jQuery(this).closest('.remove_this_seasonal').remove();  
+	});
+	/*remove seasonal period*/
+	jQuery('body').on('click', '.sesonal_price_div_show .remove_person_period',function(){
+    jQuery(this).closest('.remove_this_seasonal').remove();
     jQuery(this).remove();
   	});
-  	/*remove session period*/ 
-  	jQuery('body').on('click', '#tabs-container .remove_session_link',function(){	
+  	/*remove session period*/
+  	jQuery('body').on('click', '#tabs-container .remove_session_link',function(){
 		session_header_add=1;
-		jQuery(this).closest('.sessions_tab_content').remove();   
+		jQuery(this).closest('.sessions_tab_content').remove();
 
 		jQuery('.sessions_tab_content').find('div:first').find('h3').each(function(){
-		jQuery(this).html('Session '+session_header_add+'<span class="form-required"> *</span>');                 
+		jQuery(this).html('Session '+session_header_add+'<span class="form-required"> *</span>');
 		session_header_add++;
 		});
 	});
 
-}); 
+});
 </script>
 
 <script type="text/javascript">
@@ -1443,22 +1443,22 @@ input.error, textarea.error, select.error {
                 $info.show();
             }
         });
-		
-		////////////////////////////////////////////////////////////////		
+
+		////////////////////////////////////////////////////////////////
 
 		jQuery('#edit-session_starttime').timepicker({
 
-		showMeridian: true,        
+		showMeridian: true,
 		minuteStep: 1,
-		showInputs: true,        
-		}).on('changeTime.timepicker', function(e) {    
+		showInputs: true,
+		}).on('changeTime.timepicker', function(e) {
 
 		jQuery('#session_startTime').html(jQuery('#edit-session_starttime').val());
-		jQuery(this).closest('.offer_icon_left').addClass('active');	 
-		
+		jQuery(this).closest('.offer_icon_left').addClass('active');
+
 		});
 
-		
+
 		////////////////////////////////////////////////////////////////
 		var repeate_by_session=jQuery('#edit-session-repeatperiod').val();
 		if(repeate_by_session=='DoNOt'){ jQuery('.repeat_everyminute_condition').hide();}
@@ -1483,7 +1483,7 @@ input.error, textarea.error, select.error {
 		}else{
 			jQuery('#offer_24_hour_offer_Data_price').removeAttr('onkeyup','minmaxPrice(this.value,0,100);');
 		}
-		
+
 		jQuery('.day_disscount').on('change', function(){
 			if(jQuery(this).val()=='%'){
 				jQuery('#offer_24_hour_offer_Data_price').attr('onkeyup','minmaxPrice(this.value,0,100);');
@@ -1497,7 +1497,7 @@ input.error, textarea.error, select.error {
 	jQuery('#edit-all-day-session-all-day').click(function(){
 		jQuery('.All_day').toggle();
 	});
-	
+
 	jQuery('#last_minutes_check').click(function(){
 		if(jQuery('#last_minutes_check').prop('checked')==false){
 			jQuery('#last_minutes_disscount').hide();
@@ -1505,14 +1505,14 @@ input.error, textarea.error, select.error {
 			jQuery('#last_minutes_disscount').show();
 		}
 	});
-	
+
 	jQuery('.edit-listing-address').click(function(){
 		jQuery('.alert-message').find('.message').hide();
 		jQuery('#address-form').show();
 		jQuery('.map-canvas-outer').hide();
-		jQuery('.right_maps').show();				  
+		jQuery('.right_maps').show();
 	});
-	
+
 	function setmainimg(fid){
 		jQuery.ajax({
 			type: "POST",
@@ -1525,10 +1525,10 @@ input.error, textarea.error, select.error {
 				}else{
 				alert('Sorry!! this image cannot set as main image.')
 				}
-			} 
-        });	
+			}
+        });
 	}
-	
+
 	function default_quanity(value){
 		var min=jQuery('#edit-quantity-min').val();
 		var max=jQuery('#edit-quantity-max').val();
@@ -1537,26 +1537,26 @@ input.error, textarea.error, select.error {
 			jQuery('#edit-quantity-max').attr("value", "1");
 		}
 	}
-	
+
 	function setUntilDate(){
 		var endDate=jQuery('#edit-session-enddate').val();
 		jQuery('#edit-session-endrepeatdate').datepicker({
 				startDate: endDate,
 		});
 	}
-	
+
 	function assign_pack(id,title){
 		var list_id='<?php echo arg(3); ?>';
 		if(list_id){
-		jQuery('.generated_link').attr('href',$baseUrl+'/product/add/payment/'+<?php echo arg(3); ?>+'/'+id);	
-		}		
+		jQuery('.generated_link').attr('href',$baseUrl+'/product/add/payment/'+<?php echo arg(3); ?>+'/'+id);
+		}
 	}
-	
+
 	jQuery('.select_pack').click(function(){
 		jQuery('.ranking_classes_box').removeClass('active');
 		jQuery(this).parent('.ranking_classes_box').addClass('active');
 	});
-	
+
 	function check_photo_validate(){
 		jQuery.ajax({
 			type: "post",
@@ -1567,36 +1567,36 @@ input.error, textarea.error, select.error {
 			}
 		});
 	}
-	
+
 	function minmaxCancel(value, min, max){
 		if(parseInt(value) < min || isNaN(value)){
-			return 0; 
-		}else if(parseInt(value) > max){ 
-			return max; 
-		}else{ 
+			return 0;
+		}else if(parseInt(value) > max){
+			return max;
+		}else{
 			return value;
 		}
 	}
-	
+
 	function minmaxPrice(value, min, max){
 		if(parseInt(value) < min || isNaN(value)){
-			return 0; 
-		}else if(parseInt(value) > max){ 
-			return max; 
+			return 0;
+		}else if(parseInt(value) > max){
+			return max;
 		}else{
 			return value;
 		}
 	}
 </script>
 <!-- 6april2016 -->
-<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/overview') !== false) { ?> 
-<script> 
+<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/overview') !== false) { ?>
+<script>
 
-	jQuery(document).ready(function(){	
+	jQuery(document).ready(function(){
 		var status='active';
 		function edit_product_type(){
 			if(jQuery("#edit-product-type").val()==''){
-	 		jQuery("#edit-product-type").addClass('error');	 
+	 		jQuery("#edit-product-type").addClass('error');
 	 		jQuery("#edit-product-type").next().addClass("error");
 	 		jQuery("#edit-product-type").next('.error').next('.form-required').remove();
 	 		jQuery("#edit-product-type").next('.error').after("<span class='form-required'>Experience Type is required</span>");
@@ -1606,28 +1606,28 @@ input.error, textarea.error, select.error {
 		 		jQuery("#edit-product-type").next().next('.form-required').remove();
 		 		status='active';
 
-		 	}			
+		 	}
 		}
-		 jQuery(".add_over_exp").click(function(){	
+		 jQuery(".add_over_exp").click(function(){
 		 	edit_product_type();
-		 
-			if(status=='inactive'){	
+
+			if(status=='inactive'){
 			console.log(status);
-			return false;	 			
+			return false;
 
-			}  
-		 
+			}
+
 		 });
 
-		 jQuery("#edit-product-type").change(function(){	 	
-		 	edit_product_type();	 	
+		 jQuery("#edit-product-type").change(function(){
+		 	edit_product_type();
 		 });
-		
+
 
 	});
 </script>
 <?php }?>
-<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/payment') !== false) { ?> 
+<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/payment') !== false) { ?>
 <script>
 
 	// When the browser is ready...
@@ -1635,23 +1635,23 @@ input.error, textarea.error, select.error {
 	var status='active';
 
   	function zip_codefn(){
-	  	var zipcode=jQuery.trim(jQuery("#edit-zipcode").val());	  	
+	  	var zipcode=jQuery.trim(jQuery("#edit-zipcode").val());
 		if(zipcode!='') {
-			if(jQuery.isNumeric(zipcode)){		
+			if(jQuery.isNumeric(zipcode)){
 			jQuery("#edit-zipcode").next('.error').remove();
 			jQuery("#edit-zipcode").removeClass('error');
 			status='active';
-		} else {	
+		} else {
 			jQuery("#edit-zipcode").addClass('error');
 			jQuery("#edit-zipcode").next('.error').remove();
-			jQuery("#edit-zipcode").after('<label for="edit-zipcode" class="error">Zipcode must be numeric.</label>');	
+			jQuery("#edit-zipcode").after('<label for="edit-zipcode" class="error">Zipcode must be numeric.</label>');
 			status='inactive';
 		}
 		}
   	}
 
   	function country_codefn(){
-  	var country =jQuery("#edit-country").next().find('.sbSelector').html();  
+  	var country =jQuery("#edit-country").next().find('.sbSelector').html();
 	  	if(country=='- Select -'){
 			jQuery("#edit-country").next().addClass('error');
 			jQuery("#edit-country").next().next('.error').remove();
@@ -1659,35 +1659,35 @@ input.error, textarea.error, select.error {
 		} else {
 			jQuery("#edit-country").next().removeClass('error');
 			jQuery("#edit-country").next().next('.error').remove();
-		}	
-  	}	
+		}
+  	}
 
 	  jQuery("#edit-country").change(function(){
 	  	country_codefn();
 	  });
 
 	jQuery("#edit-zipcode").blur(function(){
-		zip_codefn();		
-		if(status=='inactive'){			
+		zip_codefn();
+		if(status=='inactive'){
 			return false;
 		}
-	  	
-	});	 
+
+	});
 
 	jQuery(".package-validate").click(function(){
-	
+
 		if(jQuery('#edit-state').val()==''){
 			jQuery("#edit-state").addClass('error');
 			jQuery("#edit-state").next().remove()
 			jQuery("#edit-state").after('<label for="edit-state" class="error">This field is required.</label>');
 		} else{
 			jQuery("#edit-state").next().remove();
-		}	
-		country_codefn();	
-		zip_codefn();				
-		if(status=='inactive'){			
+		}
+		country_codefn();
+		zip_codefn();
+		if(status=='inactive'){
 			return false;
-		} 
+		}
 
 	});
 
@@ -1697,23 +1697,23 @@ input.error, textarea.error, select.error {
 </script>
 <?php }?>
 
-<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/location') !== false) { ?> 
+<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/location') !== false) { ?>
 <script>
 
 	// When the browser is ready...
-  jQuery(function() {	 
+  jQuery(function() {
 	$latitude='<?php echo $productDetail['latitude'] ?>';
 	$longitude='<?php echo $productDetail['longitude'] ?>';
 	$base_url='<?php echo $base_url; ?>';
 	console.log($latitude);
 	console.log($longitude);
 	if($latitude!='' && $longitude!=''){
-		
-		jQuery('#product-location-info-form').find('div:first').before('<div class="col-xs-12 col-sm-12 col-md-5 pull-right"><div class="right_maps"><div class=map-canvas-outer><div id="map-canvas" style="width:500px;height:300px;"> </div></div</div></div>');	
-			
-		
+
+		jQuery('#product-location-info-form').find('div:first').before('<div class="col-xs-12 col-sm-12 col-md-5 pull-right"><div class="right_maps"><div class=map-canvas-outer><div id="map-canvas" style="width:500px;height:300px;"> </div></div</div></div>');
+
+
 	} else {
-		jQuery('#product-location-info-form').find('div:first').before('<div class="col-xs-12 col-sm-12 col-md-5 pull-right"><div class="right_maps"><img alt="Google Static Map" src="'+$base_url+'/sites/all/themes/gloobers2/images/staticmap.jpg"></div></div>');		
+		jQuery('#product-location-info-form').find('div:first').before('<div class="col-xs-12 col-sm-12 col-md-5 pull-right"><div class="right_maps"><img alt="Google Static Map" src="'+$base_url+'/sites/all/themes/gloobers2/images/staticmap.jpg"></div></div>');
 	}
 
 	jQuery('#product-location-info-form').find('.col-xs-12.col-sm-12.col-md-5.pull-right + div').addClass('outer_location');
@@ -1725,7 +1725,7 @@ input.error, textarea.error, select.error {
 </script>
 <?php }?>
 
-<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/extra') !== false) { ?> 
+<?php if (strpos($_SERVER['REQUEST_URI'], '/product/add/extra') !== false) { ?>
 <script>
 
 	// When the browser is ready...
@@ -1737,13 +1737,13 @@ jQuery('body').on('click','.add_more_optional', function(e){
 
 	jQuery("select").selectbox();
 
-	jQuery("input[name='extra_service[]").on('keypress',function(){	
-	jQuery(this).next().remove();		
+	jQuery("input[name='extra_service[]").on('keypress',function(){
+	jQuery(this).next().remove();
 
 	});
 
-	jQuery("input[name='extra_price_value[]").on('keypress',function(){	
-	jQuery(this).next().remove();		
+	jQuery("input[name='extra_price_value[]").on('keypress',function(){
+	jQuery(this).next().remove();
 
 	});
 
@@ -1751,7 +1751,7 @@ jQuery('body').on('click','.add_more_optional', function(e){
 
 jQuery("#product-extra-form").on('click', '.Remove_optional', function() {
 	console.log('test');
-	jQuery(this).parent().prev().remove();	
+	jQuery(this).parent().prev().remove();
 	jQuery(this).parent().remove();
 });
 
@@ -1761,7 +1761,7 @@ jQuery("#product-extra-form").on('click', '.Remove_optional', function() {
 </script>
 <?php }?>
 
-<?php  if (strpos($_SERVER['REQUEST_URI'], '/product/add/Calendernew') !== false) { ?>  
+<?php  if (strpos($_SERVER['REQUEST_URI'], '/product/add/Calendernew') !== false) { ?>
 <script>
 jQuery('#helpBar').hide();
 jQuery(".inner_setting_page").find('#messages').find('ul li:first').nextAll().remove();

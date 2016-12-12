@@ -16,9 +16,11 @@ global $user, $base_url;
 $fh  = fopen('funky.txt','a');
 
 $servername = 'localhost';
-$username = 'gloobers_rudy';
-$password = 'JJp~L_c$d5T=';
-$dbname = 'gloobers_live';
+$username = 'drupaluser';
+$password = 'password';
+$dbname = 'gloobers';
+//Synchronize activity types with APITUDE
+SyncAPI::synchronizeActivityTypes();
 // Create connection
 	$conn = new mysqli($servername, $username, $password,$dbname);
 	if($conn->connect_error) {

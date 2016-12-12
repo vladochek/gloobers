@@ -15,7 +15,7 @@
  * @return type 
  */
 function customer_survey_get_header($form, &$form_state) {
-  
+
   $form_state['stage'] = isset($form_state['stage']) ? $form_state['stage'] : 1;  
     
   $form_stages = array(

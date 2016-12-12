@@ -169,7 +169,14 @@ function product_add_form_1(){
 	}
 	$_SESSION['product_id'] = arg(3);
 
-	return theme('add_product', array('payment'=>$payment,'packages'=>$packages,'success'=>$success,'scheduleSessionData'=>$scheduleSessionData,'directionform'=>$directionform,'productForm' => $productForm,'photos'=>$photos,'extras'=>$extras,'extrasListing'=>$extrasListing,'productDetail'=>$productDetail,'addressform'=>$addressform,'addressListing'=>$addressListing,'photosListing'=>$photosListing,'subscriptionListing'=>$subscriptionListing,'overViewListing'=>$overViewListing,'amenitiesList'=>$amenitiesList,'Calendernew'=>$Calendernew,'pricingList'=>$pricingList,'schedulingList'=>$schedulingList,'rulesList'=>$rulesList,'calendar'=>$calendar));
+	return theme('add_product', array(
+	    'payment'=>$payment,'packages'=>$packages,'success'=>$success,'scheduleSessionData'=>$scheduleSessionData,
+        'directionform'=>$directionform,'productForm' => $productForm,'photos'=>$photos,'extras'=>$extras,
+        'extrasListing'=>$extrasListing,'productDetail'=>$productDetail,'addressform'=>$addressform,
+        'addressListing'=>$addressListing,'photosListing'=>$photosListing,'subscriptionListing'=>$subscriptionListing,
+        'overViewListing'=>$overViewListing,'amenitiesList'=>$amenitiesList,'Calendernew'=>$Calendernew,
+        'pricingList'=>$pricingList,'schedulingList'=>$schedulingList,'rulesList'=>$rulesList,'calendar'=>$calendar
+    ));
 }
 
 /**
@@ -236,7 +243,7 @@ return $form;
 
 /**********changes on 25-july*****Product overview form*******/
 function product_details_form($form, &$form_state) {
-	global $user;  
+	global $user;
 	$eid = arg(3);
 	$values = getOverviewData($eid);
 	if(isset($eid) && $eid!=""){
@@ -255,14 +262,15 @@ function product_details_form($form, &$form_state) {
 	$form['#attributes']['class'][] = 'Calenderform';
  	$form['product_details'] = array(
     	'#prefix' => '<div class="col-xs-12 col-sm-22 col-md-12 save_btn_fix">',
-    ); 
+    );
+
 
 	$experienceType=getExperienceType();
-	$experienceCategory=getExperienceCategory();
+//	$experienceCategory=getExperienceCategory();
   	$form['product_details']['product_type'] = array(
     	'#type' => 'select',
     	'#prefix' => '<fieldset class="overview_fields"><label>Type<span class="form-required"> *</span></label><div class="custom_full">',
-    	'#default_value' => isset($values['experience_type']) ? $values['experience_type'] : 0,
+    	'#default_value' => isset($values['experience_type']) ? $values['experience_type'] : '',
 	  	'#attributes' => array(
 			'class' => array(''),
 	  	),

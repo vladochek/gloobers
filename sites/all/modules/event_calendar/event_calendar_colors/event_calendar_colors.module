@@ -266,7 +266,7 @@ function _event_css_add() {
   // Create css folder and add write css.
   $path  = $_SERVER['DOCUMENT_ROOT'] . base_path() . variable_get('file_public_path', conf_path() . '/files/');
   if (is_dir($path . '/event_calendar_colors')) {
-    chmod($path . '/event_calendar_colors', 0777);
+    @chmod($path . '/event_calendar_colors', 0777);
   }
   else {
     mkdir($path . '/event_calendar_colors');

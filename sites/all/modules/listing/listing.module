@@ -648,7 +648,7 @@ function findNearByPlaces($data = array()) {
 
     $radius = 10;
 
-    $query = sprintf("SELECT eid,title,address1, latitude, longitude, city, ( 3959 * acos( cos( radians('%s') ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( latitude ) ) ) ) AS distance FROM gbl_experience_list HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20", mysql_real_escape_string($center_lat), mysql_real_escape_string($center_lng), mysql_real_escape_string($center_lat), mysql_real_escape_string($radius));
+    $query = sprintf("SELECT eid,title,address1, latitude, longitude, city, ( 3959 * acos( cos( radians('%s') ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( latitude ) ) ) ) AS distance FROM gbl_experience_list HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20", mysqli_real_escape_string($center_lat), mysqli_real_escape_string($center_lng), mysqli_real_escape_string($center_lat), mysqli_real_escape_string($radius));
 
     $result = db_query($query);
 
@@ -3353,12 +3353,12 @@ function search_listings_form_submit($form, &$form_state) {
 
 function search_listings_results($keys = null) {
     global $user;
-    
+
     $filter = array();
     
     if (arg(1)) {
-    $_SESSION['searched-dest']=arg(1);
         $countriesArray = array();
+//var_dump(arg(1));die;
         $prepAddr = str_replace(' ', '+', arg(1));
         $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false');
 
@@ -3372,35 +3372,39 @@ function search_listings_results($keys = null) {
             $city = $state_short = $country = $address = $state_long = '';
             //echo "<pre>";Print_r($output->results[0]->address_components);exit;
             foreach ($output->results[0]->address_components as $addressC) {
-                if ($addressC->types[0] == "administrative_area_level_2") {
-                    $city = $addressC->long_name;
-                    $filter['city'] = $city;
-                }else if ($addressC->types[0] == "locality") {
+                switch($addressC->types[0]){
+                    case "administrative_area_level_2":
+                $city = $addressC->long_name;
+                $filter['city'] = $city;
+
+                    case "locality":
                     $location_short = $addressC->short_name;
                     $location_long = $addressC->long_name;
-                   
+
                     $filter['city'] = $location_long;
-                }else if ($addressC->types[0] == "administrative_area_level_1") {
+                    case "administrative_area_level_1":
                     $state_short = $addressC->short_name;
                     $state_long = $addressC->long_name;
                     $filter['state_short'] = $state_short;
                     $filter['state_long'] = $state_long;
-                } else if ($addressC->types[0] == "country") {
+                    case $addressC->types[0] == "country":
                     $country = $addressC->long_name;
                     $filter['country'] = $country;
-                } else if ($addressC->types[0] == "sublocality_level_1") {
+                    case "sublocality_level_1":
                     $address = $addressC->long_name;
                     $filter['address'] = $address;
-                } else if ($addressC->types[0] == "continent") {
+                    case $addressC->types[0] == "continent":
                     $query = db_select('gbl_country_list', 'cl')
-                            ->fields('cl', array('country_name'))
-                            ->condition('continent', $addressC->long_name, '=');
+                        ->fields('cl', array('country_name'))
+                        ->condition('continent', $addressC->long_name, '=');
                     $result = $query->execute();
                     while ($res = $result->fetchAssoc()) {
                         $countriesArray[] = $res['country_name'];
                     }
                     $filter['continent'] = $addressC->long_name;
                 }
+
+            }
             }
         }
         $filter["search"] = arg(1);
@@ -3409,10 +3413,11 @@ function search_listings_results($keys = null) {
 
   
     $listings = getAllListings($filter, 'my_listing', $user->uid);
-   
+
     $listingCount = getAllListingsCount($filter, 'my_listing', $user->uid, $homeSearch, $countriesArray);
 
     $experienceType = getExperienceType();
+
     return theme('results', array('experienceType' => $experienceType, 'listingResult' => $listings,'listingResultCount'=>$listingCount));
 }
 

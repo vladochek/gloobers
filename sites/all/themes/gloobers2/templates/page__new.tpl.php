@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="css/meanmenu.css" media="all" />
 <link rel="stylesheet" href="css/font-awesome.css" />
 </head>
-<?php 
+<?php
 echo "here";exit;
 ?>
 <body>
