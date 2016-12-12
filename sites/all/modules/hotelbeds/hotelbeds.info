@@ -1,0 +1,7 @@
+name = Hotelbeds API
+description = This is a module to connect hotelbeds API.
+package = Gloobers
+core = 7.x
+project = "gloobers"
+
+

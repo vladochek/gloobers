@@ -1,0 +1,133 @@
+<?php
+
+class Hotelbeds
+{
+    private $apiKeyHotels;
+    private $signatureHotels;
+    private $apiKeyActivities;
+    private $signatureActivities;
+    private $mode;
+    private $url;
+
+    public function __construct()
+    {
+        $this->apiKeyHotels = variable_get('hotel_api_key', NULL);
+        $this->signatureHotels = variable_get('hotel_signature', NULL);
+        $this->apiKeyActivities = variable_get('activities_api_key', NULL);
+        $this->signatureActivities = variable_get('activities_signature', NULL);
+        $this->mode = variable_get('apitude_mode', NULL);
+        $this->url = $this->mode == 'test' ? variable_get('apitude_test_url', NULL) : variable_get('apitude_live_url', NULL);
+    }
+
+    protected function hotelbeds_connect($apiKey, $signature, $url, $method, $data = [], $headers = [], $format = 'json')
+    {
+        $definedHeaders = [
+            "Api-Key" => $apiKey,
+            "X-Signature" => $signature,
+            "Accept" => 'application/' . $format
+        ];
+        $options['headers'] = array_merge($definedHeaders, $headers);
+        $options['data'] = $data;
+        $options['method'] = $method;
+        $response = drupal_http_request($url, $options);
+        if ($response->code == '200') {
+            switch ($format) {
+                case 'json':
+                    return json_decode($response->data);
+                    break;
+                default:
+                    return $response->data;
+            }
+        } else {
+            return 'Error message: ' . $response->headers['x-error-detail-header'] . '. Code: ' . $response->code;
+        }
+    }
+
+    protected function hotelbeds_activities_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
+    {
+        return $this->hotelbeds_connect($this->apiKeyActivities, $this->signatureActivities, $url, $method, $data, $headers, $accept);
+    }
+
+    protected function hotelbeds_hotels_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
+    {
+        return $this->hotelbeds_connect($this->apiKeyHotels, $this->signatureHotels, $url, $method, $data, $headers, $accept);
+    }
+
+    public function hotelbeds_get_activity_types()
+    {
+        return $this->hotelbeds_activities_api_connect(
+            $this->url . 'activity-content-api/3.0/segments/en',
+            'GET'
+        );
+    }
+
+    public function hotelbeds_get_countries()
+    {
+        return $response = $this->hotelbeds_activities_api_connect(
+            $this->url . 'activity-content-api/3.0/countries/en',
+            'GET'
+        );
+    }
+
+    public function hotelbeds_get_destinations($country)
+    {
+        return $this->hotelbeds_activities_api_connect(
+            $this->url . 'activity-content-api/3.0/destinations/es/' . $country,
+            'GET'
+        );
+    }
+
+    public function hotelbeds_get_hotels($destination)
+    {
+        return $this->hotelbeds_activities_api_connect(
+            $this->url . 'activity-content-api/3.0/hotels/es/' . $destination,
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_languages()
+    {
+        return $this->hotelbeds_activities_api_connect(
+            $this->url . 'activity-content-api/3.0/languages',
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_hotels_facilities()
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/ratecommentdetails',
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_activities($data)
+    {
+        return $this->hotelbeds_activities_api_connect(
+            $this->url . 'activity-api/3.0/activities',
+            'POST',
+            $data,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
+    function hotelbeds_get_activities_by_gps($lat, $lon, $from, $to){
+        $data = json_encode([
+            "filters" => [
+                0 => [
+                    'searchFilterItems' => [
+                        0 => [
+                            "type" => "gps", "latitude" => $lat, "longitude" => $lon
+                        ]
+                    ]
+                ]
+            ],
+            "from" => $from,
+            "to" => $to,
+            "language" => "en"
+        ]);
+        return $this->hotelbeds_get_activities($data);
+    }
+}
+
+

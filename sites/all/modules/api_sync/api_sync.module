@@ -1,0 +1,57 @@
+<?php
+
+class SyncAPI
+{
+
+    public function __construct()
+    {
+
+    }
+
+    public static function getActivityTypes($ext_id)
+    {
+        return db_select('gbl_experience_type', 'gt')
+            ->fields('gt')
+            ->condition('status', 1)
+            ->condition('ext_id', $ext_id)
+            ->execute()
+            ->fetchAssoc();
+    }
+
+    public static function synchronizeActivityTypes()
+    {
+        $hotelbeds = new Hotelbeds();
+        $activities = $hotelbeds->hotelbeds_get_activity_types();
+        $serviceActivities = $activities->segmentationGroups[0]->segments;
+        $existingActivities = [];
+        foreach ($serviceActivities as $activity) {
+            $existingActivities[] = $activity->code;
+            $dbActivity = self::getActivityTypes($activity->code);
+            if ($dbActivity) {
+                if ($dbActivity['experience_type'] !== $activity->name) {
+                    db_update('gbl_experience_type')
+                        ->fields(array(
+                            'experience_type' => $activity->name
+                        ))
+                        ->condition('ext_id', $activity->code)
+                        ->execute();
+                }
+            } else {
+                db_insert('gbl_experience_type')
+                    ->fields(array(
+                        'experience_type' => $activity->name,
+                        'ext_id' => $activity->code,
+                        'status' => 1
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingActivities)) {
+            db_delete('gbl_experience_type')
+                ->condition('ext_id', $existingActivities, 'NOT IN')
+                ->execute();
+        }
+    }
+}
+
+

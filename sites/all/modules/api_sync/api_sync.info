@@ -1,0 +1,7 @@
+name = API synchronization
+description = This is a module to synchronize data from external services with database.
+package = Gloobers
+core = 7.x
+project = "gloobers"
+
+
