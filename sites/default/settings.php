@@ -574,3 +574,4 @@ $conf['hotel_signature'] = hash("sha256", $conf['hotel_api_key'].$conf['hotel_se
 $conf['apitude_test_url'] = 'https://api.test.hotelbeds.com/';
 $conf['apitude_live_url'] = 'https://api.hotelbeds.com/';
 $conf['apitude_mode'] = 'test';
+$conf['listings_per_page'] = 8;

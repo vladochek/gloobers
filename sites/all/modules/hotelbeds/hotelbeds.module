@@ -111,7 +111,8 @@ class Hotelbeds
         );
     }
 
-    function hotelbeds_get_activities_by_gps($lat, $lon, $from, $to){
+    function hotelbeds_get_activities_by_gps($lat, $lon, $from, $to, $limit = 100, $page = 1)
+    {
         $data = json_encode([
             "filters" => [
                 0 => [
@@ -124,8 +125,13 @@ class Hotelbeds
             ],
             "from" => $from,
             "to" => $to,
-            "language" => "en"
+            "language" => "en",
+            "pagination" => [
+                "itemsPerPage" => $limit,
+                "page" => $page
+            ]
         ]);
+//        var_dump(json_encode($data));die;
         return $this->hotelbeds_get_activities($data);
     }
 }

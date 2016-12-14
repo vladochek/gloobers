@@ -3,8 +3,7 @@ module_load_include('inc', 'products', 'includes/add_product.navigation');
 module_load_include('inc', 'products', 'includes/add_product.submit');
 module_load_include('inc', 'products', 'includes/add_restaurant.submit');
 
-//$sy = new Hotelbeds();
-//var_dump($sy->hotelbeds_get_activities_by_gps(50.4501, 30.5234, "2017-01-01", "2017-03-02"));die;
+
 function products_menu()
 {
     $items = array();
