@@ -77,14 +77,6 @@ class Hotelbeds
         );
     }
 
-    public function hotelbeds_get_hotels($destination)
-    {
-        return $this->hotelbeds_activities_api_connect(
-            $this->url . 'activity-content-api/3.0/hotels/es/' . $destination,
-            'GET'
-        );
-    }
-
     function hotelbeds_get_languages()
     {
         return $this->hotelbeds_activities_api_connect(
@@ -111,7 +103,7 @@ class Hotelbeds
         );
     }
 
-    function hotelbeds_get_activities_by_gps($lat, $lon, $from, $to, $limit = 100, $page = 1)
+    function hotelbeds_get_activities_by_gps($lat, $lon, $from, $to, $limit = 100, $page = 1, $persons = false)
     {
         $data = json_encode([
             "filters" => [
@@ -131,8 +123,28 @@ class Hotelbeds
                 "page" => $page
             ]
         ]);
-//        var_dump(json_encode($data));die;
-        return $this->hotelbeds_get_activities($data);
+        $activitiesResponse = $this->hotelbeds_get_activities($data);
+
+        if ($persons) {
+            $activities = [];
+            foreach ($activitiesResponse->activities as $activityResponse) {
+                if (count($activityResponse->amountsFrom) == $persons) {
+                    $activities[] = $activityResponse;
+                }
+            }
+            $activitiesResponse->activities = $activities;
+        }
+        return $activitiesResponse;
+    }
+
+    function hotelbeds_get_hotels($data)
+    {
+        return $this->hotelbeds_activities_api_connect(
+            $this->url . 'hotel-content-api/3.0/hotels/',
+            'GET',
+            $data,
+            ['Content-Type' => 'application/json']
+        );
     }
 }
 

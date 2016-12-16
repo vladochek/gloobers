@@ -1,4 +1,6 @@
 # Use PHPBETA Single php.ini as default
+php_value mbstring.http_input pass
+php_value mbstring.http_output pass
 AddHandler application/x-httpd-phpbetas .php
 #
 # Apache/PHP/Drupal settings:

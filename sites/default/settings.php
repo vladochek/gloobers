@@ -575,3 +575,23 @@ $conf['apitude_test_url'] = 'https://api.test.hotelbeds.com/';
 $conf['apitude_live_url'] = 'https://api.hotelbeds.com/';
 $conf['apitude_mode'] = 'test';
 $conf['listings_per_page'] = 8;
+
+define('PREDIS_BASE_PATH', DRUPAL_ROOT . '/sites/all/libraries/predis/');
+// Redis settings
+/*$conf['redis_client_interface'] = 'PhpRedis';
+$conf['redis_client_host'] = '127.0.0.1';
+$conf['lock_inc'] = 'sites/all/modules/contrib/redis/redis.lock.inc';
+$conf['path_inc'] = 'sites/all/modules/contrib/redis/redis.path.inc';
+$conf['cache_backends'][] = 'sites/all/modules/contrib/redis/redis.autoload.inc';
+$conf['cache_default_class'] = 'Redis_Cache';
+// For multisite, you must use a unique prefix for each site
+$conf['cache_prefix'] = 'glb';*/
+
+
+$conf['redis_client_interface'] = 'Predis';
+$conf['redis_client_host'] = '127.0.0.1';
+//$conf['redis_client_port'] = 6379;
+//$conf['redis_client_password'] = 'password';
+$conf['lock_inc'] = 'sites/all/modules/contrib/redis/redis.lock.inc';
+$conf['cache_backends'][] = 'sites/all/modules/contrib/redis/redis.autoload.inc';
+$conf['cache_default_class'] = 'Redis_Cache';
