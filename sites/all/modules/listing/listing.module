@@ -144,6 +144,14 @@ function listing_menu()
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK,
     );
+
+    $items['listings'] = array(
+        'page callback' => 'getUserListings',
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
     /* experience page view */
     $items['experience/%'] = array(
         //'title' => 'hotels',
@@ -1307,12 +1315,15 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
         } elseif (!empty($state) && (strpos(strtoupper($filter["search"]), strtoupper($state)) !== false || strpos(strtoupper($state), strtoupper($filter["search"])) !== false)) {
             //echo "here2";
 
-            $or = db_or()->condition('el.state', '%' . db_like($filter["state_short"]) . '%', 'like')->condition('el.state', '%' . db_like($filter["state_long"]) . '%', 'like')->condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
+            $or = db_or()->condition('el.state', '%' . db_like($filter["state_short"]) . '%', 'like')
+                ->condition('el.state', '%' . db_like($filter["state_long"]) . '%', 'like')
+                ->condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
             $query->condition($or);
 
         } else if (!empty($city) && (strpos(strtoupper($filter["search"]), strtoupper($city)) !== false || strpos(strtoupper($city), strtoupper($filter["search"])) !== false)) {
             //echo "here3";
-            $or = db_or()->condition('el.city', '%' . db_like($filter["city"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
+            $or = db_or()->condition('el.city', '%' . db_like($filter["city"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                ->condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
             $query->condition($or);
 
         } else {
@@ -1321,11 +1332,16 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
             if ($search_text) {
 
                 $or = db_or()->
-                condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->condition('el.city', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->condition('el.state', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.country', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->condition('el.country', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.address1', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->condition('el.address1', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.address2', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->condition('el.address2', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like');
+                condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.city', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.state', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.country', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.country', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.address1', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.address1', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.address2', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                    ->condition('el.address2', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like');
             } else {
 
                 $or = db_or()->
@@ -3433,76 +3449,121 @@ function search_listings_form_submit($form, &$form_state)
 
 }
 
-
-function search_listings_results($keys = null)
+function getCountriesByContinent($continent)
 {
-    global $user;
-    $filter = array();
     $countriesArray = array();
-    $prepAddr = str_replace(' ', '+', arg(1));
-    $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false');
-    $output = json_decode($geocode);
+    $query = db_select('gbl_country_list', 'cl')
+        ->fields('cl', array('country_name'))
+        ->condition('continent', $continent, '=');
+    $result = $query->execute();
+    while ($res = $result->fetchAssoc()) {
+        $countriesArray[] = $res['country_name'];
+    }
+    return $countriesArray;
+}
 
-    $lat = $output->results[0]->geometry->location->lat;
-    $filter['lat'] = $lat;
-    $long = $output->results[0]->geometry->location->lng;
-    $filter['long'] = $long;
-    $city = $state_short = $country = $address = $state_long = '';
-    foreach ($output->results[0]->address_components as $addressC) {
+function generateSearchFilter($mapsResponse, $filter)
+{
+    foreach ($mapsResponse as $addressC) {
         if (isset($addressC->types[0]) && !empty($addressC->types[0])) {
             switch ($addressC->types[0]) {
                 case "administrative_area_level_2":
-                    $city = $addressC->long_name;
-                    $filter['city'] = $city;
+                    $filter['city'] = $addressC->long_name;
                     break;
                 case "locality":
-                    $location_short = $addressC->short_name;
                     $location_long = $addressC->long_name;
                     $filter['city'] = $location_long;
                     break;
                 case "administrative_area_level_1":
-                    $state_short = $addressC->short_name;
-                    $state_long = $addressC->long_name;
-                    $filter['state_short'] = $state_short;
-                    $filter['state_long'] = $state_long;
+                    $filter['state_short'] = $addressC->short_name;
+                    $filter['state_long'] = $addressC->long_name;
                     break;
                 case "country":
-                    $country = $addressC->long_name;
-                    $filter['country'] = $country;
+                    $filter['country'] = $addressC->long_name;
                     break;
                 case "sublocality_level_1":
-                    $address = $addressC->long_name;
-                    $filter['address'] = $address;
+                    $filter['address'] = $addressC->long_name;
                     break;
                 case "continent":
-                    $query = db_select('gbl_country_list', 'cl')
-                        ->fields('cl', array('country_name'))
-                        ->condition('continent', $addressC->long_name, '=');
-                    $result = $query->execute();
-                    while ($res = $result->fetchAssoc()) {
-                        $countriesArray[] = $res['country_name'];
-                    }
                     $filter['continent'] = $addressC->long_name;
                     break;
             }
         }
     }
     $filter["search"] = arg(1);
+    return $filter;
+}
 
+function searchLocationByQuery($query){
+    $prepAddr = str_replace(' ', '+', $query);
+    $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false');
+    return json_decode($geocode);
+}
 
-    $userListings = getAllListings($filter, 'my_listing', $user->uid);
+function getUserListingsByFilter($filter, $userId = ''){
+    return getAllListings($filter, 'my_listing', $userId);
+}
 
-    $apitudeListings = get_apitude_activities($lat, $long);
+function getUserListings(){
+    if(isset($_POST['filter'])) {
+        return getUserListingsByFilter($_POST['filter']);
+    }
+    return ['success'=>false];
+}
 
+function search_listings_results($keys = null)
+{
+    global $user;
+    $filter = array();
+    $countriesArray = array();
+    $output = searchLocationByQuery(arg(1));
+    $lat = $output->results[0]->geometry->location->lat;
+    $filter['lat'] = $lat;
+    $long = $output->results[0]->geometry->location->lng;
+    $filter['long'] = $long;
+
+    if ($output->results[0]->address_components) {
+        $filter = generateSearchFilter($output->results[0]->address_components, $filter);
+        if ($filter['continent']) {
+            $countriesArray = getCountriesByContinent($filter['continent']);
+        }
+    }
+var_dump($filter);die;
+    $userListings = getUserListingsByFilter($filter, $user->uid);
+    $apitudeListings = get_apitude_activities($lat, $long, 50, 1);
     $allListings = array_merge($userListings, $apitudeListings);
-
 //    var_dump($allListings);die;
-
     $listingCount = getAllListingsCount($filter, 'my_listing', $user->uid, [], $countriesArray);
-
     $experienceType = getExperienceType();
-
     return theme('results', array('experienceType' => $experienceType, 'listingResult' => $allListings, 'listingResultCount' => $listingCount));
+//
+//    $client = new Predis\Client();
+//    $client->set('foo', $apitudeListings);
+    /*  $client->hmset("taxi_car1", array(
+              "brand" => "Toyota",
+              "model" => "Yaris",
+              "license number" => "RO-01-PHP",
+              "year of fabrication" => 2010,
+              "nr_stats" => 0)
+      );
+      $client->hmset("taxi_car2", array(
+              "brand" => "BMW",
+              "model" => "M5",
+              "license number" => "JJ7676GT",
+              "year of fabrication" => 2016,
+              "nr_stats" => 2)
+      );*/
+//    $value = $client->sadd('taxi_car2', 'brand');
+//    var_dump($value);die;
+//    $value = $client->hscan('taxi_car2');
+//    $client->scan('MATCH', $pattern);
+//    foreach (new Predis\Collection\Iterator\Keyspace($client, 'taxi_car*') as $key) {
+//        foreach (new Predis\Collection\Iterator\HashKey($client, $key) as $field => $value) {
+//            echo " - $field => $value", PHP_EOL;
+//        }
+//    }
+
+
 }
 
 function get_apitude_activities($lat, $lon)
