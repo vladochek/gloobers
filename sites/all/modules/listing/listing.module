@@ -991,11 +991,11 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     if (isset($filter["search"])) {
         $query->join('gbl_experience_list', 'el1', 'el1.city = el.city');
     }
-    $query->join('users', 'u', 'u.uid = el.uid');
+    //$query->join('users', 'u', 'u.uid = el.uid');
     $query->join('gbl_pricing', 'pr', 'el.eid = pr.listing_id');
     $query->leftJoin('gbl_experience_category', 'ec', 'ec.cid = el.experience_category');
-    $query->join('gbl_experience_type', 'et', 'et.id = el.experience_type');
-    $query->Join('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
+//    $query->join('gbl_experience_type', 'et', 'et.id = el.experience_type');
+//    $query->Join('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
     $query->leftJoin('gbl_listing_packages', 'pk', 'pk.id = el.package_id');
     if ($uid != "" && $type == 'my_wishlist') {
         $query->join('gbl_my_wishlist', 'w', 'el.eid = w.listing_id');
@@ -1004,7 +1004,7 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     $query->fields('pr', array('min_price', 'max_price'))
         ->fields('ec', array('category_name'))
         //->fields('et', array('experience_type'))
-        ->fields('sh', array('endRepeatDate', 'avalability_max'))
+//        ->fields('sh', array('endRepeatDate', 'avalability_max'))
         ->fields('pk', array('price'));
     if ($uid != "" && $type == 'my_wishlist') {
         $query->fields('w', array('in_wishlist'));
@@ -1018,7 +1018,7 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     }
 
     $query->groupBy('el.eid');
-    $query->orderBy('pk.price', 'DESC');
+//    $query->orderBy('pk.price', 'DESC');
 
     if ($uid != "" && $type == 'my_wishlist') {
         //echo "dsfsdfsd2222";exit;
@@ -1327,33 +1327,24 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
             $query->condition($or);
 
         } else {
-
+//echo 12399;die;
 
             if ($search_text) {
-
-                $or = db_or()->
-                condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
+                $or = db_or()
                     ->condition('el.city', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
-                    ->condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
                     ->condition('el.state', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
-                    ->condition('el.country', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
                     ->condition('el.country', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
-                    ->condition('el.address1', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
                     ->condition('el.address1', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like')
-                    ->condition('el.address2', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')
                     ->condition('el.address2', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like');
-            } else {
-
-                $or = db_or()->
+                $query->condition($or);
+            }
+                $whereLocation = db_or()->
                 condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
                 condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
                 condition('el.country', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
                 condition('el.address1', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
                 condition('el.address2', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
-
-            }
-
-            $query->condition($or);
+            $query->condition($whereLocation);
         }
 
 
@@ -3528,7 +3519,7 @@ function search_listings_results($keys = null)
             $countriesArray = getCountriesByContinent($filter['continent']);
         }
     }
-var_dump($filter);die;
+
     $userListings = getUserListingsByFilter($filter, $user->uid);
     $apitudeListings = get_apitude_activities($lat, $long, 50, 1);
     $allListings = array_merge($userListings, $apitudeListings);
@@ -3568,7 +3559,9 @@ var_dump($filter);die;
 
 function get_apitude_activities($lat, $lon)
 {
+//    include ('sites/all/modules/hotelbeds/hotelbeds.module');
     $activities = new Hotelbeds();
+
     $dateFrom = date('Y-m-d');
     $dateTo = date('Y-m-d', strtotime("+60 days"));
     $activityList = $activities->hotelbeds_get_activities_by_gps($lat, $lon, $dateFrom, $dateTo)->activities;
