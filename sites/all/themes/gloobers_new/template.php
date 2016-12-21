@@ -17,7 +17,7 @@ function gloobers_new_preprocess_html(&$variables) {
 if (!empty($variables['page']['footer_first'])
     || !empty($variables['page']['footer_second'])
     || !empty($variables['page']['footer_third'])
-    || !empty($variables['page']['footer_fourth']) 
+    || !empty($variables['page']['footer_fourth'])
 	|| !empty($variables['page']['footer_fifth'])) {
     $variables['classes_array'][] = 'footer-columns';
   }
@@ -192,7 +192,7 @@ function gloobers_new_page_alter($page) {
 		'#attributes' => array(
 		'name' =>  'viewport',
 		'content' =>  'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
-		)		
+		)
 	);
 	drupal_add_html_head($mobileoptimized, 'MobileOptimized');
 	drupal_add_html_head($handheldfriendly, 'HandheldFriendly');
@@ -201,16 +201,16 @@ function gloobers_new_page_alter($page) {
 }
 function gloobers_new_preprocess_page(&$vars) {
 	$path=current_path();
-	$header = drupal_get_http_header("status");  
+	$header = drupal_get_http_header("status");
 
-  if($header == "404 Not Found") {      
+  if($header == "404 Not Found") {
     $vars['theme_hook_suggestions'][] = 'page__404';
   }
   if($path=='recommend_link'){
 	$vars['theme_hook_suggestions'][] = 'page__recommend_user';
   }
-  
- /*  if($header == "403 Forbidden") {      
+
+ /*  if($header == "403 Forbidden") {
     $vars['theme_hook_suggestions'][] = 'page__403';
   } */
 }/* function gloobers_new_preprocess_page(&$variables, $hook) {  echo "11111111";exit;  	} */
@@ -229,7 +229,7 @@ function gloobers_new_image($variables) {
   return '<img' . drupal_attributes($attributes) . ' />';
 }
 
-function gloobers_new_js_alter(&$javascript) {  
+function gloobers_new_js_alter(&$javascript) {
   // Swap out jQuery to use an updated version of the library.
   $javascript['misc/jquery.js']['data'] = drupal_get_path('theme', $GLOBALS['theme']) . '/jss/jQuery.min.js';
 }

@@ -565,11 +565,17 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
 # $conf['allow_authorize_operations'] = FALSE;
 
 
-$conf['activities_api_key'] = 'crtb6wvg5rraypzzvb8fm7dd';
-$conf['activities_secret_key'] = 'xwuJ22kzbA';
+//$conf['activities_api_key'] = 'crtb6wvg5rraypzzvb8fm7dd';
+//$conf['activities_secret_key'] = 'xwuJ22kzbA';
+//$conf['hotel_api_key'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
+//$conf['hotel_secret_key'] = 'puUJZPazyh';
+
+$conf['activities_api_key'] = 'gsj8gbjpmq7dy2xdr3q28pqa';
+$conf['activities_secret_key'] = 'ZsWgDNJvy7';
+$conf['hotel_api_key'] = 'sfh6nz24y69wfqavmh3mggqs';
+$conf['hotel_secret_key'] = 'XP9wutzfTR';
+
 $conf['activities_signature'] = hash("sha256", $conf['activities_api_key'].$conf['activities_secret_key'].time());
-$conf['hotel_api_key'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
-$conf['hotel_secret_key'] = 'puUJZPazyh';
 $conf['hotel_signature'] = hash("sha256", $conf['hotel_api_key'].$conf['hotel_secret_key'].time());
 $conf['apitude_test_url'] = 'https://api.test.hotelbeds.com/';
 $conf['apitude_live_url'] = 'https://api.hotelbeds.com/';

@@ -42,7 +42,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/notify.js', arr
 
 }
 
-if((strpos($_SERVER['REQUEST_URI'],'/finder') !== false) || (strpos($_SERVER['REQUEST_URI'],'/profile/') !== false)  || (strpos($_SERVER['REQUEST_URI'],'/advice/request/') !== false)  || (strpos($_SERVER['REQUEST_URI'],'/advisor_listing_results') !== false)  ||($path == 'user_profile') || ($path == 'advice/request') || (strpos($_SERVER['REQUEST_URI'],'/add-listing') !== false) || (strpos($_SERVER['REQUEST_URI'],'/add_listing_to_guide/') !== false) || (strpos($_SERVER['REQUEST_URI'],'/search-destination/') !== false)){ 
+if((strpos($_SERVER['REQUEST_URI'],'/finder') !== false) || (strpos($_SERVER['REQUEST_URI'],'/profile/') !== false)  || (strpos($_SERVER['REQUEST_URI'],'/advice/request/') !== false)  || (strpos($_SERVER['REQUEST_URI'],'/advisor_listing_results') !== false)  ||($path == 'user_profile') || ($path == 'advice/request') || (strpos($_SERVER['REQUEST_URI'],'/add-listing') !== false) || (strpos($_SERVER['REQUEST_URI'],'/add_listing_to_guide/') !== false) || (strpos($_SERVER['REQUEST_URI'],'/search-destination/') !== false)){
 
 drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/notify-bootstrap.js', array('scope' => 'footer'));
 
@@ -828,7 +828,35 @@ print '<img src="' . base_path() . drupal_get_path('theme', $GLOBALS['theme']) .
 
 
 
-		if(($path == 'user_profile')  || (strpos($_SERVER['REQUEST_URI'],'/Gloobers/') !== false)  || ($path == 'dashboard') ||($path == 'advice/create-travel-guide') || ($path == 'user/transaction_history') || ($path == 'user/account_settings') || ($path == 'user/payout_preference') || ($path == 'advice/notification')||($path == 'advice/travel_guide')||($path == 'hotel_booking/success') || ($path == 'advice/request') ||($path == 'advice/my_request' ) ||($path == 'advice/create_travel_guide') ||($path == 'privacy-policy') || ($path == 'terms-and-conditions')|| ($path == 'user/account_settings') || (strpos($_SERVER['REQUEST_URI'],'/travel_guide/profile/') !== false) || (strpos($_SERVER['REQUEST_URI'],'/search-listing/advisors/') !== false)  || (strpos($_SERVER['REQUEST_URI'],'experience') !== false) || (strpos($_SERVER['REQUEST_URI'],'advice/validate_recommendation') !== false) ||($path == 'finder') ||($path == 'faqs') || (strpos($_SERVER['REQUEST_URI'],'search-hotel/India'))||(strpos($_SERVER['REQUEST_URI'],'booking/hotel/summary'))||(strpos($_SERVER['REQUEST_URI'],'Hotels/'))||(strpos($_SERVER['REQUEST_URI'],'search-hotel'))||(strpos($_SERVER['REQUEST_URI'],'hotel_booking')) || (strpos($_SERVER['REQUEST_URI'],'/profile/') !== false) || (strpos($_SERVER['REQUEST_URI'],'/user/password') !== false)){
+		if(
+            ($path == 'user_profile')
+            || (strpos($_SERVER['REQUEST_URI'],'/Gloobers/') !== false)
+            || ($path == 'dashboard') ||($path == 'advice/create-travel-guide')
+            || ($path == 'user/transaction_history')
+            || ($path == 'user/account_settings')
+            || ($path == 'user/payout_preference')
+            || ($path == 'advice/notification')
+            ||($path == 'advice/travel_guide')
+            ||($path == 'hotel_booking/success')
+            || ($path == 'advice/request')
+            ||($path == 'advice/my_request' )
+            ||($path == 'advice/create_travel_guide')
+            ||($path == 'privacy-policy')
+            || ($path == 'terms-and-conditions')
+            || ($path == 'user/account_settings')
+            || (strpos($_SERVER['REQUEST_URI'],'/travel_guide/profile/') !== false)
+            || (strpos($_SERVER['REQUEST_URI'],'/search-listing/advisors/') !== false)
+            || (strpos($_SERVER['REQUEST_URI'],'experience') !== false)
+            || (strpos($_SERVER['REQUEST_URI'],'advice/validate_recommendation') !== false)
+            ||($path == 'finder') ||($path == 'faqs')
+            || (strpos($_SERVER['REQUEST_URI'],'search-hotel/India'))
+            ||(strpos($_SERVER['REQUEST_URI'],'booking/hotel/summary'))
+            ||(strpos($_SERVER['REQUEST_URI'],'Hotels/'))
+            ||(strpos($_SERVER['REQUEST_URI'],'search-hotel'))
+            ||(strpos($_SERVER['REQUEST_URI'],'hotel_booking'))
+            || (strpos($_SERVER['REQUEST_URI'],'/profile/') !== false)
+            || (strpos($_SERVER['REQUEST_URI'],'/user/password') !== false)
+        ){
 
 			if($page['footer']){
 

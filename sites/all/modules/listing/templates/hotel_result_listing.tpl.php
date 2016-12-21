@@ -84,39 +84,6 @@
     }
 </style>
 
-<?php
-global $base_url;
-$seach_destination = arg(1);
-
-$checkin_date = $_GET["checkin_date"];
-$checkout_date = $_GET["checkout_date"];
-$no_of_travellere = $_GET["travelers"];
-$hotel_type = 0;
-$show_filter = 0;
-$price_range = '';
-if (isset($_GET["checkin_date"]) && !empty($_GET["checkin_date"])) {
-    if (isset($_GET["hotel_type"]) && !empty($_GET["hotel_type"])) {
-        $hotel_type = $_GET["hotel_type"];
-    }
-    if (isset($_GET["price_range"]) && !empty($_GET["price_range"])) {
-        $price_range = $_GET["price_range"];
-    }
-    if (isset($_GET["search_desti"]) && !empty($_GET["search_desti"])) {
-        $result_keyword = explode(",", $_GET["search_desti"]);
-        $seach_destination = trim($result_keyword[0]);
-    }
-    $show_filter = 1;
-    $result = CheckHotelRoomAvailable($seach_destination, $checkin_date, $checkout_date, $hotel_type, $price_range);
-} else {
-    $result_keyword = explode(",", $seach_destination);
-    $seach_destination = trim($result_keyword[0]);
-    $result = getHotelsDataByLocaiton($seach_destination);
-}
-if (arg(1)) {
-    $lat_long = timezone_convert_helper_getLatiLongByAddress(arg(1));
-}
-
-?>
 <link href="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']); ?>/stylesheet/style.css" rel="stylesheet" type="text/css" />
 <div id="innerwraper" class="travelpage">
     <div class="innerpage">
@@ -128,7 +95,7 @@ if (arg(1)) {
                     <form action="" id="search_filter" method="get" >
                         <div class="innersearch">
                             <div class="col-md-8 col-sm-6 col-xs-12 dessearch">
-                                <input type="search" name="search_desti" id="search_keyword"  value="<?= isset($_GET["search_desti"]) && !empty($_GET["search_desti"]) ? $_GET["search_desti"] : $seach_destination; ?>" id="advice_destination" class="searchinput" onclick="search_destination();"  placeholder="Destination" />
+                                <input type="search" name="search_desti" id="search_keyword"  value="<?= $seach_destination; ?>" id="advice_destination" class="searchinput" onclick="search_destination();"  placeholder="Destination" />
                             </div>
                             <!-- End DesSearch -->
                             <div class="col-md-2 col-sm-3 col-xs-12 travelsearch">
@@ -147,7 +114,7 @@ if (arg(1)) {
                             </div>
                             <!-- End AdvisorSearch -->
 
-                            <div class="tabs_ul" style="display: <?= isset($show_filter) && $show_filter == 1 ? 'block' : 'none'; ?>">
+                            <div class="tabs_ul" style="display: <?= $show_filter ? 'block' : 'none'; ?>">
                                 <div class="container">
                                     <div class="col-md-2">
                                         <select name="hotel_type" class="filter_hotel_type select_box">

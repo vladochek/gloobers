@@ -39,7 +39,7 @@ class Hotelbeds
                     return $response->data;
             }
         } else {
-            return 'Error message: ' . $response->headers['x-error-detail-header'] . '. Code: ' . $response->code;
+            return $response;
         }
     }
 
@@ -137,14 +137,65 @@ class Hotelbeds
         return $activitiesResponse;
     }
 
-    function hotelbeds_get_hotels($data)
+    /*  function hotelbeds_get_hotels($data)
+      {
+          return $this->hotelbeds_activities_api_connect(
+              $this->url . 'hotel-content-api/3.0/hotels/',
+              'GET',
+              $data,
+              ['Content-Type' => 'application/json']
+          );
+      }*/
+
+    function hotelbeds_hotels($data)
     {
-        return $this->hotelbeds_activities_api_connect(
-            $this->url . 'hotel-content-api/3.0/hotels/',
-            'GET',
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-api/1.0/hotels/',
+            'POST',
             $data,
             ['Content-Type' => 'application/json']
         );
+    }
+
+    function hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children = 0)
+    {
+        $radius = 200;
+        $paxes = [];
+        if ($adults > 0) {
+            for ($i = 0; $i < $adults; $i++) {
+                $paxes[$i]['type'] = 'AD';
+                $paxes[$i]['age'] = 30;
+            }
+        }
+
+        if ($children > 0) {
+            for ($k = $i; $k < $children + $i; $k++) {
+                $paxes[$k]['type'] = 'CH';
+                $paxes[$k]['age'] = 8;
+            }
+        }
+        $data = json_encode([
+            'stay' => [
+                'checkIn' => $checkIn,
+                'checkOut' => $checkOut
+            ],
+            'occupancies' => [
+                0 => [
+                    'rooms' => $rooms,
+                    'adults' => $adults,
+                    'children' => $children,
+                    'paxes' => $paxes
+                ]
+            ],
+            'geolocation' => [
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'radius' => $radius,
+                'unit' => 'km'
+            ]
+        ]);
+//        var_dump(json_encode($data));die;
+        return $this->hotelbeds_hotels($data);
     }
 }
 
