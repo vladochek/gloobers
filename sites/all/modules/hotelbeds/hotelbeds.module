@@ -8,6 +8,7 @@ class Hotelbeds
     private $signatureActivities;
     private $mode;
     private $url;
+    const HOTELS_LIMIT_PER_PAGE = 10;
 
     public function __construct()
     {
@@ -30,6 +31,7 @@ class Hotelbeds
         $options['data'] = $data;
         $options['method'] = $method;
         $response = drupal_http_request($url, $options);
+
         if ($response->code == '200') {
             switch ($format) {
                 case 'json':
@@ -39,7 +41,7 @@ class Hotelbeds
                     return $response->data;
             }
         } else {
-            return $response;
+            var_dump($response);die;
         }
     }
 
@@ -157,24 +159,33 @@ class Hotelbeds
         );
     }
 
-    function hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children = 0)
+    function hotelbeds_get_hotels_info($data)
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/hotels?' . $data,
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_hotels_info_by_codes($hotelsCodes, $to, $from = 1,  $fields = 'all')
+    {
+        $hotelsCodesString = implode(',', $hotelsCodes);
+        $hotelsInfoRequestData = [
+            'fields' => $fields,
+            'language' => 'ENG',
+            'codes' => $hotelsCodesString,
+            'from' => $from,
+            'to' => $to
+        ];
+        $hotelsInfoRequestString = http_build_query($hotelsInfoRequestData);
+        $hotelsInfo = $this->hotelbeds_get_hotels_info($hotelsInfoRequestString);
+        return $hotelsInfo->hotels;
+    }
+
+    function hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children = 0, $minRate = null, $maxRate = null, $page = 1)
     {
         $radius = 200;
-        $paxes = [];
-        if ($adults > 0) {
-            for ($i = 0; $i < $adults; $i++) {
-                $paxes[$i]['type'] = 'AD';
-                $paxes[$i]['age'] = 30;
-            }
-        }
-
-        if ($children > 0) {
-            for ($k = $i; $k < $children + $i; $k++) {
-                $paxes[$k]['type'] = 'CH';
-                $paxes[$k]['age'] = 8;
-            }
-        }
-        $data = json_encode([
+        $hotelsRequestData = [
             'stay' => [
                 'checkIn' => $checkIn,
                 'checkOut' => $checkOut
@@ -183,8 +194,7 @@ class Hotelbeds
                 0 => [
                     'rooms' => $rooms,
                     'adults' => $adults,
-                    'children' => $children,
-                    'paxes' => $paxes
+                    'children' => $children
                 ]
             ],
             'geolocation' => [
@@ -193,10 +203,35 @@ class Hotelbeds
                 'radius' => $radius,
                 'unit' => 'km'
             ]
-        ]);
-//        var_dump(json_encode($data));die;
-        return $this->hotelbeds_hotels($data);
+        ];
+        if ($minRate) {
+            $hotelsRequestData['filter']['minRate'] = $minRate;
+        }
+        if ($maxRate) {
+            $hotelsRequestData['filter']['maxRate'] = $maxRate;
+        }
+
+        $hotelsRequestDataEncoded = json_encode($hotelsRequestData);
+        $hotelsResponse = $this->hotelbeds_hotels($hotelsRequestDataEncoded);
+
+        $hotels = $hotelsResponse->hotels->hotels;
+        $hotelsCodes = array_column($hotels, 'code');
+        $hotelsMinPrices = array_column($hotels, 'minRate','code');
+//        var_dump($hotelsMinPrices);die;
+        $hotelsResponseResult['total'] = $hotelsResponse->hotels->total;
+        $hotelsResponseResult['hotels'] = [];
+        if(count($hotelsCodes)>0) {
+            $page = (int)$page;
+            if($page>0) {
+                $offset = ($page-1)*self::HOTELS_LIMIT_PER_PAGE;
+                $hotelsCodesSliced = array_slice($hotelsCodes, $offset, self::HOTELS_LIMIT_PER_PAGE);
+                $hotelsResponseResult['hotels'] =  $this->hotelbeds_get_hotels_info_by_codes($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE);
+                foreach ($hotelsResponseResult['hotels'] as $key => $hotelItem){
+                    $hotelsResponseResult['hotels'][$key]->minRate = $hotelsMinPrices[$hotelItem->code];
+                }
+            }
+        }
+        var_dump($hotelsResponseResult);die;
+        return $hotelsResponseResult;
     }
 }
-
-

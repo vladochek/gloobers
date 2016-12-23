@@ -5,10 +5,17 @@ define('LISTINGS_PER_PAGE', variable_get('listings_per_page', NULL));
 function listing_menu()
 {
     $items = array();
-    $items['search-hotel/%'] = array(
+    $items['search-hotel'] = array(
         'page callback' => 'hotel_result_listing',
+        'access arguments' => array('access container'),
         'access callback' => true,
-        'type' => MENU_NORMAL_ITEM,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['search-hotel/ajax'] = array(
+        'page callback' => 'filter_hotels',
+        'access arguments' => array('access container'),
+        'access callback' => true,
+        'type' => MENU_NORMAL_ITEM
     );
     $items['Hotels/%'] = array(
         'page callback' => 'hotels_listing',
@@ -460,6 +467,10 @@ function listing_theme()
         ),
         'hotel_result_listing' => array(
             'template' => 'hotel_result_listing',
+            'path' => $module_path . '/templates',
+        ),
+        'load' => array(
+            'template' => 'load',
             'path' => $module_path . '/templates',
         ),
         'add_review' => array(
@@ -6958,41 +6969,83 @@ function advisor_listing_results()
 
 }
 
+function handle_request($index, $defaultValue = null, $input = false)
+{
+    $input = $input ? $input : $_GET;
+    $inputHandle = drupal_get_query_parameters($input);
+    return isset($inputHandle[$index]) && !empty($inputHandle[$index]) ? addslashes($inputHandle[$index]) : $defaultValue;
+}
+
+function filter_hotels()
+{
+    $checkIn = handle_request('checkin_date');
+    $testCheckIn = explode('-', $checkIn);
+    $testCheckOInValidation = checkdate($testCheckIn[1], $testCheckIn[2], $testCheckIn[0]);
+    $checkOut = handle_request('checkout_date');
+    $testCheckOut = explode('-', $checkOut);
+    $testCheckOutValidation = checkdate($testCheckOut[1], $testCheckOut[2], $testCheckOut[0]);
+    $maxRate = handle_request('maxRate');
+    $minRate = handle_request('minRate');
+    $search_destination = handle_request('destination');
+    $adults = handle_request('adults');
+    $children = handle_request('children', 0);
+    $rooms = handle_request('rooms', 1);
+    $page = handle_request('page', 1);
+    $mapsResponse = searchLocationByQuery($search_destination);
+    if (isset($mapsResponse->results[0]->geometry->location->lat) &&
+        isset($mapsResponse->results[0]->geometry->location->lng) && $testCheckOInValidation &&
+        $testCheckOutValidation) {
+        $latitude = $mapsResponse->results[0]->geometry->location->lat;
+        $longitude = $mapsResponse->results[0]->geometry->location->lng;
+        $api = new Hotelbeds();
+        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page);
+        $hotels['status'] = true;
+        return json_encode($hotels);
+    } else {
+        return json_encode(['status' => false]);
+    }
+}
+
 function hotel_result_listing()
 {
     global $base_url;
-    $output = '';
-    $output .= theme('pager', array('quantity' => 6));
-    $checkIn = isset($_GET["checkin_date"]) && !empty($_GET["checkin_date"]) ? $_GET["checkin_date"] : null;
-    $checkOut = isset($_GET["checkout_date"]) && !empty($_GET["checkout_date"]) ? $_GET["checkout_date"] : null;
+    $output = theme('pager', array('quantity' => 6));
+    $checkIn = handle_request('checkin_date');
+    $testCheckIn = explode('-', $checkIn);
+    $testCheckOInValidation = checkdate($testCheckIn[1], $testCheckIn[2], $testCheckIn[0]);
+    $checkOut = handle_request('checkout_date');
+    $testCheckOut = explode('-', $checkOut);
+    $testCheckOutValidation = checkdate($testCheckOut[1], $testCheckOut[2], $testCheckOut[0]);
+    $maxRate = handle_request('maxRate');
+    $minRate = handle_request('minRate');
+    $search_destination = handle_request('destination');
+    $adults = handle_request('adults');
+    $children = handle_request('children', 0);
+    $rooms = handle_request('rooms', 1);
+    $page = handle_request('page', 1);
     $show_filter = 1;
-
-    $hotel_type = isset($_GET["hotel_type"]) && !empty($_GET["hotel_type"]) ? $_GET["hotel_type"] : null;
-    $price_range = isset($_GET["price_range"]) && !empty($_GET["price_range"]) ? $_GET["price_range"] : null;
-    $search_destination = isset($_GET["destination"]) && !empty($_GET["destination"]) ? $_GET["destination"] : null;
-    $adults = isset($_GET["adults"]) && !empty($_GET["adults"]) ? $_GET["adults"] : null;
-    $children = isset($_GET["children"]) && !empty($_GET["children"]) ? $_GET["children"] : null;
-    $rooms = isset($_GET["rooms"]) && !empty($_GET["rooms"]) ? $_GET["rooms"] : 1;
-    $show_filter = 1;
-
     $mapsResponse = searchLocationByQuery($search_destination);
-    $latitude = $mapsResponse->results[0]->geometry->location->lat;
-    $longitude = $mapsResponse->results[0]->geometry->location->lng;
-//    var_dump($lat_long);die;
+    if (isset($mapsResponse->results[0]->geometry->location->lat) &&
+        isset($mapsResponse->results[0]->geometry->location->lng) && $testCheckOInValidation &&
+            $testCheckOutValidation) {
+        $latitude = $mapsResponse->results[0]->geometry->location->lat;
+        $longitude = $mapsResponse->results[0]->geometry->location->lng;
+        $api = new Hotelbeds();
+        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page);
+        return theme('hotel_result_listing', array(
+            'seach_destination' => $search_destination,
+            'checkin_date' => $checkIn,
+            'checkout_date' => $checkOut,
+            'hotels' => $hotels['hotels'],
+            'pagination' => $output,
+            'base_url' => $base_url,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'show_filter' => $show_filter,
+        ));
+    }
 
-    $api = new Hotelbeds();
-    $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children)->hotels;
-    var_dump($hotels);die;
-    return theme('hotel_result_listing', array(
-        'result' => $result,
-        'pagination' => $output,
-        'checkin_date' => $checkIn,
-        'checkout_date' => $checkOut,
-        'show_filter' => $show_filter,
-        'seach_destination' => $search_destination,
-        'lat_long' => $lat_long,
-        'base_url' => $base_url
-    ));
+
 
 }
 

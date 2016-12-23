@@ -188,20 +188,22 @@
             <div id="map" style="width: 100%; height: 400px;"></div>
             <?php
             $pointer_data = array();
-            if(count($result)>0){
-            foreach ($result as $key => $value) {
+            if(count($hotels)>0){
+            foreach ($hotels as $key => $value) {
                 $extra = array();
-                $extra[] = '<h4>' . $value["hotel_name"] . '<br/>' . $value["hotel_city"] . ',' . $value["hotel_state"] . '<br/>' . $value["hotel_country"] . '</h4>';
-                $extra[] = $value["hotel_latitude"];
-                $extra[] = $value["hotel_longitude"];
+                $extra[] = '<h4>' . $value->name->content . '<br/>' .
+                    $value->city->content . ',' . $value->address->content . '<br/>' .
+                    $value->countryCode . '</h4>';
+                $extra[] = $value->coordinates->latitude;
+                $extra[] = $value->coordinates->longitude;
 
                 $pointer_data[] = $extra;
             }}
             else{
                 $extra = array();
                 $extra[] = arg(1);
-                $extra[] = $lat_long["lati"];
-                $extra[] = $lat_long["long"];
+                $extra[] = $value->coordinates->latitude;
+                $extra[] = $value->coordinates->longitude;
                 
                 $pointer_data[] = $extra;
                 
@@ -293,14 +295,14 @@
             <div class="container">
 
                 <?php
-                if (count($result) > 0) {
-                    foreach ($result as $key => $value) {
-                        $img_data = json_decode($value["hotel_images"]);
+                if (count($hotels) > 0) {
+                    foreach ($hotels as $key => $value) {
+                      //  $img_data = json_decode($value["hotel_images"]);
                         ?>
 
                         <div class="col-md-4 col-sm-4 col-xs-12 travelcol">
                             <div class="travellist">
-                                <a href="<?= $base_url; ?>/Hotels/<?= $value["hotel_id"] ?>">   <img src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', 'hotel_theme'); ?>/hotel_img/listing_page/<?= $img_data[0] ?>" alt="" title="" />
+                                <a href="#">   <img src="http://photos.hotelbeds.com/giata/<?= $value->images[2]->path ?>" alt="" title="" />
                                 </a>
                                 <div class="travellistdetail">
                                     <div class="listicon"><i class="fa fa-align-justify"></i></div>
@@ -309,7 +311,7 @@
                                             <li><a href="#"><i class="fa fa-link"></i>Recommend to a friend</a></li>
                                             <li><a href="#"><i class="fa fa-heart"></i>Add to wishlist</a></li>
                                             <li><a href="#"><i class="fa fa-plus"></i>Add to guide</a></li>
-                                            <li><a href="<?= $base_url; ?>/Hotels/<?= $value["hotel_id"] ?>"><i class="fa fa-eye"></i>View details</a></li>
+                                            <li><a href="#"><i class="fa fa-eye"></i>View details</a></li>
                                             <li><a href="#"><i class="fa fa-flag-o"></i>Report this listing</a></li>
                                             <li><a href="#"><i class="fa fa-arrows-h"></i>Embed on my website</a></li>
                                         </ul>
@@ -317,22 +319,21 @@
                                     <!-- End ListView -->
                                 </div>
                                 <div class="travel-bbl-icon2" >
-                                    <b>$ <?= $value["lowest_price"] ?></b>
+                                    <b>$ <?= 'hardcode' ?></b>
                                     <small>Per Night</small>
                                 </div>
-
 
                                 <!-- End ListDetail -->
 
                                 <!-- Detail -->
                                 <div class="travel-bottom-detail">
                                     <div class="travel-bottom-detail-left">
-                                        <h5><?= $value["hotel_name"] ?></h5>
+                                        <h5><?= $value->name->content ?></h5>
                                         <span class="pull-left">
-                                            <?= $value["hotel_city"] ?>, <?= $value["hotel_state"] ?> &nbsp;
+                                            <?= $value->city->content ?>, <?= $value->address->content ?> &nbsp;
                                         </span>
                                         <span class="pull-right">
-                                            <?= $value["hotel_country"] ?>
+                                            <?= $value->countryCode ?>
                                         </span>
                                     </div>
 
