@@ -5,10 +5,17 @@ define('LISTINGS_PER_PAGE', variable_get('listings_per_page', NULL));
 function listing_menu()
 {
     $items = array();
-    $items['search-hotel/%'] = array(
+    $items['search-hotel'] = array(
         'page callback' => 'hotel_result_listing',
+        'access arguments' => array('access container'),
         'access callback' => true,
-        'type' => MENU_NORMAL_ITEM,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['search-hotel/ajax'] = array(
+        'page callback' => 'filter_hotels',
+        'access arguments' => array('access container'),
+        'access callback' => true,
+        'type' => MENU_NORMAL_ITEM
     );
     $items['Hotels/%'] = array(
         'page callback' => 'hotels_listing',
@@ -138,7 +145,7 @@ function listing_menu()
 
     /* Added on 11 feb 2015 */
     //will redirect search form on homepage results
-    $items['search-destination/%'] = array(
+    $items['search-destination'] = array(
         'page callback' => 'search_listings_results',
         'page arguments' => array(1),
         'access arguments' => array('access content'),
@@ -460,6 +467,10 @@ function listing_theme()
         ),
         'hotel_result_listing' => array(
             'template' => 'hotel_result_listing',
+            'path' => $module_path . '/templates',
+        ),
+        'load' => array(
+            'template' => 'load',
             'path' => $module_path . '/templates',
         ),
         'add_review' => array(
@@ -975,7 +986,7 @@ function listing_review_form_submit($form, $form_state)
     }
 }
 
-function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = array(), $countriesArray = array())
+function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = array(), $countriesArray = array(), $dateFrom = false, $dateTo = false, $persons = false)
 {
 //    var_dump($filter);
 //    die;
@@ -995,7 +1006,19 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     $query->join('gbl_pricing', 'pr', 'el.eid = pr.listing_id');
     $query->leftJoin('gbl_experience_category', 'ec', 'ec.cid = el.experience_category');
 //    $query->join('gbl_experience_type', 'et', 'et.id = el.experience_type');
-//    $query->Join('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
+    $query->Join('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
+
+    if ($dateFrom) {
+        $query->condition('sh.startDate', $dateFrom, '<=');
+    }
+    if ($dateTo) {
+        $query->condition('sh.endRepeatDate', $dateTo, '>=');
+    }
+    if ($persons) {
+        $query->condition('sh.avalability_max', $persons, '>=');
+    }
+
+    $query->condition('sh.endDate', date('Y-m-d'), '>=');
     $query->leftJoin('gbl_listing_packages', 'pk', 'pk.id = el.package_id');
     if ($uid != "" && $type == 'my_wishlist') {
         $query->join('gbl_my_wishlist', 'w', 'el.eid = w.listing_id');
@@ -1004,14 +1027,14 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     $query->fields('pr', array('min_price', 'max_price'))
         ->fields('ec', array('category_name'))
         //->fields('et', array('experience_type'))
-//        ->fields('sh', array('endRepeatDate', 'avalability_max'))
+        ->fields('sh', array('endRepeatDate', 'avalability_max'))
         ->fields('pk', array('price'));
     if ($uid != "" && $type == 'my_wishlist') {
         $query->fields('w', array('in_wishlist'));
     }
     $query->condition('el.visibility_status', '1');
     $query->condition('el.list_status', '1');
-    //$query->condition('sh.endDate',date('Y-m-d'),'>=' );
+
     if (empty($filter)) {
         $or = db_or()->condition('sh.endRepeatDate', date('Y-m-d'), '>=')->isNull('sh.endRepeatDate');
         $query->condition($or);
@@ -1040,10 +1063,6 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     }
 
     if (empty($filter)) {
-
-        if (arg(1) != '') {
-
-        }
         $query = $query->range($pageLimitOffset, $pageSize);
         $result = $query->execute();
 
@@ -1112,19 +1131,20 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
 
             if ($key == "when") {
                 if ($value != '') {
-                    $value = date('Y-m-d', strtotime($value));
-                    $dates = array('sh.startDate', 'sh.endRepeatDate');
-                    $query->condition(db_or()->condition('sh.startDate', $value, '<=')->isNull('sh.startDate'));
-                    $query->condition(db_or()->condition('sh.endRepeatDate', $value, '>=')->isNull('sh.endRepeatDate'));
+                    /*  $value = date('Y-m-d', strtotime($value));
+                      $dates = array('sh.startDate', 'sh.endRepeatDate');
+                      $query->condition(db_or()->condition('sh.startDate', $value, '<=')->isNull('sh.startDate'));
+                      $query->condition(db_or()->condition('sh.endRepeatDate', $value, '>=')->isNull('sh.endRepeatDate'));
+                */
                 }
             }
 
-            if ($key == "person") {
-                if ($value != '') {
-                    $or = db_or()->isNull('sh.avalability_max')->condition('sh.avalability_max', $value, '>=');
-                    $query->condition($or);
-                }
-            }
+            /* if ($key == "person") {
+                 if ($value != '') {
+                     $or = db_or()->isNull('sh.avalability_max')->condition('sh.avalability_max', $value, '>=');
+                     $query->condition($or);
+                 }
+             }*/
         }
 
         //print($query);exit;
@@ -1283,6 +1303,7 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     echo "<pre>";
     print_r($filter);exit;
 */
+
         $country = $filter["country"];
         $state = $filter["state_long"];
         $city = $filter["city"];
@@ -1338,12 +1359,12 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
                     ->condition('el.address2', '%' . db_like($search_text) . '%', 'COLLATE UTF8_GENERAL_CI like');
                 $query->condition($or);
             }
-                $whereLocation = db_or()->
-                condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.country', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.address1', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
-                condition('el.address2', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
+            $whereLocation = db_or()->
+            condition('el.city', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
+            condition('el.state', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
+            condition('el.country', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
+            condition('el.address1', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like')->
+            condition('el.address2', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
             $query->condition($whereLocation);
         }
 
@@ -1364,7 +1385,7 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     // had removed old else case using nowhere. 03-13-2015
 }
 
-function getAllListingsCount($filter = array(), $type = '', $uid = '', $homeSearch = array(), $countriesArray1 = array())
+function getAllListingsCount($filter = array(), $type = '', $uid = '', $homeSearch = array(), $dateFrom, $dateTo, $persons)
 {
     $pageSize = 8;
     $str = '';
@@ -1377,6 +1398,17 @@ function getAllListingsCount($filter = array(), $type = '', $uid = '', $homeSear
     $query->leftJoin('gbl_experience_category', 'ec', 'ec.cid = el.experience_category');
     $query->join('gbl_experience_type', 'et', 'et.id = el.experience_type');
     $query->leftJoin('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
+
+    if ($dateFrom) {
+        $query->condition('sh.startDate', $dateFrom, '<=');
+    }
+    if ($dateTo) {
+        $query->condition('sh.endRepeatDate', $dateTo, '>=');
+    }
+    if ($persons) {
+        $query->condition('sh.avalability_max', $persons, '>=');
+    }
+
     if ($uid != "" && $type == 'my_wishlist') {
         $query->join('gbl_my_wishlist', 'w', 'el.eid = w.listing_id');
     }
@@ -1461,14 +1493,14 @@ function getAllListingsCount($filter = array(), $type = '', $uid = '', $homeSear
                 }
             }
 
-            if ($key == "when") {
-                if ($value != '') {
-                    $value = date('Y-m-d', strtotime($value));
-                    $dates = array('sh.startDate', 'sh.endRepeatDate');
-                    $query->condition(db_or()->condition('sh.startDate', $value, '<=')->isNull('sh.startDate'));
-                    $query->condition(db_or()->condition('sh.endRepeatDate', $value, '>=')->isNull('sh.endRepeatDate'));
-                }
-            }
+            /*  if ($key == "when") {
+                  if ($value != '') {
+                      $value = date('Y-m-d', strtotime($value));
+                      $dates = array('sh.startDate', 'sh.endRepeatDate');
+                      $query->condition(db_or()->condition('sh.startDate', $value, '<=')->isNull('sh.startDate'));
+                      $query->condition(db_or()->condition('sh.endRepeatDate', $value, '>=')->isNull('sh.endRepeatDate'));
+                  }
+              }*/
             if ($key == "person") {
                 if ($value != '') {
                     $or = db_or()->isNull('sh.avalability_max')->condition('sh.avalability_max', $value, '>=');
@@ -3364,6 +3396,18 @@ function search_listings_form($form, &$form_state)
 
         '#suffix' => '</div></div>'
     );
+    $form['dateFrom'] = array(
+        '#type' => 'hidden',
+        '#value' => '2016-12-21'
+    );
+    $form['dateTo'] = array(
+        '#type' => 'hidden',
+        '#value' => '2016-12-31'
+    );
+    $form['persons'] = array(
+        '#type' => 'hidden',
+        '#value' => '5'
+    );
     $form['type'] = array(
         '#type' => 'select',
         '#prefix' => '<div class="col-md-4 col-sm-4 col-xs-12"><div class=row id="custom_jquery_select">',
@@ -3409,7 +3453,15 @@ function search_listings_form_submit($form, &$form_state)
     if (!empty($form_state['values']['keys'])) {
         switch ($form_state['values'] ['type']) {
             case "Experience":
-                drupal_goto('search-destination/' . $form_state['values']['keys']);
+//                var_dump($form_state['values']['dateFrom']);die;
+                drupal_goto('search-destination',
+                    ['query' => [
+                        'keys' => $form_state['values']['keys'],
+                        'dateFrom' => $form_state['values']['dateFrom'],
+                        'dateTo' => $form_state['values']['dateTo'],
+                        'persons' => $form_state['values']['persons']
+                    ]]
+                );
                 break;
             case "Hotels":
                 drupal_goto('search-hotel/' . $form_state['values']['keys']);
@@ -3453,7 +3505,7 @@ function getCountriesByContinent($continent)
     return $countriesArray;
 }
 
-function generateSearchFilter($mapsResponse, $filter)
+function generateSearchFilter($mapsResponse, $filter, $keys)
 {
     foreach ($mapsResponse as $addressC) {
         if (isset($addressC->types[0]) && !empty($addressC->types[0])) {
@@ -3481,52 +3533,66 @@ function generateSearchFilter($mapsResponse, $filter)
             }
         }
     }
-    $filter["search"] = arg(1);
+    $filter["search"] = $keys;
     return $filter;
 }
 
-function searchLocationByQuery($query){
+function searchLocationByQuery($query)
+{
     $prepAddr = str_replace(' ', '+', $query);
     $geocode = file_get_contents('http://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false');
     return json_decode($geocode);
 }
 
-function getUserListingsByFilter($filter, $userId = ''){
-    return getAllListings($filter, 'my_listing', $userId);
+function getUserListingsByFilter($filter, $userId = '', $dateFrom = false, $dateTo = false, $persons = false)
+{
+    return getAllListings($filter, 'my_listing', $userId, false, false, $dateFrom, $dateTo, $persons);
 }
 
-function getUserListings(){
-    if(isset($_POST['filter'])) {
-        return getUserListingsByFilter($_POST['filter']);
-    }
-    return ['success'=>false];
-}
+//function getUserListings(){
+//    if(isset($_POST['filter'])) {
+//        return getUserListingsByFilter($_POST['filter']);
+//    }
+//    return ['success'=>false];
+//}
 
 function search_listings_results($keys = null)
 {
     global $user;
     $filter = array();
     $countriesArray = array();
-    $output = searchLocationByQuery(arg(1));
+    $input = drupal_get_query_parameters();
+
+    $keys = isset($input['keys']) ? $input['keys'] : false;
+    $dateFrom = isset($input['dateFrom']) ? $input['dateFrom'] : false;
+    $dateTo = isset($input['dateTo']) ? $input['dateTo'] : false;
+    $persons = isset($input['persons']) ? $input['persons'] : false;
+
+    $output = searchLocationByQuery($keys);
     $lat = $output->results[0]->geometry->location->lat;
     $filter['lat'] = $lat;
     $long = $output->results[0]->geometry->location->lng;
     $filter['long'] = $long;
 
     if ($output->results[0]->address_components) {
-        $filter = generateSearchFilter($output->results[0]->address_components, $filter);
+        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $keys);
         if ($filter['continent']) {
             $countriesArray = getCountriesByContinent($filter['continent']);
         }
     }
 
-    $userListings = getUserListingsByFilter($filter, $user->uid);
+    $userListings = getUserListingsByFilter($filter, $user->uid, $dateFrom, $dateTo, $persons);
+
     $apitudeListings = get_apitude_activities($lat, $long, 50, 1);
     $allListings = array_merge($userListings, $apitudeListings);
 //    var_dump($allListings);die;
-    $listingCount = getAllListingsCount($filter, 'my_listing', $user->uid, [], $countriesArray);
+    $listingCount = getAllListingsCount($filter, 'my_listing', $user->uid, $countriesArray, $dateFrom, $dateTo, $persons);
     $experienceType = getExperienceType();
-    return theme('results', array('experienceType' => $experienceType, 'listingResult' => $allListings, 'listingResultCount' => $listingCount));
+    return theme(
+        'results', array(
+        'experienceType' => $experienceType, 'listingResult' => $allListings,
+        'listingResultCount' => $listingCount, 'keys' => $keys
+    ));
 //
 //    $client = new Predis\Client();
 //    $client->set('foo', $apitudeListings);
@@ -6903,19 +6969,83 @@ function advisor_listing_results()
 
 }
 
+function handle_request($index, $defaultValue = null, $input = false)
+{
+    $input = $input ? $input : $_GET;
+    $inputHandle = drupal_get_query_parameters($input);
+    return isset($inputHandle[$index]) && !empty($inputHandle[$index]) ? addslashes($inputHandle[$index]) : $defaultValue;
+}
+
+function filter_hotels()
+{
+    $checkIn = handle_request('checkin_date');
+    $testCheckIn = explode('-', $checkIn);
+    $testCheckOInValidation = checkdate($testCheckIn[1], $testCheckIn[2], $testCheckIn[0]);
+    $checkOut = handle_request('checkout_date');
+    $testCheckOut = explode('-', $checkOut);
+    $testCheckOutValidation = checkdate($testCheckOut[1], $testCheckOut[2], $testCheckOut[0]);
+    $maxRate = handle_request('maxRate');
+    $minRate = handle_request('minRate');
+    $search_destination = handle_request('destination');
+    $adults = handle_request('adults');
+    $children = handle_request('children', 0);
+    $rooms = handle_request('rooms', 1);
+    $page = handle_request('page', 1);
+    $mapsResponse = searchLocationByQuery($search_destination);
+    if (isset($mapsResponse->results[0]->geometry->location->lat) &&
+        isset($mapsResponse->results[0]->geometry->location->lng) && $testCheckOInValidation &&
+        $testCheckOutValidation) {
+        $latitude = $mapsResponse->results[0]->geometry->location->lat;
+        $longitude = $mapsResponse->results[0]->geometry->location->lng;
+        $api = new Hotelbeds();
+        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page);
+        $hotels['status'] = true;
+        return json_encode($hotels);
+    } else {
+        return json_encode(['status' => false]);
+    }
+}
+
 function hotel_result_listing()
 {
-    global $user, $base_url;
-    $uid = $user->uid;
-    $seach_destination = arg(1);
-    $query = "Select * from gbl_hotels where (hotel_name like '" . $seach_destination . "' or hotel_city like '" . $seach_destination . "' or hotel_state like '" . $seach_destination . "' or hotel_country like '" . $seach_destination . "' or hotel_address like '" . $seach_destination . "' )";
-    $query = db_query($query);
+    global $base_url;
+    $output = theme('pager', array('quantity' => 6));
+    $checkIn = handle_request('checkin_date');
+    $testCheckIn = explode('-', $checkIn);
+    $testCheckOInValidation = checkdate($testCheckIn[1], $testCheckIn[2], $testCheckIn[0]);
+    $checkOut = handle_request('checkout_date');
+    $testCheckOut = explode('-', $checkOut);
+    $testCheckOutValidation = checkdate($testCheckOut[1], $testCheckOut[2], $testCheckOut[0]);
+    $maxRate = handle_request('maxRate');
+    $minRate = handle_request('minRate');
+    $search_destination = handle_request('destination');
+    $adults = handle_request('adults');
+    $children = handle_request('children', 0);
+    $rooms = handle_request('rooms', 1);
+    $page = handle_request('page', 1);
+    $show_filter = 1;
+    $mapsResponse = searchLocationByQuery($search_destination);
+    if (isset($mapsResponse->results[0]->geometry->location->lat) &&
+        isset($mapsResponse->results[0]->geometry->location->lng) && $testCheckOInValidation &&
+            $testCheckOutValidation) {
+        $latitude = $mapsResponse->results[0]->geometry->location->lat;
+        $longitude = $mapsResponse->results[0]->geometry->location->lng;
+        $api = new Hotelbeds();
+        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page);
+        return theme('hotel_result_listing', array(
+            'seach_destination' => $search_destination,
+            'checkin_date' => $checkIn,
+            'checkout_date' => $checkOut,
+            'hotels' => $hotels['hotels'],
+            'pagination' => $output,
+            'base_url' => $base_url,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'show_filter' => $show_filter,
+        ));
+    }
 
-    $total_hotel = $query->fetchAll(PDO::FETCH_ASSOC);
-    $output = '';
-    $listing = pager_array_splice($total_hotel, 6);
-    $output .= theme('pager', array('quantity' => 6));
-    return theme('hotel_result_listing', array('result' => $listing, 'pagination' => $output));
+
 
 }
 

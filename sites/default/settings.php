@@ -564,12 +564,51 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  */
 # $conf['allow_authorize_operations'] = FALSE;
 
+//gloobers account
+//$conf['activities_api_key'] = 'crtb6wvg5rraypzzvb8fm7dd';
+//$conf['activities_secret_key'] = 'xwuJ22kzbA';
+//$conf['hotel_api_key'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
+//$conf['hotel_secret_key'] = 'puUJZPazyh';
 
-$conf['activities_api_key'] = 'crtb6wvg5rraypzzvb8fm7dd';
-$conf['activities_secret_key'] = 'xwuJ22kzbA';
+//zing account
+//$conf['activities_api_key'] = '3fuyx82hu2cxgyaz74kmgqdf';
+//$conf['activities_secret_key'] = 'yhFQpN6a7Z';
+//$conf['hotel_api_key'] = 'x37dc798rxs3m2z2zje9z4dd';
+//$conf['hotel_secret_key'] = 'UDpjqa2kFP';
+
+//zingeon account
+//$conf['activities_api_key'] = 'gsj8gbjpmq7dy2xdr3q28pqa';
+//$conf['activities_secret_key'] = 'ZsWgDNJvy7';
+//$conf['hotel_api_key'] = 'sfh6nz24y69wfqavmh3mggqs';
+//$conf['hotel_secret_key'] = 'XP9wutzfTR';
+
+//zingeon1 account
+//$conf['activities_api_key'] = '9gm5j46jdh2qt2fsuamtjrqp';
+//$conf['activities_secret_key'] = 'JVr85neg92';
+//$conf['hotel_api_key'] = '8d8g4nbsas5rqkpkejgwejx3';
+//$conf['hotel_secret_key'] = 'nfRvckEWJr';
+
+//zingeon2 account
+//$conf['activities_api_key'] = 'b4hey33e2k7ugv5uhqb6zdcq';
+//$conf['activities_secret_key'] = 'h5HJeZJ44n';
+//$conf['hotel_api_key'] = '4ja8v9ry4f59zdvmx37krr3y';
+//$conf['hotel_secret_key'] = 'jfsv72GE5C';
+
+//zingeon3 account
+//$conf['activities_api_key'] = '4dee7jk6zyfxj7mha8zxpy8n';
+//$conf['activities_secret_key'] = 'QSHnGwX82k';
+//$conf['hotel_api_key'] = 'fkxjmqjh85mggxxsavyf8aje';
+//$conf['hotel_secret_key'] = 'wYEvvk8A7M';
+
+//zingeon4 account
+$conf['activities_api_key'] = 'drwzyt2pqhm9f8cah4ubyqtq';
+$conf['activities_secret_key'] = 'v74Myzc6Pm';
+$conf['hotel_api_key'] = 'wurm9p4zhmqt4eu4mjtrkwbh';
+$conf['hotel_secret_key'] = 'vSSGccEaJB';
+
+
+
 $conf['activities_signature'] = hash("sha256", $conf['activities_api_key'].$conf['activities_secret_key'].time());
-$conf['hotel_api_key'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
-$conf['hotel_secret_key'] = 'puUJZPazyh';
 $conf['hotel_signature'] = hash("sha256", $conf['hotel_api_key'].$conf['hotel_secret_key'].time());
 $conf['apitude_test_url'] = 'https://api.test.hotelbeds.com/';
 $conf['apitude_live_url'] = 'https://api.hotelbeds.com/';

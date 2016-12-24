@@ -20,15 +20,15 @@ $base_price_array = array();
 if (module_exists('advisor')) {
     $trevelGuideList = getListTrevelGuide();
 }
-if (arg(1)) {
-    $lat_long = timezone_convert_helper_getLatiLongByAddress(arg(1));
+if ($keys) {
+    $lat_long = timezone_convert_helper_getLatiLongByAddress($keys);
 }
 ?>
 
 
 <div class="innersearch">
     <div class="col-md-8 col-sm-6 col-xs-12 dessearch">
-        <input type="search" name="search_desti" id="search_keyword" value="<?php echo arg(1); ?>" class="desinput"
+        <input type="search" name="search_desti" id="search_keyword" value="<?php echo $keys; ?>" class="desinput"
                onKeyup="search_destination();"
                onblur="if (this.placeholder == ''){this.placeholder = 'Enter a destination'; }"
                onfocus="if(this.placeholder == 'Enter a destination'){this.placeholder = '';}" autocomplete="off"
@@ -224,7 +224,7 @@ if (arg(1)) {
 
                                             $Listing_recommend_link = $base_url . '/experience/' . $listing["eid"] . '?ruid=' . base64_encode($user->uid) . '&FBsrc=' . $FBsrc . '&base_url=' . $base_url;
 
-                                            $twitter_recommend_link = $base_url . '/sites/all/themes/gloobers_new/twitterOauthwithImagePost/callback.php?msg=' . $base_url . '/experience/' . arg(1) . '?ruid=' . base64_encode($user->uid) . '&media=' . $FBsrc . '&redirect=1';
+                                            $twitter_recommend_link = $base_url . '/sites/all/themes/gloobers_new/twitterOauthwithImagePost/callback.php?msg=' . $base_url . '/experience/' . $keys . '?ruid=' . base64_encode($user->uid) . '&media=' . $FBsrc . '&redirect=1';
 
                                             echo '<label id="twitter_recommend_link_' . $listing["eid"] . '" style="display:none">' . $twitter_recommend_link . '</label>';
 
@@ -366,19 +366,19 @@ if (arg(1)) {
                 <ul>
                     <?php
                     if ($page > 1) {
-                        $urlName = $base_url . '/search-destination/' . arg(1) . '?page=' . ($page - 1);
+                        $urlName = $base_url . '/search-destination/' . $keys . '?page=' . ($page - 1);
                         echo '<li><a href="' . $urlName . '"><i class="glyphicon glyphicon-chevron-left"></i></a></li>';
                     }
 
                     for ($i = 1; $i <= $listingCount; $i++) {
                         $currentClass = ($page == $i) ? 'current' : '';
-                        $urlName = $base_url . '/search-destination/' . arg(1) . '?page=' . $i;
+                        $urlName = $base_url . '/search-destination/' . $keys . '?page=' . $i;
                         if ($i <= 3) {
                             echo '<li><a href="' . $urlName . '" class="' . $currentClass . '">' . $i . '</a></li>';
                         }
                     }
                     if ($listingCount > 4) {
-                        $urlName = $base_url . '/search-destination/' . arg(1) . '?page=' . ($page + 1);
+                        $urlName = $base_url . '/search-destination/' . $keys . '?page=' . ($page + 1);
                         echo '<li><a href="' . $urlName . '"><i class="glyphicon glyphicon-chevron-right"></i></a></li>';
                     }
                     ?>
@@ -530,7 +530,7 @@ if (arg(1)) {
                 expType: jQuery('#select_experience_type').val(),
                 when: jQuery('#datetimepicker2').val(),
                 person: jQuery('#select_persons').val(),
-                place: '<?php echo arg(1) ?>',
+                place: '<?php echo $keys ?>',
                 action: 'search'
             };
             setFilter(cObj);
@@ -563,7 +563,7 @@ if (arg(1)) {
                 expType: jQuery('#select_experience_type').val(),
                 person: jQuery('#select_persons').val(),
                 when: (e.delegateTarget.value),
-                place: '<?php echo arg(1) ?>',
+                place: '<?php echo $keys ?>',
                 action: 'search'
             }
             setFilter(cObj);
@@ -573,8 +573,8 @@ if (arg(1)) {
         if (jQuery('.listsection .listing_container_head').length > 0) {
             initialize();
         } else {
-            // timezone_convert_helper_getLatiLongByAddress(<?php echo arg(1); ?>)
-            initialize_blank('<?php echo arg(1); ?>');
+            // timezone_convert_helper_getLatiLongByAddress(<?php echo $keys; ?>)
+            initialize_blank('<?php echo $keys; ?>');
         }
 
         jQuery('.paging-sec').css('display', 'block');
@@ -588,7 +588,7 @@ if (arg(1)) {
             expType: this.value,
             when: jQuery('#datetimepicker2').val(),
             person: jQuery('#select_persons').val(),
-            place: '<?php echo arg(1) ?>',
+            place: '<?php echo $keys ?>',
             action: 'search'
         }
         setFilter(cObj);
@@ -645,7 +645,7 @@ if (arg(1)) {
             expType: this.value,
             when: jQuery('#datetimepicker2').val(),
             person: jQuery('#select_persons').val(),
-            place: '<?php echo arg(1) ?>',
+            place: '<?php echo $keys ?>',
             selectedStar: SelectedStar[1],
             action: 'search'
         }
@@ -660,7 +660,7 @@ if (arg(1)) {
             expType: jQuery('#select_experience_type').val(),
             when: jQuery('#datetimepicker2').val(),
             person: this.value,
-            place: '<?php echo arg(1) ?>',
+            place: '<?php echo $keys ?>',
             action: 'search'
         }
         setFilter(cObj);
@@ -746,7 +746,7 @@ if (arg(1)) {
             expType: jQuery('#select_experience_type').val(),
             when: jQuery('#datetimepicker2').val(),
             person: jQuery('#select_persons').val(),
-            place: '<?php echo arg(1) ?>',
+            place: '<?php echo $keys ?>',
             offers: jQuery('#offerFrm').serialize(),
             action: 'search'
         }

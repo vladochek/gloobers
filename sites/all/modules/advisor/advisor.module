@@ -1847,7 +1847,7 @@ function unread_notification($isAccess = 0 , $returnType='array'){
 
 function readnotifications(){
     global $user;
-    
+
     //send to login page if user is not logged in
     if(!$user->uid){
         drupal_goto('login');
