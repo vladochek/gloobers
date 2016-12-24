@@ -1,0 +1,10 @@
+name = New Design
+description = A new site design.
+package = Core
+version = VERSION
+core = 7.x
+
+version = "7.28"
+project = "drupal"
+
+
