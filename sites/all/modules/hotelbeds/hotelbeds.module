@@ -8,7 +8,7 @@ class Hotelbeds
     private $signatureActivities;
     private $mode;
     private $url;
-    const HOTELS_LIMIT_PER_PAGE = 10;
+    const HOTELS_LIMIT_PER_PAGE = 6;
 
     public function __construct()
     {
@@ -184,7 +184,7 @@ class Hotelbeds
 
     function hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children = 0, $minRate = null, $maxRate = null, $page = 1)
     {
-        $radius = 200;
+        $radius = 50;
         $hotelsRequestData = [
             'stay' => [
                 'checkIn' => $checkIn,
@@ -215,23 +215,28 @@ class Hotelbeds
         $hotelsResponse = $this->hotelbeds_hotels($hotelsRequestDataEncoded);
 
         $hotels = $hotelsResponse->hotels->hotels;
+//        var_dump($hotels);die;
         $hotelsCodes = array_column($hotels, 'code');
-        $hotelsMinPrices = array_column($hotels, 'minRate','code');
-//        var_dump($hotelsMinPrices);die;
+        $hotelsMinPrices = array_column($hotels, NULL,'code');
         $hotelsResponseResult['total'] = $hotelsResponse->hotels->total;
         $hotelsResponseResult['hotels'] = [];
         if(count($hotelsCodes)>0) {
             $page = (int)$page;
             if($page>0) {
-                $offset = ($page-1)*self::HOTELS_LIMIT_PER_PAGE;
-                $hotelsCodesSliced = array_slice($hotelsCodes, $offset, self::HOTELS_LIMIT_PER_PAGE);
-                $hotelsResponseResult['hotels'] =  $this->hotelbeds_get_hotels_info_by_codes($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE);
-                foreach ($hotelsResponseResult['hotels'] as $key => $hotelItem){
-                    $hotelsResponseResult['hotels'][$key]->minRate = $hotelsMinPrices[$hotelItem->code];
+                $checkLimit = ($page*self::HOTELS_LIMIT_PER_PAGE) - $hotelsResponseResult['total'];
+                if($checkLimit<=self::HOTELS_LIMIT_PER_PAGE) {
+                    $offset = ($page - 1) * self::HOTELS_LIMIT_PER_PAGE;
+                    $hotelsCodesSliced = array_slice($hotelsCodes, $offset, self::HOTELS_LIMIT_PER_PAGE);
+                    $hotelsResponseResult['hotels'] = $this->hotelbeds_get_hotels_info_by_codes($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE);
+//                var_dump($hotelsResponseResult['hotels']);die;
+                    foreach ($hotelsResponseResult['hotels'] as $key => $hotelItem) {
+                        $hotelsResponseResult['hotels'][$key]->minRate = $hotelsMinPrices[$hotelItem->code]->minRate;
+                        $hotelsResponseResult['hotels'][$key]->currency = $hotelsMinPrices[$hotelItem->code]->currency;
+                    }
                 }
             }
         }
-        var_dump($hotelsResponseResult);die;
+//        var_dump($hotelsResponseResult);die;
         return $hotelsResponseResult;
     }
 }

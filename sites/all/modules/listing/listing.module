@@ -2393,7 +2393,9 @@ function bookings_details()
     $output = '';
     $bookings = pager_array_splice($bookings, 10);
     $output .= theme('pager', array('quantity' => 10));
-    return theme('bookings_details', array('bookings' => $bookings, 'bookingsCount' => $bookingsCount, 'searchForm' => $searchForm, 'pagination' => $output));
+    return theme('bookings_details', array(
+        'bookings' => $bookings, 'bookingsCount' => $bookingsCount,
+        'searchForm' => $searchForm, 'pagination' => $output));
 }
 
 function getAllBookings($userId = null, $title = null, $type = null, $booking_status, $search_filter)
@@ -7031,8 +7033,12 @@ function hotel_result_listing()
         $latitude = $mapsResponse->results[0]->geometry->location->lat;
         $longitude = $mapsResponse->results[0]->geometry->location->lng;
         $api = new Hotelbeds();
-        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page);
-        return theme('hotel_result_listing', array(
+        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children,
+            $minRate, $maxRate, $page);
+
+
+
+        $output = theme('hotel_result_listing', array(
             'seach_destination' => $search_destination,
             'checkin_date' => $checkIn,
             'checkout_date' => $checkOut,
@@ -7043,6 +7049,9 @@ function hotel_result_listing()
             'longitude' => $longitude,
             'show_filter' => $show_filter,
         ));
+        $current_page = pager_default_initialize($hotels['total'], $api::HOTELS_LIMIT_PER_PAGE);
+        $output .= theme('pager', array('quantity'=>$hotels['total'], 'tags'=>['dddd']));
+        return $output;
     }
 
 

@@ -319,8 +319,8 @@
                                     <!-- End ListView -->
                                 </div>
                                 <div class="travel-bbl-icon2" >
-                                    <b>$ <?= 'hardcode' ?></b>
-                                    <small>Per Night</small>
+                                    <b><?= $value->minRate.' '.$value->currency ?></b>
+                                    <small>Per Period</small>
                                 </div>
 
                                 <!-- End ListDetail -->
@@ -358,9 +358,9 @@
                 <?php } ?>
 
                 <?php
-                print'<div class="col-md-12 text-center"><div class="pagination pagination-lg">';
-                echo $pagination;
-                print '</div></div>';
+
+                echo $pager;
+
                 ?>
                 <!-- End Text_center -->
             </div>
@@ -374,6 +374,7 @@
     </div>
     <!-- End InnerPage -->
 </div>
+<?php drupal_add_js('sites/all/themes/gloobers_new/js/search.js', 'file'); ?>
 <script src="<?php print $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']); ?>/js/advisor.js" type="text/javascript" language="javascript"></script>
 <script>
                 function search_destination() {
