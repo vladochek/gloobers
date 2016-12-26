@@ -7044,7 +7044,8 @@ function hotel_result_listing()
             'show_filter' => $show_filter,
         ));
         $current_page = pager_default_initialize($hotels['total'], $api::HOTELS_LIMIT_PER_PAGE);
-        $output .= theme('pager', array('quantity'=>$hotels['total'], 'tags'=>['dddd']));
+        theme_pager_first(['text'=>'hj']);
+        $output .= theme('pager', array('quantity'=>$hotels['total'], 'parameters'=>['some'=>'aaa']));//, 'tags'=>['dddd']
         return $output;
     }
 
