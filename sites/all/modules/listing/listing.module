@@ -6859,33 +6859,22 @@ function search_listings_advisors_form($form, &$form_state)
 function advisor_listing_results()
 {
     global $user, $base_url;
-    /* if((strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit')!==FALSE)){
-        drupal_goto('http://gloobers.com'.$_SERVER['REQUEST_URI']);
-    }else{
-        if((!$user->uid)){
-            $dest = drupal_get_destination();
-            $_SESSION['destination']  = $dest["destination"];
-            drupal_goto('login',$dest);
-        }
-    } */
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit') !== false) {
-        //$mayText='Here1\n';
-    } else {
 
-        //$mayText='NoHere1\n';
-        if ((!$user->uid)) {
-            $dest = drupal_get_destination();
-            $_SESSION['destination'] = $dest["destination"];
-            drupal_goto('login', $dest);
-        }
+    if (!strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit') && (!$user->uid)) {
+        $dest = drupal_get_destination();
+        $_SESSION['destination'] = $dest["destination"];
+        drupal_goto('login', $dest);
     }
+
     $uid = $user->uid;
     $destination = $_GET['dest'];
     $dest = explode(',', $destination);
-    $where = '';
     $search = '';
     if (!empty($dest[0])) {
-        $search = "((gel.country COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' . "') or (gel.city COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' . "') or (gel.state COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' . "') or (MATCH (gup.location) AGAINST ('" . $dest[0] . "' IN NATURAL LANGUAGE MODE)))";
+        $search = "((gel.country COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' .
+            "') or (gel.city COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' .
+            "') or (gel.state COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' .
+            "') or (MATCH (gup.location) AGAINST ('" . $dest[0] . "' IN NATURAL LANGUAGE MODE)))";
         //(gup.location COLLATE UTF8_GENERAL_CI LIKE '".'%'.$dest[0].'%'."')
     }
     /**
@@ -6946,8 +6935,10 @@ function advisor_listing_results()
     if ($have_been_there == '' && $with_mutual_interests_join == '' && $local_condition == '' && $professionals == '') {
         $query = "SELECT gum.uid FROM gbl_users_meta gum left join  gbl_experience_list gel on (gum.uid = gel.uid) ";
         $query .= " left join  gbl_user_passeport gup on  (gup.uid = gum.uid) $where  $group_by";
-        $query2 = "SELECT gbl.owner_id uid FROM  gbl_advise_listing AS gbl LEFT JOIN gbl_advice_location_request AS gal ON (gal.rid = gbl.request_id) WHERE gal.destination COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $destination . '%' . "' GROUP 
-            BY gbl.owner_id ";
+        $query2 = "SELECT gbl.owner_id uid FROM  gbl_advise_listing AS gbl LEFT JOIN gbl_advice_location_request
+                   AS gal ON (gal.rid = gbl.request_id)
+                   WHERE gal.destination COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $destination . '%' . "' GROUP 
+                   BY gbl.owner_id ";
 
         $query2 = db_query($query2);
         $unique_advice_advisor = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -6960,8 +6951,9 @@ function advisor_listing_results()
     $advisor = $query->fetchAll(PDO::FETCH_ASSOC);
 
     $total_advisor1 = array_merge($unique_advice_advisor, $advisor);
-    $total_advisor = array_map('unserialize', array_unique(array_map('serialize', $total_advisor1)));
 
+    $total_advisor = array_map('array_unique', $total_advisor1);
+//    var_dump($total_advisor1);die;
     $output = '';
     $listing = pager_array_splice($total_advisor, 6);
     $output .= theme('pager', array('quantity' => 6));
@@ -6994,7 +6986,8 @@ function filter_hotels()
     $mapsResponse = searchLocationByQuery($search_destination);
     if (isset($mapsResponse->results[0]->geometry->location->lat) &&
         isset($mapsResponse->results[0]->geometry->location->lng) && $testCheckOInValidation &&
-        $testCheckOutValidation) {
+        $testCheckOutValidation
+    ) {
         $latitude = $mapsResponse->results[0]->geometry->location->lat;
         $longitude = $mapsResponse->results[0]->geometry->location->lng;
         $api = new Hotelbeds();
@@ -7027,7 +7020,8 @@ function hotel_result_listing()
     $mapsResponse = searchLocationByQuery($search_destination);
     if (isset($mapsResponse->results[0]->geometry->location->lat) &&
         isset($mapsResponse->results[0]->geometry->location->lng) && $testCheckOInValidation &&
-            $testCheckOutValidation) {
+        $testCheckOutValidation
+    ) {
         $latitude = $mapsResponse->results[0]->geometry->location->lat;
         $longitude = $mapsResponse->results[0]->geometry->location->lng;
         $api = new Hotelbeds();
@@ -7044,7 +7038,6 @@ function hotel_result_listing()
             'show_filter' => $show_filter,
         ));
     }
-
 
 
 }
