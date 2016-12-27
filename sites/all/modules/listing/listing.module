@@ -6875,16 +6875,9 @@ function advisor_listing_results()
     /**
      * type of exp. must be used in or
      */
-    $with_mutual_interests_join = '';
-    $with_mutual_interests_join_condition = '';
 
 
     $have_been_there = '';
-
-
-
-
-    $where_condition = '';
 
 
     $group_by = 'group by gum.uid';
@@ -6935,7 +6928,7 @@ function advisor_listing_results()
         }
 
         if ((isset($_GET['have_been_there']) == 'on') || ($_GET['professionals'] == 'on')) {
-            $have_been_there = "inner join  gbl_experience_list gel on (gum.uid = gel.uid)";
+            $query->join('gbl_experience_list', 'gel', 'gum.uid = gel.uid');
             if ($_GET['have_been_there'] == 'on') {
                 $query->join('gbl_booking', 'gb', 'gb.lid = gel.eid');
             }
@@ -6953,13 +6946,9 @@ function advisor_listing_results()
                 $destination . "' IN NATURAL LANGUAGE MODE)) AND (gup.description = 'I live there')";
              */
         }
-
-
-
-        $query = "SELECT gum.uid FROM gbl_users_meta gum  $with_mutual_interests_join $have_been_there 
-        $local_condition  $professionals $where_condition   $group_by";
+        $query->groupBy('gum.uid');
     }
-    //echo $query; exit;
+
     $advisor = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
 
     $total_advisor1 = array_merge($unique_advice_advisor, $advisor);
