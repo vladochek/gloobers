@@ -6893,7 +6893,8 @@ function advisor_listing_results()
                 ->condition('gel.country', "%$dest[0]%", 'like')
                 ->condition('gel.city', "%$dest[0]%", 'like')
                 ->condition('gel.state', "%$dest[0]%", 'like')
-            );// "') or (MATCH (gup.location) AGAINST ('" . $dest[0] . "' IN NATURAL LANGUAGE MODE)))";
+            // "') or (MATCH (gup.location) AGAINST ('" . $dest[0] . "' IN NATURAL LANGUAGE MODE)))";
+            );
 
         }
         $query->groupBy('gum.uid');
