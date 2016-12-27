@@ -13,7 +13,6 @@ include_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 // Load Drupal
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 global $user, $base_url;
-$fh  = fopen('funky.txt','a');
 
 $servername = 'localhost';
 $username = 'drupaluser';
@@ -21,6 +20,7 @@ $password = 'password';
 $dbname = 'gloobers';
 //Synchronize activity types with APITUDE
 SyncAPI::synchronizeActivityTypes();
+SyncAPI::synchronizeHotelTypes();
 // Create connection
 	$conn = new mysqli($servername, $username, $password,$dbname);
 	if($conn->connect_error) {
@@ -32,7 +32,6 @@ SyncAPI::synchronizeActivityTypes();
 	$Msg='My Cron is running';
 	//(CURDATE() + INTERVAL 1 DAY) 
 	$sql = "Select * from gbl_booking where arrive_at_date = CURDATE() and  booking_status='booked'";
-	//fwrite($fh,$sql);exit;
 	$result=$conn->query($sql);
 
 	if($result->num_rows > 0){

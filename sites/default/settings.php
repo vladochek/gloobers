@@ -565,10 +565,10 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
 # $conf['allow_authorize_operations'] = FALSE;
 
 //gloobers account
-//$conf['activities_api_key'] = 'crtb6wvg5rraypzzvb8fm7dd';
-//$conf['activities_secret_key'] = 'xwuJ22kzbA';
-//$conf['hotel_api_key'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
-//$conf['hotel_secret_key'] = 'puUJZPazyh';
+$conf['activities_api_key'] = 'crtb6wvg5rraypzzvb8fm7dd';
+$conf['activities_secret_key'] = 'xwuJ22kzbA';
+$conf['hotel_api_key'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
+$conf['hotel_secret_key'] = 'puUJZPazyh';
 
 //zing account
 //$conf['activities_api_key'] = '3fuyx82hu2cxgyaz74kmgqdf';
@@ -607,10 +607,10 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
 //$conf['hotel_secret_key'] = 'vSSGccEaJB';
 
 //zingeon5 account
-$conf['activities_api_key'] = 'jqmrb5wdhp3rth4gryn94v57';
-$conf['activities_secret_key'] = 'hmCuRCns5e';
-$conf['hotel_api_key'] = 'adubgj8fe3zftcenky296hux';
-$conf['hotel_secret_key'] = 'FqbbM6UvA4';
+//$conf['activities_api_key'] = 'jqmrb5wdhp3rth4gryn94v57';
+//$conf['activities_secret_key'] = 'hmCuRCns5e';
+//$conf['hotel_api_key'] = 'adubgj8fe3zftcenky296hux';
+//$conf['hotel_secret_key'] = 'FqbbM6UvA4';
 
 //zingeon6 account
 //$conf['activities_api_key'] = 'k5bwnf8b7sxpj85gxeqhe7q5';

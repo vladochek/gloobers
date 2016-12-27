@@ -18,6 +18,15 @@ class SyncAPI
             ->fetchAssoc();
     }
 
+    public static function getHotelTypes($ext_id)
+    {
+        return db_select('gbl_hotel_type', 'ht')
+            ->fields('ht')
+            ->condition('ext_id', $ext_id)
+            ->execute()
+            ->fetchAssoc();
+    }
+
     public static function synchronizeActivityTypes()
     {
         $hotelbeds = new Hotelbeds();
@@ -49,6 +58,40 @@ class SyncAPI
         if (count($existingActivities)) {
             db_delete('gbl_experience_type')
                 ->condition('ext_id', $existingActivities, 'NOT IN')
+                ->execute();
+        }
+    }
+
+    public static function synchronizeHotelTypes()
+    {
+        $hotelbeds = new Hotelbeds();
+        $hotelTypesResponse = $hotelbeds->hotelbeds_get_hotel_types();
+        $hotelTypes = $hotelTypesResponse->segments;
+        $existingHotelTypes = [];
+        foreach ($hotelTypes as $type) {
+            $existingHotelTypes[] = $type->code;
+            $dbActivity = self::getHotelTypes($type->code);
+            if ($dbActivity) {
+                if ($dbActivity['hotel_type'] !== $type->description->content) {
+                    db_update('gbl_hotel_type')
+                        ->fields(array(
+                            'hotel_type' => $type->description->content
+                        ))
+                        ->condition('ext_id', $type->code)
+                        ->execute();
+                }
+            } else {
+                db_insert('gbl_hotel_type')
+                    ->fields(array(
+                        'hotel_type' => $type->description->content,
+                        'ext_id' => $type->code
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingHotelTypes)) {
+            db_delete('hotel_type')
+                ->condition('ext_id', $existingHotelTypes, 'NOT IN')
                 ->execute();
         }
     }

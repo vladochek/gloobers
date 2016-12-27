@@ -6871,86 +6871,96 @@ function advisor_listing_results()
     $uid = $user->uid;
     $destination = $_GET['dest'];
     $dest = explode(',', $destination);
-    $search = '';
-    if (!empty($dest[0])) {
-        $search = "((gel.country COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' .
-            "') or (gel.city COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' .
-            "') or (gel.state COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' .
-            "') or (MATCH (gup.location) AGAINST ('" . $dest[0] . "' IN NATURAL LANGUAGE MODE)))";
-        //(gup.location COLLATE UTF8_GENERAL_CI LIKE '".'%'.$dest[0].'%'."')
-    }
+
     /**
      * type of exp. must be used in or
      */
     $with_mutual_interests_join = '';
     $with_mutual_interests_join_condition = '';
 
-    if ((isset($_GET['with_mutual_interests']) == 'on') && (isset($uid))) {
-        $with_mutual_interests_join = " inner join gbl_users_passions gups on (gups.uid = gum.uid) ";
-        if (!isset($_GET['professionals']) && !isset($_GET['locals'])) {
-            $with_mutual_interests_join .= "inner join gbl_user_passeport gup on (gup.uid = gum.uid)";
-        }
-        if (isset($_GET['passions'])) {
-            $with_mutual_interests_join_condition = "gups.pid IN(select concat(pid,',') from gbl_users_passions where uid = '" . $uid . "' and gups.pid IN(" . $_GET['passions'] . "))";
-        } else {
-            $with_mutual_interests_join_condition = "gups.pid IN(select concat(pid,',') from gbl_users_passions where uid = '" . $uid . "')";
-        }
-        if (!isset($_GET['professionals']) && !isset($_GET['locals'])) {
-            $with_mutual_interests_join_condition .= " And (MATCH (gup.location) AGAINST ('" . $destination . "' IN NATURAL LANGUAGE MODE))";
-        }
-    }
-    $have_been_there = '';
-    $have_been_there_condition = '';
-    if ((isset($_GET['have_been_there']) == 'on') || ($_GET['professionals'] == 'on')) {
-        $have_been_there = "inner join  gbl_experience_list gel on (gum.uid = gel.uid)";
-        if ($_GET['have_been_there'] == 'on') {
-            $have_been_there .= " INNER JOIN gbl_booking gb ON (gb.lid = gel.eid) ";
-        }
-        //  $have_been_there .=" Inner join  gbl_user_passeport gup on  (gup.uid = gum.uid) ";
-        $have_been_there_condition = " ((gel.country COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' . "') or (gel.city COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' . "') or (gel.state COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $dest[0] . '%' . "'))";
-        // or ((gup.location COLLATE UTF8_GENERAL_CI LIKE '%Paris, France%') AND (gup.description COLLATE UTF8_GENERAL_CI LIKE '%been living there%'))
-    }
-    $local_condition = '';
-    $local_condition2 = '';
-    if ((isset($_GET['locals'])) && ($_GET['locals'] == 'on')) {
-        $local_condition = " Inner join  gbl_user_passeport gup on  (gup.uid = gum.uid) ";
-        $local_condition2 = " (MATCH (gup.location) AGAINST ('" . $destination . "' IN NATURAL LANGUAGE MODE)) AND (gup.description = 'I live there')";
-        //gup.location  COLLATE UTF8_GENERAL_CI LIKE '".'%'.$destination.'%'."'
-    }
-    $where = 'where ' . $search;
-    $where_condition = '';
-    if (!empty($with_mutual_interests_join_condition)) {
-        $where_condition .= ' and ' . $with_mutual_interests_join_condition;
-    }
-    if (!empty($have_been_there_condition)) {
-        $where_condition .= ' and ' . $have_been_there_condition;
-    }
-    if (!empty($local_condition2)) {
-        $where_condition .= ' and ' . $local_condition2;
-    }
 
-    $where_condition = 'where ' . ltrim($where_condition, " and");
+    $have_been_there = '';
+
+
+
+
+    $where_condition = '';
 
 
     $group_by = 'group by gum.uid';
     $unique_advice_advisor = array();
     if ($have_been_there == '' && $with_mutual_interests_join == '' && $local_condition == '' && $professionals == '') {
-        $query = "SELECT gum.uid FROM gbl_users_meta gum left join  gbl_experience_list gel on (gum.uid = gel.uid) ";
-        $query .= " left join  gbl_user_passeport gup on  (gup.uid = gum.uid) $where  $group_by";
-        $query2 = "SELECT gbl.owner_id uid FROM  gbl_advise_listing AS gbl LEFT JOIN gbl_advice_location_request
-                   AS gal ON (gal.rid = gbl.request_id)
-                   WHERE gal.destination COLLATE UTF8_GENERAL_CI LIKE '" . '%' . $destination . '%' . "' GROUP 
-                   BY gbl.owner_id ";
+        $query = db_select('gbl_users_meta', 'gum');
+        $query->fields('gum', ['uid']);
+        $query->leftJoin('gbl_experience_list', 'gel', 'gum.uid = gel.uid');
+        $query->leftJoin('gbl_user_passeport', 'gup', 'gup.uid = gum.uid');
 
-        $query2 = db_query($query2);
-        $unique_advice_advisor = $query2->fetchAll(PDO::FETCH_ASSOC);
+        if (!empty($dest[0])) {
+            $query->condition(db_or()
+                ->condition('gel.country', "%$dest[0]%", 'like')
+                ->condition('gel.city', "%$dest[0]%", 'like')
+                ->condition('gel.state', "%$dest[0]%", 'like')
+            );// "') or (MATCH (gup.location) AGAINST ('" . $dest[0] . "' IN NATURAL LANGUAGE MODE)))";
+
+        }
+        $query->groupBy('gum.uid');
+/////////////////////////////////////////////////////
+        $query2 = db_select('gbl_advise_listing', 'gbl');
+        $query2->fields('gbl', ['owner_id']);
+        $query2->leftJoin('gbl_advice_location_request', 'gal', 'gal.rid = gbl.request_id');
+        $query2->condition('gal.destination', "%$destination%", 'like');
+        $query2->groupBy('gbl.owner_id');
+        $unique_advice_advisor = $query2->execute()->fetchAll(PDO::FETCH_ASSOC);
     } else {
+        $query = db_select('gbl_users_meta', 'gum');
+        $query->fields('gum', ['uid']);
+
+        if ((isset($_GET['with_mutual_interests']) == 'on') && (isset($uid))) {
+            $query->join('gbl_users_passions', 'gups', 'gups.uid = gum.uid');
+            if (!isset($_GET['professionals']) && !isset($_GET['locals'])) {
+                $query->join('gbl_user_passeport', 'gup', 'gup.uid = gum.uid');
+            }
+            if (isset($_GET['passions'])) {
+          /*      $query->join('gbl_user_passeport', 'gup', 'gup.uid = gum.uid');
+                $with_mutual_interests_join_condition = "gups.pid IN(select concat(pid,',') from gbl_users_passions where uid = '" .
+                    $uid . "' and gups.pid IN(" . $_GET['passions'] . "))";*/
+            } else {
+             /*   $with_mutual_interests_join_condition = "gups.pid IN(select concat(pid,',') from gbl_users_passions where uid = '" . $uid . "')";
+                $query->join('gbl_user_passeport', 'gup', 'gup.uid = gum.uid');*/
+            }
+            if (!isset($_GET['professionals']) && !isset($_GET['locals'])) {
+               /* $with_mutual_interests_join_condition .= " And (MATCH (gup.location) AGAINST ('" . $destination . "' IN NATURAL LANGUAGE MODE))";
+                $query->condition('gup.location', "%$destination%", 'like');*/
+            }
+        }
+
+        if ((isset($_GET['have_been_there']) == 'on') || ($_GET['professionals'] == 'on')) {
+            $have_been_there = "inner join  gbl_experience_list gel on (gum.uid = gel.uid)";
+            if ($_GET['have_been_there'] == 'on') {
+                $query->join('gbl_booking', 'gb', 'gb.lid = gel.eid');
+            }
+            $query->condition(db_or()
+                ->condition('gel.country', "%$dest[0]%", 'like')
+                ->condition('gel.city', "%$dest[0]%", 'like')
+                ->condition('gel.state', "%$dest[0]%", 'like')
+            );
+        }
+
+        if ((isset($_GET['locals'])) && ($_GET['locals'] == 'on')) {
+            $query->join('gbl_user_passeport', 'gup', 'gup.uid = gum.uid');
+            /*
+            $local_condition2 = " (MATCH (gup.location) AGAINST ('" .
+                $destination . "' IN NATURAL LANGUAGE MODE)) AND (gup.description = 'I live there')";
+             */
+        }
+
+
+
         $query = "SELECT gum.uid FROM gbl_users_meta gum  $with_mutual_interests_join $have_been_there 
         $local_condition  $professionals $where_condition   $group_by";
     }
     //echo $query; exit;
-    $query = db_query($query);
-    $advisor = $query->fetchAll(PDO::FETCH_ASSOC);
+    $advisor = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
 
     $total_advisor1 = array_merge($unique_advice_advisor, $advisor);
 
@@ -7031,7 +7041,6 @@ function hotel_result_listing()
             $minRate, $maxRate, $page);
 
 
-
         $output = theme('hotel_result_listing', array(
             'seach_destination' => $search_destination,
             'checkin_date' => $checkIn,
@@ -7044,7 +7053,7 @@ function hotel_result_listing()
             'show_filter' => $show_filter,
         ));
         $current_page = pager_default_initialize($hotels['total'], $api::HOTELS_LIMIT_PER_PAGE);
-        theme_pager_first(['text'=>'hj']);
+//        theme_pager_first(['text'=>'hj']);
         $output .= theme('pager', array('quantity'=>$hotels['total'], 'parameters'=>['some'=>'aaa']));//, 'tags'=>['dddd']
         return $output;
     }

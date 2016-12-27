@@ -63,6 +63,14 @@ class Hotelbeds
         );
     }
 
+    public function hotelbeds_get_hotel_types()
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/segments?fields=all&language=ENG',
+            'GET'
+        );
+    }
+
     public function hotelbeds_get_countries()
     {
         return $response = $this->hotelbeds_activities_api_connect(
@@ -167,13 +175,14 @@ class Hotelbeds
         );
     }
 
-    function hotelbeds_get_hotels_info_by_codes($hotelsCodes, $to, $from = 1,  $fields = 'all')
+    function hotelbeds_get_hotels_info_by_codes($hotelsCodes, $to, $from = 1,  $fields = 'all', $segmentCodes='')//segmentCodes=31&
     {
         $hotelsCodesString = implode(',', $hotelsCodes);
         $hotelsInfoRequestData = [
             'fields' => $fields,
             'language' => 'ENG',
             'codes' => $hotelsCodesString,
+            'segmentCodes'=>$segmentCodes,
             'from' => $from,
             'to' => $to
         ];
