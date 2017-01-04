@@ -222,9 +222,7 @@ class Hotelbeds
 
         $hotelsRequestDataEncoded = json_encode($hotelsRequestData);
         $hotelsResponse = $this->hotelbeds_hotels($hotelsRequestDataEncoded);
-
         $hotels = $hotelsResponse->hotels->hotels;
-//        var_dump($hotels);die;
         $hotelsCodes = array_column($hotels, 'code');
         $hotelsMinPrices = array_column($hotels, NULL,'code');
         $hotelsResponseResult['total'] = $hotelsResponse->hotels->total;

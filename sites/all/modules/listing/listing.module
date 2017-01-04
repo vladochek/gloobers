@@ -3585,31 +3585,6 @@ function search_listings_results($keys = null)
 
     $userListings = getUserListingsByFilter($filter, $user->uid, $dateFrom, $dateTo, $persons);
 
-
-    $options = array(
-        'method' => 'GET',
-        'blocking' => true,
-        'headers' => array(
-            "Api-Key" => variable_get('hotel_api_key', NULL),
-            "X-Signature" => variable_get('hotel_signature', NULL),
-            "Accept" => 'application/json'
-        ),
-    );
-// Queue up the requests.
-    $max = 2;
-    $urls = array();
-    for ($i=1; $i <= $max; $i++) {
-        // Build URL to a page that doesn't exist.
-        $urls[] = 'https://api.test.hotelbeds.com/hotel-content-api/1.0/types/segments?fields=all&language=ENG&from=1&to='.$i;
-    }
-// Queue up the requests.
-    httprl_request($urls, $options);
-// Execute requests.
-    $request = httprl_send_request();
-
-// Echo out the results.
-    var_dump($request);die;
-
     $apitudeListings = get_apitude_activities($lat, $long, 30, 1);
     $allListings = array_merge($userListings, $apitudeListings);
 //    var_dump($allListings);die;
