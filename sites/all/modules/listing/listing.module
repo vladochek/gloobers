@@ -11,6 +11,12 @@ function listing_menu()
         'access callback' => true,
         'type' => MENU_NORMAL_ITEM
     );
+    $items['search-advisor'] = array(
+        'page callback' => 'search_advisor_results',
+        'access arguments' => array('access container'),
+        'access callback' => true,
+        'type' => MENU_NORMAL_ITEM
+    );
     $items['search-hotel/ajax'] = array(
         'page callback' => 'filter_hotels',
         'access arguments' => array('access container'),
@@ -138,6 +144,20 @@ function listing_menu()
     );
     $items['product/ajax/getList'] = array(
         'page callback' => 'getAllAjaxListingsBylistType',
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['ajax/create-recommendation'] = array(
+        'page callback' => 'create_recommendation',
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['ajax/recommendations-by-advisor'] = array(
+        'page callback' => 'get_recommendations_by_advisor',
         'access arguments' => TRUE,
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
@@ -986,10 +1006,8 @@ function listing_review_form_submit($form, $form_state)
     }
 }
 
-function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = array(), $countriesArray = array(), $dateFrom = false, $dateTo = false, $persons = false)
+function search_listings($filter, $type, $uid, $homeSearch, $countriesArray, $dateFrom, $dateTo, $persons)
 {
-//    var_dump($filter);
-//    die;
     $pageLimitOffset = ($_REQUEST['page']) ? ($_REQUEST['page'] - 1) : 0;
     $pageSize = 8;
     $pageLimitOffset = $pageLimitOffset * $pageSize;
@@ -1008,7 +1026,7 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
 //    $query->join('gbl_experience_type', 'et', 'et.id = el.experience_type');
     $query->Join('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
 
-    if ($dateFrom) {
+  /*  if ($dateFrom) {
         $query->condition('sh.startDate', $dateFrom, '<=');
     }
     if ($dateTo) {
@@ -1016,7 +1034,7 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
     }
     if ($persons) {
         $query->condition('sh.avalability_max', $persons, '>=');
-    }
+    }*/
 
     $query->condition('sh.endDate', date('Y-m-d'), '>=');
     $query->leftJoin('gbl_listing_packages', 'pk', 'pk.id = el.package_id');
@@ -1348,7 +1366,6 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
             $query->condition($or);
 
         } else {
-//echo 12399;die;
 
             if ($search_text) {
                 $or = db_or()
@@ -1367,23 +1384,23 @@ function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = 
             condition('el.address2', '%' . db_like($filter["search"]) . '%', 'COLLATE UTF8_GENERAL_CI like');
             $query->condition($whereLocation);
         }
-
-
-        $query = $query->range($pageLimitOffset, $pageSize);
-        $result = $query->execute();
-
-        while ($record = $result->fetchAssoc()) {
-            $record['state'] = @str_replace("'", " ", $record['state']);
-            $record['title'] = @str_replace("'", " ", $record['title']);
-
-            $listings[] = $record;
-        }
-
-        return $listings;
+        return $query->range($pageLimitOffset, $pageSize);
 
     }
-    // had removed old else case using nowhere. 03-13-2015
 }
+
+function getAllListings($filter = array(), $type = '', $uid = '', $homeSearch = array(), $countriesArray = array(), $dateFrom = false, $dateTo = false, $persons = false)
+{
+    $filteredListings = search_listings($filter, $type, $uid, $homeSearch, $countriesArray, $dateFrom, $dateTo, $persons);
+    $result = $filteredListings->execute();
+    while ($record = $result->fetchAssoc()) {
+        $record['state'] = @str_replace("'", " ", $record['state']);
+        $record['title'] = @str_replace("'", " ", $record['title']);
+        $listings[] = $record;
+    }
+    return $listings;
+}
+
 
 function getAllListingsCount($filter = array(), $type = '', $uid = '', $homeSearch = array(), $dateFrom, $dateTo, $persons)
 {
@@ -1710,7 +1727,16 @@ function booking_summary()
     $extras = getProductExtraData($listID);
     $scheduleSessionData = getScheduleSessionData($listID);
     $schedulingData = getSchedulingData($listID);
-    return theme('booking_summary', array('extras' => $extras, 'schedulingData' => $schedulingData, 'scheduleSessionData' => $scheduleSessionData, 'postedData' => $postedData, 'OverviewData' => $OverviewData, 'pricingData' => $pricingData, 'basePrice' => $basePrice, 'rulesDetail' => $rulesDetail));
+    return theme('booking_summary', array(
+        'extras' => $extras,
+        'schedulingData' => $schedulingData,
+        'scheduleSessionData' => $scheduleSessionData,
+        'postedData' => $postedData,
+        'OverviewData' => $OverviewData,
+        'pricingData' => $pricingData,
+        'basePrice' => $basePrice,
+        'rulesDetail' => $rulesDetail
+    ));
 }
 
 /**
@@ -1881,7 +1907,24 @@ function booking_details_form_submit($form, $form_state)
         $grandTotal = $_SESSION['total_amount'] - $discount;
         $bookingID = random_string(10);
         $query = db_insert('gbl_booking')
-            ->fields(array('lid' => $listId, 'uid' => $user->uid, 'quantity' => $quantity, 'quantity_details' => $_SESSION['participants'], 'additional_cost' => $additional_amount, 'additional_services' => ($_SESSION["additional-services"]) ? $_SESSION["additional-services"] : '', 'total_cost' => $subTotal, 'security' => $security_deposit, 'discount' => $discount, 'grand_total' => $grandTotal, 'arrive_at_date' => $booking_date_from, 'created' => time(), 'booking_status' => 'booked', 'other_details' => serialize($bilingdetail), 'arrive_at_time' => $arrival_time, 'booking_id' => $bookingID));
+            ->fields(array(
+                'lid' => $listId,
+                'uid' => $user->uid,
+                'quantity' => $quantity,
+                'quantity_details' => $_SESSION['participants'],
+                'additional_cost' => $additional_amount,
+                'additional_services' => ($_SESSION["additional-services"]) ? $_SESSION["additional-services"] : '',
+                'total_cost' => $subTotal,
+                'security' => $security_deposit,
+                'discount' => $discount,
+                'grand_total' => $grandTotal,
+                'arrive_at_date' => $booking_date_from,
+                'created' => time(),
+                'booking_status' => 'booked',
+                'other_details' => serialize($bilingdetail),
+                'arrive_at_time' => $arrival_time,
+                'booking_id' => $bookingID
+            ));
         $result = $query->execute();
         /* Get new id after insert and insert in payment table */
         if ($result) {
@@ -3558,26 +3601,161 @@ function getUserListingsByFilter($filter, $userId = '', $dateFrom = false, $date
 //    return ['success'=>false];
 //}
 
-function search_listings_results($keys = null)
+function activities_count($destination)
 {
-    global $user;
-    $filter = array();
-    $countriesArray = array();
-    $input = drupal_get_query_parameters();
-
-    $keys = isset($input['keys']) ? $input['keys'] : false;
-    $dateFrom = isset($input['dateFrom']) ? $input['dateFrom'] : false;
-    $dateTo = isset($input['dateTo']) ? $input['dateTo'] : false;
-    $persons = isset($input['persons']) ? $input['persons'] : false;
-
-    $output = searchLocationByQuery($keys);
+    $dateFrom = date('Y-m-d');
+    $dateTo = date('Y-m-d', strtotime('+2 days'));
+    $persons = 2;
+    $output = searchLocationByQuery($destination);
     $lat = $output->results[0]->geometry->location->lat;
     $filter['lat'] = $lat;
     $long = $output->results[0]->geometry->location->lng;
     $filter['long'] = $long;
 
     if ($output->results[0]->address_components) {
-        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $keys);
+        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
+    }
+    $userListingsCount = count(getUserListingsByFilter($filter, '', $dateFrom, $dateTo, $persons));
+    $hbActivities = new Hotelbeds();
+    $hbActivityListCount = $hbActivities->hotelbeds_get_activities_by_gps($lat, $long, $dateFrom, $dateTo, 1, 1)->pagination->totalItems;
+    return $hbActivityListCount + $userListingsCount;
+}
+
+function handle_request($index, $defaultValue = null, $input = false)
+{
+    $input = $input ? $input : $_GET;
+    $inputHandle = drupal_get_query_parameters($input);
+    return isset($inputHandle[$index]) && !empty($inputHandle[$index]) ? addslashes($inputHandle[$index]) : $defaultValue;
+}
+
+function create_recommendation()
+{
+    $input = drupal_get_query_parameters($_POST);
+    $comment = $input['comment'];
+    $tripTypeId = $input['trip_type_id'];
+    $advisorId = $input['advisor_id'];
+    $experienceId = $input['experienceId'];
+    $passions = $input['passions'];
+    if ($comment && $tripTypeId && $advisorId && $experienceId && $passions) {
+        $queryRec = db_insert('gbl_recommendations')->fields([
+            'comment' => $comment,
+            'trip_type_id' => $tripTypeId,
+            'advisor_id' => $advisorId,
+            'experience_id' => $experienceId
+        ]);
+        $recommendationId = $queryRec->execute();
+        if (count($passions)) {
+            $queryPasToRec = db_insert('gbl_passions_to_recommendations')->fields(['passion_id', 'recommendation_id']);
+            foreach ($passions as $passion) {
+                $queryPasToRec->values([
+                    'passion_id' => $passion,
+                    'recommendation_id' => $recommendationId
+                ]);
+            }
+            $queryPasToRec->execute();
+        }
+        drupal_json_output(['status' => true, 'recommendation_id' => $recommendationId]);
+    } else {
+        drupal_json_output(['status' => false]);
+    }
+}
+
+function search_advisor_results()
+{
+    global $user;
+    $filter = array();
+    $input = drupal_get_query_parameters();
+    $destination = $input['destination'];
+    $persons = $input['persons'];
+
+    $daterange = $input['daterange'];
+    $dates = isset($daterange) ? explode(' - ', $daterange) : '';
+    $dateFromSegments = explode('/', $dates[0]);
+    $dateFrom = $dateFromSegments[2] . '-' . $dateFromSegments[1] . '-' . $dateFromSegments[0];
+    $dateToSegments = explode('/', $dates[1]);
+    $dateTo = $dateToSegments[2] . '-' . $dateToSegments[1] . '-' . $dateToSegments[0];
+    $testDateFrom = explode('-', $dateFrom);
+    $testDateFromValidation = checkdate($testDateFrom[1], $testDateFrom[2], $testDateFrom[0]);
+    $testDateTo = explode('-', $dateTo);
+    $testDateToValidation = checkdate($testDateTo[1], $testDateTo[2], $testDateTo[0]);
+
+    $output = searchLocationByQuery($destination);
+    $lat = $output->results[0]->geometry->location->lat;
+    $filter['lat'] = $lat;
+    $long = $output->results[0]->geometry->location->lng;
+    $filter['long'] = $long;
+
+    if ($output->results[0]->address_components) {
+        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
+    }
+    if ($testDateFromValidation && $testDateToValidation && $destination) {
+        $userListings = get_advisors_by_recommendations($filter, 'my_listing', '', [], [], $dateFrom, $dateTo, $persons);
+        var_dump($userListings);die;
+    }
+
+}
+
+function get_advisors_by_recommendations($filter = array(), $type = '', $uid = '', $homeSearch = array(), $countriesArray = array(), $dateFrom = false, $dateTo = false, $persons = false)
+{
+    $filteredListings = search_listings($filter, $type, $uid, $homeSearch, $countriesArray, $dateFrom, $dateTo, $persons);
+    $filteredListings->innerJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
+    $filteredListings->leftJoin('gbl_passions_to_recommendations', 'ptr', 'rec.id = ptr.recommendation_id');
+    $filteredListings->leftJoin('gbl_passions', 'pas', 'ptr.passion_id = pas.pid');
+    $filteredListings->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
+    $filteredListings->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
+    $filteredListings->leftJoin('gbl_listing_reviews', 'lr', 'advisor.uid = lr.uid');
+    $filteredListings->addExpression('COUNT(lr.id)', 'reviews_count');
+    $filteredListings->fields('advisor', ['uid']);
+    $filteredListings->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
+    $filteredListings->fields('am', ['city', 'country', 'first_name', 'last_name', 'company']);
+    $filteredListings->groupBy('advisor.uid');
+    $result = $filteredListings->execute()->fetchAssoc();
+    return $result ? $result : [];
+}
+
+function recommendations_by_advisor($advisorId)
+{
+    $query = db_select('gbl_recommendations', 'rec');
+    $query->condition('rec.advisor_id', $advisorId, '=');
+    $query->leftJoin('gbl_experience_list', 'el', 'rec.experience_id = el.eid');
+    $query->fields('el', ['eid', 'title', 'base_price', 'latitude', 'longitude']);
+    $result = $query->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function get_recommendations_by_advisor()
+{
+    $input = drupal_get_query_parameters($_POST);
+    $advisorId = $input['advisor_id'];
+    if ($advisorId) {
+        $recommendations = recommendations_by_advisor($advisorId);
+        drupal_json_output(['status' => true, 'recommendations' => $recommendations]);
+    } else {
+        drupal_json_output(['status' => false]);
+    }
+}
+
+function search_listings_results()
+{
+    global $user;
+    $filter = array();
+    $countriesArray = array();
+    $input = drupal_get_query_parameters();
+    $destination = $input['destination'];
+    $dates = isset($input['daterange']) ? explode(' - ', $input['daterange']) : '';
+    $dateFromSegments = explode('/', $dates[0]);
+    $dateFrom = $dateFromSegments[2] . '-' . $dateFromSegments[1] . '-' . $dateFromSegments[0];
+    $dateToSegments = explode('/', $dates[1]);
+    $dateTo = $dateToSegments[2] . '-' . $dateToSegments[1] . '-' . $dateToSegments[0];
+    $persons = $input['persons'];
+    $output = searchLocationByQuery($destination);
+    $lat = $output->results[0]->geometry->location->lat;
+    $filter['lat'] = $lat;
+    $long = $output->results[0]->geometry->location->lng;
+    $filter['long'] = $long;
+
+    if ($output->results[0]->address_components) {
+        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
         if ($filter['continent']) {
             $countriesArray = getCountriesByContinent($filter['continent']);
         }
@@ -3585,7 +3763,7 @@ function search_listings_results($keys = null)
 
     $userListings = getUserListingsByFilter($filter, $user->uid, $dateFrom, $dateTo, $persons);
 
-    $apitudeListings = get_apitude_activities($lat, $long, 30, 1);
+    $apitudeListings = get_apitude_activities($lat, $long, 30, 1, $dateFrom, $dateTo);
     $allListings = array_merge($userListings, $apitudeListings);
 //    var_dump($allListings);die;
     $listingCount = getAllListingsCount($filter, 'my_listing', $user->uid, $countriesArray, $dateFrom, $dateTo, $persons);
@@ -3593,7 +3771,7 @@ function search_listings_results($keys = null)
     return theme(
         'results', array(
         'experienceType' => $experienceType, 'listingResult' => $allListings,
-        'listingResultCount' => $listingCount, 'keys' => $keys
+        'listingResultCount' => $listingCount, 'keys' => $destination
     ));
 //
 //    $client = new Predis\Client();
@@ -3625,12 +3803,10 @@ function search_listings_results($keys = null)
 
 }
 
-function get_apitude_activities($lat, $lon, $from, $to)
+function get_apitude_activities($lat, $lon, $from, $to, $dateFrom, $dateTo)
 {
     $activities = new Hotelbeds();
 
-    $dateFrom = date('Y-m-d');
-    $dateTo = date('Y-m-d', strtotime("+60 days"));
     $activityList = $activities->hotelbeds_get_activities_by_gps($lat, $lon, $dateFrom, $dateTo, $from, $to)->activities;
 //    $activityList = '';
 //    $activityList = json_decode($activityList);
@@ -3670,6 +3846,79 @@ function get_apitude_activities($lat, $lon, $from, $to)
 
 
 //26 feb2015
+
+function get_recommendations($limit = 3, $offset = 0)
+{
+    $query = db_select('gbl_booking', 'b');
+    $query->innerJoin('users', 'u', 'b.advisor_id = u.uid');
+    $query->innerJoin('gbl_experience_list', 'el', 'b.lid = el.eid');
+    $query->leftJoin('gbl_experience_type', 'et', 'el.experience_type = et.id');
+    $query->leftJoin('gbl_listing_reviews', 'lr', 'el.eid = lr.listing_id');
+    $query->fields('b', ['lid']);
+    $query->fields('et', ['experience_type']);
+    $query->fields('el', ['eid', 'title', 'base_price', 'address1']);
+    $query->fields('u', ['uid']);
+    $query->addExpression('COUNT(lr.listing_id)', 'reviews_count');
+    $query->orderBy('el.agg_rating', 'DESC');
+    $query->condition('b.uid', '0', '<>');
+    $query->condition('b.advisor_id', '0', '<>');
+    $query->orderBy('b.created', 'DESC');
+    $query->groupBy('el.eid');
+    $query->range($offset, $limit);
+    $result = $query->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function get_last_followed_recommendations()
+{
+    return get_recommendations(3, 0);
+}
+
+function get_listing_photos($recommendation)
+{
+    $photos = isset($recommendation["eid"]) ? getPhotosData($recommendation["eid"]) : $recommendation["photos"];
+    if (count($photos) > 0) {
+        $photo = $photos[0];
+        if (isset($recommendation["eid"])) {
+            $photo = unserialize($photo["value1"]);
+            $file = file_load($photo["fid"]);
+            $imgpath = $file->uri;
+            $style = 'listing_slider';
+            return image_style_url($style, $imgpath);
+        } else {
+            return $photo;
+        }
+        /* foreach ($photos as $imgKey => $photo) {
+             if (isset($listing["eid"])) {
+                 $photo = unserialize($photo["value1"]);
+                 $file = file_load($photo["fid"]);
+                 $imgpath = $file->uri;
+                 $style = 'listing_slider';
+
+                 //set image into json array for map element
+                 $path = image_style_url($style, $imgpath);
+             } else {
+                 $path = $photo;
+             }
+         }*/
+    } else {
+        return base_path() . drupal_get_path('theme', 'gloobers_new') . '/images/cover_small_pic.jpg';
+    }
+
+}
+
+function get_user_photo($recommendation)
+{
+    if (isset($recommendation["uid"]) && $userDetails = user_load($recommendation["uid"])) {
+
+        if ($userDetails->picture != "") {
+            $file = file_load($userDetails->picture->fid);
+            return file_create_url($file->uri);
+        } else {
+            return base_path() . drupal_get_path('theme', 'gloobers') . '/images/no-profile-male-img.jpg';
+        }
+    }
+}
 
 function experience_listing_details()
 {
@@ -6871,24 +7120,35 @@ function advisor_listing_results()
     $destination = $_GET['dest'];
     $dest = explode(',', $destination);
 
+    $daterange = handle_request('daterange');
+    $dates = isset($daterange) ? explode(' - ', $daterange) : '';
+    $dateFromSegments = explode('/', $dates[0]);
+    $dateFrom = $dateFromSegments[2] . '-' . $dateFromSegments[1] . '-' . $dateFromSegments[0];
+    $dateToSegments = explode('/', $dates[1]);
+    $dateTo = $dateToSegments[2] . '-' . $dateToSegments[1] . '-' . $dateToSegments[0];
+    $testDateFrom = explode('-', $dateFrom);
+    $testDateFromValidation = checkdate($testDateFrom[1], $testDateFrom[2], $testDateFrom[0]);
+    $testDateTo = explode('-', $dateTo);
+    $testDateToValidation = checkdate($testDateTo[1], $testDateTo[2], $testDateTo[0]);
+
     $query = db_select('gbl_users_meta', 'gum');
     $query->fields('gum', ['uid']);
     $query->leftJoin('gbl_experience_list', 'gel', 'gum.uid = gel.uid');
     $query->leftJoin('gbl_user_passeport', 'gup', 'gup.uid = gum.uid');
 
-    if ((isset($_GET['with_mutual_interests']) == 'on') && (isset($uid))) {
-        $query->join('gbl_users_passions', 'gups', 'gups.uid = gum.uid');
-
-        $subquery = db_select('gbl_users_passions');
-        $subquery->addExpression("concat(pid,',')", 'pid');
-        $subquery->condition('uid', $uid, '=');
-
-        $query->condition('gups.pid', $subquery, 'IN');
-
-        if (isset($_GET['passions'])) {
-            $query->condition('gups.pid', $_GET['passions'], 'IN');
-        }
-    }
+//    if ((isset($_GET['with_mutual_interests']) == 'on') && (isset($uid))) {
+//        $query->join('gbl_users_passions', 'gups', 'gups.uid = gum.uid');
+//
+//        $subquery = db_select('gbl_users_passions');
+//        $subquery->addExpression("concat(pid,',')", 'pid');
+//        $subquery->condition('uid', $uid, '=');
+//
+//        $query->condition('gups.pid', $subquery, 'IN');
+//
+//        if (isset($_GET['passions'])) {
+//            $query->condition('gups.pid', $_GET['passions'], 'IN');
+//        }
+//    }
 
     if (!empty($dest[0])) {
         $query->condition(db_or()
@@ -6898,9 +7158,9 @@ function advisor_listing_results()
             ->condition('gup.location', "%$dest[0]%", 'like')
         );
     }
-    if (isset($_GET['have_been_there']) || $_GET['professionals'] == 'on' && ($_GET['have_been_there'] == 'on')) {
-            $query->join('gbl_booking', 'gb', 'gb.lid = gel.eid');
-    }
+//    if (isset($_GET['have_been_there']) || $_GET['professionals'] == 'on' && ($_GET['have_been_there'] == 'on')) {
+//        $query->join('gbl_booking', 'gb', 'gb.lid = gel.eid');
+//    }
 
     if ((isset($_GET['locals'])) && ($_GET['locals'] == 'on')) {
         $query->condition('gup.location', "%$destination%", 'like');
@@ -6915,7 +7175,7 @@ function advisor_listing_results()
     $query2->condition('gal.destination', "%$destination%", 'like');
     $query2->groupBy('gbl.owner_id');
 
-    $advisor =                $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    $advisor = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     $unique_advice_advisor = $query2->execute()->fetchAll(PDO::FETCH_ASSOC);
 
     $total_advisor1 = array_merge($unique_advice_advisor, $advisor);
@@ -6927,13 +7187,6 @@ function advisor_listing_results()
     $output .= theme('pager', array('quantity' => 6));
     return theme('advisor_listing_results', array('result' => $listing, 'pagination' => $output));
 
-}
-
-function handle_request($index, $defaultValue = null, $input = false)
-{
-    $input = $input ? $input : $_GET;
-    $inputHandle = drupal_get_query_parameters($input);
-    return isset($inputHandle[$index]) && !empty($inputHandle[$index]) ? addslashes($inputHandle[$index]) : $defaultValue;
 }
 
 function filter_hotels()
@@ -6971,17 +7224,25 @@ function hotel_result_listing()
 {
     global $base_url;
     $output = theme('pager', array('quantity' => 6));
-    $checkIn = handle_request('checkin_date');
+
+
+    $daterange = handle_request('daterange');
+    $dates = isset($daterange) ? explode(' - ', $daterange) : '';
+    $dateFromSegments = explode('/', $dates[0]);
+    $checkIn = $dateFromSegments[2] . '-' . $dateFromSegments[1] . '-' . $dateFromSegments[0];
+    $dateToSegments = explode('/', $dates[1]);
+    $checkOut = $dateToSegments[2] . '-' . $dateToSegments[1] . '-' . $dateToSegments[0];
     $testCheckIn = explode('-', $checkIn);
     $testCheckOInValidation = checkdate($testCheckIn[1], $testCheckIn[2], $testCheckIn[0]);
-    $checkOut = handle_request('checkout_date');
     $testCheckOut = explode('-', $checkOut);
     $testCheckOutValidation = checkdate($testCheckOut[1], $testCheckOut[2], $testCheckOut[0]);
+
+//    var_dump($_GET);die;
     $maxRate = handle_request('maxRate');
     $minRate = handle_request('minRate');
     $search_destination = handle_request('destination');
     $adults = handle_request('adults');
-    $children = handle_request('children', 0);
+    $children = handle_request('childrens', 0);
     $rooms = handle_request('rooms', 1);
     $page = handle_request('page', 1);
     $show_filter = 1;

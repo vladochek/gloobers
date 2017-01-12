@@ -179,11 +179,7 @@ if ($keys) {
                                     if (count($photos) > 0) {
                                         foreach ($photos as $imgKey => $photo) {
                                             if (isset($listing["eid"])) {
-//                                                        if($listing['city'] == 'Kiev'){
-//                                                            var_dump($listingResult);die;
-//                                                        }
                                                 $photo = unserialize($photo["value1"]);
-
                                                 $file = file_load($photo["fid"]);
                                                 $imgpath = $file->uri;
                                                 $style = 'listing_slider';

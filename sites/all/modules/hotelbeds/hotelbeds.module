@@ -41,7 +41,7 @@ class Hotelbeds
                     return $response->data;
             }
         } else {
-            var_dump($response);die;
+            var_dump(json_decode($response->data));die;
         }
     }
 
@@ -200,7 +200,7 @@ class Hotelbeds
                 'checkOut' => $checkOut
             ],
             'occupancies' => [
-                0 => [
+                 [
                     'rooms' => $rooms,
                     'adults' => $adults,
                     'children' => $children
@@ -213,6 +213,7 @@ class Hotelbeds
                 'unit' => 'km'
             ]
         ];
+
         if ($minRate) {
             $hotelsRequestData['filter']['minRate'] = $minRate;
         }

@@ -359,13 +359,12 @@ jQuery(document).on('mouseenter','#drop4',function (){
 jQuery(document).ready(function(){
     //1 minute interval for notification
    setInterval(function() { 
-        getNotifications();
+     //   getNotifications();
     },60000);
   
 });
 
-getNotifications =  function(){  
-console.log("front"); 
+getNotifications =  function(){
 var uid="<?php echo $user->uid; ?>";
 if(uid>0) {
   console.log(uid); 
