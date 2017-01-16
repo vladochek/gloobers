@@ -713,28 +713,15 @@ function findNearByPlaces($data = array())
     return $records;
 }
 
-function getListingReviews($eid = "", $uid = null)
+function getListingReviews($eid, $uid = null)
 {
-    $reviews = array();
-    $query = db_select('gbl_listing_reviews', 'r');
-    $query->fields('r')
-        /*        $query->join('users', 'user', 'user.uid = r.uid');
-        $query->join('file_managed', 'file', 'file.fid = user.picture');
-        $query->fields('r')
-            ->fields('user',array('name','picture'))
-            ->fields('file',array('uri')) */
+    $query = db_select('gbl_listing_reviews', 'r')
+        ->fields('r')
         ->condition('listing_id', $eid);
-    if ($uid != "") {
+    if ($uid) {
         $query->condition('uid', $uid, '=');
     }
-
-    //$query->range(0, 2);
-    $result = $query->execute();
-    while ($data = $result->fetchAssoc()) {
-        $reviews[] = $data;
-    }
-    //echo "<pre>";Print_r($reviews);exit;
-    return $reviews;
+    return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
 }
 
 
@@ -1026,15 +1013,15 @@ function search_listings($filter, $type, $uid, $homeSearch, $countriesArray, $da
 //    $query->join('gbl_experience_type', 'et', 'et.id = el.experience_type');
     $query->Join('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
 
-  /*  if ($dateFrom) {
-        $query->condition('sh.startDate', $dateFrom, '<=');
-    }
-    if ($dateTo) {
-        $query->condition('sh.endRepeatDate', $dateTo, '>=');
-    }
-    if ($persons) {
-        $query->condition('sh.avalability_max', $persons, '>=');
-    }*/
+    /*  if ($dateFrom) {
+          $query->condition('sh.startDate', $dateFrom, '<=');
+      }
+      if ($dateTo) {
+          $query->condition('sh.endRepeatDate', $dateTo, '>=');
+      }
+      if ($persons) {
+          $query->condition('sh.avalability_max', $persons, '>=');
+      }*/
 
     $query->condition('sh.endDate', date('Y-m-d'), '>=');
     $query->leftJoin('gbl_listing_packages', 'pk', 'pk.id = el.package_id');
@@ -3632,28 +3619,40 @@ function create_recommendation()
 {
     $input = drupal_get_query_parameters($_POST);
     $comment = $input['comment'];
-    $tripTypeId = $input['trip_type_id'];
+    $tripTypes = $input['trip_types'];
     $advisorId = $input['advisor_id'];
     $experienceId = $input['experienceId'];
     $passions = $input['passions'];
-    if ($comment && $tripTypeId && $advisorId && $experienceId && $passions) {
+    if ($comment && $tripTypes && $advisorId && $experienceId && $passions) {
         $queryRec = db_insert('gbl_recommendations')->fields([
             'comment' => $comment,
-            'trip_type_id' => $tripTypeId,
             'advisor_id' => $advisorId,
-            'experience_id' => $experienceId
+            'experience_id' => $experienceId,
+            'created' => time()
         ]);
         $recommendationId = $queryRec->execute();
         if (count($passions)) {
-            $queryPasToRec = db_insert('gbl_passions_to_recommendations')->fields(['passion_id', 'recommendation_id']);
+            $queryPasToExp = db_insert('gbl_passions_to_experience')->fields(['passion_id', 'experience_id']);
             foreach ($passions as $passion) {
-                $queryPasToRec->values([
+                $queryPasToExp->values([
                     'passion_id' => $passion,
-                    'recommendation_id' => $recommendationId
+                    'experience_id' => $experienceId
                 ]);
             }
-            $queryPasToRec->execute();
+            $queryPasToExp->execute();
         }
+
+        if (count($tripTypes)) {
+            $queryTrToRec = db_insert('gbl_trip_types_to_experience')->fields(['trip_type_id', 'experience_id']);
+            foreach ($tripTypes as $tripType) {
+                $queryTrToRec->values([
+                    'trip_type_id' => $tripType,
+                    'experience_id' => $experienceId
+                ]);
+            }
+            $queryTrToRec->execute();
+        }
+
         drupal_json_output(['status' => true, 'recommendation_id' => $recommendationId]);
     } else {
         drupal_json_output(['status' => false]);
@@ -3690,7 +3689,8 @@ function search_advisor_results()
     }
     if ($testDateFromValidation && $testDateToValidation && $destination) {
         $userListings = get_advisors_by_recommendations($filter, 'my_listing', '', [], [], $dateFrom, $dateTo, $persons);
-        var_dump($userListings);die;
+        var_dump($userListings);
+        die;
     }
 
 }
@@ -3699,8 +3699,8 @@ function get_advisors_by_recommendations($filter = array(), $type = '', $uid = '
 {
     $filteredListings = search_listings($filter, $type, $uid, $homeSearch, $countriesArray, $dateFrom, $dateTo, $persons);
     $filteredListings->innerJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
-    $filteredListings->leftJoin('gbl_passions_to_recommendations', 'ptr', 'rec.id = ptr.recommendation_id');
-    $filteredListings->leftJoin('gbl_passions', 'pas', 'ptr.passion_id = pas.pid');
+    $filteredListings->leftJoin('gbl_passions_to_experience', 'pte', 'rec.experience_id = pte.experience_id');
+    $filteredListings->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
     $filteredListings->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
     $filteredListings->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
     $filteredListings->leftJoin('gbl_listing_reviews', 'lr', 'advisor.uid = lr.uid');
@@ -3920,14 +3920,114 @@ function get_user_photo($recommendation)
     }
 }
 
+function listing_details($listingId)
+{
+//    $rec = db_select('gbl_recommendations', 'r')
+//        ->fields('r', ['id', 'experience_id'])
+//
+//->range();
+
+    $query = db_select('gbl_experience_list', 'el');
+    $query->leftJoin('users', 'author', 'el.uid = author.uid');
+    $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->innerJoin('gbl_experience_list', 'uel', 'uel.uid = author.uid');
+    $query->leftJoin('gbl_users_meta', 'author_meta', 'author.uid = author_meta.uid');
+    $query->leftJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
+//    $query->addJoin('LEFT', $rec, 'rec', 'el.eid = rec.experience_id');
+    $query->fields('el', ['eid', 'title', 'brief_description', 'address1', 'state', 'country', 'latitude', 'longitude', 'base_price']);
+    $query->fields('author_meta', ['first_name', 'last_name', 'company', 'occupation', 'language']);
+    $query->fields('author', ['uid']);
+//    $query->addExpression('rec.id', 'last_rec_id');
+    $query->addExpression('fm.filename', 'author_pic');
+
+    $query->addExpression('COUNT(DISTINCT rec.id)', 'recommendations_count');
+    $query->addExpression('COUNT(DISTINCT uel.eid)', 'author_count_listings');
+    $query->condition('el.eid', $listingId, '=');
+    $query->groupBy('el.eid');
+
+    $result = $query->execute();
+//        echo $result->queryString;die;
+    return $result->fetchAssoc();
+}
+
+function latest_recommendations_by_listing($listingId)
+{
+    $query = db_select('gbl_recommendations', 'rec');
+    $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
+    $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
+    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->leftJoin('gbl_passions_to_experience', 'pte', 'rec.experience_id = pte.experience_id');
+    $query->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
+    $query->leftJoin('gbl_trip_types_to_experience', 'tte', 'rec.experience_id = tte.experience_id');
+    $query->leftJoin('gbl_advisor_trip_type', 'tt', 'tte.trip_type_id = tt.trip_id');
+
+    $query->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
+    $query->addExpression('GROUP_CONCAT(DISTINCT tt.trip_type SEPARATOR \', \')', 'trip_types');
+
+    $query->fields('rec', ['id', 'experience_id']);
+    $query->fields('advisor', ['uid']);
+    $query->fields('advisor_meta', ['first_name', 'last_name', 'company', 'occupation']);
+    $query->addExpression('fm.filename', 'advisor_pic');
+    $query->condition('rec.experience_id', $listingId, '=');
+    $query->orderBy('rec.created', 'DESC');
+    $query->groupBy('rec.id');
+    $query->range(0, 5);
+
+    $result = $query->execute();
+//    echo $result->queryString;die;
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function listing_reviews($listingId, $offset = 0, $limit = 3)
+{
+    $query = db_select('gbl_listing_reviews', 'rev');
+    $query->leftJoin('users', 'author', 'rev.uid = author.uid');
+    $query->leftJoin('gbl_users_meta', 'author_meta', 'author.uid = author_meta.uid');
+    $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->addExpression('fm.filename', 'author_pic');
+    $query->fields('rev', ['comments', 'created', 'average']);
+    $query->fields('author_meta', ['first_name', 'last_name', 'occupation', 'uid']);
+    $query->condition('rev.listing_id', $listingId, '=');
+    $query->range($offset, $limit);
+    $result = $query->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function listing_review_passsions_ratings($listingId, $offset = 0, $limit = 3)
+{
+    $query = db_select('gbl_passions_category', 'pc');
+    $query->leftJoin('gbl_passions', 'p', 'pc.pcid = p.passion_category');
+    $query->leftJoin('gbl_passions_to_review', 'ptr', 'ptr.passion_id = p.pid');
+    $query->leftJoin('gbl_listing_reviews', 'rev', 'ptr.review_id = rev.id and rev.listing_id = ' . $listingId);
+    $query->leftJoin('gbl_listing_reviews', 'revc', 'revc.listing_id = ' . $listingId);
+    $query->addExpression('(((100/count(DISTINCT p.pid))*count(DISTINCT ptr.passion_id))/(count(DISTINCT revc.id)))', 'percentage');
+    $query->fields('pc', ['pcid', 'passion_category']);
+    $query->fields('ptr', ['review_id']);
+    $query->fields('rev', ['created']);
+    $query->groupBy('pc.pcid');
+    $query->orderBy('percentage', 'DESC');
+    $query->range($offset, $limit);
+    $result = $query->execute();
+//    var_dump($result->queryString);die;
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function experience_listing_details()
 {
-
+//    $response = drupal_http_request('http://testaif2.interface-xml.com/aif2-pub-ws/files/full', [
+//        'headers' =>
+//            ['X-Username'=>'zingeon1', 'X-Password'=>'08111992a', 'Api-Key'=>'4ja8v9ry4f59zdvmx37krr3y'
+//            ]]);
+//    var_dump($response);die;
     session_start();
     global $user;
     $listId = arg(1);
-
+    $reviewRatings = listing_review_passsions_ratings($listId);
+//    var_dump(unserialize('a:3:{i:0;s:8:" English";i:1;s:9:" Español";i:2;s:10:" Français";}'));die;
+//    var_dump(listing_details($listId));
+//    die;
     if (strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit') !== false) {
+
 
     } else {
         if ((!$user->uid)) {
@@ -4039,6 +4139,7 @@ function experience_listing_details()
 
         /* ===========================End of OrderCart Session var====================================== */
         return theme('experience_listing_details', array(
+                'reviewRatings' => $reviewRatings,
                 'photos' => $photos,
                 'OverviewData' => $OverviewData,
                 'rulesDetail' => $rulesDetail,
@@ -4050,7 +4151,6 @@ function experience_listing_details()
                 'topRankedListingCount' => $topRankedListingCount,
                 'topListingAccToPlace' => $topListingAccToPlace,
                 'scheduleSessionData' => $scheduleSessionData,
-                //'orderPriceDOM' => getOrderPricingDetails($pricingData,$rulesDetail),
                 'orderPriceDOM' => '',
                 'extras' => $extras)
         );

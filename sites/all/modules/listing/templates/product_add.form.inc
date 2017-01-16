@@ -82,7 +82,7 @@ function product_add_form_1(){
 		case "Calendernew":
 			$Calendernew=1;
 			drupal_add_js(drupal_get_path('theme', 'gloobers2') .'/js/vendor/plugins/datepicker/bootstrap-datepicker.js', 'file');
-			
+
 			$scheduleSessionData = getScheduleSessionData(arg(3));
 			$productForm = drupal_get_form('product_calendar_form');
 		break;
