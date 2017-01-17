@@ -3668,6 +3668,13 @@ function search_advisor_results()
     $persons = $input['persons'];
 
     $daterange = $input['daterange'];
+    $city = $input['city'];
+    $state = $input['state'];
+    $country = $input['country'];
+    $address = $input['address'];
+    $searchType = isset($input['search_type']) && ($input['search_type'] == 'recommendation' || $input['search_type'] == 'review')
+        ? $input['search_type'] : 'recommendation';
+
     $dates = isset($daterange) ? explode(' - ', $daterange) : '';
     $dateFromSegments = explode('/', $dates[0]);
     $dateFrom = $dateFromSegments[2] . '-' . $dateFromSegments[1] . '-' . $dateFromSegments[0];
@@ -3688,16 +3695,21 @@ function search_advisor_results()
         $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
     }
     if ($testDateFromValidation && $testDateToValidation && $destination) {
-        $userListings = get_advisors_by_recommendations($filter, 'my_listing', '', [], [], $dateFrom, $dateTo, $persons);
+        $userListings = get_advisors_by_recommendations($city, $state, $country, $address);
         var_dump($userListings);
         die;
     }
 
 }
 
-function get_advisors_by_recommendations($filter = array(), $type = '', $uid = '', $homeSearch = array(), $countriesArray = array(), $dateFrom = false, $dateTo = false, $persons = false)
+function get_advisors_by_recommendations($city, $state, $country, $address)
 {
-    $filteredListings = search_listings($filter, $type, $uid, $homeSearch, $countriesArray, $dateFrom, $dateTo, $persons);
+    $query = db_select('gbl_recommendations', 'rec');
+    $query->leftJoin('gbl_user_passeport', 'pass', 'rec.advisor_id = pass.uid');
+//    $db_or()->condition('el.city', $city, 'LIKE');
+    $query->fields('pass');
+    $query->groupBy('rec.advisor_id');
+    /*
     $filteredListings->innerJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
     $filteredListings->leftJoin('gbl_passions_to_experience', 'pte', 'rec.experience_id = pte.experience_id');
     $filteredListings->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
@@ -3709,8 +3721,15 @@ function get_advisors_by_recommendations($filter = array(), $type = '', $uid = '
     $filteredListings->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
     $filteredListings->fields('am', ['city', 'country', 'first_name', 'last_name', 'company']);
     $filteredListings->groupBy('advisor.uid');
-    $result = $filteredListings->execute()->fetchAssoc();
+    */
+    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     return $result ? $result : [];
+
+}
+
+function get_advisors_by_reviews()
+{
+
 }
 
 function recommendations_by_advisor($advisorId)

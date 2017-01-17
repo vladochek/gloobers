@@ -72,6 +72,11 @@
                                     <input type="hidden" id="childrens-count" value="1" name="childrens">
                                     <input type="hidden" id="adults-count" value="2" name="adults">
                                     <input type="hidden" id="rooms-count" value="1" name="rooms">
+
+                                    <input type="hidden" id="city-hotels" name="city" >
+                                    <input type="hidden" id="country-hotels" name="country" >
+                                    <input type="hidden" id="state-hotels" name="state">
+                                    <input type="hidden" id="address-hotels" name="address" >
                                 </div>
                                 <div id="popover-content" class="hide">
                                     <div class="person-num-holder">
@@ -123,6 +128,11 @@
                                 <input type="text" id="destination-activity"
                                        onclick="hometowngeocode('destination-activity')"
                                        placeholder="Enter your destination" value="" name="destination">
+
+                                <input type="hidden" id="city-activity" name="city" >
+                                <input type="hidden" id="country-activity" name="country" >
+                                <input type="hidden" id="state-activity" name="state">
+                                <input type="hidden" id="address-activity" name="address" >
                             </div>
                             <div class="col col02">
                                 <span class="ttl">When?</span>
@@ -175,6 +185,13 @@
                                        name="destination"
                                        onclick="hometowngeocode('destination-advisor')" type="text"
                                        placeholder="Enter your destination" value="">
+                                <input type="hidden" id="persons-count-advisor" name="persons" value="2">
+
+                                <input type="hidden" id="city-advisor" name="city">
+                                <input type="hidden" id="country-advisor" name="country">
+                                <input type="hidden" id="state-advisor" name="state">
+                                <input type="hidden" id="address-advisor" name="address">
+                                <input type="hidden" id="search-type-advisor" name="search_type" value="recommendation">
                             </div>
                             <div class="col col02">
                                 <span class="ttl">When?</span>

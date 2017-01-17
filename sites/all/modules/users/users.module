@@ -2896,48 +2896,68 @@ function add_user_passeport()
 {
 
     global $user;
-    $location = trim($_REQUEST['location']);
-    //echo $_REQUEST['location'];exit;
-    $description = trim($_REQUEST['description']);
-    $query = db_select('gbl_user_passeport', 'p')
-        ->fields('p')
-        ->condition('uid', $user->uid)
-        ->condition('location', $location);
-    $result = $query->execute();
-    $data = $result->fetchAssoc();
+
+    $input = drupal_get_query_parameters($_POST);
+    $description = $input['description'];
+    $country = $input['country'];
+    $address = $input['address'];
+    $state = $input['state'];
+    $city = $input['city'];
+
+//    $query = db_select('gbl_user_passeport', 'p')
+//        ->fields('p')
+//        ->condition('uid', $user->uid)
+//        ->condition('location', $location);
+//    $result = $query->execute();
+//    $data = $result->fetchAssoc();
 
 
-    if (empty($data)) {
+//    if (empty($data)) {
 
         if (trim($description) == 'I live there') {
 
             $query = db_select('gbl_user_passeport', 'p')
                 ->fields('p')
                 ->condition('uid', $user->uid)
-                ->condition('description', $description);
+                ->condition('passport_trip_type_id', 1);
 
             $result = $query->execute();
             $data_homeTown = $result->fetchAssoc();
-
-            if (empty($data_homeTown)) {
-
-                $result = db_insert('gbl_user_passeport')->fields(
-                    array('uid' => $user->uid,
-                        'location' => $location,
+            if (!$data_homeTown) {
+                db_insert('gbl_user_passeport')->fields(
+                    array(
+                        'uid' => $user->uid,
+//                        'location' => $location,
                         'description' => $description,
-                        'created' => time())
+                        'country'=>$country,
+                        'address'=>$address,
+                        'state'=>$state,
+                        'city'=>$city,
+                        'created' => time()
+                    )
                 )->execute();
             } else {
-                $result = db_update('gbl_user_passeport')->fields(
+                db_update('gbl_user_passeport')->fields(
                     array('uid' => $user->uid,
-                        'location' => $location,
+//                        'location' => $location,
+                        'country'=>$country,
+                        'address'=>$address,
+                        'state'=>$state,
+                        'city'=>$city,
                         'description' => $description
-                    ))->condition('uid', $user->uid)->condition('description', $description)->execute();
+                    ))
+                    ->condition('uid', $user->uid)
+                    ->condition('passport_trip_type_id', 1)
+                    ->execute();
             }
         } else {
-            $result = db_insert('gbl_user_passeport')->fields(
+            db_insert('gbl_user_passeport')->fields(
                 array('uid' => $user->uid,
-                    'location' => $location,
+//                    'location' => $location,
+                    'country'=>$country,
+                    'address'=>$address,
+                    'state'=>$state,
+                    'city'=>$city,
                     'description' => $description,
                     'created' => time())
             )->execute();
@@ -2953,23 +2973,22 @@ function add_user_passeport()
         }
         echo $str;
         exit;
-        $result = 'inserted';
-
-    } else {
-
-        $query = db_select('gbl_user_passeport', 'p')
-            ->fields('p')
-            ->condition('uid', $user->uid);
-        $result2 = $query->execute();
-        $alldata = $result2->fetchAll(PDO::FETCH_ASSOC);
-        $str = '';
-        foreach ($alldata as $alldat) {
-            $str .= '<span class="tagmanagerTag" tag="' . $alldat['location'] . '">' . $alldat['location'] . '<a class="tagmanagerRemoveTag" onclick="Delete_passeport(this)"  title="Remove" href="javascript:void(0);">x</a></span>';
-        }
-        echo $str;
-        exit;
-
-    }
+//
+//    } else {
+//
+//        $query = db_select('gbl_user_passeport', 'p')
+//            ->fields('p')
+//            ->condition('uid', $user->uid);
+//        $result2 = $query->execute();
+//        $alldata = $result2->fetchAll(PDO::FETCH_ASSOC);
+//        $str = '';
+//        foreach ($alldata as $alldat) {
+//            $str .= '<span class="tagmanagerTag" tag="' . $alldat['location'] . '">' . $alldat['location'] . '<a class="tagmanagerRemoveTag" onclick="Delete_passeport(this)"  title="Remove" href="javascript:void(0);">x</a></span>';
+//        }
+//        echo $str;
+//        exit;
+//
+//    }
 }
 
 function del_user_passeport()
@@ -3187,7 +3206,7 @@ function user_profile_section()
     $query = db_select('gbl_user_passeport', 'gup');
     $query->fields('gup', array('location'));
     $query->condition('uid', $uid);
-    $query->condition('description', 'I live there');
+    $query->condition('passport_trip_type_id', 1);
     $result1 = $query->execute();
     $location = $result1->fetchField();
 
@@ -3234,16 +3253,39 @@ function add_user_hometown()
 {
     global $user;
     $uid = $user->uid;
-    $hometown = $_POST['homtown'];
-    $query_get = db_select('gbl_user_passeport', 'u')->fields('u')->condition('uid', $uid)->condition('description', 'I live there');
+    $input = drupal_get_query_parameters($_POST);
+
+
+    $country = $input['country'];
+    $address = $input['address'];
+    $state = $input['state'];
+    $city = $input['city'];
+    $hometown = $input['homtown'];
+
+    $query_get = db_select('gbl_user_passeport', 'u')->fields('u')->condition('uid', $uid)->condition('passport_trip_type_id', 1);
     $result1 = $query_get->execute();
     $result = $result1->rowCount();
 
     if ($result == 1) {
-        $query = db_update("gbl_user_passeport")->fields(array('location' => $hometown))->condition('uid', $uid)->condition('description', 'I live there');
+        $query = db_update("gbl_user_passeport")->fields(array(
+            'location' => $hometown,
+            'country'=>$country,
+            'address'=>$address,
+            'state'=>$state,
+            'city'=>$city
+        ))->condition('uid', $uid)->condition('passport_trip_type_id', 1);
         $result = $query->execute();
     } else {
-        $query = db_insert("gbl_user_passeport")->fields(array('location' => $hometown, 'uid' => $uid, 'description' => 'I live there'));
+        $query = db_insert("gbl_user_passeport")->fields(array(
+            'location' => $hometown,
+            'uid' => $uid,
+            'country'=>$country,
+            'address'=>$address,
+            'state'=>$state,
+            'city'=>$city,
+//            'passport_trip_type_id'=> 1,
+            'description' => 'I live there'
+        ));
         $result = $query->execute();
     }
 

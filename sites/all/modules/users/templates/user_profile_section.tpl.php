@@ -607,10 +607,11 @@ jQuery(window).on('resize',function(){
 
 function add_hometown(){
  var hometown =jQuery('.hometown').val();
+    fullHometonwAddress['homtown'] = hometown;
  jQuery.ajax({
         url: $baseUrl + '/ajax/user/hometown',
         type: 'post',
-        data: {homtown:hometown},
+        data: fullHometonwAddress,
         /* success: function (result) {
            alert(result);
         }, */
@@ -834,12 +835,14 @@ function add_passeport(){
 		jQuery('#_trip_loction').val('');
 		return false;
 	}
-    var description =jQuery('#loc_desc').val();
+
+    fullAddress['description'] = jQuery('#loc_desc').val();
+    fullAddress['location'] = location;
     jQuery.ajax({
         url: $baseUrl + '/ajax/user/addpasseport',
         type: 'post',
 		async: false,
-        data: {location:location, description:description},
+        data: fullAddress,
         success: function (result){
 			jQuery('#createElementHandlerBox').html(result);
 			jQuery('#_trip_loction1').val('');
@@ -847,13 +850,29 @@ function add_passeport(){
     });
 	insertMap();
 }
+var fullAddress = {
+    address: '',
+    city: '',
+    state: '',
+    country: ''
+};
  function search_destination(){
      	var home_autocomplete = new google.maps.places.Autocomplete(
                 /** @type {HTMLInputElement} */
                         (document.getElementById('_trip_loction1')),
                         {types: ['geocode']});
-        google.maps.event.addListener(home_autocomplete, 'place_changed', function () {
-        });
+
+     home_autocomplete.addListener('place_changed', function() {
+         var place = home_autocomplete.getPlace();
+         var arrAddress = place.address_components;
+         for (var i = 0; i < arrAddress.length; i++) {
+             if (arrAddress[i].types[0] == "route") { fullAddress['address'] = arrAddress[i].long_name; }
+             if (arrAddress[i].types[0] == "locality") { fullAddress['city'] = arrAddress[i].long_name; }
+             if (arrAddress[i].types[0] == "administrative_area_level_1") { fullAddress['state'] = arrAddress[i].short_name; }
+             if (arrAddress[i].types[0] == "country") { fullAddress['country'] = arrAddress[i].long_name; }
+         }
+
+         });
 } 
 function Delete_passeport(location){
 	var location2 =jQuery(location).parent().attr('tag');
@@ -1027,13 +1046,29 @@ jQuery('.togelsubmenu').click(function(e){
 });
 </script>
 <script type="text/javascript">
+    var fullHometonwAddress = {
+        address: '',
+        city: '',
+        state: '',
+        country: ''
+    };
 function hometowngeocode() {
 	var home_autocomplete = new google.maps.places.Autocomplete(
 	/** @type {HTMLInputElement} */
 		(document.getElementById('home-town')),
 			{types: ['geocode']});
-			google.maps.event.addListener(home_autocomplete, 'place_changed', function () {
-			});
+
+    home_autocomplete.addListener('place_changed', function() {
+        var place = home_autocomplete.getPlace();
+        var arrAddress = place.address_components;
+        for (var i = 0; i < arrAddress.length; i++) {
+            if (arrAddress[i].types[0] == "route") { fullHometonwAddress['address'] = arrAddress[i].long_name; }
+            if (arrAddress[i].types[0] == "locality") { fullHometonwAddress['city'] = arrAddress[i].long_name; }
+            if (arrAddress[i].types[0] == "administrative_area_level_1") { fullHometonwAddress['state'] = arrAddress[i].short_name; }
+            if (arrAddress[i].types[0] == "country") { fullHometonwAddress['country'] = arrAddress[i].long_name; }
+        }
+
+    });
 }
 </script>
 

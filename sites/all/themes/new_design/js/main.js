@@ -7,9 +7,55 @@ function hometowngeocode(id) {
 
         {types: ['geocode']});
 
-    google.maps.event.addListener(home_autocomplete, 'place_changed', function () {
+    var fullAddress = {
+        address: false,
+        city: false,
+        state: false,
+        country: false
+    };
 
+
+    switch (id) {
+        case 'destination-hotel':
+            var searchType = 'hotels';
+            break;
+        case 'destination-advisor':
+            var searchType = 'advisor';
+            break;
+        case 'destination-activity':
+            var searchType = 'activity';
+            break;
+        default: var searchType = 'hotels';
+    }
+
+    home_autocomplete.addListener('place_changed', function () {
+        var place = home_autocomplete.getPlace();
+        var arrAddress = place.address_components;
+
+        for (var i = 0; i < arrAddress.length; i++) {
+            var addressType = arrAddress[i].types[0];
+            switch (addressType) {
+                case "route" :
+                    fullAddress['address'] = arrAddress[i].long_name;
+                    break;
+                case "locality" :
+                    fullAddress['city'] = arrAddress[i].long_name;
+                    break;
+                case "administrative_area_level_1" :
+                    fullAddress['state'] = arrAddress[i].long_name;
+                    break;
+                case "country" :
+                    fullAddress['country'] = arrAddress[i].long_name;
+                    break;
+            }
+        }
+        $('#country-'+searchType).val(fullAddress['country']);
+        $('#state-'+searchType).val(fullAddress['state'] );
+        $('#city-'+searchType).val(fullAddress['city']);
+        $('#address-'+searchType).val(fullAddress['address']);
+        console.log(fullAddress);
     });
+
 
 }
 $(document).ready(function () {
