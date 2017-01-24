@@ -618,7 +618,8 @@ $conf['hotel_secret_key'] = 'UDpjqa2kFP';
 //$conf['hotel_api_key'] = 'h2dvufpwtuha33eydc24pkbs';
 //$conf['hotel_secret_key'] = 'WD3Xp9XZ3m';
 
-
+//$conf['fb_old_app_id'] = '1587171044923678';
+//$conf['fb_old_secret'] = '502e74bc468f8ab3604fb51dae243e2e';
 
 
 $conf['activities_signature'] = hash("sha256", $conf['activities_api_key'].$conf['activities_secret_key'].time());

@@ -3659,8 +3659,37 @@ function create_recommendation()
     }
 }
 
+//function listing_fboauth_actions_alter()
+//{
+//    $actions['listing_connect'] = array(
+//        'title' => t('Connect'),
+//        'file' => drupal_get_path('module','fboauth').'/includes/fboauth.fboauth.inc',
+//        'callback' => 'fboauth_action_connect',
+//        'permissions' => array_keys(fboauth_user_connect_permissions())
+//    );
+//    // Adding additional scope parameters to the original action here
+//    $actions['listing_connect']['permissions'][] = 'user_friends';
+//    return $actions;
+//}
+
+function get_registered_fb_friends()
+{
+    $access_token = $_SESSION['fboauth']['access_token'];
+    $friends = fboauth_graph_query('me/friends', $access_token);
+    $friendsIds = [];
+    foreach ($friends->data as $friend) {
+        $friendsIds[] = $friend->id;
+    }
+    return $friendsIds;
+}
+
+
+
+
+
 function search_advisor_results()
 {
+    include_once(drupal_get_path('module', 'fboauth') . '/includes/fboauth.fboauth.inc');
     global $user;
     $filter = array();
     $input = drupal_get_query_parameters();
@@ -3672,6 +3701,16 @@ function search_advisor_results()
     $state = $input['state'];
     $country = $input['country'];
     $address = $input['address'];
+    $mutualInterests = $input['mutual-interests'];
+    $local = $input['local'];
+    $fb = $input['fb'];
+
+    $passportTypes = explode(',', $input['passport-types']);
+    $passions = $input['passions'] ? $input['passions'] : [];
+    $passionsList = explode(',', $passions);
+    if (!count($passportTypes) || !$input['passport-types']) {
+        $passportTypes[] = 1;
+    }
     $searchType = isset($input['search_type']) && ($input['search_type'] == 'recommendation' || $input['search_type'] == 'review')
         ? $input['search_type'] : 'recommendation';
 
@@ -3685,51 +3724,120 @@ function search_advisor_results()
     $testDateTo = explode('-', $dateTo);
     $testDateToValidation = checkdate($testDateTo[1], $testDateTo[2], $testDateTo[0]);
 
-    $output = searchLocationByQuery($destination);
-    $lat = $output->results[0]->geometry->location->lat;
-    $filter['lat'] = $lat;
-    $long = $output->results[0]->geometry->location->lng;
-    $filter['long'] = $long;
 
-    if ($output->results[0]->address_components) {
-        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
-    }
-    if ($testDateFromValidation && $testDateToValidation && $destination) {
-        $userListings = get_advisors_by_recommendations($city, $state, $country, $address);
-        var_dump($userListings);
-        die;
-    }
+
+//    $output = searchLocationByQuery($destination);
+//    $lat = $output->results[0]->geometry->location->lat;
+//    $filter['lat'] = $lat;
+//    $long = $output->results[0]->geometry->location->lng;
+//    $filter['long'] = $long;
+//    var_dump(drupal_get_destination());die;
+    $advisors = $searchType == 'recommendation'
+        ? get_advisors_by_recommendations($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb)
+        : get_advisors_by_reviews($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb);
+    var_dump($advisors);
+    die;
+//    if ($output->results[0]->address_components) {
+//        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
+//    }
+//    if ($testDateFromValidation && $testDateToValidation && $destination) {
+//        $userListings = get_advisors_by_reviews($city, $state, $country, $address);
+//        var_dump($userListings);
+//        die;
+//    }
 
 }
 
-function get_advisors_by_recommendations($city, $state, $country, $address)
+function get_advisors_by_recommendations($city, $state, $country, $address, $userId, $passportTypes, $passions = [], $mutualInterests = 0, $local = 0, $fb = 0)
 {
+//    echo $userId;die;
     $query = db_select('gbl_recommendations', 'rec');
-    $query->leftJoin('gbl_user_passeport', 'pass', 'rec.advisor_id = pass.uid');
-//    $db_or()->condition('el.city', $city, 'LIKE');
+    $passportCond = '';
+    if ($local) {
+        $passportCond = ' AND pass_cu.country = pass.country AND pass.passport_trip_type_id = 1';
+        $query->innerJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1');
+        $query->condition('pass_cu.uid', $userId, '=');
+    }
+    $query->leftJoin('gbl_user_passeport', 'pass', 'rec.advisor_id = pass.uid' . $passportCond);
+    if ($city !== 'false') {
+        $query->condition(db_or()->condition('pass.city', "%$city%", 'like'));
+    }
+    if ($state !== 'false') {
+        $query->condition(db_or()->condition('pass.state', "%$state%", 'like'));
+    }
+    if ($address !== 'false') {
+        $query->condition(db_or()->condition('pass.address', "%$address%", 'like'));
+    }
+    if (is_array($passions) && count($passions)) {
+        $query->leftJoin('gbl_users_passions', 'psn', 'rec.advisor_id = psn.uid');
+        $query->condition('psn.pid', $passions, 'IN');
+    }
+    if ($mutualInterests) {
+        $query->innerJoin('gbl_users_passions', 'psn', 'psn.uid = rec.advisor_id');
+        $query->innerJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
+    }
+    if ($fb) {
+
+        $fbFriends = get_registered_fb_friends();
+//        var_dump($fbFriends);die;
+        $query->innerJoin('fboauth_users', 'fbu', 'rec.advisor_id = fbu.uid');
+        $query->condition('fbu.fbid', $fbFriends, 'IN');
+    }
+    $query->condition('pass.country', "%$country%", 'like');
+    $query->condition('pass.passport_trip_type_id', $passportTypes, 'IN');
+    $query->condition('rec.advisor_id', $userId, '<>');
+    $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
+    $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
     $query->fields('pass');
+    $query->fields('advisor');
     $query->groupBy('rec.advisor_id');
-    /*
-    $filteredListings->innerJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
-    $filteredListings->leftJoin('gbl_passions_to_experience', 'pte', 'rec.experience_id = pte.experience_id');
-    $filteredListings->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
-    $filteredListings->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
-    $filteredListings->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
-    $filteredListings->leftJoin('gbl_listing_reviews', 'lr', 'advisor.uid = lr.uid');
-    $filteredListings->addExpression('COUNT(lr.id)', 'reviews_count');
-    $filteredListings->fields('advisor', ['uid']);
-    $filteredListings->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
-    $filteredListings->fields('am', ['city', 'country', 'first_name', 'last_name', 'company']);
-    $filteredListings->groupBy('advisor.uid');
-    */
     $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     return $result ? $result : [];
-
 }
 
-function get_advisors_by_reviews()
+function get_advisors_by_reviews($city, $state, $country, $address, $userId, $passportTypes, $passions = [], $mutualInterests = 0, $local = 0, $fb = 0)
 {
+    $query = db_select('gbl_listing_reviews', 'rev');
+    $passportCond = '';
+    if ($local) {
+        $passportCond = ' AND pass_cu.country = pass.country AND pass.passport_trip_type_id = 1';
+        $query->innerJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1');
+        $query->condition('pass_cu.uid', $userId, '=');
+    }
+    $query->leftJoin('gbl_user_passeport', 'pass', 'rev.uid = pass.uid' . $passportCond);
+    if ($city !== 'false') {
+        $query->condition(db_or()->condition('pass.city', "%$city%", 'like'));
+    }
+    if ($state !== 'false') {
+        $query->condition(db_or()->condition('pass.state', "%$state%", 'like'));
+    }
+    if ($address !== 'false') {
+        $query->condition(db_or()->condition('pass.address', "%$address%", 'like'));
+    }
+    if (is_array($passions) && count($passions)) {
+        $query->leftJoin('gbl_users_passions', 'psn', 'rev.uid = psn.uid');
+        $query->condition('psn.pid', $passions, 'IN');
+    }
+    if ($mutualInterests) {
+        $query->innerJoin('gbl_users_passions', 'psn_ad', 'psn_ad.uid = rev.uid');
+        $query->innerJoin('gbl_users_passions', 'psn_cu', 'psn_ad.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
+    }
+    if ($fb) {
+        $fbFriends = get_registered_fb_friends();
+        $query->condition('rev.uid', $fbFriends, 'IN');
+    }
 
+    $query->condition('pass.country', "%$country%", 'like');
+    $query->condition('pass.passport_trip_type_id', $passportTypes, 'IN');
+    $query->condition('rev.uid', $userId, '<>');
+    $query->leftJoin('users', 'advisor', 'rev.uid = advisor.uid');
+    $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
+    $query->fields('pass');
+
+    $query->fields('advisor');
+    $query->groupBy('rev.uid');
+    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    return $result ? $result : [];
 }
 
 function recommendations_by_advisor($advisorId)

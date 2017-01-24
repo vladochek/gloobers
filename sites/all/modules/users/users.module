@@ -586,6 +586,11 @@ function users_user_delete($account)
     db_delete('gbl_users_meta')->condition('uid', $account->uid)->execute();
 }
 
+/**
+ * Implements hook_fboauth_actions().
+ */
+
+
 function user_custom_login()
 {
 
@@ -2914,65 +2919,65 @@ function add_user_passeport()
 
 //    if (empty($data)) {
 
-        if (trim($description) == 'I live there') {
+    if (trim($description) == 'I live there') {
 
-            $query = db_select('gbl_user_passeport', 'p')
-                ->fields('p')
-                ->condition('uid', $user->uid)
-                ->condition('passport_trip_type_id', 1);
-
-            $result = $query->execute();
-            $data_homeTown = $result->fetchAssoc();
-            if (!$data_homeTown) {
-                db_insert('gbl_user_passeport')->fields(
-                    array(
-                        'uid' => $user->uid,
-//                        'location' => $location,
-                        'description' => $description,
-                        'country'=>$country,
-                        'address'=>$address,
-                        'state'=>$state,
-                        'city'=>$city,
-                        'created' => time()
-                    )
-                )->execute();
-            } else {
-                db_update('gbl_user_passeport')->fields(
-                    array('uid' => $user->uid,
-//                        'location' => $location,
-                        'country'=>$country,
-                        'address'=>$address,
-                        'state'=>$state,
-                        'city'=>$city,
-                        'description' => $description
-                    ))
-                    ->condition('uid', $user->uid)
-                    ->condition('passport_trip_type_id', 1)
-                    ->execute();
-            }
-        } else {
-            db_insert('gbl_user_passeport')->fields(
-                array('uid' => $user->uid,
-//                    'location' => $location,
-                    'country'=>$country,
-                    'address'=>$address,
-                    'state'=>$state,
-                    'city'=>$city,
-                    'description' => $description,
-                    'created' => time())
-            )->execute();
-        }
         $query = db_select('gbl_user_passeport', 'p')
             ->fields('p')
-            ->condition('uid', $user->uid);
-        $result2 = $query->execute();
-        $alldata = $result2->fetchAll(PDO::FETCH_ASSOC);
-        $str = '';
-        foreach ($alldata as $alldat) {
-            $str .= '<span class="tagmanagerTag" tag="' . $alldat['location'] . '">' . $alldat['location'] . '<a class="tagmanagerRemoveTag" onclick="Delete_passeport(this)"  title="Remove" href="javascript:void(0);">x</a></span>';
+            ->condition('uid', $user->uid)
+            ->condition('passport_trip_type_id', 1);
+
+        $result = $query->execute();
+        $data_homeTown = $result->fetchAssoc();
+        if (!$data_homeTown) {
+            db_insert('gbl_user_passeport')->fields(
+                array(
+                    'uid' => $user->uid,
+//                        'location' => $location,
+                    'description' => $description,
+                    'country' => $country,
+                    'address' => $address,
+                    'state' => $state,
+                    'city' => $city,
+                    'created' => time()
+                )
+            )->execute();
+        } else {
+            db_update('gbl_user_passeport')->fields(
+                array('uid' => $user->uid,
+//                        'location' => $location,
+                    'country' => $country,
+                    'address' => $address,
+                    'state' => $state,
+                    'city' => $city,
+                    'description' => $description
+                ))
+                ->condition('uid', $user->uid)
+                ->condition('passport_trip_type_id', 1)
+                ->execute();
         }
-        echo $str;
-        exit;
+    } else {
+        db_insert('gbl_user_passeport')->fields(
+            array('uid' => $user->uid,
+//                    'location' => $location,
+                'country' => $country,
+                'address' => $address,
+                'state' => $state,
+                'city' => $city,
+                'description' => $description,
+                'created' => time())
+        )->execute();
+    }
+    $query = db_select('gbl_user_passeport', 'p')
+        ->fields('p')
+        ->condition('uid', $user->uid);
+    $result2 = $query->execute();
+    $alldata = $result2->fetchAll(PDO::FETCH_ASSOC);
+    $str = '';
+    foreach ($alldata as $alldat) {
+        $str .= '<span class="tagmanagerTag" tag="' . $alldat['location'] . '">' . $alldat['location'] . '<a class="tagmanagerRemoveTag" onclick="Delete_passeport(this)"  title="Remove" href="javascript:void(0);">x</a></span>';
+    }
+    echo $str;
+    exit;
 //
 //    } else {
 //
@@ -3172,6 +3177,173 @@ function email_template()
 /************2july2015*****************/
 /// ----------------------User Profile Section-----------------------//
 
+/**
+ * gplus_sync_sing_on().
+ */
+function gplus_sync_sing_on_custom() {
+    $client_id = variable_get('gplus_sync_client_id');
+    $client_secret = variable_get('gplus_sync_client_secret');
+    if (isset($_POST['code']) && $client_id && $client_secret) {//$GLOBALS['user']->uid == 0 &&
+        set_include_path(get_include_path().PATH_SEPARATOR.GPLUS_SYNC_MODULE_PATH.'/vendor/google/apiclient/src/');
+        require_once 'Google/Client.php';
+        $client = new Google_Client();
+        $client->setClientId($client_id);
+        $client->setClientSecret($client_secret);
+        $client->setRedirectUri('postmessage');
+        $client->authenticate($_POST['code']);
+        $token = json_decode($client->getAccessToken());
+        $service_auth = new Google_Service_Oauth2($client);
+        $service_plus = new Google_Service_Plus($client);
+        $user_info = $service_auth->userinfo->get();
+        $user_info_plus = $service_plus->people->get('me');
+        if (isset($user_info['email']) && isset($user_info['name'])) {
+            /* check domain name of user email with available domain names */
+            $domains = variable_get('gplus_sync_available_domains', '');
+            if ($domains) {
+                $domains_parsed = explode("\r\n", $domains);
+                $email_domain = substr(strrchr($user_info['email'], '@'), 1);
+                $domain_is_available = FALSE;
+                foreach ($domains_parsed as $c_domain) {
+                    if ($c_domain == $email_domain) {
+                        $domain_is_available = TRUE;
+                        break;
+                    }
+                }
+                if (!$domain_is_available) {
+                    drupal_set_message(t('The domain name from your email address is not available on this site!'), 'error');
+                    print json_encode(array(
+                        'status' => 'error',
+                        'uid' => 0,
+                        'redirect' => '/',
+                        'error_code' => 2,
+                        'error_text' => 'The domain name from your email address is not available on this site!',
+                    ));
+                    return;
+                }
+            }
+            /* filter user name */
+            $user_info['filteredName'] = gplus_sync_prepare_user_name($user_info['name']);
+            /* load user account */
+            $user = user_load_by_mail($user_info['email']);
+            /* check for ability to login with loaded user account */
+            if ($user && $user->status == 0) {
+                drupal_set_message(t('This user is blocked!'), 'error');
+                print json_encode(array(
+                    'status' => 'error',
+                    'uid' => $user->uid,
+                    'redirect' => '/',
+                    'error_code' => 4,
+                    'error_text' => 'This user is blocked!',
+                ));
+                return;
+            }
+            /* check for ability to create new user account */
+            $is_create_new_user = variable_get('gplus_sync_is_create_new_user', TRUE);
+            if (!$user && !$is_create_new_user) {
+                drupal_set_message(t('Registration of new users via Google+ button is disabled! Only users with exist profile can login.'), 'error');
+                print json_encode(array(
+                    'status' => 'error',
+                    'uid' => 0,
+                    'redirect' => '/',
+                    'error_code' => 3,
+                    'error_text' => 'Registration of new users via Google+ button is disabled! Only users with exist profile can login.',
+                ));
+                return;
+            }
+            /* create new user if not exist */
+            if (!$user && $user_info['filteredName']) {
+                $pass = user_password();
+                $user = array(
+                    'name'     => $user_info['filteredName'],
+                    'pass'     => user_password(),
+                    'status'   => 1,
+                    'timezone' => NULL,
+                    'mail'     => $user_info['email'],
+                    'init'     => $user_info['email'],
+                );
+                $user = user_save(NULL, $user);
+                if (isset($user->uid)) {
+                    db_update('users')->fields(array('gplus_sync_is_external_user' => 1))->condition('uid', $user->uid)->execute();
+                    drupal_set_message(t('New user was created. UID = %uid, name = %name, email = %email', array('%uid' => $user->uid, '%name' => $user_info['filteredName'], '%email' => $user_info['email'])));
+                    watchdog('gplus_sync', 'New user was created. UID = %uid, name = %name, email = %email', array('%uid' => $user->uid, '%name' => $user_info['filteredName'], '%email' => $user_info['email']));
+                }
+            }
+            /* login to user profile */
+            if (isset($user->uid)) {
+                $GLOBALS['user'] = $user;
+                user_login_finalize();
+                print json_encode(array(
+                    'status' => 'login',
+                    'uid' => $user->uid,
+                    'redirect' => url('user/'.$user->uid),
+                    'error_code' => 0,
+                    'error_text' => '',
+                ));
+            }
+            /* save and log google data */
+            if ($user->uid) {
+                db_update('users')->fields(array(
+                    'gplus_sync_token'            => $token->id_token,
+                    'gplus_sync_id'               => $user_info['id'],
+                    'gplus_sync_given_name'       => $user_info['givenName'],
+                    'gplus_sync_family_name'      => $user_info['familyName'],
+                    'gplus_sync_name'             => $user_info['name'],
+                    'gplus_sync_gender'           => $user_info['gender'],
+                    'gplus_sync_url_profile'      => $user_info['link'],
+                    'gplus_sync_url_picture'      => $user_info['picture'],
+                    'gplus_sync_locale'           => $user_info['locale'],
+                    'gplus_sync_language'         => isset($user_info_plus['language'])        ? $user_info_plus['language']            : NULL,
+                    'gplus_sync_birthday'         => isset($user_info_plus['birthday'])        ? strtotime($user_info_plus['birthday']) : NULL,
+                    'gplus_sync_current_location' => isset($user_info_plus['currentLocation']) ? $user_info_plus['currentLocation']     : NULL,
+                ))->condition('uid', $user->uid)->execute();
+                watchdog('gplus_sync', 'Drupal sign on.'.GPLUS_SYNC_HTML_BR.
+                    'Drupal uid = !drupalUid'.GPLUS_SYNC_HTML_BR.
+                    'Drupal filteredName = !filteredName'.GPLUS_SYNC_HTML_BR.
+                    'Google input code = !code'.GPLUS_SYNC_HTML_BR.
+                    'Google token = !token'.GPLUS_SYNC_HTML_BR.
+                    'Google id = !id'.GPLUS_SYNC_HTML_BR.
+                    'Google email = !email'.GPLUS_SYNC_HTML_BR.
+                    'Google givenName = !givenName'.GPLUS_SYNC_HTML_BR.
+                    'Google familyName = !familyName'.GPLUS_SYNC_HTML_BR.
+                    'Google name = !name'.GPLUS_SYNC_HTML_BR.
+                    'Google gender = !gender'.GPLUS_SYNC_HTML_BR.
+                    'Google link = !link'.GPLUS_SYNC_HTML_BR.
+                    'Google picture = !picture'.GPLUS_SYNC_HTML_BR.
+                    'Google locale = !locale'.GPLUS_SYNC_HTML_BR.
+                    'Google language = !language'.GPLUS_SYNC_HTML_BR.
+                    'Google birthday = !birthday'.GPLUS_SYNC_HTML_BR.
+                    'Google currentLocation = !currentLocation', array(
+                    '!drupalUid'       => $user->uid,
+                    '!filteredName'    => $user_info['filteredName'],
+                    '!code'            => $_POST['code'],
+                    '!token'           => truncate_utf8($token->id_token, 50, FALSE, TRUE),
+                    '!id'              => $user_info['id'],
+                    '!email'           => $user_info['email'],
+                    '!givenName'       => $user_info['givenName'],
+                    '!familyName'      => $user_info['familyName'],
+                    '!name'            => $user_info['name'],
+                    '!gender'          => $user_info['gender'],
+                    '!link'            => $user_info['link'],
+                    '!picture'         => $user_info['picture'],
+                    '!locale'          => $user_info['locale'],
+                    '!language'        => isset($user_info_plus['language'])        ? $user_info_plus['language']        : t(GPLUS_SYNC_HTML_NA),
+                    '!birthday'        => isset($user_info_plus['birthday'])        ? $user_info_plus['birthday']        : t(GPLUS_SYNC_HTML_NA),
+                    '!currentLocation' => isset($user_info_plus['currentLocation']) ? $user_info_plus['currentLocation'] : t(GPLUS_SYNC_HTML_NA),
+                ));
+                return;
+            }
+        }
+    }
+    print json_encode(array(
+        'status' => 'error',
+        'uid' => 0,
+        'redirect' => '',
+        'error_code' => 1,
+        'error_text' => 'Request code or client ID or client secret is invalid!',
+    ));
+    return;
+}
+
 
 function user_profile_section()
 {
@@ -3240,10 +3412,157 @@ function user_profile_section()
     $user_passion = getUserPassionList($uid);
     $passeport_types = get_passeport_types();
     $passeportListDOM = theme('passeport_dom_file', array('passeports' => $Passeports, 'passeport_types' => $passeport_types));
+//    linkedin_binding();
+//    gauth_account_authenticate('585851538970-gfe0ofncc6922n2u1na3lt1c46dt68g.apps.googleusercontent.com');
+//    var_dump(variable_get('gplus_sync_client_id'));die;
+//    gplus_sync_sing_on();
 
+    $fbLink = fboauth_action_link_properties('connect');
+    $fbImage = '<img src="' . $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/images/fb.png">';
+    $fbAuthLink = l($fbImage, $fbLink['href'], array('html' => true, 'query' => $fbLink['query']));
+    $linkedinLink = theme_linkedin_auth_display_login_block_button(['display' => 'linkedin_login_block', 'path' => 'linkedin/login/0', 'text' => 'Log in using LinkedIn']);
     return theme('user_profile_section', array('passeportListDOM' => $passeportListDOM, 'Main_user_data' => $Main_user_data,
         'loc' => $location, 'language' => $language, 'passeports' => $Passeports, 'profile_pic' => $profile_pic, 'cover_pic' =>
-            $cover_pic, 'passionlist' => $user_passion, 'selected_language' => $selected_language));
+            $cover_pic, 'passionlist' => $user_passion, 'fbAuthLink' => $fbAuthLink, 'linkedinLink' => $linkedinLink));
+}
+
+function linkedin_binding() {
+    global $user;
+    $check = linkedin_get_profile_fields($user->uid, array('first-name', 'last-name', 'public-profile-url'), TRUE);
+    if (isset($check['error-code'])) {
+        linkedin_access_token_custom($user);
+    }
+//    else {
+//        $output .= t('Your account is associated with @name !public_profile.', array('@name' => $check['first-name'] . ' ' . $check['last-name'], '!public_profile' => l($check['public-profile-url'], $check['public-profile-url'])));
+//        $form = drupal_get_form('linkedin_user_settings_form', $account);
+//        $output .= drupal_render($form);
+//    }
+}
+
+function linkedin_access_token_custom($account) {
+    //Get sure library is loaded before doing anything.
+    linkedin_init();
+
+    if ($account->uid < 1) {
+        $anon = TRUE;
+        $back = 'login';
+    }
+    else {
+        $anon = FALSE;
+        $back = 'token';
+    }
+    //setting up variables
+    $base_url = "https://api.linkedin.com/uas/oauth";
+    $signature = new OAuthSignatureMethod_HMAC_SHA1();
+    $consumer_key = variable_get('linkedin_consumer_key', '');
+    $consumer_secret = variable_get('linkedin_consumer_secret', '');
+    $consumer = new OAuthConsumer($consumer_key, $consumer_secret, NULL);
+    $random = md5(rand());
+    $callback = url('http://gloobers.loc/user_profile/', array('absolute' => TRUE, 'query' => array('action' => $random))); // random will be used to discard direct call to the path and for anonymous
+//    var_dump($callback);die;
+    // First or renewal request
+    if (!isset($_GET['action']) || $_GET['action'] != $_SESSION['random']) {
+        $_SESSION['random'] = $random;
+        $url = $base_url . "/requestToken";
+        $request = OAuthRequest::from_consumer_and_token($consumer, NULL, 'POST', $url);
+        $request->set_parameter("oauth_callback", $callback);
+        $request->sign_request($signature, $consumer, NULL);
+        $header = $request->to_header();
+        $response = _linkedin_http_request($url, $header, 'token_request');
+        parse_str($response, $oauth);
+        if (isset($oauth['oauth_problem'])) {
+            if (variable_get('linkedin_debug_mode', 0) == 1) {
+                drupal_set_message(t('LinkedIn debug : received error response : @error'), array('@error' => $oauth['oauth_problem']), 'warning');
+            }
+            else {
+                drupal_set_message(t('There was a problem with the configuration of LinkedIn on this website. Please try again later.'), 'error');
+            }
+            watchdog('linkedin', t('Linkedin reported the following response : @error'), array('@error' => $oauth['oauth_problem']), WATCHDOG_ERROR);
+            drupal_goto();
+        }
+        if ($oauth['oauth_token']) {
+
+            if (!$anon) { // Logged in user : store request token for next step in db instead of $_SESSION for security
+                db_delete('linkedin_token')
+                    ->condition('uid', $account->uid)
+                    ->execute();
+                $sql = array(
+                    'uid' => $account->uid,
+                    'token_key' => $oauth['oauth_token'],
+                    'token_secret' => $oauth['oauth_token_secret'],
+                    'type' => 'request',
+                );
+                drupal_write_record('linkedin_token', $sql);
+                //Redirect the user to the authentication/authorisation page. This will authorise the token in LinkedIn
+                drupal_goto($base_url . '/authorize?oauth_token=' . $oauth['oauth_token']);
+            }
+            else { // Anonymous user. We can't use db storage, but $_SESSION can not lead to identity forgery for anonymous
+                $_SESSION['oauth_token_secret'] = $oauth['oauth_token_secret'];
+                //Redirect the user to the authentication/authorisation page. This will authorise the token in LinkedIn
+                drupal_goto($base_url . '/authenticate?oauth_token=' . $oauth['oauth_token']);
+            }
+        }
+        else {
+            if (variable_get('linkedin_debug_mode', 0) == 1) {
+                drupal_set_message(t('LinkedIn debug : received no answer from linkedin.com. Check your API credential at admin/settings/linkedin'));
+            }
+            else {
+                drupal_set_message(t('There was a problem with the configuration of LinkedIn on this website. Please try again later.'), 'error');
+            }
+            watchdog('linkedin', t('The website could not communicate with LinkedIn. It is likely your API credentials are misconfigured.'), array(), WATCHDOG_ERROR);
+            drupal_goto();
+        }
+    }
+    else {
+        //this is called when the OAuth callback is invoked. User has authorised the token.
+        //Now retrieve the stored request token and ask for an access token
+
+        $url = $base_url . '/accessToken';
+        if (!$anon) {
+            $result = db_query("SELECT token_secret FROM {linkedin_token} WHERE uid = :uid AND type = :type", array(':uid' => $account->uid, ':type' => 'request'))->fetchField();
+        }
+        else {
+            $result = $_SESSION['oauth_token_secret'];
+        }
+        $token = new OAuthConsumer($_REQUEST['oauth_token'], $result, 1);
+        $request = OAuthRequest::from_consumer_and_token($consumer, $token, "POST", $url);
+        $request->set_parameter("oauth_verifier", $_REQUEST['oauth_verifier']);
+        $request->sign_request($signature, $consumer, $token);
+        $header = $request->to_header();
+        $response = _linkedin_http_request($url, $header, 'token_request');
+        parse_str($response, $oauth);
+        if (!$anon) {
+            //Check if the same LinkedIn account is not already tied to another user
+            $result = db_query("SELECT uid FROM {linkedin_token} WHERE token_key = :token_key AND token_secret = :token_secret AND type = :type ", array(':token_key' => $oauth['oauth_token'], ':token_secret' => $oauth['oauth_token_secret'], ':type' => 'access'))->fetchField();
+            if ($result) {
+                $registered = user_load($result);
+                drupal_set_message(t('Sorry, this LinkedIn account is already associated with user !registered', array('!registered' => l($registered->name, 'user/' . $result))), 'warning');
+                drupal_goto('user_profile');
+            }
+            //save acces token for future requests
+            $sql = array(
+                'uid' => $account->uid,
+                'token_key' => $oauth['oauth_token'],
+                'token_secret' => $oauth['oauth_token_secret'],
+                'type' => 'access',
+            );
+            drupal_write_record('linkedin_token', $sql, array('uid'));
+            //associate LinkedIn ID with uid for future use
+            $id = linkedin_get_profile_fields($account->uid, array('id'), TRUE);
+            user_set_authmaps($account, array('authmap_linkedin' => $id['id']));
+            drupal_goto("/user_profile");
+        }
+        else {
+            $uid = db_query("SELECT uid FROM {linkedin_token} WHERE token_key = :token_key AND token_secret = :token_secret AND type = :type ", array(':token_key' => $oauth['oauth_token'], ':token_secret' => $oauth['oauth_token_secret'], ':type' => 'access'))->fetchField();
+
+            if ($uid > 0) {
+                module_invoke_all('linkedin_external_login', $uid);
+            }
+            else {
+                module_invoke_all('linkedin_tie_external_login', $uid, $oauth['oauth_token'], $oauth['oauth_token_secret']);
+            }
+        }
+    }
 }
 
 
@@ -3269,20 +3588,20 @@ function add_user_hometown()
     if ($result == 1) {
         $query = db_update("gbl_user_passeport")->fields(array(
             'location' => $hometown,
-            'country'=>$country,
-            'address'=>$address,
-            'state'=>$state,
-            'city'=>$city
+            'country' => $country,
+            'address' => $address,
+            'state' => $state,
+            'city' => $city
         ))->condition('uid', $uid)->condition('passport_trip_type_id', 1);
         $result = $query->execute();
     } else {
         $query = db_insert("gbl_user_passeport")->fields(array(
             'location' => $hometown,
             'uid' => $uid,
-            'country'=>$country,
-            'address'=>$address,
-            'state'=>$state,
-            'city'=>$city,
+            'country' => $country,
+            'address' => $address,
+            'state' => $state,
+            'city' => $city,
 //            'passport_trip_type_id'=> 1,
             'description' => 'I live there'
         ));

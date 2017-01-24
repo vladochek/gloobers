@@ -191,51 +191,52 @@
                                 <input type="hidden" id="country-advisor" name="country">
                                 <input type="hidden" id="state-advisor" name="state">
                                 <input type="hidden" id="address-advisor" name="address">
+                                <input type="hidden" id="passport-advisor" name="passport-types" value="1">
                                 <input type="hidden" id="search-type-advisor" name="search_type" value="recommendation">
                             </div>
-                            <div class="col col02">
-                                <span class="ttl">When?</span>
-                                <div class="date-range">
-                                    <input name="daterange" class="date-range-input" type="text" id="calendar-advisor"
-                                           placeholder="<?= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?>"
-                                           value="<?= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?>">
-                                </div>
-                            </div>
-                            <div class="col col03">
-                                <span class="ttl">What?</span>
-                                <div class="person-num">
-                                    <span class="chosen" data-placement="bottom" id="open-person-popover02"
-                                          data-container="body" data-placement="left" data-html="true"><span
-                                                class="persons-cnt">2</span> Persons <i
-                                                class="gl-ico gl-ico-arrow-down"></i></span>
-                                    <input type="hidden" id="persons-count-advisor" name="persons" value="2">
-                                </div>
-                                <div id="popover-content02" class="hide">
-                                    <div class="person-num-holder">
-                                        <div class="person-row">
-                                            <div class="operation-btns pull-right">
-                                                <span id="persons-minus-advisor" class="btns-col">
-                                                    <a href="javascript:void(0);" class="btn-sub">
-                                                        <i class="gl-ico gl-ico-minus"></i>
-                                                    </a>
-                                                </span>
-                                                <span id="persons-plus-advisor" class="btns-col">
-                                                    <a href="javascript:void(0);" class="btn-add">
-                                                        <i class="gl-ico gl-ico-plus"></i>
-                                                    </a>
-                                                </span>
-                                            </div>
-                                            <div class="text-h">
-                                                <strong><span class="persons-cnt">2</span>Persons</strong>
-                                            </div>
-                                        </div>
-                                        <div class="lnk-row clearfix">
-                                            <a id="close-person-popover01" href="#"
-                                               class="lnk-close pull-right">Close</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+<!--                            <div class="col col02">-->
+<!--                                <span class="ttl">When?</span>-->
+<!--                                <div class="date-range">-->
+<!--                                    <input name="daterange" class="date-range-input" type="text" id="calendar-advisor"-->
+<!--                                           placeholder="--><?//= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?><!--"-->
+<!--                                           value="--><?//= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?><!--">-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col col03">-->
+<!--                                <span class="ttl">What?</span>-->
+<!--                                <div class="person-num">-->
+<!--                                    <span class="chosen" data-placement="bottom" id="open-person-popover02"-->
+<!--                                          data-container="body" data-placement="left" data-html="true"><span-->
+<!--                                                class="persons-cnt">2</span> Persons <i-->
+<!--                                                class="gl-ico gl-ico-arrow-down"></i></span>-->
+<!--                                    <input type="hidden" id="persons-count-advisor" name="persons" value="2">-->
+<!--                                </div>-->
+<!--                                <div id="popover-content02" class="hide">-->
+<!--                                    <div class="person-num-holder">-->
+<!--                                        <div class="person-row">-->
+<!--                                            <div class="operation-btns pull-right">-->
+<!--                                                <span id="persons-minus-advisor" class="btns-col">-->
+<!--                                                    <a href="javascript:void(0);" class="btn-sub">-->
+<!--                                                        <i class="gl-ico gl-ico-minus"></i>-->
+<!--                                                    </a>-->
+<!--                                                </span>-->
+<!--                                                <span id="persons-plus-advisor" class="btns-col">-->
+<!--                                                    <a href="javascript:void(0);" class="btn-add">-->
+<!--                                                        <i class="gl-ico gl-ico-plus"></i>-->
+<!--                                                    </a>-->
+<!--                                                </span>-->
+<!--                                            </div>-->
+<!--                                            <div class="text-h">-->
+<!--                                                <strong><span class="persons-cnt">2</span>Persons</strong>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="lnk-row clearfix">-->
+<!--                                            <a id="close-person-popover01" href="#"-->
+<!--                                               class="lnk-close pull-right">Close</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </form>
                     </div>
                     <button id="submit-btn" form="tab01" type="submit" name="" class="btn-search"><i
