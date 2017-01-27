@@ -313,6 +313,7 @@ $recommendation_link = urldecode($recommendation_link);
                     <?= $fbAuthLink ?>
 <?= $linkedinLink ?>
                     <?php
+                    echo twitter_signin_button();
                     drupal_add_js(GPLUS_SYNC_MODULE_PATH.'/gplus_sync.js');
                     drupal_add_js(GPLUS_SYNC_URL_GPLUS_JS_CLIENT);
                     $client_id = variable_get('gplus_sync_client_id');

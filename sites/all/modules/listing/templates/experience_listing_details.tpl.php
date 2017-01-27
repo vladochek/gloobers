@@ -52,6 +52,7 @@ if (!empty($reviews)) {
 				<div class="col-sm-12">  <h3>reviews <span>(' . sizeof($reviews) . ' reviews) </span></h3></div>';
 
     $rc = 1;
+//    var_dump($reviews);die;
     foreach ($reviews as $reviewDetails) {
         $averageRating = $averageRating + $reviewDetails['average'];
         $professionalismRate = $professionalismRate + $reviewDetails['professional'];

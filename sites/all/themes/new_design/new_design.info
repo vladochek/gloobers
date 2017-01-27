@@ -10,16 +10,17 @@ project = "drupal"
 stylesheets[all][] = css/sprite.css
 stylesheets[all][] = css/jquery.fancybox.css
 stylesheets[all][] = css/daterangepicker.css
+stylesheets[all][] = css/drop-theme-arrows.css
 stylesheets[all][] = css/bootstrap.min.css
 stylesheets[all][] = css/bootstrap-theme.min.css
 stylesheets[all][] = css/all.css
 
-
-
 scripts[] = js/custom-file-input.js
-scripts[] = js/jquery.fancybox.pack.js
 scripts[] = js/moment.js
 scripts[] = js/daterangepicker.js
-scripts[] = js/slick.min.js
+scripts[] = js/jquery.fancybox.pack.js
 scripts[] = js/bootstrap.min.js
+scripts[] = js/slick.min.js
+scripts[] = js/tether.min.js
+scripts[] = js/drop.min.js
 scripts[] = js/main.js

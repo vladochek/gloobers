@@ -11,6 +11,12 @@ function users_menu()
         'type' => MENU_NORMAL_ITEM,
     );
 
+    $items['linkedin'] = array(
+        'page callback' => 'linkedin_binding',
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+    );
+
     $items['register'] = array(
         'page callback' => 'user_register',
         'access callback' => TRUE,
@@ -498,14 +504,17 @@ function users_user_insert(&$edit, $account, $category)
 
 function users_user_update(&$edit, $account, $category)
 {
-
+    global $user;
     if (strpos($_SERVER['REQUEST_URI'], '/user') !== false) {
         if (is_numeric(arg(1))) {
             $uid = arg(1);
             $account = $_REQUEST;
         }
     }
-
+    if (is_object($account)) {
+        $account = get_object_vars($account);
+    }
+    $uid = $user->uid;
 //$form,&$form_state\
 //echo "here";
 //echo "<pre>";print_r($account);exit;
@@ -1945,21 +1954,6 @@ function user_passion_form_submit($form, &$form_state)
     }
 }
 
-function getUserPassionList($userId = null)
-{
-
-    $passion = array();
-    $query = db_select('gbl_users_passions', 'gup');
-    $query->join('gbl_passions', 'gp', 'gp.pid = gup.pid');
-    $query->fields('gup', array('pid'));
-    $query->fields('gp', array('passion', 'fid', 'fid_thumb'))
-        ->condition('uid', $userId);
-    $result = $query->execute();
-    while ($data = $result->fetchAssoc()) {
-        $passion[] = $data;
-    }
-    return $passion;
-}
 
 function my_past_trips()
 {
@@ -3180,11 +3174,12 @@ function email_template()
 /**
  * gplus_sync_sing_on().
  */
-function gplus_sync_sing_on_custom() {
+function gplus_sync_sing_on_custom()
+{
     $client_id = variable_get('gplus_sync_client_id');
     $client_secret = variable_get('gplus_sync_client_secret');
     if (isset($_POST['code']) && $client_id && $client_secret) {//$GLOBALS['user']->uid == 0 &&
-        set_include_path(get_include_path().PATH_SEPARATOR.GPLUS_SYNC_MODULE_PATH.'/vendor/google/apiclient/src/');
+        set_include_path(get_include_path() . PATH_SEPARATOR . GPLUS_SYNC_MODULE_PATH . '/vendor/google/apiclient/src/');
         require_once 'Google/Client.php';
         $client = new Google_Client();
         $client->setClientId($client_id);
@@ -3254,12 +3249,12 @@ function gplus_sync_sing_on_custom() {
             if (!$user && $user_info['filteredName']) {
                 $pass = user_password();
                 $user = array(
-                    'name'     => $user_info['filteredName'],
-                    'pass'     => user_password(),
-                    'status'   => 1,
+                    'name' => $user_info['filteredName'],
+                    'pass' => user_password(),
+                    'status' => 1,
                     'timezone' => NULL,
-                    'mail'     => $user_info['email'],
-                    'init'     => $user_info['email'],
+                    'mail' => $user_info['email'],
+                    'init' => $user_info['email'],
                 );
                 $user = user_save(NULL, $user);
                 if (isset($user->uid)) {
@@ -3275,7 +3270,7 @@ function gplus_sync_sing_on_custom() {
                 print json_encode(array(
                     'status' => 'login',
                     'uid' => $user->uid,
-                    'redirect' => url('user/'.$user->uid),
+                    'redirect' => url('user/' . $user->uid),
                     'error_code' => 0,
                     'error_text' => '',
                 ));
@@ -3283,51 +3278,51 @@ function gplus_sync_sing_on_custom() {
             /* save and log google data */
             if ($user->uid) {
                 db_update('users')->fields(array(
-                    'gplus_sync_token'            => $token->id_token,
-                    'gplus_sync_id'               => $user_info['id'],
-                    'gplus_sync_given_name'       => $user_info['givenName'],
-                    'gplus_sync_family_name'      => $user_info['familyName'],
-                    'gplus_sync_name'             => $user_info['name'],
-                    'gplus_sync_gender'           => $user_info['gender'],
-                    'gplus_sync_url_profile'      => $user_info['link'],
-                    'gplus_sync_url_picture'      => $user_info['picture'],
-                    'gplus_sync_locale'           => $user_info['locale'],
-                    'gplus_sync_language'         => isset($user_info_plus['language'])        ? $user_info_plus['language']            : NULL,
-                    'gplus_sync_birthday'         => isset($user_info_plus['birthday'])        ? strtotime($user_info_plus['birthday']) : NULL,
-                    'gplus_sync_current_location' => isset($user_info_plus['currentLocation']) ? $user_info_plus['currentLocation']     : NULL,
+                    'gplus_sync_token' => $token->id_token,
+                    'gplus_sync_id' => $user_info['id'],
+                    'gplus_sync_given_name' => $user_info['givenName'],
+                    'gplus_sync_family_name' => $user_info['familyName'],
+                    'gplus_sync_name' => $user_info['name'],
+                    'gplus_sync_gender' => $user_info['gender'],
+                    'gplus_sync_url_profile' => $user_info['link'],
+                    'gplus_sync_url_picture' => $user_info['picture'],
+                    'gplus_sync_locale' => $user_info['locale'],
+                    'gplus_sync_language' => isset($user_info_plus['language']) ? $user_info_plus['language'] : NULL,
+                    'gplus_sync_birthday' => isset($user_info_plus['birthday']) ? strtotime($user_info_plus['birthday']) : NULL,
+                    'gplus_sync_current_location' => isset($user_info_plus['currentLocation']) ? $user_info_plus['currentLocation'] : NULL,
                 ))->condition('uid', $user->uid)->execute();
-                watchdog('gplus_sync', 'Drupal sign on.'.GPLUS_SYNC_HTML_BR.
-                    'Drupal uid = !drupalUid'.GPLUS_SYNC_HTML_BR.
-                    'Drupal filteredName = !filteredName'.GPLUS_SYNC_HTML_BR.
-                    'Google input code = !code'.GPLUS_SYNC_HTML_BR.
-                    'Google token = !token'.GPLUS_SYNC_HTML_BR.
-                    'Google id = !id'.GPLUS_SYNC_HTML_BR.
-                    'Google email = !email'.GPLUS_SYNC_HTML_BR.
-                    'Google givenName = !givenName'.GPLUS_SYNC_HTML_BR.
-                    'Google familyName = !familyName'.GPLUS_SYNC_HTML_BR.
-                    'Google name = !name'.GPLUS_SYNC_HTML_BR.
-                    'Google gender = !gender'.GPLUS_SYNC_HTML_BR.
-                    'Google link = !link'.GPLUS_SYNC_HTML_BR.
-                    'Google picture = !picture'.GPLUS_SYNC_HTML_BR.
-                    'Google locale = !locale'.GPLUS_SYNC_HTML_BR.
-                    'Google language = !language'.GPLUS_SYNC_HTML_BR.
-                    'Google birthday = !birthday'.GPLUS_SYNC_HTML_BR.
+                watchdog('gplus_sync', 'Drupal sign on.' . GPLUS_SYNC_HTML_BR .
+                    'Drupal uid = !drupalUid' . GPLUS_SYNC_HTML_BR .
+                    'Drupal filteredName = !filteredName' . GPLUS_SYNC_HTML_BR .
+                    'Google input code = !code' . GPLUS_SYNC_HTML_BR .
+                    'Google token = !token' . GPLUS_SYNC_HTML_BR .
+                    'Google id = !id' . GPLUS_SYNC_HTML_BR .
+                    'Google email = !email' . GPLUS_SYNC_HTML_BR .
+                    'Google givenName = !givenName' . GPLUS_SYNC_HTML_BR .
+                    'Google familyName = !familyName' . GPLUS_SYNC_HTML_BR .
+                    'Google name = !name' . GPLUS_SYNC_HTML_BR .
+                    'Google gender = !gender' . GPLUS_SYNC_HTML_BR .
+                    'Google link = !link' . GPLUS_SYNC_HTML_BR .
+                    'Google picture = !picture' . GPLUS_SYNC_HTML_BR .
+                    'Google locale = !locale' . GPLUS_SYNC_HTML_BR .
+                    'Google language = !language' . GPLUS_SYNC_HTML_BR .
+                    'Google birthday = !birthday' . GPLUS_SYNC_HTML_BR .
                     'Google currentLocation = !currentLocation', array(
-                    '!drupalUid'       => $user->uid,
-                    '!filteredName'    => $user_info['filteredName'],
-                    '!code'            => $_POST['code'],
-                    '!token'           => truncate_utf8($token->id_token, 50, FALSE, TRUE),
-                    '!id'              => $user_info['id'],
-                    '!email'           => $user_info['email'],
-                    '!givenName'       => $user_info['givenName'],
-                    '!familyName'      => $user_info['familyName'],
-                    '!name'            => $user_info['name'],
-                    '!gender'          => $user_info['gender'],
-                    '!link'            => $user_info['link'],
-                    '!picture'         => $user_info['picture'],
-                    '!locale'          => $user_info['locale'],
-                    '!language'        => isset($user_info_plus['language'])        ? $user_info_plus['language']        : t(GPLUS_SYNC_HTML_NA),
-                    '!birthday'        => isset($user_info_plus['birthday'])        ? $user_info_plus['birthday']        : t(GPLUS_SYNC_HTML_NA),
+                    '!drupalUid' => $user->uid,
+                    '!filteredName' => $user_info['filteredName'],
+                    '!code' => $_POST['code'],
+                    '!token' => truncate_utf8($token->id_token, 50, FALSE, TRUE),
+                    '!id' => $user_info['id'],
+                    '!email' => $user_info['email'],
+                    '!givenName' => $user_info['givenName'],
+                    '!familyName' => $user_info['familyName'],
+                    '!name' => $user_info['name'],
+                    '!gender' => $user_info['gender'],
+                    '!link' => $user_info['link'],
+                    '!picture' => $user_info['picture'],
+                    '!locale' => $user_info['locale'],
+                    '!language' => isset($user_info_plus['language']) ? $user_info_plus['language'] : t(GPLUS_SYNC_HTML_NA),
+                    '!birthday' => isset($user_info_plus['birthday']) ? $user_info_plus['birthday'] : t(GPLUS_SYNC_HTML_NA),
                     '!currentLocation' => isset($user_info_plus['currentLocation']) ? $user_info_plus['currentLocation'] : t(GPLUS_SYNC_HTML_NA),
                 ));
                 return;
@@ -3344,11 +3339,79 @@ function gplus_sync_sing_on_custom() {
     return;
 }
 
+//user profile functions
+
+function get_profile_info($uid)
+{
+    $query = db_select('gbl_users_meta', 'u');
+    $query->leftJoin('users', 'us', 'u.uid = us.uid');
+    $query->leftJoin('fboauth_users', 'fb', 'u.uid = fb.uid');
+    $query->leftJoin('linkedin_token', 'ld', 'u.uid = ld.uid');
+    $query->leftJoin('twitter_account', 'tw', 'u.uid = tw.uid');
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = u.uid');
+
+    $query->fields('u', array(
+        'uid', 'first_name', 'last_name', 'occupation', 'confirm_status',
+        'language', 'mobile', 'about_yourself', 'phone'));
+    $query->fields('us', array('gplus_sync_url_profile', 'mail'));
+    $query->fields('fb', array('fbid'));
+    $query->addExpression('ld.token_key', 'linkedin_token_key');
+    $query->addExpression('AVG(rat.rating)', 'overall_advisor_rating');
+    $query->fields('tw', array('twitter_uid'));
+    $query->condition('u.uid', $uid);
+    $query->groupBy('us.uid');
+    $result = $query->execute();
+    $info = $result->fetchAssoc();
+    return $info ? $info : [];
+}
+
+
+function getUserPassionList($userId)
+{
+    $query = db_select('gbl_users_passions', 'gup');
+    $query->join('gbl_passions', 'gp', 'gp.pid = gup.pid');
+    $query->fields('gup', array('pid'));
+    $query->fields('gp', array('passion', 'fid', 'fid_thumb'))
+        ->condition('uid', $userId);
+    return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function get_user_passport($userId)
+{
+    $query = db_select('gbl_user_passeport', 'p')
+        ->fields('p')
+        ->condition('uid', $userId);
+    $result = $query->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+function get_user_experience_quantity($userId)
+{
+    $sql = "SELECT COUNT(DISTINCT rev.id) as user_reviews_count, 
+    COUNT(DISTINCT el.eid) as user_listings_count, 
+    COUNT(DISTINCT b.id) as user_trips_count
+    FROM {gbl_listing_reviews} as rev, {gbl_experience_list} as el, {gbl_booking} as b
+    where rev.uid = :userId and el.uid = :userId and b.uid = :userId";
+    return db_query($sql, [':userId'=>$userId])->fetchAssoc();
+}
+
+
+function get_overall_user_profile_data($userId)
+{
+    $result = [];
+    $result['passports'] = get_user_passport($userId);
+    $result['passions'] = getUserPassionList($userId);
+    $result['profile'] = get_profile_info($userId);
+    return $result;
+}
 
 function user_profile_section()
 {
 
     global $user;
+    var_dump(get_profile_info($user->uid));
+    die;
     /*if(!$user->uid){
         $dest = drupal_get_destination();
         $_SESSION['destination']  = $dest["destination"];
@@ -3381,7 +3444,7 @@ function user_profile_section()
     $query->condition('passport_trip_type_id', 1);
     $result1 = $query->execute();
     $location = $result1->fetchField();
-
+//var_dump($location);die;
 
     $query = db_select('gbl_languages', 'l');
     $query->fields('l');
@@ -3404,29 +3467,28 @@ function user_profile_section()
     $cover_pic = $result4->fetchField();
 
 
-    $query = db_select('gbl_user_passeport', 'p')
-        ->fields('p')
-        ->condition('uid', $user->uid);
-    $result = $query->execute();
-    $Passeports = $result->fetchAll(PDO::FETCH_ASSOC);
+    $Passeports = get_user_passport($uid);
+    var_dump($Passeports);
+    die;
     $user_passion = getUserPassionList($uid);
     $passeport_types = get_passeport_types();
     $passeportListDOM = theme('passeport_dom_file', array('passeports' => $Passeports, 'passeport_types' => $passeport_types));
-//    linkedin_binding();
+    linkedin_binding();
 //    gauth_account_authenticate('585851538970-gfe0ofncc6922n2u1na3lt1c46dt68g.apps.googleusercontent.com');
-//    var_dump(variable_get('gplus_sync_client_id'));die;
+//    var_dump(twitter_signin_button());die;
 //    gplus_sync_sing_on();
 
     $fbLink = fboauth_action_link_properties('connect');
     $fbImage = '<img src="' . $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/images/fb.png">';
     $fbAuthLink = l($fbImage, $fbLink['href'], array('html' => true, 'query' => $fbLink['query']));
-    $linkedinLink = theme_linkedin_auth_display_login_block_button(['display' => 'linkedin_login_block', 'path' => 'linkedin/login/0', 'text' => 'Log in using LinkedIn']);
+    $linkedinLink = theme_linkedin_auth_display_login_block_button(['display' => 'linkedin_login_block', 'path' => 'linkedin', 'text' => 'Log in using LinkedIn']);
     return theme('user_profile_section', array('passeportListDOM' => $passeportListDOM, 'Main_user_data' => $Main_user_data,
         'loc' => $location, 'language' => $language, 'passeports' => $Passeports, 'profile_pic' => $profile_pic, 'cover_pic' =>
             $cover_pic, 'passionlist' => $user_passion, 'fbAuthLink' => $fbAuthLink, 'linkedinLink' => $linkedinLink));
 }
 
-function linkedin_binding() {
+function linkedin_binding()
+{
     global $user;
     $check = linkedin_get_profile_fields($user->uid, array('first-name', 'last-name', 'public-profile-url'), TRUE);
     if (isset($check['error-code'])) {
@@ -3439,15 +3501,15 @@ function linkedin_binding() {
 //    }
 }
 
-function linkedin_access_token_custom($account) {
+function linkedin_access_token_custom($account)
+{
     //Get sure library is loaded before doing anything.
     linkedin_init();
 
     if ($account->uid < 1) {
         $anon = TRUE;
         $back = 'login';
-    }
-    else {
+    } else {
         $anon = FALSE;
         $back = 'token';
     }
@@ -3473,8 +3535,7 @@ function linkedin_access_token_custom($account) {
         if (isset($oauth['oauth_problem'])) {
             if (variable_get('linkedin_debug_mode', 0) == 1) {
                 drupal_set_message(t('LinkedIn debug : received error response : @error'), array('@error' => $oauth['oauth_problem']), 'warning');
-            }
-            else {
+            } else {
                 drupal_set_message(t('There was a problem with the configuration of LinkedIn on this website. Please try again later.'), 'error');
             }
             watchdog('linkedin', t('Linkedin reported the following response : @error'), array('@error' => $oauth['oauth_problem']), WATCHDOG_ERROR);
@@ -3495,33 +3556,28 @@ function linkedin_access_token_custom($account) {
                 drupal_write_record('linkedin_token', $sql);
                 //Redirect the user to the authentication/authorisation page. This will authorise the token in LinkedIn
                 drupal_goto($base_url . '/authorize?oauth_token=' . $oauth['oauth_token']);
-            }
-            else { // Anonymous user. We can't use db storage, but $_SESSION can not lead to identity forgery for anonymous
+            } else { // Anonymous user. We can't use db storage, but $_SESSION can not lead to identity forgery for anonymous
                 $_SESSION['oauth_token_secret'] = $oauth['oauth_token_secret'];
                 //Redirect the user to the authentication/authorisation page. This will authorise the token in LinkedIn
                 drupal_goto($base_url . '/authenticate?oauth_token=' . $oauth['oauth_token']);
             }
-        }
-        else {
+        } else {
             if (variable_get('linkedin_debug_mode', 0) == 1) {
                 drupal_set_message(t('LinkedIn debug : received no answer from linkedin.com. Check your API credential at admin/settings/linkedin'));
-            }
-            else {
+            } else {
                 drupal_set_message(t('There was a problem with the configuration of LinkedIn on this website. Please try again later.'), 'error');
             }
             watchdog('linkedin', t('The website could not communicate with LinkedIn. It is likely your API credentials are misconfigured.'), array(), WATCHDOG_ERROR);
             drupal_goto();
         }
-    }
-    else {
+    } else {
         //this is called when the OAuth callback is invoked. User has authorised the token.
         //Now retrieve the stored request token and ask for an access token
 
         $url = $base_url . '/accessToken';
         if (!$anon) {
             $result = db_query("SELECT token_secret FROM {linkedin_token} WHERE uid = :uid AND type = :type", array(':uid' => $account->uid, ':type' => 'request'))->fetchField();
-        }
-        else {
+        } else {
             $result = $_SESSION['oauth_token_secret'];
         }
         $token = new OAuthConsumer($_REQUEST['oauth_token'], $result, 1);
@@ -3551,14 +3607,12 @@ function linkedin_access_token_custom($account) {
             $id = linkedin_get_profile_fields($account->uid, array('id'), TRUE);
             user_set_authmaps($account, array('authmap_linkedin' => $id['id']));
             drupal_goto("/user_profile");
-        }
-        else {
+        } else {
             $uid = db_query("SELECT uid FROM {linkedin_token} WHERE token_key = :token_key AND token_secret = :token_secret AND type = :type ", array(':token_key' => $oauth['oauth_token'], ':token_secret' => $oauth['oauth_token_secret'], ':type' => 'access'))->fetchField();
 
             if ($uid > 0) {
                 module_invoke_all('linkedin_external_login', $uid);
-            }
-            else {
+            } else {
                 module_invoke_all('linkedin_tie_external_login', $uid, $oauth['oauth_token'], $oauth['oauth_token_secret']);
             }
         }

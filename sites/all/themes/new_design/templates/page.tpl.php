@@ -7,10 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gloobers</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|PT+Sans:400,700" rel="stylesheet">
-    <?php drupal_add_js('https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en', 'external'); ?>
+    <?php
+    drupal_add_js('https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js', 'external');
+    drupal_add_js('https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en', 'external');
+    drupal_add_js('https://use.fontawesome.com/36fe5b07c5.js', 'external');
+    ?>
+
     <script src="https://use.fontawesome.com/36fe5b07c5.js"></script>
 </head>
-<body>
+<body  class="hp">
 <div class="wrapper">
     <header class="header">
         <div class="container">
@@ -50,14 +55,13 @@
                         <form action="/search-hotel" method="get" class="tab-pane active" id="tab01">
                             <div class="col col01">
                                 <span class="ttl">Where?</span>
-                                <input id="destination-hotel" onclick="hometowngeocode('destination-hotel')"
-                                       type="text"
-                                       placeholder="Enter your destination" name="destination" value="">
+                                <input type="text" id="destination-hotel" placeholder="Enter your destination" value=""
+                                       onclick="hometowngeocode('destination-hotel')" name="destination">
                             </div>
                             <div class="col col02">
                                 <span class="ttl">When?</span>
                                 <div class="date-range">
-                                    <input name="daterange" class="date-range-input" id="calendar-hotel" type="text"
+                                    <input id="calendar-hotel" name="daterange" class="date-range-input" type="text" data-opens="left"
                                            placeholder="<?= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?>"
                                            value="<?= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?>">
                                 </div>
@@ -65,10 +69,32 @@
                             <div class="col col03">
                                 <span class="ttl">What?</span>
                                 <div class="person-num">
-                                    <span class="chosen" data-placement="bottom" id="open-person-popover"
-                                          data-container="body" data-placement="left" data-html="true"><span
-                                                id="all-persons-cnt">3</span> Persons <i
-                                                class="gl-ico gl-ico-arrow-down"></i></span>
+
+                                    <span class="chosen open-drop" data-offset="-25px -15px" data-theme="drop-theme-arrows-bounce" data-position="bottom right" ><span id="all-persons-cnt">3</span> Persons <i class="gl-ico gl-ico-arrow-down"></i></span>
+
+                                    <div class="drop-content hide">
+                                        <div class="person-num-holder">
+                                            <div class="person-row">
+                                                <div class="operation-btns pull-right">
+                                                    <span id="adult-minus" class="btns-col"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
+                                                    <span id="adult-plus" class="btns-col"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
+                                                </div>
+                                                <div class="text-h">
+                                                    <strong><span id="adult-cnt">2</span>Adult</strong>
+                                                </div>
+                                            </div>
+                                            <div class="person-row">
+                                                <div class="operation-btns pull-right">
+                                                    <span class="btns-col" id="children-minus"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
+                                                    <span class="btns-col" id="children-plus"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
+                                                </div>
+                                                <div class="text-h">
+                                                    <strong class=""><span id="children-cnt">1</span>Childrens</strong>
+                                                    <em class="person-info">Age 2 -12 </em>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <input type="hidden" id="childrens-count" value="1" name="childrens">
                                     <input type="hidden" id="adults-count" value="2" name="adults">
                                     <input type="hidden" id="rooms-count" value="1" name="rooms">
@@ -77,48 +103,6 @@
                                     <input type="hidden" id="country-hotels" name="country" >
                                     <input type="hidden" id="state-hotels" name="state">
                                     <input type="hidden" id="address-hotels" name="address" >
-                                </div>
-                                <div id="popover-content" class="hide">
-                                    <div class="person-num-holder">
-                                        <div class="person-row">
-                                            <div class="operation-btns pull-right">
-                                                <span class="btns-col" id="adult-minus">
-                                                    <a href="javascript:void(0);" class="btn-sub">
-                                                        <i class="gl-ico gl-ico-minus"></i>
-                                                    </a>
-                                                </span>
-                                                <span class="btns-col" id="adult-plus">
-                                                    <a href="javascript:void(0);" class="btn-add">
-                                                        <i class="gl-ico gl-ico-plus"></i>
-                                                    </a>
-                                                </span>
-                                            </div>
-                                            <div class="text-h">
-                                                <strong><span id="adult-cnt">2</span>Adult</strong>
-                                            </div>
-                                        </div>
-                                        <div class="person-row">
-                                            <div class="operation-btns pull-right">
-                                                <span class="btns-col" id="children-minus">
-                                                    <a href="javascript:void(0);" class="btn-sub">
-                                                        <i class="gl-ico gl-ico-minus"></i>
-                                                    </a>
-                                                </span>
-                                                <span class="btns-col" id="children-plus">
-                                                    <a href="javascript:void(0);" class="btn-add">
-                                                        <i class="gl-ico gl-ico-plus"></i>
-                                                    </a>
-                                                </span>
-                                            </div>
-                                            <div class="text-h">
-                                                <strong class=""><span id="children-cnt">1</span>Childrens</strong>
-                                                <em class="person-info">Age 2 -12 </em>
-                                            </div>
-                                        </div>
-                                        <div class="lnk-row clearfix">
-                                            <a id="close-person-popover" href="#" class="lnk-close pull-right">Close</a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -144,39 +128,25 @@
                             </div>
                             <div class="col col03">
                                 <span class="ttl">What?</span>
+
                                 <div class="person-num">
-                                    <span class="chosen" data-placement="bottom" id="open-person-popover01"
-                                          data-container="body" data-placement="left" data-html="true"><span
-                                                class="persons-cnt">2</span> Persons <i
-                                                class="gl-ico gl-ico-arrow-down"></i></span>
-                                    <input type="hidden" id="persons-count" name="persons" value="2">
-                                </div>
-                                <div id="popover-content01" class="hide">
-                                    <div class="person-num-holder">
-                                        <div class="person-row">
-                                            <div class="operation-btns pull-right">
-                                                <span id="persons-minus" class="btns-col">
-                                                    <a href="javascript:void(0);" class="btn-sub">
-                                                        <i class="gl-ico gl-ico-minus"></i>
-                                                    </a>
-                                                </span>
-                                                <span id="persons-plus" class="btns-col">
-                                                    <a href="javascript:void(0);" class="btn-add">
-                                                        <i class="gl-ico gl-ico-plus"></i>
-                                                    </a>
-                                                </span>
+                                    <span class="chosen open-drop" data-offset="-25px -15px" data-theme="drop-theme-arrows-bounce" data-position="bottom right" ><span class="persons-cnt">2</span> Persons <i class="gl-ico gl-ico-arrow-down"></i></span>
+                                    <div class="drop-content hide">
+                                        <div class="person-num-holder">
+                                            <div class="person-row">
+                                                <div class="operation-btns pull-right">
+                                                    <span id="persons-minus" class="btns-col"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
+                                                    <span id="persons-plus" class="btns-col"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
+                                                </div>
+                                                <div class="text-h">
+                                                    <strong><span class="persons-cnt">2</span>Adult</strong>
+                                                </div>
                                             </div>
-                                            <div class="text-h">
-                                                <strong><span class="persons-cnt">2</span>Persons</strong>
-                                            </div>
-                                        </div>
-                                        <div class="lnk-row clearfix">
-                                            <a id="close-person-popover01" href="#"
-                                               class="lnk-close pull-right">Close</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" id="persons-count" name="persons" value="2">
                         </form>
                         <form action="/search-advisor" method="get" class="tab-pane" id="tab03">
                             <div class="col col01">
@@ -194,49 +164,6 @@
                                 <input type="hidden" id="passport-advisor" name="passport-types" value="1">
                                 <input type="hidden" id="search-type-advisor" name="search_type" value="recommendation">
                             </div>
-<!--                            <div class="col col02">-->
-<!--                                <span class="ttl">When?</span>-->
-<!--                                <div class="date-range">-->
-<!--                                    <input name="daterange" class="date-range-input" type="text" id="calendar-advisor"-->
-<!--                                           placeholder="--><?//= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?><!--"-->
-<!--                                           value="--><?//= date('d/m/Y') . ' - ' . date('d/m/Y', strtotime('+2 days')) ?><!--">-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div class="col col03">-->
-<!--                                <span class="ttl">What?</span>-->
-<!--                                <div class="person-num">-->
-<!--                                    <span class="chosen" data-placement="bottom" id="open-person-popover02"-->
-<!--                                          data-container="body" data-placement="left" data-html="true"><span-->
-<!--                                                class="persons-cnt">2</span> Persons <i-->
-<!--                                                class="gl-ico gl-ico-arrow-down"></i></span>-->
-<!--                                    <input type="hidden" id="persons-count-advisor" name="persons" value="2">-->
-<!--                                </div>-->
-<!--                                <div id="popover-content02" class="hide">-->
-<!--                                    <div class="person-num-holder">-->
-<!--                                        <div class="person-row">-->
-<!--                                            <div class="operation-btns pull-right">-->
-<!--                                                <span id="persons-minus-advisor" class="btns-col">-->
-<!--                                                    <a href="javascript:void(0);" class="btn-sub">-->
-<!--                                                        <i class="gl-ico gl-ico-minus"></i>-->
-<!--                                                    </a>-->
-<!--                                                </span>-->
-<!--                                                <span id="persons-plus-advisor" class="btns-col">-->
-<!--                                                    <a href="javascript:void(0);" class="btn-add">-->
-<!--                                                        <i class="gl-ico gl-ico-plus"></i>-->
-<!--                                                    </a>-->
-<!--                                                </span>-->
-<!--                                            </div>-->
-<!--                                            <div class="text-h">-->
-<!--                                                <strong><span class="persons-cnt">2</span>Persons</strong>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                        <div class="lnk-row clearfix">-->
-<!--                                            <a id="close-person-popover01" href="#"-->
-<!--                                               class="lnk-close pull-right">Close</a>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
                         </form>
                     </div>
                     <button id="submit-btn" form="tab01" type="submit" name="" class="btn-search"><i
@@ -245,24 +172,21 @@
                 <p class="search-info">Search through 6.000 items or browse 2.000 events.</p>
             </div>
             <a href="#tag" class="btn-scroll">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"
-                     height="45" viewBox="0 0 30 45">
-                    <metadata><? xpacket begin = "﻿" id = "W5M0MpCehiHzreSzNTczkc9d"?>
-                        <x:xmpmeta xmlns:x="adobe:ns:meta/"
-                                   x:xmptk="Adobe XMP Core 5.6-c138 79.159824, 2016/09/14-01:09:01        ">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="45" viewBox="0 0 30 45">
+                    <metadata><?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+                        <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c138 79.159824, 2016/09/14-01:09:01        ">
                             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
                                 <rdf:Description rdf:about=""/>
                             </rdf:RDF>
                         </x:xmpmeta>
-                        <? xpacket end = "w"?></metadata>
-                    <image id="mouse" width="30" height="45"
-                           xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAtCAQAAAAT1xMqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfgDBQNKSMu4uEhAAACG0lEQVRIx+3WvU9TYRTH8V8vEFBJkSiJLzEYizQ6EFCbdMJEAhqJhsioDjoxspgwODGw+PIfGBNdSDRsisRBGrtUXdTBVIsvkcQQaStCtYXefh3ahvb2aeUy95zl3nPP57nnmZ7HgwzRpwGdkE+tsrWiT3qlOX0x9FGezYzxgXyk+Mp30oW3MCN4yrvL6RALQIoHjLKvULPwcY2nZIEwx83YwxSwzi32IkN2MQ2kuFKJLR4CUXqMsJgXiAPjTnwXeEmbo/kJU46Kn0Uo/j1fGgXeVlDxi/mKmp8EKY4V8W6WWOOoYUwTFheBMJ48ngRuGPdoxmIaGEGimQQ/2OEKd5NjHlkaVrvu6a/cxEc912l1Wjor6bErKkmPJA1aCmhV71zjsKSAJZ+iylVpyehPlS8xZXWkUV4tV12/XytVvmT1W3saJWWq4miNwVdlWa53WxJ1XMd1XAW3bEt6ZVtKqmMbtElexS0tyK8G17hbDYpZimiXTrrGZyRFxHngds2z0ZQhbPaLJpZYptUV7QOe5c+qCWDSFZ4FBvJ4J99I07tlehWY3Tyfh8jxmY4t0VOskeRw6c3gJvCeA/+lAX5iM1x+rRB3gEX6a9LrpLC57LyTCDHOBnCfLiMM8gJIcG6z5hzqDWAzxxg9tCBEG0EmeA3ADIdK+53rW1wiRDHSbBSeMswQdE7jMd49D2pQvepUu3KKK6aIQkpWtv0DHYXYxCIfOB0AAAAASUVORK5CYII="/>
+                        <?xpacket end="w"?></metadata>
+                    <image id="mouse" width="30" height="45" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAtCAQAAAAT1xMqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfgDBQNKSMu4uEhAAACG0lEQVRIx+3WvU9TYRTH8V8vEFBJkSiJLzEYizQ6EFCbdMJEAhqJhsioDjoxspgwODGw+PIfGBNdSDRsisRBGrtUXdTBVIsvkcQQaStCtYXefh3ahvb2aeUy95zl3nPP57nnmZ7HgwzRpwGdkE+tsrWiT3qlOX0x9FGezYzxgXyk+Mp30oW3MCN4yrvL6RALQIoHjLKvULPwcY2nZIEwx83YwxSwzi32IkN2MQ2kuFKJLR4CUXqMsJgXiAPjTnwXeEmbo/kJU46Kn0Uo/j1fGgXeVlDxi/mKmp8EKY4V8W6WWOOoYUwTFheBMJ48ngRuGPdoxmIaGEGimQQ/2OEKd5NjHlkaVrvu6a/cxEc912l1Wjor6bErKkmPJA1aCmhV71zjsKSAJZ+iylVpyehPlS8xZXWkUV4tV12/XytVvmT1W3saJWWq4miNwVdlWa53WxJ1XMd1XAW3bEt6ZVtKqmMbtElexS0tyK8G17hbDYpZimiXTrrGZyRFxHngds2z0ZQhbPaLJpZYptUV7QOe5c+qCWDSFZ4FBvJ4J99I07tlehWY3Tyfh8jxmY4t0VOskeRw6c3gJvCeA/+lAX5iM1x+rRB3gEX6a9LrpLC57LyTCDHOBnCfLiMM8gJIcG6z5hzqDWAzxxg9tCBEG0EmeA3ADIdK+53rW1wiRDHSbBSeMswQdE7jMd49D2pQvepUu3KKK6aIQkpWtv0DHYXYxCIfOB0AAAAASUVORK5CYII="/>
                 </svg>
             </a>
         </div>
     </header>
     <main class="main">
-        <section class="block coloured">
+        <section class="block">
             <div class="container">
                 <div class="block-title">
                     <h2>Last followed recommendations</h2>
@@ -310,7 +234,7 @@
                             <li class="slider-2"><a href="javascript:void(0);">Earn</a></li>
                         </ul>
                     </nav>
-                    <div class="slider">
+                    <div class="how-slider">
                         <div class="slide">
                             <div class="steps">
                                 <div class="step">
@@ -442,7 +366,7 @@
                 </div>
             </div>
         </section>
-        <section class="block coloured">
+        <section class="block">
             <div class="container">
                 <div class="block-title">
                     <h2>Testimonials</h2>
@@ -757,8 +681,7 @@
     </main>
     <footer class="footer">
         <div class="container">
-            <a href="#" class="logo"><img src="<?= drupal_get_path('theme', 'new_design') . '/images/logo.png' ?>"
-                                          alt="Gloobers" height="59" width="160"></a>
+            <a href="#" class="logo"><img src="<?= drupal_get_path('theme', 'new_design') . '/images/logo.png' ?>" alt="Gloobers" height="59" width="160"></a>
             <div class="soc-list">
                 <a class="item" href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
                 <a class="item" href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
@@ -781,8 +704,8 @@
 </div>
 <!--<script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en" async defer></script>-->
 <?php
-drupal_add_js('https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js', 'external');
 
+drupal_add_js('https://use.fontawesome.com/36fe5b07c5.js', 'external');
 ?>
 <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
 <!--<script src="js/custom-file-input.js"></script>-->
