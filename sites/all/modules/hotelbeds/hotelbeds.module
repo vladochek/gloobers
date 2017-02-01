@@ -103,6 +103,14 @@ class Hotelbeds
         );
     }
 
+    function hotelbeds_get_hotels_facility_groups()
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/facilities?fields=all&language=ENG&from=1&to=450',
+            'GET'
+        );
+    }
+
     function hotelbeds_get_activities($data)
     {
         return $this->hotelbeds_activities_api_connect(

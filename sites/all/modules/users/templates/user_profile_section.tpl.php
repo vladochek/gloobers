@@ -1105,7 +1105,7 @@ $recommendation_link = urldecode($recommendation_link);
                 var Cp = '0';
             }
             jQuery.ajax({
-                url: $baseUrl + '/ajax/user/update_Dp',
+                url: '/ajax/user/update_Dp',
                 type: 'post',
                 data: {profile_pic: Dp, cover_pic: Cp},
                 beforSend: function () {

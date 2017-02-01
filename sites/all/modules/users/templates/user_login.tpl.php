@@ -2,7 +2,7 @@
 $link = fboauth_action_link_properties('connect');
 $fbImage = '<img src="'. $GLOBALS['base_url'] . '/' . drupal_get_path('theme', $GLOBALS['theme']) . '/images/fb.png">';
 $fbAuthLink = l($fbImage, $link['href'], array('html' => true, 'query' => $link['query']));
-
+//var_dump($link);die;
 $form = drupal_get_form('user_login_block');
 ?><!--Landding page Css Here-->
 <style type="text/css">

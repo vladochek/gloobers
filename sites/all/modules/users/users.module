@@ -3410,8 +3410,8 @@ function user_profile_section()
 {
 
     global $user;
-    var_dump(get_profile_info($user->uid));
-    die;
+//    var_dump(get_profile_info($user->uid));
+//    die;
     /*if(!$user->uid){
         $dest = drupal_get_destination();
         $_SESSION['destination']  = $dest["destination"];
@@ -3468,12 +3468,12 @@ function user_profile_section()
 
 
     $Passeports = get_user_passport($uid);
-    var_dump($Passeports);
-    die;
+//    var_dump($Passeports);
+//    die;
     $user_passion = getUserPassionList($uid);
     $passeport_types = get_passeport_types();
     $passeportListDOM = theme('passeport_dom_file', array('passeports' => $Passeports, 'passeport_types' => $passeport_types));
-    linkedin_binding();
+//    linkedin_binding();
 //    gauth_account_authenticate('585851538970-gfe0ofncc6922n2u1na3lt1c46dt68g.apps.googleusercontent.com');
 //    var_dump(twitter_signin_button());die;
 //    gplus_sync_sing_on();

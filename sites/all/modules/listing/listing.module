@@ -149,6 +149,13 @@ function listing_menu()
         'type' => MENU_CALLBACK,
     );
 
+    $items['listing/reviews/ajax'] = array(
+        'page callback' => 'get_listing_reviews_ajax',
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK
+    );
+
     $items['ajax/create-recommendation'] = array(
         'page callback' => 'create_recommendation',
         'access arguments' => TRUE,
@@ -495,6 +502,11 @@ function listing_theme()
         ),
         'add_review' => array(
             'template' => 'add_review',
+            'path' => $module_path . '/templates',
+        ),
+
+        'single_page_reviews' => array(
+            'template' => 'single_page_reviews',
             'path' => $module_path . '/templates',
         ),
 
@@ -1013,15 +1025,15 @@ function search_listings($filter, $type, $uid, $homeSearch, $countriesArray, $da
 //    $query->join('gbl_experience_type', 'et', 'et.id = el.experience_type');
     $query->Join('gbl_scheduling_sessions', 'sh', 'el.eid = sh.listing_id');
 
-      if ($dateFrom) {
-          $query->condition('sh.startDate', $dateFrom, '<=');
-      }
-      if ($dateTo) {
-          $query->condition('sh.endRepeatDate', $dateTo, '>=');
-      }
-      if ($persons) {
-          $query->condition('sh.avalability_max', $persons, '>=');
-      }
+    if ($dateFrom) {
+        $query->condition('sh.startDate', $dateFrom, '<=');
+    }
+    if ($dateTo) {
+        $query->condition('sh.endRepeatDate', $dateTo, '>=');
+    }
+    if ($persons) {
+        $query->condition('sh.avalability_max', $persons, '>=');
+    }
 
     $query->condition('sh.endDate', date('Y-m-d'), '>=');
     $query->leftJoin('gbl_listing_packages', 'pk', 'pk.id = el.package_id');
@@ -3676,7 +3688,7 @@ function get_registered_fb_friends()
 {
     include_once(drupal_get_path('module', 'fboauth') . '/includes/fboauth.fboauth.inc');
     $friendsIds = [];
-    if($access_token = $_SESSION['fboauth']['access_token']) {
+    if ($access_token = $_SESSION['fboauth']['access_token']) {
         $friends = fboauth_graph_query('me/friends', $access_token);
         foreach ($friends->data as $friend) {
             $friendsIds[] = $friend->id;
@@ -3684,7 +3696,6 @@ function get_registered_fb_friends()
     }
     return $friendsIds;
 }
-
 
 
 //search by advisors
@@ -3776,7 +3787,7 @@ function get_advisors_by_recommendations($city, $state, $country, $address, $use
     if ($mutualInterests) {
         $query->innerJoin('gbl_users_passions', 'psn', 'psn.uid = rec.advisor_id');
         $query->innerJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
-    }else {
+    } else {
         $query->leftJoin('gbl_users_passions', 'psn', 'psn.uid = rec.advisor_id');
         $query->leftJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
     }
@@ -3795,7 +3806,7 @@ function get_advisors_by_recommendations($city, $state, $country, $address, $use
     $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
     $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rec.advisor_id');
     $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
-    if($rating !== null){
+    if ($rating !== null) {
         $query->havingCondition('overall_advisor_rating', $rating, '>=');
     }
     $query->addExpression('COUNT(DISTINCT psn_cu.id)', 'mutual');
@@ -3832,7 +3843,7 @@ function get_advisors_by_reviews($city, $state, $country, $address, $userId, $pa
     if ($mutualInterests) {
         $query->innerJoin('gbl_users_passions', 'psn_ad', 'psn_ad.uid = rev.uid');
         $query->innerJoin('gbl_users_passions', 'psn_cu', 'psn_ad.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
-    }else {
+    } else {
         $query->leftJoin('gbl_users_passions', 'psn', 'psn.uid = rev.uid');
         $query->leftJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
     }
@@ -3848,7 +3859,7 @@ function get_advisors_by_reviews($city, $state, $country, $address, $userId, $pa
     $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
     $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rev.uid');
     $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
-    if($rating !== null){
+    if ($rating !== null) {
         $query->havingCondition('overall_advisor_rating', $rating, '>=');
     }
     $query->addExpression('COUNT(DISTINCT psn_cu.id)', 'mutual');
@@ -3999,12 +4010,16 @@ function get_recommendations($limit = 3, $offset = 0)
     $query->innerJoin('users', 'u', 'b.advisor_id = u.uid');
     $query->innerJoin('gbl_experience_list', 'el', 'b.lid = el.eid');
     $query->leftJoin('gbl_experience_type', 'et', 'el.experience_type = et.id');
+
+    $query->leftJoin('gbl_recommendations', 'rec', 'rec.experience_id = el.eid');
+
     $query->leftJoin('gbl_listing_reviews', 'lr', 'el.eid = lr.listing_id');
     $query->fields('b', ['lid']);
     $query->fields('et', ['experience_type']);
     $query->fields('el', ['eid', 'title', 'base_price', 'address1']);
     $query->fields('u', ['uid']);
-    $query->addExpression('COUNT(lr.listing_id)', 'reviews_count');
+    $query->addExpression('COUNT(DISTINCT lr.listing_id)', 'reviews_count');
+    $query->addExpression('COUNT(DISTINCT rec.experience_id)', 'recommendations_count');
     $query->orderBy('el.agg_rating', 'DESC');
     $query->condition('b.uid', '0', '<>');
     $query->condition('b.advisor_id', '0', '<>');
@@ -4017,7 +4032,12 @@ function get_recommendations($limit = 3, $offset = 0)
 
 function get_last_followed_recommendations()
 {
-    return get_recommendations(3, 0);
+    return get_recommendations(3);
+}
+
+function get_last_followed_recommendations_single_page()
+{
+    return get_recommendations(2);
 }
 
 function get_listing_photos($recommendation)
@@ -4070,36 +4090,44 @@ function get_user_photo($recommendation)
 
 function listing_details($listingId)
 {
-//    $rec = db_select('gbl_recommendations', 'r')
-//        ->fields('r', ['id', 'experience_id'])
-//
-//->range();
-
     $query = db_select('gbl_experience_list', 'el');
     $query->leftJoin('users', 'author', 'el.uid = author.uid');
+    $query->leftJoin('fboauth_users', 'fb', 'author.uid = fb.uid');
     $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
     $query->innerJoin('gbl_experience_list', 'uel', 'uel.uid = author.uid');
     $query->leftJoin('gbl_users_meta', 'author_meta', 'author.uid = author_meta.uid');
     $query->leftJoin('gbl_listing_reviews', 'rev', 'el.eid = rev.listing_id');
-//    $query->leftJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
-    $query->fields('el', ['eid', 'title', 'brief_description', 'address1', 'state', 'country', 'latitude', 'longitude', 'base_price']);
-    $query->fields('author_meta', ['first_name', 'last_name', 'company', 'occupation', 'language']);
+    $query->leftJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
+    $query->leftJoin('gbl_user_passeport', 'pas', 'author.uid = pas.uid');
+
+    $query->fields('el', ['eid', 'title', 'brief_description', 'address1', 'state', 'country', 'latitude', 'longitude', 'base_price', 'city']);
+    $query->fields('author_meta', ['first_name', 'last_name', 'company', 'occupation', 'language', 'about_yourself', 'mail']);
     $query->fields('author', ['uid']);
+    $query->fields('pas', ['city']);
+    $query->fields('fb', ['fbid']);
     $query->addExpression('fm.filename', 'author_pic');
-    $query->addExpression('(SUM(DISTINCT rev.communication)+SUM(DISTINCT rev.safety)+SUM(DISTINCT rev.professional)+SUM(DISTINCT rev.money))/(COUNT(DISTINCT rev.id)*4)', 'overall_listing_rating');
 
+    $query->addExpression('ROUND(SUM(DISTINCT rev.communication)+SUM(DISTINCT rev.safety)+SUM(DISTINCT rev.professional)+SUM(DISTINCT rev.money))/(COUNT(DISTINCT rev.id)*4)', 'overall_listing_rating');
+    $query->addExpression('ROUND(SUM(DISTINCT rev.communication)/COUNT(DISTINCT rev.communication))', 'overall_communication');
+    $query->addExpression('ROUND(SUM(DISTINCT rev.safety)/COUNT(DISTINCT rev.safety))', 'overall_safety');
+    $query->addExpression('ROUND(SUM(DISTINCT rev.professional)/COUNT(DISTINCT rev.professional))', 'overall_professional');
+    $query->addExpression('ROUND(SUM(DISTINCT rev.money)/COUNT(DISTINCT rev.money))', 'overall_money');
+//    $query->addExpression('COUNT(DISTINCT rev.id)', 'reviews_count');
+    $query->addExpression('COUNT(DISTINCT rec.id)', 'recommendations_count');
+    $query->addExpression('COUNT(DISTINCT uel.eid)', 'count_of_authors_listings');
 
-    $query->addExpression('COUNT(DISTINCT uel.eid)', 'count_authors_of_listings');
     $query->condition('el.eid', $listingId, '=');
-    $query->groupBy('el.eid');
+    $query->condition('pas.passport_trip_type_id', 1, '=');
+//    $query->groupBy('el.eid');
 
     $result = $query->execute();
 //        echo $result->queryString;die;
     return $result->fetchAssoc();
 }
 
-function latest_recommendations_by_listing($listingId, $userId, $fb = 0, $mutual = 0, $local = 0)
+function last_recommendation($listingId, $userId)//, $limit = 5, $offset = 0
 {
+    $fbFriends = implode(',', get_registered_fb_friends());
     $query = db_select('gbl_recommendations', 'rec');
     $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
     $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
@@ -4107,36 +4135,54 @@ function latest_recommendations_by_listing($listingId, $userId, $fb = 0, $mutual
     $query->leftJoin('gbl_passions_to_experience', 'pte', 'rec.experience_id = pte.experience_id');
     $query->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
     $query->leftJoin('gbl_trip_types_to_experience', 'tte', 'rec.experience_id = tte.experience_id');
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rec.advisor_id');
     $query->leftJoin('gbl_advisor_trip_type', 'tt', 'tte.trip_type_id = tt.trip_id');
 
-    if ($local) {
-        $query->innerJoin('gbl_user_passeport', 'pass', 'advisor.uid = pass.uid AND pass.passport_trip_type_id = 1');
-        $query->innerJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1 AND pass_cu.country = pass.country');
-        $query->condition('pass_cu.uid', $userId, '=');
-    }
-    if ($mutual) {
-//        var_dump($userId);die;
-        $query->innerJoin('gbl_users_passions', 'psn', 'psn.uid = rec.advisor_id');
-        $query->innerJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
-    }
-    if ($fb) {
-        $fbFriends = get_registered_fb_friends();
-//        var_dump($fbFriends);die;
-        $query->innerJoin('fboauth_users', 'fbu', 'rec.advisor_id = fbu.uid');
-        $query->condition('fbu.fbid', $fbFriends, 'IN');
+    $query->leftJoin('gbl_user_passeport', 'pass', 'advisor.uid = pass.uid AND pass.passport_trip_type_id = 1');
+    $query->leftJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1 AND pass_cu.country = pass.country AND pass_cu.uid = ' . $userId);
+    $query->addExpression('pass_cu.passeport_id', 'local');
+
+    $query->leftJoin('gbl_users_passions', 'psn', 'psn.uid = rec.advisor_id');
+    $query->leftJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
+    $query->addExpression('psn_cu.pid', 'mutual');
+
+//$fbFriends = '159056944584014';
+    if ($fbFriends) {
+        $query->leftJoin('fboauth_users', 'fbu', 'rec.advisor_id = fbu.uid AND fbu.fbid IN (' . $fbFriends . ')');
+        $query->addExpression('fbu.fbid', 'fbfriend');
     }
 
     $query->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
     $query->addExpression('GROUP_CONCAT(DISTINCT tt.trip_type SEPARATOR \', \')', 'trip_types');
+    $query->addExpression('ROUND(SUM(rat.rating)/COUNT(rat.advisor_rating_id))', 'advisor_rating');
+    $query->addExpression('COUNT(DISTINCT rat.advisor_rating_id)', 'advisor_rating_count');
 
-    $query->fields('rec', ['id', 'experience_id']);
+    $query->fields('rec', ['id', 'experience_id', 'comment']);
     $query->fields('advisor', ['uid']);
-    $query->fields('advisor_meta', ['first_name', 'last_name', 'company', 'occupation']);
+    $query->fields('advisor_meta', ['first_name', 'last_name', 'company', 'occupation', 'city']);
     $query->addExpression('fm.filename', 'advisor_pic');
     $query->condition('rec.experience_id', $listingId, '=');
     $query->orderBy('rec.created', 'DESC');
     $query->groupBy('rec.id');
-    $query->range(0, 5);
+//    $query->range($offset, $limit);
+
+    $result = $query->execute();
+//    echo $result->queryString;die;
+    return $result->fetchAssoc();
+}
+
+function latest_recommendations_by_listing($listingId)//, $limit = 5, $offset = 0
+{
+    $query = db_select('gbl_recommendations', 'rec');
+    $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
+    $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
+    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->fields('advisor', ['uid']);
+    $query->addExpression('fm.filename', 'advisor_pic');
+    $query->condition('rec.experience_id', $listingId, '=');
+    $query->orderBy('rec.created', 'DESC');
+    $query->groupBy('rec.id');
+//    $query->range($offset, $limit);
 
     $result = $query->execute();
 //    echo $result->queryString;die;
@@ -4151,13 +4197,34 @@ function listing_reviews($listingId, $offset = 0, $limit = 3)
     $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
     $query->addExpression('fm.filename', 'author_pic');
     $query->fields('rev', ['id', 'comments', 'created', 'communication', 'safety', 'professional', 'money']);
-    $query->addExpression('(communication + safety + professional + money)/4', 'overall_rating');
+    $query->addExpression('ROUND((rev.communication + rev.safety + rev.professional + rev.money)/4)', 'overall_rating');
+
+    $query->leftJoin('gbl_listing_reviews', 'lr', 'lr.listing_id = ' . $listingId);
+    $query->addExpression('COUNT(DISTINCT lr.id)', 'reviews_count');
+
     $query->fields('author_meta', ['first_name', 'last_name', 'occupation', 'uid']);
     $query->condition('rev.listing_id', $listingId, '=');
     $query->groupBy('rev.id');
     $query->range($offset, $limit);
     $result = $query->execute();
     return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function get_listing_reviews_ajax()
+{
+    $page = filter_input(INPUT_POST, 'page', FILTER_VALIDATE_INT);
+    $pageValidated = $page ? $page : 1;
+    $countPerPage = 1;
+    $offset = ($pageValidated - 1) * $countPerPage;
+    $lid = filter_input(INPUT_POST, 'listing_id', FILTER_VALIDATE_INT);
+    if ($lid && is_int($offset)) {
+        $reviews = listing_reviews($lid, $offset, $countPerPage);
+//        var_dump($reviews);die;
+        echo theme('single_page_reviews', array(
+                'reviews' => $reviews
+            )
+        );
+    }
 }
 
 function listing_review_passsions_ratings($listingId, $offset = 0, $limit = 3)
@@ -4167,7 +4234,7 @@ function listing_review_passsions_ratings($listingId, $offset = 0, $limit = 3)
     $query->leftJoin('gbl_passions_to_review', 'ptr', 'ptr.passion_id = p.pid');
     $query->leftJoin('gbl_listing_reviews', 'rev', 'ptr.review_id = rev.id and rev.listing_id = ' . $listingId);
     $query->leftJoin('gbl_listing_reviews', 'revc', 'revc.listing_id = ' . $listingId);
-    $query->addExpression('(((100/count(DISTINCT p.pid))*count(DISTINCT ptr.passion_id))/(count(DISTINCT revc.id)))', 'percentage');
+    $query->addExpression('ROUND(((100/count(DISTINCT p.pid))*count(DISTINCT ptr.passion_id))/(count(DISTINCT revc.id)))', 'percentage');
     $query->fields('pc', ['pcid', 'passion_category']);
     $query->fields('ptr', ['review_id']);
     $query->fields('rev', ['created']);
@@ -4179,30 +4246,33 @@ function listing_review_passsions_ratings($listingId, $offset = 0, $limit = 3)
     return $result->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function overall_listing_info($listingId, $userId)
+{
+    $result = [];
+    $result['listing_details'] = listing_details($listingId);
+    $result['recommendations'] = latest_recommendations_by_listing($listingId, $userId);
+    $result['last_recommendation'] = last_recommendation($listingId, $userId);
+    $result['listing_reviews'] = listing_reviews($listingId);
+    $result['passions_ratings'] = listing_review_passsions_ratings($listingId);
+    $result['last_followed_recommendations'] = get_last_followed_recommendations_single_page();
+    return $result;
+}
+
 function experience_listing_details()
 {
-//    $response = drupal_http_request('http://testaif2.interface-xml.com/aif2-pub-ws/files/full', [
-//        'headers' =>
-//            ['X-Username'=>'zingeon1', 'X-Password'=>'08111992a', 'Api-Key'=>'4ja8v9ry4f59zdvmx37krr3y'
-//            ]]);
-//    var_dump($response);die;
     session_start();
-    global $user;
+    global $user, $base_path;
     $listId = arg(1);
     $reviewRatings = listing_review_passsions_ratings($listId);
-//    var_dump(unserialize('a:3:{i:0;s:8:" English";i:1;s:9:" Español";i:2;s:10:" Français";}'));die;
-    var_dump(listing_details($listId));die;//, $user->uid, 0, 0, 1
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit') !== false) {
-
-
-    } else {
-        if ((!$user->uid)) {
-            $dest = drupal_get_destination();
-            $_SESSION['destination'] = $dest["destination"];
-            drupal_goto('login', $dest);
-        }
+//    var_dump($user->uid);die;
+//    $listingInfo = overall_listing_info($listId, $user->uid);
+//    $listingInfo['avg_overall_rating'] = round(array_sum(array_column($listingInfo['listing_reviews'], 'overall_rating')) / count($listingInfo['listing_reviews']));
+//    var_dump($listingInfo);die;//, $user->uid, 0, 0, 1
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'facebookexternalhit') === false && !$user->uid) {
+        $dest = drupal_get_destination();
+        $_SESSION['destination'] = $dest["destination"];
+        drupal_goto('login', $dest);
     }
-
 
     if ($_GET['ruid']) {
 
@@ -4213,119 +4283,46 @@ function experience_listing_details()
             $_SESSION['rruid'] = $recommendUidendoded;
         }
     }
-
     if (isset($_REQUEST['advisorId'])) {
-
         $advisorId = base64_decode($_REQUEST['advisorId']);
         $_SESSION['order']['advisor_id'] = $advisorId;
     }
-    $offerUriType = (isset($_REQUEST['offer'])) ? base64_decode($_REQUEST['offer']) : null;
 
-    $pricingData = getPricingData($listId);
-
-
-    if (is_numeric($listId) == false) {
-        drupal_not_found();
-    }
     $OverviewData = getOverviewData($listId);
-    if (is_array($OverviewData) && !empty($OverviewData) && isset($OverviewData)) {
-        $reviews = getListingReviews($listId);
-        $SuperAverage = getListingReviewsSuperAverage($listId);
-        $SuperAverage1 = getListingReviewsSuperAverage($listId);
-        $reviewsCount = getListingReviewsCount($listId);
-        $reviewsAverage = getListingReviewsAverage($listId);
-        $photos = getPhotosData($listId);
-        //echo "<pre>";Print_r($photos);exit;
-        $userReviewsCount = getUserReviewsCount($OverviewData["uid"]);
-        $amentiesdata = getAmentiesByproduct($listId);
-        $amentiesdata = unserialize($amentiesdata["value1"]);
-        $locationDetail = getListingData($listId);
-        $pricingData = getPricingData($listId);
-        $basePrice = getBasePrice($listId);
-        $calendarDetail = getSchedulingData($listId);
-        $scheduleSessionData = getScheduleSessionData($listId);
-        $extras = getProductExtraData($listId);
-        $rulesDetail = getRulesDetails($listId);
-
-        $rulesDetail = unserialize($rulesDetail["value1"]);
-        //echo "<pre>";Print_r($rulesDetail);exit;
-        $nearPlaces = findNearByPlaces($OverviewData);
-        $topRankedListing = getTopRankedExperienceListing($listId);
-        $topListingAccToPlace = getListingAccToPlace($listId);
-        $topRankedListingCount = getTopRankedExperienceListingCount();
-        $experienceType = getExperienceListingTypeById($OverviewData['experience_type']);
+//    if (is_array($OverviewData) && !empty($OverviewData) && isset($OverviewData)) {
+    $listingInfo = overall_listing_info($listId, $user->uid);
 
 
-        if (isset($_SESSION['order'])) {
-            if ($_SESSION['order']['eid'] != $listId) {
+    $listingInfo['last_user_trip_types'] = explode(', ', $listingInfo['last_recommendation']['trip_types']);
+    $listingInfo['last_user_passions'] = explode(', ', $listingInfo['last_recommendation']['passions']);
+    $listingInfo['avg_overall_rating'] = round(array_sum(array_column($listingInfo['listing_reviews'], 'overall_rating')) / count($listingInfo['listing_reviews']));
+    $recLink = url(current_path(), array('absolute' => TRUE, 'query' => ['ruid' => base64_encode($user->uid)]));
 
-                unset($_SESSION['order']);
-                // unset($_SESSION['credit_message']);
-            }
-        }
+    //        echo $listingInfo['avg_overall_rating'];die;
+    $output = '';
+//    $api = new Hotelbeds;
+//    $list = $api->hotelbeds_get_hotels_facility_groups()->facilities;
+//    foreach($list as $gr){
+//echo $gr->description->content.'</br>';
+//    }die;
+//    var_dump($listingInfo);die;
+//    $listing = pager_array_splice($listingInfo['listing_reviews'], 1);
+//    $output .= theme('pager', array('quantity' => 1));
+//    echo url(NULL, array('absolute' => TRUE)).current_path();die;
+    return theme('experience_listing_details', array(
+            'listingInfo' => $listingInfo,
+            'user' => $user,
+            'recLink' => $recLink
+//            'pagination'=>$output
+        )
+    );
 
-        /* ======================Setting up session cart for order================================== */
-        $_SESSION['order']['title'] = isset($OverviewData['title']) ? $OverviewData['title'] : '';
-        $_SESSION['order']['eid'] = isset($OverviewData['eid']) ? $OverviewData['eid'] : '';
-        $_SESSION['order']['listing_type'] = isset($OverviewData['title']) ? $OverviewData['title'] : '';
-        $_SESSION['order']['city'] = $OverviewData['city'];
-        $_SESSION['order']['country'] = $OverviewData['country'];
-        $_SESSION['order']['deposit'] = isset($rulesDetail['security_deposit']) ? $rulesDetail['security_deposit'] : '';
-
-        $photo = unserialize($photos[0]['value1']);
-        $file = file_load($photo["fid"]);
-        $_SESSION['order']['imagepath'] = $file->uri;
-
-        $experienceType = getExperienceListingTypeById($topRankedListing[0]['experience_type']);
-        $_SESSION['order']['experience_type'] = $experienceType['experience_type'];
-
-        //select offer type and set into session
-        $offerUriType = ($offerUriType) ? $offerUriType : 'N/A';
-        $offers = getOffersAndDiscountsData($listId, $offerUriType);
-        $availOfferList = array();
-        foreach ($offers as $offerList) {
-            $amount = 0;
-            if ($offerUriType == '24 Hour Offer') {
-                $amountArr = unserialize($offerList['amount']);
-                $amount = $amountArr['offer_24_hour_price_value'];
-            } else {
-                $amount = $offerList['amount'];
-            }
-
-            $availOfferList['offer_type'] = $offerList['offer_type'];
-            $availOfferList['discount_by'] = $offerList['discount_by'];
-            $availOfferList['date'] = $offerList['date'];
-            $availOfferList['amout'] = $amount;
-            $availOfferList['time_value'] = $offerList['time_value'];
-            $availOfferList['time_key'] = $offerList['time_key'];
-        }
-        $_SESSION['order']['availOfferList'] = $availOfferList;
-
-        // echo  $_SESSION['rruid'];exit;
-
-        /* ===========================End of OrderCart Session var====================================== */
-        return theme('experience_listing_details', array(
-                'reviewRatings' => $reviewRatings,
-                'photos' => $photos,
-                'OverviewData' => $OverviewData,
-                'rulesDetail' => $rulesDetail,
-                'reviews' => $reviews,
-                'calendarDetail' => $calendarDetail,
-                'amentiesdata' => $amentiesdata,
-                'pricingData' => $pricingData,
-                'topRankedListing' => $topRankedListing,
-                'topRankedListingCount' => $topRankedListingCount,
-                'topListingAccToPlace' => $topListingAccToPlace,
-                'scheduleSessionData' => $scheduleSessionData,
-                'orderPriceDOM' => '',
-                'extras' => $extras)
-        );
-
-    } else {
-        drupal_not_found();
-    }
+//    } else {
+//        drupal_not_found();
+//    }
 
 }
+
 
 /*
  * @description: Order sumary details for all items like adult , child etc

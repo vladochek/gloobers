@@ -63,7 +63,7 @@
                         jQuery('.cover_img').find('.cropme').find('img').after('<div class="profile_text"> <img alt="image" src="http://staging.gloobers.net/sites/all/themes/gloobers_new/images/cover.png"> <br>Change the cover picture</div>');
                     }                  
 					jQuery.ajax({
-						url: $baseUrl + '/ajax/user/update_Dp',
+						url: '/ajax/user/update_Dp',
 						type: 'post',
 						data: {profile_pic:Dp,cover_pic:Cp},
 						beforSend:function(){
