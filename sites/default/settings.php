@@ -571,10 +571,10 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
 //$conf['hotel_secret_key'] = 'puUJZPazyh';
 
 //zing account
-$conf['activities_api_key'] = '3fuyx82hu2cxgyaz74kmgqdf';
-$conf['activities_secret_key'] = 'yhFQpN6a7Z';
-$conf['hotel_api_key'] = 'x37dc798rxs3m2z2zje9z4dd';
-$conf['hotel_secret_key'] = 'UDpjqa2kFP';
+//$conf['activities_api_key'] = '3fuyx82hu2cxgyaz74kmgqdf';
+//$conf['activities_secret_key'] = 'yhFQpN6a7Z';
+//$conf['hotel_api_key'] = 'x37dc798rxs3m2z2zje9z4dd';
+//$conf['hotel_secret_key'] = 'UDpjqa2kFP';
 
 //zingeon account
 //$conf['activities_api_key'] = 'gsj8gbjpmq7dy2xdr3q28pqa';
@@ -595,10 +595,10 @@ $conf['hotel_secret_key'] = 'UDpjqa2kFP';
 //$conf['hotel_secret_key'] = 'jfsv72GE5C';
 
 //zingeon3 account
-//$conf['activities_api_key'] = '4dee7jk6zyfxj7mha8zxpy8n';
-//$conf['activities_secret_key'] = 'QSHnGwX82k';
-//$conf['hotel_api_key'] = 'fkxjmqjh85mggxxsavyf8aje';
-//$conf['hotel_secret_key'] = 'wYEvvk8A7M';
+$conf['activities_api_key'] = '4dee7jk6zyfxj7mha8zxpy8n';
+$conf['activities_secret_key'] = 'QSHnGwX82k';
+$conf['hotel_api_key'] = 'fkxjmqjh85mggxxsavyf8aje';
+$conf['hotel_secret_key'] = 'wYEvvk8A7M';
 
 //zingeon4 account
 //$conf['activities_api_key'] = 'drwzyt2pqhm9f8cah4ubyqtq';
@@ -617,6 +617,12 @@ $conf['hotel_secret_key'] = 'UDpjqa2kFP';
 //$conf['activities_secret_key'] = '35ZXQchRgg';
 //$conf['hotel_api_key'] = 'h2dvufpwtuha33eydc24pkbs';
 //$conf['hotel_secret_key'] = 'WD3Xp9XZ3m';
+
+//zingeon7 account
+//$conf['activities_api_key'] = 'a22nazt4grknje44gbq2ftrf';
+//$conf['activities_secret_key'] = 'zPr9Pf47R6';
+//$conf['hotel_api_key'] = 'nnxbxm6qjx8urszatcfhfv5r';
+//$conf['hotel_secret_key'] = 'pqkmydQSGP';
 
 //$conf['fb_old_app_id'] = '1587171044923678';
 //$conf['fb_old_secret'] = '502e74bc468f8ab3604fb51dae243e2e';

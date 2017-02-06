@@ -5073,3 +5073,8 @@ fieldset[disabled] .btn {
 .footer-nav li a {
   color: #fff;
 }
+
+.like-a-link {
+  cursor: pointer;
+  cursor: hand;
+}

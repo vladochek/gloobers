@@ -6,15 +6,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gloobers</title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en" async defer></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|PT+Sans:400,700" rel="stylesheet">
+    <?php
+//    drupal_add_js('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|PT+Sans:400,700', 'external');
+    drupal_add_js('https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', 'external');
+    drupal_add_js('https://use.fontawesome.com/36fe5b07c5.js', 'external');
+    ?>
 </head>
 <body  >
 <div class="wrapper">
     <header class="header">
         <div class="container">
             <div class="header-holder">
-                <a href="#" class="logo"><img src="<?= drupal_get_path('theme', 'new_design') . '/images/logo.png' ?>"
-                                              alt="Gloobers" height="59" width="160"></a>
+                <a href="#" class="logo">
+                    <img src="<?= drupal_get_path('theme', 'new_design') . '/images/logo.png' ?>" alt="Gloobers" height="59" width="160">
+                </a>
                 <nav class="nav">
                     <ul class="main-nav">
                         <li><a href="#">About <i class="gl-ico gl-ico-arrow-down"></i></a></li>
@@ -69,8 +76,8 @@
                                         <div class="person-num-holder">
                                             <div class="person-row">
                                                 <div class="operation-btns pull-right">
-                                                    <span id="adult-minus" class="btns-col"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
-                                                    <span id="adult-plus" class="btns-col"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
+                                                    <span id="adult-minus" class="like-a-link btns-col"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
+                                                    <span id="adult-plus" class="like-a-link btns-col"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
                                                 </div>
                                                 <div class="text-h">
                                                     <strong><span id="adult-cnt">2</span>Adult</strong>
@@ -78,8 +85,8 @@
                                             </div>
                                             <div class="person-row">
                                                 <div class="operation-btns pull-right">
-                                                    <span class="btns-col" id="children-minus"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
-                                                    <span class="btns-col" id="children-plus"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
+                                                    <span class="like-a-link dragging btns-col" id="children-minus"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
+                                                    <span class="like-a-link btns-col" id="children-plus"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
                                                 </div>
                                                 <div class="text-h">
                                                     <strong class=""><span id="children-cnt">1</span>Childrens</strong>
@@ -128,8 +135,8 @@
                                         <div class="person-num-holder">
                                             <div class="person-row">
                                                 <div class="operation-btns pull-right">
-                                                    <span id="persons-minus" class="btns-col"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
-                                                    <span id="persons-plus" class="btns-col"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
+                                                    <span id="persons-minus" class="like-a-link btns-col"><span class="btn-sub"><i class="gl-ico gl-ico-minus"></i></span></span>
+                                                    <span id="persons-plus" class="like-a-link btns-col"><span class="btn-add"><i class="gl-ico gl-ico-plus"></i></span></span>
                                                 </div>
                                                 <div class="text-h">
                                                     <strong><span class="persons-cnt">2</span>Adult</strong>
@@ -695,12 +702,10 @@
         </div>
     </footer>
 </div>
-<!--<script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en" async defer></script>-->
-<?php
+<!--<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|PT+Sans:400,700" rel="stylesheet">-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
 
-drupal_add_js('https://use.fontawesome.com/36fe5b07c5.js', 'external');
-?>
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+
 <!--<script src="js/custom-file-input.js"></script>-->
 <!--<script src="js/jquery.fancybox.pack.js"></script>-->
 <!---->

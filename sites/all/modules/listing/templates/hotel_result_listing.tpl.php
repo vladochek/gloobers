@@ -302,7 +302,7 @@
 
                         <div class="col-md-4 col-sm-4 col-xs-12 travelcol">
                             <div class="travellist">
-                                <a href="#">   <img src="http://photos.hotelbeds.com/giata/<?= $value->images[2]->path ?>" alt="" title="" />
+                                <a href="<?= url('hotel/'.$value->code, array('absolute' => TRUE, 'query' => $searchParams)); ?>">   <img src="http://photos.hotelbeds.com/giata/<?= $value->images[2]->path ?>" alt="" title="" />
                                 </a>
                                 <div class="travellistdetail">
                                     <div class="listicon"><i class="fa fa-align-justify"></i></div>
@@ -319,7 +319,7 @@
                                     <!-- End ListView -->
                                 </div>
                                 <div class="travel-bbl-icon2" >
-                                    <b><?= $value->minRate.' '.$value->currency ?></b>
+                                    <b><?= $value->bookingInfo->minRate.' '.$value->bookingInfo->currency ?></b>
                                     <small>Per Period</small>
                                 </div>
 

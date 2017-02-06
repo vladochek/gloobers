@@ -3704,28 +3704,30 @@ function search_advisor_results()
 {
     global $user;
     $filter = array();
-    $input = drupal_get_query_parameters();
-    $destination = $input['destination'];
-    $persons = $input['persons'];
 
-    $daterange = $input['daterange'];
-    $city = $input['city'];
-    $state = $input['state'];
-    $country = $input['country'];
-    $address = $input['address'];
-    $mutualInterests = $input['mutual-interests'];
-    $local = $input['local'];
-    $fb = $input['fb'];
-    $rating = $input['rating'];
+    $destination = filter_input(INPUT_GET, 'destination');
+    $persons = filter_input(INPUT_GET, 'persons');
 
-    $passportTypes = explode(',', $input['passport-types']);
-    $passions = $input['passions'] ? $input['passions'] : [];
+    $daterange = filter_input(INPUT_GET, 'daterange');
+    $city = filter_input(INPUT_GET, 'city');
+    $state = filter_input(INPUT_GET, 'state');
+    $country = filter_input(INPUT_GET, 'country');
+    $address = filter_input(INPUT_GET, 'address');
+    $mutualInterests = filter_input(INPUT_GET, 'mutual-interests');
+    $local = filter_input(INPUT_GET, 'local');
+    $fb = filter_input(INPUT_GET, 'fb');
+    $rating = filter_input(INPUT_GET, 'rating');
+    $records = filter_input(INPUT_GET, 'records');
+
+    $passportTypes = explode(',', filter_input(INPUT_GET, 'passport-types'));
+    $passions = filter_input(INPUT_GET, 'passions') ? filter_input(INPUT_GET, 'passions') : [];
     $passionsList = explode(',', $passions);
-    if (!count($passportTypes) || !$input['passport-types']) {
+    if (!count($passportTypes) || !$passportTypes) {
         $passportTypes[] = 1;
     }
-    $searchType = isset($input['search_type']) && ($input['search_type'] == 'recommendation' || $input['search_type'] == 'review')
-        ? $input['search_type'] : 'recommendation';
+    $searchType = filter_input(INPUT_GET, 'search_type');
+    $searchType = $searchType && ($searchType == 'recommendation' || $searchType == 'review')
+        ? $searchType : 'recommendation';
 
     $dates = isset($daterange) ? explode(' - ', $daterange) : '';
     $dateFromSegments = explode('/', $dates[0]);
@@ -3745,8 +3747,8 @@ function search_advisor_results()
 //    $filter['long'] = $long;
 //    var_dump(drupal_get_destination());die;
     $advisors = $searchType == 'recommendation'
-        ? get_advisors_by_recommendations($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating)
-        : get_advisors_by_reviews($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating);
+        ? get_advisors_by_recommendations($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records)
+        : get_advisors_by_reviews($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records);
     var_dump($advisors);
     die;
 //    if ($output->results[0]->address_components) {
@@ -3760,17 +3762,26 @@ function search_advisor_results()
 
 }
 
-function get_advisors_by_recommendations($city, $state, $country, $address, $userId, $passportTypes, $passions = [], $mutualInterests = 0, $local = 0, $fb = 0, $rating = null)
+function get_advisors_by_recommendations(
+    $city, $state, $country, $address, $userId, $passportTypes, $passions = [],
+    $mutualInterests = 0, $local = 0, $fb = 0, $rating = null, $records)
 {
 //    echo $userId;die;
     $query = db_select('gbl_recommendations', 'rec');
     $passportCond = '';
     if ($local) {
-        $passportCond = ' AND pass_cu.country = pass.country AND pass.passport_trip_type_id = 1';
-        $query->innerJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1');
-        $query->condition('pass_cu.uid', $userId, '=');
+        $passportCond = ' AND pass.passport_trip_type_id = 1';
     }
     $query->leftJoin('gbl_user_passeport', 'pass', 'rec.advisor_id = pass.uid' . $passportCond);
+    if ($local) {
+        $query->innerJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1 AND pass_cu.country = pass.country');
+        $query->condition('pass_cu.uid', $userId, '=');
+    }else{
+        $query->leftJoin('gbl_user_passeport', 'pass_check_loc', 'pass_check_loc.passeport_id = pass.passeport_id AND pass_check_loc.passport_trip_type_id = 1');
+        $query->leftJoin('gbl_user_passeport', 'pass_cu',
+            'pass_check_loc.country = pass_cu.country AND pass_cu.passport_trip_type_id = 1 AND pass_cu.uid = '.$userId);
+    }
+
     if ($city !== 'false') {
         $query->condition(db_or()->condition('pass.city', "%$city%", 'like'));
     }
@@ -3792,12 +3803,13 @@ function get_advisors_by_recommendations($city, $state, $country, $address, $use
         $query->leftJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
     }
 
+    $fbFriends = get_registered_fb_friends();
     if ($fb) {
-
-        $fbFriends = get_registered_fb_friends();
 //        var_dump($fbFriends);die;
         $query->innerJoin('fboauth_users', 'fbu', 'rec.advisor_id = fbu.uid');
         $query->condition('fbu.fbid', $fbFriends, 'IN');
+    }else{
+        $query->leftJoin('fboauth_users', 'fbu', 'rec.advisor_id = fbu.uid AND fbu.fbid IN('.implode(',', $fbFriends).')');
     }
     $query->condition('pass.country', "%$country%", 'like');
     $query->condition('pass.passport_trip_type_id', $passportTypes, 'IN');
@@ -3806,10 +3818,30 @@ function get_advisors_by_recommendations($city, $state, $country, $address, $use
     $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
     $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rec.advisor_id');
     $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
+    $query->addExpression('COUNT(DISTINCT rec.id)', 'rec_count');
+    $query->addExpression('pass_cu.passeport_id', 'is_local');
+    switch ($records) {
+        case '10':
+            $query->havingCondition('rec_count', [1, 10], 'BETWEEN');
+            break;
+        case '20':
+            $query->havingCondition('rec_count', [11, 20], 'BETWEEN');
+            break;
+        case '50':
+            $query->havingCondition('rec_count', [21, 50], 'BETWEEN');
+            break;
+        case '100':
+            $query->havingCondition('rec_count', [51, 100], 'BETWEEN');
+            break;
+        default:
+            $query->havingCondition('rec_count', [1, 10], 'BETWEEN');
+            break;
+    }
     if ($rating !== null) {
         $query->havingCondition('overall_advisor_rating', $rating, '>=');
     }
-    $query->addExpression('COUNT(DISTINCT psn_cu.id)', 'mutual');
+    $query->addExpression('psn_cu.id', 'is_mutual');
+    $query->addExpression('fbu.uid', 'is_fb_friend');
     $query->fields('pass');
     $query->fields('advisor');
     $query->groupBy('rec.advisor_id');
@@ -3817,16 +3849,26 @@ function get_advisors_by_recommendations($city, $state, $country, $address, $use
     return $result ? $result : [];
 }
 
-function get_advisors_by_reviews($city, $state, $country, $address, $userId, $passportTypes, $passions = [], $mutualInterests = 0, $local = 0, $fb = 0, $rating = null)
+function get_advisors_by_reviews(
+    $city, $state, $country, $address, $userId, $passportTypes, $passions = [],
+    $mutualInterests = 0, $local = 0, $fb = 0, $rating = null, $records)
 {
     $query = db_select('gbl_listing_reviews', 'rev');
     $passportCond = '';
     if ($local) {
-        $passportCond = ' AND pass_cu.country = pass.country AND pass.passport_trip_type_id = 1';
-        $query->innerJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1');
-        $query->condition('pass_cu.uid', $userId, '=');
+        $passportCond = ' AND pass.passport_trip_type_id = 1';
     }
     $query->leftJoin('gbl_user_passeport', 'pass', 'rev.uid = pass.uid' . $passportCond);
+
+    if ($local) {
+        $query->innerJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1 AND pass_cu.country = pass.country');
+        $query->condition('pass_cu.uid', $userId, '=');
+    }else{
+        $query->leftJoin('gbl_user_passeport', 'pass_check_loc', 'pass_check_loc.passeport_id = pass.passeport_id AND pass_check_loc.passport_trip_type_id = 1');
+        $query->leftJoin('gbl_user_passeport', 'pass_cu',
+            'pass_check_loc.country = pass_cu.country AND pass_cu.passport_trip_type_id = 1 AND pass_cu.uid = '.$userId);
+    }
+
     if ($city !== 'false') {
         $query->condition(db_or()->condition('pass.city', "%$city%", 'like'));
     }
@@ -3847,10 +3889,16 @@ function get_advisors_by_reviews($city, $state, $country, $address, $userId, $pa
         $query->leftJoin('gbl_users_passions', 'psn', 'psn.uid = rev.uid');
         $query->leftJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
     }
+
+    $fbFriends = get_registered_fb_friends();
     if ($fb) {
-        $fbFriends = get_registered_fb_friends();
-        $query->condition('rev.uid', $fbFriends, 'IN');
+//        var_dump($fbFriends);die;
+        $query->innerJoin('fboauth_users', 'fbu', 'rev.uid = fbu.uid');
+        $query->condition('fbu.fbid', $fbFriends, 'IN');
+    }else{
+        $query->leftJoin('fboauth_users', 'fbu', 'rev.uid = fbu.uid AND fbu.fbid IN('.implode(',', $fbFriends).')');
     }
+
 
     $query->condition('pass.country', "%$country%", 'like');
     $query->condition('pass.passport_trip_type_id', $passportTypes, 'IN');
@@ -3859,10 +3907,30 @@ function get_advisors_by_reviews($city, $state, $country, $address, $userId, $pa
     $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
     $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rev.uid');
     $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
+    $query->addExpression('pass_cu.passeport_id', 'is_local');
+    $query->addExpression('fbu.uid', 'is_fb_friend');
     if ($rating !== null) {
         $query->havingCondition('overall_advisor_rating', $rating, '>=');
     }
-    $query->addExpression('COUNT(DISTINCT psn_cu.id)', 'mutual');
+    $query->addExpression('psn_cu.id', 'is_mutual');
+    $query->addExpression('COUNT(DISTINCT rev.id)', 'rev_count');
+    switch ($records) {
+        case '10':
+            $query->havingCondition('rev_count', [1, 10], 'BETWEEN');
+            break;
+        case '20':
+            $query->havingCondition('rev_count', [11, 20], 'BETWEEN');
+            break;
+        case '50':
+            $query->havingCondition('rev_count', [21, 50], 'BETWEEN');
+            break;
+        case '100':
+            $query->havingCondition('rev_count', [51, 100], 'BETWEEN');
+            break;
+        default:
+            $query->havingCondition('rev_count', [1, 10], 'BETWEEN');
+            break;
+    }
     $query->fields('pass');
     $query->fields('advisor');
     $query->groupBy('rev.uid');
@@ -7483,6 +7551,7 @@ function filter_hotels()
     }
 }
 
+
 function hotel_result_listing()
 {
     global $base_url;
@@ -7518,15 +7587,15 @@ function hotel_result_listing()
         $latitude = $mapsResponse->results[0]->geometry->location->lat;
         $longitude = $mapsResponse->results[0]->geometry->location->lng;
         $api = new Hotelbeds();
-        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children,
-            $minRate, $maxRate, $page);
-
-
+        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page);
+$searchParams = drupal_get_query_parameters();
+//var_dump($hotels->hotels_info);die;
         $output = theme('hotel_result_listing', array(
             'seach_destination' => $search_destination,
             'checkin_date' => $checkIn,
             'checkout_date' => $checkOut,
-            'hotels' => $hotels['hotels'],
+            'hotels' => $hotels['hotels_info'],
+            'searchParams'=>$searchParams,
             'pagination' => $output,
             'base_url' => $base_url,
             'latitude' => $latitude,

@@ -41,7 +41,7 @@ class Hotelbeds
                     return $response->data;
             }
         } else {
-            var_dump(json_decode($response->data));die;
+            var_dump($response);die;
         }
     }
 
@@ -98,7 +98,31 @@ class Hotelbeds
     function hotelbeds_get_hotels_facilities()
     {
         return $this->hotelbeds_hotels_api_connect(
-            $this->url . 'hotel-content-api/1.0/types/ratecommentdetails',
+            $this->url . 'hotel-content-api/1.0/types/facilities?fields=all&language=ENG&from=1&to=1000',
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_hotels_facilities_groups()
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/facilitygroups?fields=all&language=ENG&from=1&to=1000',
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_hotels_accomodations()
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/accommodations?fields=all&language=ENG&from=1&to=1000',
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_hotels_categories()
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/categories?fields=all&language=ENG&from=1&to=1000',
             'GET'
         );
     }
@@ -107,6 +131,14 @@ class Hotelbeds
     {
         return $this->hotelbeds_hotels_api_connect(
             $this->url . 'hotel-content-api/1.0/types/facilities?fields=all&language=ENG&from=1&to=450',
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_hotels_room_types($from, $to)
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/rooms?fields=all&language=ENG&from='.$from.'&to='.$to,
             'GET'
         );
     }
@@ -199,7 +231,9 @@ class Hotelbeds
         return $hotelsInfo->hotels;
     }
 
-    function hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children = 0, $minRate = null, $maxRate = null, $page = 1)
+    function hotelbeds_get_hotels(
+        $latitude, $longitude, $checkIn, $checkOut, $rooms, $adults,
+        $children = 0, $minRate = null, $maxRate = null, $page = 1, $code = false)
     {
         $radius = 50;
         $hotelsRequestData = [
@@ -232,22 +266,35 @@ class Hotelbeds
         $hotelsRequestDataEncoded = json_encode($hotelsRequestData);
         $hotelsResponse = $this->hotelbeds_hotels($hotelsRequestDataEncoded);
         $hotels = $hotelsResponse->hotels->hotels;
-        $hotelsCodes = array_column($hotels, 'code');
-        $hotelsMinPrices = array_column($hotels, NULL,'code');
+//        var_dump($hotels);die;
+        if($code){
+            $hotelsCodes = [$code];
+        }else {
+            $hotelsCodes = array_column($hotels, 'code');
+        }
+        $hotelsBookingInfo = array_column($hotels, NULL,'code');
+//        var_dump($hotelsBookingInfo);die;
         $hotelsResponseResult['total'] = $hotelsResponse->hotels->total;
-        $hotelsResponseResult['hotels'] = [];
+//        $hotelsResponseResult['hotels_booking'] = $hotelsResponse->hotels;
+        $hotelsResponseResult['hotels_info'] = [];
+
+
+
         if(count($hotelsCodes)>0) {
             $page = (int)$page;
             if($page>0) {
                 $checkLimit = ($page*self::HOTELS_LIMIT_PER_PAGE) - $hotelsResponseResult['total'];
+
                 if($checkLimit<=self::HOTELS_LIMIT_PER_PAGE) {
                     $offset = ($page - 1) * self::HOTELS_LIMIT_PER_PAGE;
                     $hotelsCodesSliced = array_slice($hotelsCodes, $offset, self::HOTELS_LIMIT_PER_PAGE);
-                    $hotelsResponseResult['hotels'] = $this->hotelbeds_get_hotels_info_by_codes($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE);
-//                var_dump($hotelsResponseResult['hotels']);die;
-                    foreach ($hotelsResponseResult['hotels'] as $key => $hotelItem) {
-                        $hotelsResponseResult['hotels'][$key]->minRate = $hotelsMinPrices[$hotelItem->code]->minRate;
-                        $hotelsResponseResult['hotels'][$key]->currency = $hotelsMinPrices[$hotelItem->code]->currency;
+
+                    $hotelsResponseResult['hotels_info'] = $this->hotelbeds_get_hotels_info_by_codes($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE);
+//                var_dump($hotelsResponseResult['hotels_info']);die;
+                    foreach ($hotelsResponseResult['hotels_info'] as $key => $hotelItem) {
+                        $hotelsResponseResult['hotels_info'][$key]->bookingInfo = $hotelsBookingInfo[$hotelItem->code];
+//                        $hotelsResponseResult['hotels_info'][$key]->minRate = $hotelsBookingInfo[$hotelItem->code]->minRate;
+//                        $hotelsResponseResult['hotels_info'][$key]->currency = $hotelsBookingInfo[$hotelItem->code]->currency;
                     }
                 }
             }

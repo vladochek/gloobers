@@ -27,6 +27,53 @@ class SyncAPI
             ->fetchAssoc();
     }
 
+    public static function getHotelFacilitiesGroups($code)
+    {
+        return db_select('gbl_hotel_amenities_groups', 'hg')
+            ->fields('hg')
+            ->condition('code', $code)
+            ->execute()
+            ->fetchAssoc();
+    }
+
+    public static function getHotelFacilities($code, $groupCode, $typologyCode)
+    {
+        return db_select('gbl_hotel_amenities', 'ha')
+            ->fields('ha')
+            ->condition('code', $code)
+            ->condition('group_code', $groupCode)
+            ->condition('typology_code', $typologyCode)
+            ->execute()
+            ->fetchAssoc();
+    }
+
+    public static function getHotelAccomodations($code)
+    {
+        return db_select('gbl_hotel_accomodations', 'hac')
+            ->fields('hac')
+            ->condition('code', $code)
+            ->execute()
+            ->fetchAssoc();
+    }
+
+    public static function getHotelCategories($code)
+    {
+        return db_select('gbl_hotel_categories', 'hc')
+            ->fields('hc')
+            ->condition('code', $code)
+            ->execute()
+            ->fetchAssoc();
+    }
+
+    public static function getHotelRoomTypes($code)
+    {
+        return db_select('gbl_room_types', 'rt')
+            ->fields('rt')
+            ->condition('code', $code)
+            ->execute()
+            ->fetchAssoc();
+    }
+
     public static function synchronizeActivityTypes()
     {
         $hotelbeds = new Hotelbeds();
@@ -90,8 +137,231 @@ class SyncAPI
             }
         }
         if (count($existingHotelTypes)) {
-            db_delete('hotel_type')
+            db_delete('gbl_hotel_type')
                 ->condition('ext_id', $existingHotelTypes, 'NOT IN')
+                ->execute();
+        }
+    }
+
+    public static function synchronizeHotelFacilities()
+    {
+        $hotelbeds = new Hotelbeds();
+        $hotelFacilitiesResponse = $hotelbeds->hotelbeds_get_hotels_facilities();
+//        var_dump($hotelFacilitiesResponse);die;
+        $facilityTypes = $hotelFacilitiesResponse->facilities;
+        $existingFacilityCodes = [];
+        $existingFacilityGroupCodes = [];
+        $existingFacilityTypologyCodes = [];
+        foreach ($facilityTypes as $type) {
+            $existingFacilityCodes[] = $type->code;
+            $existingFacilityGroupCodes[] = $type->facilityGroupCode;
+            $existingFacilityTypologyCodes[] = $type->facilityTypologyCode;
+            $dbFacilities = self::getHotelFacilities($type->code, $type->facilityGroupCode, $type->facilityTypologyCode);
+            $facilityName = $type->description->content ? $type->description->content : 'No Description';
+            if ($dbFacilities) {
+                if ($dbFacilities['hotel_amenties_name'] !== $facilityName) {
+                    db_update('gbl_hotel_amenities')
+                        ->fields(array(
+                            'hotel_amenties_name' => $facilityName
+                        ))
+                        ->condition('code', $type->code)
+                        ->condition('group_code', $type->facilityGroupCode)
+                        ->condition('typology_code', $type->facilityTypologyCode)
+                        ->execute();
+                }
+            } else {
+                db_insert('gbl_hotel_amenities')
+                    ->fields(array(
+                        'hotel_amenties_name' => $facilityName,
+                        'code' => $type->code,
+                        'group_code' => $type->facilityGroupCode,
+                        'typology_code' => $type->facilityTypologyCode
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingFacilityTypologyCodes) || count($existingFacilityCodes) || count($existingFacilityGroupCodes)) {
+            $query = db_delete('gbl_hotel_amenities');
+                $or = db_or()
+                    ->condition('code', $existingFacilityCodes, 'NOT IN')
+                    ->condition('group_code', $existingFacilityGroupCodes, 'NOT IN')
+                    ->condition('typology_code', $existingFacilityTypologyCodes, 'NOT IN');
+                $query->condition($or);
+                $query->execute();
+        }
+    }
+
+    public static function synchronizeHotelFacilityGroups()
+    {
+        $hotelbeds = new Hotelbeds();
+        $groupsResponse = $hotelbeds->hotelbeds_get_hotels_facilities_groups();
+        $groups = $groupsResponse->facilityGroups;
+        $existingCodes = [];
+        foreach ($groups as $type) {
+            $existingCodes[] = $type->code;
+            $dbActivity = self::getHotelFacilitiesGroups($type->code);
+            if ($dbActivity) {
+                if ($dbActivity['name'] !== $type->description->content) {
+                    db_update('gbl_hotel_amenities_groups')
+                        ->fields(array(
+                            'name' => $type->description->content
+                        ))
+                        ->condition('code', $type->code)
+                        ->execute();
+                }
+            } else {
+                db_insert('gbl_hotel_amenities_groups')
+                    ->fields(array(
+                        'name' => $type->description->content,
+                        'code' => $type->code
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingCodes)) {
+            db_delete('gbl_hotel_amenities_groups')
+                ->condition('code', $existingCodes, 'NOT IN')
+                ->execute();
+        }
+    }
+
+    public static function synchronizeHotelAccomodations()
+    {
+        $hotelbeds = new Hotelbeds();
+        $groupsResponse = $hotelbeds->hotelbeds_get_hotels_accomodations();
+        $groups = $groupsResponse->accommodations;
+        $existingCodes = [];
+        foreach ($groups as $type) {
+            $existingCodes[] = $type->code;
+            $dbActivity = self::getHotelAccomodations($type->code);
+            if ($dbActivity) {
+                if ($dbActivity['description'] !== $type->typeDescription) {
+                    db_update('gbl_hotel_accomodations')
+                        ->fields(array(
+                            'description' => $type->typeDescription
+                        ))
+                        ->condition('code', $type->code)
+                        ->execute();
+                }
+                if ($dbActivity['multi_description'] !== $type->typeMultiDescription->content) {
+                    db_update('gbl_hotel_accomodations')
+                        ->fields(array(
+                            'description' => $type->typeDescription
+                        ))
+                        ->condition('code', $type->code)
+                        ->execute();
+                }
+            } else {
+                db_insert('gbl_hotel_accomodations')
+                    ->fields(array(
+                        'description' => $type->typeDescription,
+                        'multi_description' => $type->typeMultiDescription->content,
+                        'code' => $type->code
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingCodes)) {
+            db_delete('gbl_hotel_accomodations')
+                ->condition('code', $existingCodes, 'NOT IN')
+                ->execute();
+        }
+    }
+
+    public static function synchronizeHotelCategories()
+    {
+        $hotelbeds = new Hotelbeds();
+        $groupsResponse = $hotelbeds->hotelbeds_get_hotels_categories();
+        $groups = $groupsResponse->categories;
+        $existingCodes = [];
+        foreach ($groups as $type) {
+            $existingCodes[] = $type->code;
+            $dbActivity = self::getHotelCategories($type->code);
+            if ($dbActivity) {
+                if ($dbActivity['description'] !== $type->description->content) {
+                    db_update('gbl_hotel_categories')
+                        ->fields(array(
+                            'description' => $type->description->content
+                        ))
+                        ->condition('code', $type->code)
+                        ->execute();
+                }
+            } else {
+                db_insert('gbl_hotel_categories')
+                    ->fields(array(
+                        'code' => $type->code,
+                        'simple_code' => $type->simpleCode,
+                        'accommodation_type' => $type->accommodationType,
+                        'group_code' => $type->group,
+                        'description' => $type->description->content
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingCodes)) {
+            db_delete('gbl_hotel_categories')
+                ->condition('code', $existingCodes, 'NOT IN')
+                ->execute();
+        }
+    }
+
+    public static function synchronizeHotelRoomTypes()
+    {
+        $hotelbeds = new Hotelbeds();
+        $from = 1;
+        $step = 1000;
+        $roomCategories = [];
+        $groupsResponse = $hotelbeds->hotelbeds_get_hotels_room_types($from, $step);
+        $itemsCount = $groupsResponse->total;
+        $iterations = ceil($groupsResponse->total / $step);
+        $roomCategories = array_merge($roomCategories, $groupsResponse->rooms);
+        if($itemsCount>$step) {
+            for ($i = $step + $from, $k = 2; $i < $step * $iterations, $k <= $iterations; $i += $step, $k++) {
+                $response = $hotelbeds->hotelbeds_get_hotels_room_types($i, $k*$step);
+                $roomCategories = array_merge($roomCategories, $response->rooms);
+            }
+        }
+
+        $existingCodes = [];
+        foreach ($roomCategories as $type) {
+            $existingCodes[] = $type->code;
+            $dbActivity = self::getHotelRoomTypes($type->code);
+            if ($dbActivity) {
+                if ($dbActivity['description'] !== $type->description ||
+                    $dbActivity['type_description'] !== $type->typeDescription->content ||
+                    $dbActivity['characteristic_description'] !== $type->characteristicDescription->content
+                ) {
+                    db_update('gbl_room_types')
+                        ->fields(array(
+                            'description' => $type->description,
+                            'type_description' => $type->typeDescription->content,
+                            'characteristic_description' => $type->characteristicDescription->content
+                        ))
+                        ->condition('code', $type->code)
+                        ->execute();
+                }
+
+            } else {
+                db_insert('gbl_room_types')
+                    ->fields(array(
+                        'code' => $type->code,
+                        'type' => $type->type,
+                        'characteristic' => $type->characteristic,
+                        'min_pax' => $type->minPax,
+                        'max_pax' => $type->maxPax,
+                        'max_adults' => $type->maxAdults,
+                        'max_children' => $type->maxChildren,
+                        'min_adults' => $type->minAdults,
+                        'description' => $type->description,
+                        'type_description' => $type->typeDescription->content,
+                        'characteristic_description' => $type->characteristicDescription->content,
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingCodes)) {
+            db_delete('gbl_room_types')
+                ->condition('code', $existingCodes, 'NOT IN')
                 ->execute();
         }
     }
