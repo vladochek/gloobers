@@ -120,6 +120,9 @@ if(in_array($passions['pid'],$selectedPassions)){
 			 $advisor_data = user_load($value['uid']);
 			 $cover_pic = getcoverpic($value['uid']);
              $location = passeport_location($value['uid']);
+
+
+             //REFACTORED DB STRUCTURE!
 			 $getStarRating=getAdvisorStarRating($value['uid']);
 				if(!empty($getStarRating)){
 					$totalReviews=sizeof($getStarRating);

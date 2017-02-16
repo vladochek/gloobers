@@ -727,7 +727,7 @@ function findNearByPlaces($data = array())
 
 function getListingReviews($eid, $uid = null)
 {
-    $query = db_select('gbl_listing_reviews', 'r')
+    $query = db_select('gbl_reviews', 'r')
         ->fields('r')
         ->condition('listing_id', $eid);
     if ($uid) {
@@ -740,7 +740,7 @@ function getListingReviews($eid, $uid = null)
 function getListingReviewsCount($eid = "", $uid = null)
 {
     $reviews = array();
-    $query = db_select('gbl_listing_reviews', 'r')
+    $query = db_select('gbl_reviews', 'r')
         ->fields('r', array('listing_id', 'uid', 'created', 'comments'))
         ->condition('listing_id', $eid);
     if ($uid != "") {
@@ -759,7 +759,7 @@ function getListingReviewsAjax()
     $limit = ($page - 1) * $pageSize;
 
     $str = "";
-    $query = db_select('gbl_listing_reviews', 'r')
+    $query = db_select('gbl_reviews', 'r')
         ->fields('r', array('listing_id', 'uid', 'created', 'comments'))
         ->condition('listing_id', $listing_id)
         ->range($limit, $pageSize)
@@ -814,20 +814,20 @@ function getListingReviewsAjax()
 
 function getListingReviewsAverage($eid = "")
 {
-    $result = db_query("select AVG(accuracy) as accuracy_avg,AVG(communication) as communication_avg,AVG(cleanliness) as cleanliness_avg,AVG(location) as location_avg,AVG(check_in) as check_in,AVG(value) as value_avg from gbl_listing_reviews where listing_id = " . $eid);
+    $result = db_query("select AVG(accuracy) as accuracy_avg,AVG(communication) as communication_avg,AVG(cleanliness) as cleanliness_avg,AVG(location) as location_avg,AVG(check_in) as check_in,AVG(value) as value_avg from gbl_reviews where listing_id = " . $eid);
     return $result;
 }
 
 function getListingReviewsSuperAverage($eid = "")
 {
-    $result = db_query("select AVG(average) as average_avg from gbl_listing_reviews where listing_id = " . $eid);
+    $result = db_query("select AVG(average) as average_avg from gbl_reviews where listing_id = " . $eid);
     return $result;
 }
 
 function getUserReviewsCount($uid = null)
 {
     $query = db_select('gbl_experience_list', 'gel');
-    $query->join('gbl_listing_reviews', 'gb', 'gb.listing_id = gel.eid');
+    $query->join('gbl_reviews', 'gb', 'gb.listing_id = gel.eid');
     $query->fields('gel', array('eid'));
     $query->fields('gb');
     $query->condition('gb.uid', $uid, '=');
@@ -974,7 +974,7 @@ function listing_review_form_submit($form, $form_state)
 
     $eid = $form_state['values']['listId'];
 
-    $nid = db_insert('gbl_listing_reviews')
+    $nid = db_insert('gbl_reviews')
         ->fields(array(
             'listing_id' => $eid,
             'uid' => $user->uid,
@@ -990,7 +990,7 @@ function listing_review_form_submit($form, $form_state)
         ->execute();
 
     if ($nid) {
-        $result = db_query("select AVG(average) as average_avg from gbl_listing_reviews where listing_id = " . $eid);
+        $result = db_query("select AVG(average) as average_avg from gbl_reviews where listing_id = " . $eid);
 
         foreach ($result as $rating) {
             $query = db_update('gbl_experience_list')
@@ -3633,13 +3633,13 @@ function create_recommendation()
     $comment = $input['comment'];
     $tripTypes = $input['trip_types'];
     $advisorId = $input['advisor_id'];
-    $experienceId = $input['experienceId'];
+    $recId = $input['rec_id'];
     $passions = $input['passions'];
-    if ($comment && $tripTypes && $advisorId && $experienceId && $passions) {
+    if ($comment && $tripTypes && $advisorId && $recId && $passions) {
         $queryRec = db_insert('gbl_recommendations')->fields([
             'comment' => $comment,
             'advisor_id' => $advisorId,
-            'experience_id' => $experienceId,
+            'experience_id' => $recId,
             'created' => time()
         ]);
         $recommendationId = $queryRec->execute();
@@ -3648,7 +3648,7 @@ function create_recommendation()
             foreach ($passions as $passion) {
                 $queryPasToExp->values([
                     'passion_id' => $passion,
-                    'experience_id' => $experienceId
+                    'rec_id' => $recId
                 ]);
             }
             $queryPasToExp->execute();
@@ -3659,7 +3659,7 @@ function create_recommendation()
             foreach ($tripTypes as $tripType) {
                 $queryTrToRec->values([
                     'trip_type_id' => $tripType,
-                    'experience_id' => $experienceId
+                    'rec_id' => $recId
                 ]);
             }
             $queryTrToRec->execute();
@@ -3816,7 +3816,7 @@ function get_advisors_by_recommendations(
     $query->condition('rec.advisor_id', $userId, '<>');
     $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
     $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
-    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rec.advisor_id');
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = advisor.uid');
     $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
     $query->addExpression('COUNT(DISTINCT rec.id)', 'rec_count');
     $query->addExpression('pass_cu.passeport_id', 'is_local');
@@ -3842,6 +3842,7 @@ function get_advisors_by_recommendations(
     }
     $query->addExpression('psn_cu.id', 'is_mutual');
     $query->addExpression('fbu.uid', 'is_fb_friend');
+    $query->isNotNull('rec.experience_id');
     $query->fields('pass');
     $query->fields('advisor');
     $query->groupBy('rec.advisor_id');
@@ -3853,7 +3854,7 @@ function get_advisors_by_reviews(
     $city, $state, $country, $address, $userId, $passportTypes, $passions = [],
     $mutualInterests = 0, $local = 0, $fb = 0, $rating = null, $records)
 {
-    $query = db_select('gbl_listing_reviews', 'rev');
+    $query = db_select('gbl_reviews', 'rev');
     $passportCond = '';
     if ($local) {
         $passportCond = ' AND pass.passport_trip_type_id = 1';
@@ -3905,7 +3906,7 @@ function get_advisors_by_reviews(
     $query->condition('rev.uid', $userId, '<>');
     $query->leftJoin('users', 'advisor', 'rev.uid = advisor.uid');
     $query->leftJoin('gbl_users_meta', 'am', 'advisor.uid = am.uid');
-    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rev.uid');
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = advisor.uid');
     $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
     $query->addExpression('pass_cu.passeport_id', 'is_local');
     $query->addExpression('fbu.uid', 'is_fb_friend');
@@ -3943,6 +3944,7 @@ function recommendations_by_advisor($advisorId)
     $query = db_select('gbl_recommendations', 'rec');
     $query->condition('rec.advisor_id', $advisorId, '=');
     $query->leftJoin('gbl_experience_list', 'el', 'rec.experience_id = el.eid');
+    $query->isNotNull('rec.experience_id');
     $query->fields('el', ['eid', 'title', 'base_price', 'latitude', 'longitude']);
     $result = $query->execute();
     return $result->fetchAll(PDO::FETCH_ASSOC);
@@ -4081,7 +4083,7 @@ function get_recommendations($limit = 3, $offset = 0)
 
     $query->leftJoin('gbl_recommendations', 'rec', 'rec.experience_id = el.eid');
 
-    $query->leftJoin('gbl_listing_reviews', 'lr', 'el.eid = lr.listing_id');
+    $query->leftJoin('gbl_reviews', 'lr', 'el.eid = lr.listing_id');
     $query->fields('b', ['lid']);
     $query->fields('et', ['experience_type']);
     $query->fields('el', ['eid', 'title', 'base_price', 'address1']);
@@ -4091,6 +4093,7 @@ function get_recommendations($limit = 3, $offset = 0)
     $query->orderBy('el.agg_rating', 'DESC');
     $query->condition('b.uid', '0', '<>');
     $query->condition('b.advisor_id', '0', '<>');
+    $query->isNotNull('rec.experience_id');
     $query->orderBy('b.created', 'DESC');
     $query->groupBy('el.eid');
     $query->range($offset, $limit);
@@ -4164,7 +4167,7 @@ function listing_details($listingId)
     $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
     $query->innerJoin('gbl_experience_list', 'uel', 'uel.uid = author.uid');
     $query->leftJoin('gbl_users_meta', 'author_meta', 'author.uid = author_meta.uid');
-    $query->leftJoin('gbl_listing_reviews', 'rev', 'el.eid = rev.listing_id');
+    $query->leftJoin('gbl_reviews', 'rev', 'el.eid = rev.listing_id');
     $query->leftJoin('gbl_recommendations', 'rec', 'el.eid = rec.experience_id');
     $query->leftJoin('gbl_user_passeport', 'pas', 'author.uid = pas.uid');
 
@@ -4185,6 +4188,7 @@ function listing_details($listingId)
     $query->addExpression('COUNT(DISTINCT uel.eid)', 'count_of_authors_listings');
 
     $query->condition('el.eid', $listingId, '=');
+    $query->isNotNull('rec.experience_id');
     $query->condition('pas.passport_trip_type_id', 1, '=');
 //    $query->groupBy('el.eid');
 
@@ -4200,10 +4204,10 @@ function last_recommendation($listingId, $userId)//, $limit = 5, $offset = 0
     $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
     $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
     $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 'yes'");
-    $query->leftJoin('gbl_passions_to_experience', 'pte', 'rec.experience_id = pte.experience_id');
+    $query->leftJoin('gbl_passions_to_experience', 'pte', 'rec.id = pte.rec_id');
     $query->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
-    $query->leftJoin('gbl_trip_types_to_experience', 'tte', 'rec.experience_id = tte.experience_id');
-    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = rec.advisor_id');
+    $query->leftJoin('gbl_trip_types_to_experience', 'tte', 'rec.id = tte.rec_id');
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = advisor.uid');
     $query->leftJoin('gbl_advisor_trip_type', 'tt', 'tte.trip_type_id = tt.trip_id');
 
     $query->leftJoin('gbl_user_passeport', 'pass', 'advisor.uid = pass.uid AND pass.passport_trip_type_id = 1');
@@ -4222,8 +4226,8 @@ function last_recommendation($listingId, $userId)//, $limit = 5, $offset = 0
 
     $query->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
     $query->addExpression('GROUP_CONCAT(DISTINCT tt.trip_type SEPARATOR \', \')', 'trip_types');
-    $query->addExpression('ROUND(SUM(rat.rating)/COUNT(rat.advisor_rating_id))', 'advisor_rating');
-    $query->addExpression('COUNT(DISTINCT rat.advisor_rating_id)', 'advisor_rating_count');
+    $query->addExpression('ROUND(SUM(rat.rating)/COUNT(rat.id))', 'advisor_rating');
+    $query->addExpression('COUNT(DISTINCT rat.id)', 'advisor_rating_count');
 
     $query->fields('rec', ['id', 'experience_id', 'comment']);
     $query->fields('advisor', ['uid']);
@@ -4259,7 +4263,7 @@ function latest_recommendations_by_listing($listingId)//, $limit = 5, $offset = 
 
 function listing_reviews($listingId, $offset = 0, $limit = 3)
 {
-    $query = db_select('gbl_listing_reviews', 'rev');
+    $query = db_select('gbl_reviews', 'rev');
     $query->leftJoin('users', 'author', 'rev.uid = author.uid');
     $query->leftJoin('gbl_users_meta', 'author_meta', 'author.uid = author_meta.uid');
     $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
@@ -4267,7 +4271,7 @@ function listing_reviews($listingId, $offset = 0, $limit = 3)
     $query->fields('rev', ['id', 'comments', 'created', 'communication', 'safety', 'professional', 'money']);
     $query->addExpression('ROUND((rev.communication + rev.safety + rev.professional + rev.money)/4)', 'overall_rating');
 
-    $query->leftJoin('gbl_listing_reviews', 'lr', 'lr.listing_id = ' . $listingId);
+    $query->leftJoin('gbl_reviews', 'lr', 'lr.listing_id = ' . $listingId);
     $query->addExpression('COUNT(DISTINCT lr.id)', 'reviews_count');
 
     $query->fields('author_meta', ['first_name', 'last_name', 'occupation', 'uid']);
@@ -4300,8 +4304,8 @@ function listing_review_passsions_ratings($listingId, $offset = 0, $limit = 3)
     $query = db_select('gbl_passions_category', 'pc');
     $query->leftJoin('gbl_passions', 'p', 'pc.pcid = p.passion_category');
     $query->leftJoin('gbl_passions_to_review', 'ptr', 'ptr.passion_id = p.pid');
-    $query->leftJoin('gbl_listing_reviews', 'rev', 'ptr.review_id = rev.id and rev.listing_id = ' . $listingId);
-    $query->leftJoin('gbl_listing_reviews', 'revc', 'revc.listing_id = ' . $listingId);
+    $query->leftJoin('gbl_reviews', 'rev', 'ptr.review_id = rev.id and rev.listing_id = ' . $listingId);
+    $query->leftJoin('gbl_reviews', 'revc', 'revc.listing_id = ' . $listingId);
     $query->addExpression('ROUND(((100/count(DISTINCT p.pid))*count(DISTINCT ptr.passion_id))/(count(DISTINCT revc.id)))', 'percentage');
     $query->fields('pc', ['pcid', 'passion_category']);
     $query->fields('ptr', ['review_id']);
@@ -4318,7 +4322,7 @@ function overall_listing_info($listingId, $userId)
 {
     $result = [];
     $result['listing_details'] = listing_details($listingId);
-    $result['recommendations'] = latest_recommendations_by_listing($listingId, $userId);
+    $result['recommendations'] = latest_recommendations_by_listing($listingId);
     $result['last_recommendation'] = last_recommendation($listingId, $userId);
     $result['listing_reviews'] = listing_reviews($listingId);
     $result['passions_ratings'] = listing_review_passsions_ratings($listingId);
@@ -7554,11 +7558,18 @@ function filter_hotels()
 
 function hotel_result_listing()
 {
+//        $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
+////        $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+////        $result = $manager->executeBulkWrite('gloobers.hot', $bulk, $writeConcern);
+//
+//        $filter = ['0.code'=>7486];
+//        $query = new MongoDB\Driver\Query($filter);
+//        $rows = $manager->executeQuery('gloobers.hotel', $query)->toArray();
+//        var_dump($rows);die;
     global $base_url;
     $output = theme('pager', array('quantity' => 6));
 
-
-    $daterange = handle_request('daterange');
+    $daterange = filter_input(INPUT_GET, 'daterange');
     $dates = isset($daterange) ? explode(' - ', $daterange) : '';
     $dateFromSegments = explode('/', $dates[0]);
     $checkIn = $dateFromSegments[2] . '-' . $dateFromSegments[1] . '-' . $dateFromSegments[0];
@@ -7569,14 +7580,22 @@ function hotel_result_listing()
     $testCheckOut = explode('-', $checkOut);
     $testCheckOutValidation = checkdate($testCheckOut[1], $testCheckOut[2], $testCheckOut[0]);
 
-//    var_dump($_GET);die;
-    $maxRate = handle_request('maxRate');
-    $minRate = handle_request('minRate');
-    $search_destination = handle_request('destination');
-    $adults = handle_request('adults');
-    $children = handle_request('childrens', 0);
-    $rooms = handle_request('rooms', 1);
-    $page = handle_request('page', 1);
+
+    $maxRate = filter_input(INPUT_GET, 'maxRate');
+    $minRate = filter_input(INPUT_GET, 'minRate');
+    $search_destination = filter_input(INPUT_GET, 'destination');
+    $adults = filter_input(INPUT_GET, 'adults');
+    $children = filter_input(INPUT_GET, 'childrens');
+    $rooms = filter_input(INPUT_GET, 'rooms');
+    $page = filter_input(INPUT_GET, 'page');
+    $page = $page ? $page : 1;
+    $rooms = $rooms ? $rooms : 1;
+    $children = $children ? $children : 0;
+    $boards = filter_input(INPUT_GET, 'boardCodes');
+    $segments = filter_input(INPUT_GET, 'segmentCodes');
+    $accommodations = filter_input(INPUT_GET, 'accommodationTypes');
+
+
     $show_filter = 1;
     $mapsResponse = searchLocationByQuery($search_destination);
 
@@ -7587,7 +7606,8 @@ function hotel_result_listing()
         $latitude = $mapsResponse->results[0]->geometry->location->lat;
         $longitude = $mapsResponse->results[0]->geometry->location->lng;
         $api = new Hotelbeds();
-        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page);
+        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children,
+            $minRate, $maxRate, $page, false, $segments, $boards, $accommodations);
 $searchParams = drupal_get_query_parameters();
 //var_dump($hotels->hotels_info);die;
         $output = theme('hotel_result_listing', array(
@@ -8167,7 +8187,7 @@ function add_review_traveler()
     //If Looged User and Booked user same than he/she can give review of that Booking.
     if ($loggedUserId == $bookedUserId) {
         //Check Review already exists
-        $alreadyExists = db_select('gbl_listing_reviews', 'r')->fields('r')->condition('booking_id', $bookingId)->execute();
+        $alreadyExists = db_select('gbl_reviews', 'r')->fields('r')->condition('booking_id', $bookingId)->execute();
         $resultAlreadyExists = $alreadyExists->fetchAll(PDO::FETCH_ASSOC);
         if (!empty($resultAlreadyExists)) {
             //Review can be edited upto 1 week
@@ -8230,7 +8250,7 @@ function addReview()
     $booking_details = getbookingdata($bookingId);
     $listing_id = $booking_details['lid'];
 
-    $alreadyExists = db_select('gbl_listing_reviews', 'r')->fields('r')->condition('booking_id', $bookingId)->execute();
+    $alreadyExists = db_select('gbl_reviews', 'r')->fields('r')->condition('booking_id', $bookingId)->execute();
     $resultAlreadyExists = $alreadyExists->fetchAll(PDO::FETCH_ASSOC);
     if (empty($resultAlreadyExists) && is_array($resultAlreadyExists)) {
 
@@ -8249,7 +8269,7 @@ function addReview()
             'passion_categories' => $categories,
             'created' => date('Y-m-d H:i:s')
         );
-        $InsertReview = db_insert('gbl_listing_reviews')->fields($insertArray)->execute();
+        $InsertReview = db_insert('gbl_reviews')->fields($insertArray)->execute();
 
         /* if($recommendation==5){
 
@@ -8268,12 +8288,23 @@ function addReview()
         } */
         //Advisor Ranking Db Save Indivisually
         if ($booking_details['advisor_id'] || $booking_details['ruid']) {
-            $InsertAdvisorRating = db_insert('gbl_advisor_rating')->fields(array('advisor_id' => ($booking_details['advisor_id']) ? $booking_details['advisor_id'] : $booking_details['ruid'], 'traveler_id' => $booking_details['uid'], 'listing_id' => $listing_id, 'booking_id' => $booking_details['id'], 'rating' => $recommendation))->execute();
+
+
+
+            //TO REFACTOR: CHANGED DB STRUCTURE
+            $InsertAdvisorRating = db_insert('gbl_advisor_rating')
+                ->fields(array(
+                    'advisor_id' => ($booking_details['advisor_id']) ? $booking_details['advisor_id'] : $booking_details['ruid'],
+                    'traveler_id' => $booking_details['uid'],
+                    'listing_id' => $listing_id,
+                    'booking_id' => $booking_details['id'],
+                    'rating' => $recommendation))
+                ->execute();
         }
 
         // Update Average Rating Of that listing in experience_listing
 
-        $getAllRating = db_select('gbl_listing_reviews', 'r')->fields('r', array('average'))->condition('listing_id', $listing_id)->execute();
+        $getAllRating = db_select('gbl_reviews', 'r')->fields('r', array('average'))->condition('listing_id', $listing_id)->execute();
         $getAllRatingArray = $getAllRating->fetchAll(PDO::FETCH_ASSOC);
         $getAllRatingAvg = array();
         $sizeOFReviews = sizeof($getAllRatingArray);
@@ -8314,11 +8345,21 @@ function addReview()
                 'passion_categories' => $categories,
                 'created' => date('Y-m-d H:i:s')
             );
-            $updateReview = db_update('gbl_listing_reviews')->fields($insertArray)->condition('id', $resultAlreadyExists[0]['id'])->execute();
+            $updateReview = db_update('gbl_reviews')->fields($insertArray)->condition('id', $resultAlreadyExists[0]['id'])->execute();
 
             //Advisor Ranking Db Save Indivisually
             if ($booking_details['advisor_id']) {
-                $UpdateAdvisorRating = db_update('gbl_advisor_rating')->fields(array('advisor_id' => $booking_details['advisor_id'], 'traveler_id' => $booking_details['uid'], 'listing_id' => $listing_id, 'rating' => $recommendation))->condition('booking_id', $booking_details['id'])->execute();
+
+
+                //TO REFACTOR: CHANGED DB STRUCTURE
+                $UpdateAdvisorRating = db_update('gbl_advisor_rating')
+                    ->fields(array(
+                        'advisor_id' => $booking_details['advisor_id'],
+                        'traveler_id' => $booking_details['uid'],
+                        'listing_id' => $listing_id,
+                        'rating' => $recommendation))
+                    ->condition('booking_id', $booking_details['id'])
+                    ->execute();
             }
             /* if($recommendation==5){
 
@@ -8337,7 +8378,7 @@ function addReview()
 
             // Update Average Rating Of that listing in experience_listing
 
-            $getAllRating = db_select('gbl_listing_reviews', 'r')->fields('r', array('average'))->condition('listing_id', $listing_id)->execute();
+            $getAllRating = db_select('gbl_reviews', 'r')->fields('r', array('average'))->condition('listing_id', $listing_id)->execute();
             $getAllRatingArray = array();
             while ($res = $getAllRating->fetchAssoc()) {
                 $getAllRatingArray[] = $res['average'];

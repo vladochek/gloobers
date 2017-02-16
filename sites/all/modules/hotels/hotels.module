@@ -14,6 +14,12 @@ function hotels_menu()
         'type' => MENU_NORMAL_ITEM,
     );
 
+    $items["booking-hotel"] = array(
+        'page callback' => 'hotelsPaymentPage',
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+    );
+
     return $items;
 }
 
@@ -34,8 +40,9 @@ function hotels_theme(&$existing, $type, $theme, $path)
     );
 }
 
-function get_facility_categories_full_info($facilities){
-    if(is_array($facilities) && count($facilities)) {
+function get_facilities_full_info($facilities)
+{
+    if (is_array($facilities) && count($facilities)) {
         $codes = [];
         $groups = [];
         foreach ($facilities as $facility) {
@@ -47,27 +54,189 @@ function get_facility_categories_full_info($facilities){
         $query->fields('am');
         $query->addExpression('amg.name', 'group_name');
         $query->condition('am.code', array_unique($codes), 'IN');
-        $query->condition('am.group_code',  array_unique($groups), 'IN');
+        $query->condition('am.group_code', array_unique($groups), 'IN');
         return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
-function get_facility_groups_full_info($facilities){
-    if(is_array($facilities) && count($facilities)) {
+function get_facility_groups_full_info($facilities)
+{
+    if (is_array($facilities) && count($facilities)) {
         $groups = [];
         foreach ($facilities as $facility) {
             $groups[] = $facility->facilityGroupCode;
         }
         $query = db_select('gbl_hotel_amenities_groups', 'amg');
         $query->fields('amg');
-        $query->condition('amg.code',  array_unique($groups), 'IN');
+        $query->condition('amg.code', array_unique($groups), 'IN');
         return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
+function combine_rooms_data($allRooms, $availableRooms)
+{
+    foreach ($allRooms as $key => $hotelRoom) {
+        foreach ($availableRooms as $availableRoom) {
+            if ($allRooms[$key]->roomCode == $availableRoom->code) {
+                $allRooms[$key]->name = $availableRoom->name;
+                $allRooms[$key]->rates = $availableRoom->rates;
+            }
+        }
+        $allRooms[$key]->roomFacilities = get_facilities_full_info($allRooms[$key]->roomFacilities);
+    }
+    return $allRooms;
+}
+
+function latest_hotel_recommendations($hotelCode)//, $limit = 5, $offset = 0
+{
+    $query = db_select('gbl_recommendations', 'rec');
+    $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
+    $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
+    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->fields('advisor', ['uid']);
+    $query->addExpression('fm.filename', 'advisor_pic');
+    $query->condition('rec.hotel_code', $hotelCode, '=');
+    $query->orderBy('rec.created', 'DESC');
+    $query->groupBy('rec.id');
+    $result = $query->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function last_hotel_recommendation($hotelCode, $userId)//, $limit = 5, $offset = 0
+{
+    $fbFriends = implode(',', get_registered_fb_friends());
+    $query = db_select('gbl_recommendations', 'rec');
+    $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
+    $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
+    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 'yes'");
 
 
-function getHotel(){
+    $query->leftJoin('center_of_interest_to_recommendation', 'cir', 'rec.id = cir.rec_id');
+    $query->leftJoin('center_of_interest', 'ci', 'cir.passion_id = ci.id');
+    $query->leftJoin('hotel_trip_type_to_recommendation', 'ttr', 'rec.id = ttr.rec_id');
+    $query->leftJoin('gbl_advisor_trip_type', 'tt', 'ttr.trip_type_id = tt.trip_id');
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = advisor.uid');
+
+    $query->leftJoin('gbl_user_passeport', 'pass', 'advisor.uid = pass.uid AND pass.passport_trip_type_id = 1');
+    $query->leftJoin('gbl_user_passeport', 'pass_cu', 'pass_cu.passport_trip_type_id = 1 AND pass_cu.country = pass.country AND pass_cu.uid = ' . $userId);
+    $query->addExpression('pass_cu.passeport_id', 'local');
+
+    $query->leftJoin('gbl_users_passions', 'psn', 'psn.uid = rec.advisor_id');
+    $query->leftJoin('gbl_users_passions', 'psn_cu', 'psn.pid = psn_cu.pid AND psn_cu.uid = ' . $userId);
+    $query->addExpression('psn_cu.pid', 'mutual');
+
+//$fbFriends = '159056944584014';
+    if ($fbFriends) {
+        $query->leftJoin('fboauth_users', 'fbu', 'rec.advisor_id = fbu.uid AND fbu.fbid IN (' . $fbFriends . ')');
+        $query->addExpression('fbu.fbid', 'fbfriend');
+    }
+
+    $query->addExpression('GROUP_CONCAT(DISTINCT ci.name SEPARATOR \', \')', 'centers_of_interest');
+    $query->addExpression('GROUP_CONCAT(DISTINCT tt.trip_type SEPARATOR \', \')', 'trip_types');
+    $query->addExpression('ROUND(SUM(rat.rating)/COUNT(rat.id))', 'advisor_rating');
+    $query->addExpression('COUNT(DISTINCT rat.id)', 'advisor_rating_count');
+
+    $query->fields('rec', ['id', 'experience_id', 'comment']);
+    $query->fields('advisor', ['uid']);
+    $query->fields('advisor_meta', ['first_name', 'last_name', 'company', 'occupation', 'city']);
+    $query->addExpression('fm.filename', 'advisor_pic');
+    $query->condition('rec.hotel_code', $hotelCode, '=');
+//    $query->isNotNull('rat.hotel_rec_id');
+    $query->orderBy('rec.created', 'DESC');
+    $query->groupBy('rec.id');
+//    $query->range($offset, $limit);
+
+    $result = $query->execute();
+//    echo $result->queryString;die;
+    return $result->fetchAssoc();
+}
+
+function hotel_reviews($hotelСode, $offset = 0, $limit = 3)
+{
+    $query = db_select('gbl_reviews', 'rev');
+    $query->leftJoin('users', 'author', 'rev.uid = author.uid');
+    $query->leftJoin('gbl_users_meta', 'author_meta', 'author.uid = author_meta.uid');
+    $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->addExpression('fm.filename', 'author_pic');
+    $query->fields('rev', ['id', 'comments', 'created', 'communication', 'safety', 'professional', 'money']);
+    $query->addExpression('ROUND((rev.communication + rev.safety + rev.professional + rev.money)/4)', 'overall_rating');
+
+    $query->leftJoin('gbl_reviews', 'lr', 'lr.hotel_code = ' . $hotelСode);
+    $query->addExpression('COUNT(DISTINCT lr.id)', 'reviews_count');
+
+    $query->fields('author_meta', ['first_name', 'last_name', 'occupation', 'uid']);
+    $query->condition('rev.hotel_code', $hotelСode, '=');
+    $query->groupBy('rev.id');
+    $query->range($offset, $limit);
+    $result = $query->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+function hotel_review_passsions_ratings($listingId, $offset = 0, $limit = 3)
+{
+
+    //first three center of interests percentage
+
+
+    $query = db_select('gbl_passions_category', 'pc');
+    $query->leftJoin('gbl_passions', 'p', 'pc.pcid = p.passion_category');
+    $query->leftJoin('gbl_passions_to_review', 'ptr', 'ptr.passion_id = p.pid');
+    $query->leftJoin('gbl_reviews', 'rev', 'ptr.review_id = rev.id and rev.listing_id = ' . $listingId);
+    $query->leftJoin('gbl_reviews', 'revc', 'revc.listing_id = ' . $listingId);
+    $query->addExpression('ROUND(((100/count(DISTINCT p.pid))*count(DISTINCT ptr.passion_id))/(count(DISTINCT revc.id)))', 'percentage');
+    $query->fields('pc', ['pcid', 'passion_category']);
+    $query->fields('ptr', ['review_id']);
+    $query->fields('rev', ['created']);
+    $query->groupBy('pc.pcid');
+    $query->orderBy('percentage', 'DESC');
+    $query->range($offset, $limit);
+    $result = $query->execute();
+//    var_dump($result->queryString);die;
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function last_followed_recommendations_hotels($limit = 3, $offset = 0)
+{
+  /*  $query = db_select('gbl_booking', 'b');
+    $query->innerJoin('users', 'u', 'b.advisor_id = u.uid');
+    $query->innerJoin('gbl_experience_list', 'el', 'b.lid = el.eid');
+    $query->leftJoin('gbl_experience_type', 'et', 'el.experience_type = et.id');
+
+    $query->leftJoin('gbl_recommendations', 'rec', 'rec.experience_id = el.eid');
+
+    $query->leftJoin('gbl_reviews', 'lr', 'el.eid = lr.listing_id');
+    $query->fields('b', ['lid']);
+    $query->fields('et', ['experience_type']);
+    $query->fields('el', ['eid', 'title', 'base_price', 'address1']);
+    $query->fields('u', ['uid']);
+    $query->addExpression('COUNT(DISTINCT lr.listing_id)', 'reviews_count');
+    $query->addExpression('COUNT(DISTINCT rec.hotel_code)', 'recommendations_count');
+    $query->orderBy('el.agg_rating', 'DESC');
+    $query->condition('b.uid', '0', '<>');
+    $query->condition('b.advisor_id', '0', '<>');
+    $query->isNotNull('rec.hotel_code');
+    $query->orderBy('b.created', 'DESC');
+    $query->groupBy('el.eid');
+    $query->range($offset, $limit);
+    $result = $query->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);*/
+}
+
+function getHotel()
+{
+//    $from = 1;
+//    $step = 1000;
+//    $iterations = ceil(154472 / $step);
+//    for ($i = $step + $from, $k = 2; $i < $step * $iterations, $k <= $iterations; $i += $step, $k++) {
+//        echo $i.' '.$k*$step.'<br/>';
+//            }
+//    SyncAPI::synchronizeAllHotels();die;
+
+//    $api = new Hotelbeds();
+//    $res = $api->hotelbeds_check_rates(['20170419|20170515|W|55|1454|APT.B2-VM|CG TODOS17 NUEV|SC||1~2~0||N@FDF5EFF071AA4C1792A5B386A2719A8B']);
+//    var_dump($res);die;
+
     $hotelCode = arg(1);
     $daterange = filter_input(INPUT_GET, 'daterange');
     $dates = isset($daterange) ? explode(' - ', $daterange) : '';
@@ -101,7 +270,50 @@ function getHotel(){
         $longitude = $mapsResponse->results[0]->geometry->location->lng;
         $api = new Hotelbeds();
         $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children, $minRate, $maxRate, $page, $hotelCode);
-        $facilityGroups = get_facility_groups_full_info($hotels['hotels_info'][0]->facilities);
-        var_dump($facilityGroups);die;
+        var_dump($hotels);
+        die;
+//        $hotelFacilityGroups = get_facility_groups_full_info($hotels['hotels_info'][0]->facilities);
+//        $roomFacilities = get_facility_groups_full_info($hotels['hotels_info'][0]->facilities);
+//        $rooms = combine_rooms_data($hotels['hotels_info'][0]->rooms, $hotels['hotels_info'][0]->bookingInfo->rooms);
+//        var_dump($hotels);die;
+    }
+}
+
+function hotelsPaymentPage()
+{
+    global $user;
+
+//    var_dump($advisorData);die;
+    $rates = filter_input(INPUT_GET, 'rates');
+    $advisor = filter_input(INPUT_GET, 'ruid');
+    if ($rates) {
+        $rates = is_array(explode(',', $rates)) ? explode(',', $rates) : [];
+        if (count($rates)) {
+            $api = new Hotelbeds();
+            $hotels = $api->hotelbeds_check_rates($rates);
+            if ($hotels->hotel->rooms && !$hotels->error) {
+                $hotelbedsRate = $hotels->hotel->totalNet;
+                $gloobersFee = $hotelbedsRate*0.11;
+
+                if($user->invited_by){
+                    //payment to inviter
+                    $inviterFee = $hotelbedsRate*0.01;
+                }else{
+                    $gloobersFee += $hotelbedsRate*0.01;
+                }
+
+                $advisorData = get_user_by_id($advisor);
+                if($advisorData){
+                    //payment to advisor
+                    $advisorFee = $hotelbedsRate*0.07;
+                    $advisorInviterFee = $hotelbedsRate*0.01;
+                }else{
+                    $gloobersFee += $hotelbedsRate*0.08;
+                }
+
+            } else {
+            //wrong rooms data
+            }
+        }
     }
 }

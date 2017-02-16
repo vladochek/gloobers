@@ -1203,6 +1203,13 @@ function sendWelcomeEmail($module, $key, $to_email, $subject, $title, $body = NU
     }
 }
 
+function get_user_by_id($id){
+    $query = db_select('users', 'u');
+    $query->fields('u');
+    $query->condition('u.uid', $id, '=');
+    return $query->execute()->fetchAssoc();
+}
+
 function send_invitation()
 {
 
@@ -2378,7 +2385,7 @@ function getListingReviewsAll($uid = null)
 {
 
     $reviews = array();
-    $query = db_select('gbl_listing_reviews', 'r');
+    $query = db_select('gbl_reviews', 'r');
     $query->join('users', 'user', 'user.uid = r.uid');
     //$query->leftJoin('gbl_experience_list', 'e', 'user.uid = e.uid');
     $query->join('file_managed', 'file', 'file.fid = user.picture');
@@ -3391,7 +3398,7 @@ function get_user_experience_quantity($userId)
     $sql = "SELECT COUNT(DISTINCT rev.id) as user_reviews_count, 
     COUNT(DISTINCT el.eid) as user_listings_count, 
     COUNT(DISTINCT b.id) as user_trips_count
-    FROM {gbl_listing_reviews} as rev, {gbl_experience_list} as el, {gbl_booking} as b
+    FROM {gbl_reviews} as rev, {gbl_experience_list} as el, {gbl_booking} as b
     where rev.uid = :userId and el.uid = :userId and b.uid = :userId";
     return db_query($sql, [':userId'=>$userId])->fetchAssoc();
 }

@@ -182,12 +182,12 @@ class SyncAPI
         }
         if (count($existingFacilityTypologyCodes) || count($existingFacilityCodes) || count($existingFacilityGroupCodes)) {
             $query = db_delete('gbl_hotel_amenities');
-                $or = db_or()
-                    ->condition('code', $existingFacilityCodes, 'NOT IN')
-                    ->condition('group_code', $existingFacilityGroupCodes, 'NOT IN')
-                    ->condition('typology_code', $existingFacilityTypologyCodes, 'NOT IN');
-                $query->condition($or);
-                $query->execute();
+            $or = db_or()
+                ->condition('code', $existingFacilityCodes, 'NOT IN')
+                ->condition('group_code', $existingFacilityGroupCodes, 'NOT IN')
+                ->condition('typology_code', $existingFacilityTypologyCodes, 'NOT IN');
+            $query->condition($or);
+            $query->execute();
         }
     }
 
@@ -315,9 +315,9 @@ class SyncAPI
         $itemsCount = $groupsResponse->total;
         $iterations = ceil($groupsResponse->total / $step);
         $roomCategories = array_merge($roomCategories, $groupsResponse->rooms);
-        if($itemsCount>$step) {
+        if ($itemsCount > $step) {
             for ($i = $step + $from, $k = 2; $i < $step * $iterations, $k <= $iterations; $i += $step, $k++) {
-                $response = $hotelbeds->hotelbeds_get_hotels_room_types($i, $k*$step);
+                $response = $hotelbeds->hotelbeds_get_hotels_room_types($i, $k * $step);
                 $roomCategories = array_merge($roomCategories, $response->rooms);
             }
         }
@@ -363,6 +363,97 @@ class SyncAPI
             db_delete('gbl_room_types')
                 ->condition('code', $existingCodes, 'NOT IN')
                 ->execute();
+        }
+    }
+
+    public function saveHotels(){
+
+    }
+
+    public static function synchronizeAllHotels()
+    {
+//        $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
+////        $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+////        $result = $manager->executeBulkWrite('gloobers.hot', $bulk, $writeConcern);
+//
+//        $filter = [];
+//        $query = new MongoDB\Driver\Query($filter);
+//        $rows = $manager->executeQuery('gloobers.hote', $query);
+//        var_dump($rows);die;
+//        unset($_SESSION['keys_cursor_hotels']);die;
+        $hotelbeds = new Hotelbeds();
+        $from = 1;
+        $step = 400;
+        $hotelsCodes = [];
+        $urlData = 'fields=all&from=' . $from . '&to=' . $step;
+        $hotelsResponse = $hotelbeds->hotelbeds_get_hotels_info($urlData);
+        var_dump(mb_strlen(json_encode($hotelsResponse)));die;
+        $itemsCount = $hotelsResponse->total;
+        $iterations = ceil($itemsCount / $step);
+        foreach ($hotelsResponse as $hotel) {
+//                    var_dump($hotel->code);die;
+            $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
+            $bulk = new MongoDB\Driver\BulkWrite;
+            $hotelCode = $hotel->code;
+            //find hotel in the mongo
+            $filter = ['0.code' => $hotelCode];
+            $query = new MongoDB\Driver\Query($filter);
+            $result = $manager->executeQuery('gloobers.hotel', $query)->toArray();
+            //if we have this hotel in mongo
+            if (isset($result[0]->_id)) {
+                //delete and insert (replace outdated info)
+                $bulk->delete(['0.code' => $hotelCode]);
+                $bulk->insert([$hotel]);
+            } else {
+                //insert
+                $bulk->insert([$hotel]);
+            }
+            $manager->executeBulkWrite('gloobers.hotel', $bulk);
+            $hotelsCodes[] = $hotelCode;
+        }
+//        $code = $hotelsResponse->hotels[0]->code;
+//        $bulk = new MongoDB\Driver\BulkWrite;
+//        $bulk->delete(['0.code'=>1]);
+//        var_dump($hotelsResponse);die;
+
+//        $bulk->insert([$hotelsResponse->hotels[0]]);
+
+//        $manager->executeBulkWrite('gloobers.hot', $bulk);
+//        $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
+//        $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+//        $result = $manager->executeBulkWrite('gloobers.hot', $bulk);
+
+        if ($itemsCount > $step) {
+            for ($i = $step + $from, $k = 2; $i < $step * $iterations, $k <= $iterations; $i += $step, $k++) {
+                $urlData = 'fields=all&from=' . $i . '&to=' . $k * $step;
+                $hotelsResponse = $hotelbeds->hotelbeds_get_hotels_info($urlData);
+                $hotels = $hotelsResponse->hotels;
+                foreach ($hotels as $hotel) {
+//                    var_dump($hotel->code);die;
+                    $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
+                    $bulk = new MongoDB\Driver\BulkWrite;
+                    $hotelCode = $hotel->code;
+                    //find hotel in the mongo
+                    $filter = ['0.code' => $hotelCode];
+                    $query = new MongoDB\Driver\Query($filter);
+                    $result = $manager->executeQuery('gloobers.hotel', $query)->toArray();
+//                    var_dump($result);
+//                    die;
+                    //if we have this hotel in mongo
+                    if (isset($result[0]->_id)) {
+                        //delete and insert (replace outdated info)
+                        $bulk->delete(['0.code' => $hotelCode]);
+                        $bulk->insert([$hotel]);
+                    } else {
+                        //insert
+                        $bulk->insert([$hotel]);
+                    }
+                    $manager->executeBulkWrite('gloobers.hotel', $bulk);
+                    $hotelsCodes[] = $hotelCode;
+                }
+//                $roomCategories = array_merge($roomCategories, $response->rooms);
+            }
+
         }
     }
 }

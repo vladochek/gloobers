@@ -8,14 +8,15 @@ class Hotelbeds
     private $signatureActivities;
     private $mode;
     private $url;
+    private $keysCursor = 0;
     const HOTELS_LIMIT_PER_PAGE = 6;
 
     public function __construct()
     {
-        $this->apiKeyHotels = variable_get('hotel_api_key', NULL);
-        $this->signatureHotels = variable_get('hotel_signature', NULL);
-        $this->apiKeyActivities = variable_get('activities_api_key', NULL);
-        $this->signatureActivities = variable_get('activities_signature', NULL);
+        $this->apiKeyHotels = variable_get('hotel_api_key_0', NULL);
+        $this->signatureHotels = variable_get('hotel_signature_0', NULL);
+        $this->apiKeyActivities = variable_get('activities_api_key_0', NULL);
+        $this->signatureActivities = variable_get('activities_signature_0', NULL);
         $this->mode = variable_get('apitude_mode', NULL);
         $this->url = $this->mode == 'test' ? variable_get('apitude_test_url', NULL) : variable_get('apitude_live_url', NULL);
     }
@@ -30,29 +31,88 @@ class Hotelbeds
         $options['headers'] = array_merge($definedHeaders, $headers);
         $options['data'] = $data;
         $options['method'] = $method;
-        $response = drupal_http_request($url, $options);
+        return drupal_http_request($url, $options);
+    }
 
+    protected function hotelbeds_activities_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
+    {
+        session_start();
+        if (!isset($_SESSION['keys_cursor_activities'])) {
+            $_SESSION['keys_cursor_activities'] = 0;
+        }
+        $cursor = $_SESSION['keys_cursor_activities'];
+
+        if (variable_get('activities_api_key_' . $cursor, NULL) !== NULL) {
+            $this->apiKeyActivities = variable_get('activities_api_key_' . $cursor, NULL);
+            $this->signatureActivities = variable_get('activities_signature_' . $cursor, NULL);
+        } else {
+            unset($_SESSION['keys_cursor_activities']);
+        }
+
+        $response = $this->hotelbeds_connect($this->apiKeyActivities, $this->signatureActivities, $url, $method, $data, $headers, $accept);
         if ($response->code == '200') {
-            switch ($format) {
+            switch ($accept) {
                 case 'json':
                     return json_decode($response->data);
                     break;
                 default:
                     return $response->data;
             }
+        } elseif ($response->code == '403' && $response->data == '<h1>Developer Over Rate</h1>') {
+            if (isset($_SESSION['keys_cursor_activities'])) {
+                $_SESSION['keys_cursor_activities'] += 1;
+            }
+            $this->hotelbeds_connect($this->apiKeyActivities, $this->signatureActivities, $url, $method, $data = [], $headers = [], $format = 'json');
         } else {
-            var_dump($response);die;
+            var_dump($response);
+            die;
         }
-    }
-
-    protected function hotelbeds_activities_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
-    {
-        return $this->hotelbeds_connect($this->apiKeyActivities, $this->signatureActivities, $url, $method, $data, $headers, $accept);
     }
 
     protected function hotelbeds_hotels_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
     {
-        return $this->hotelbeds_connect($this->apiKeyHotels, $this->signatureHotels, $url, $method, $data, $headers, $accept);
+        session_start();
+
+        $_SESSION['keys_cursor_hotels'] = 10;
+
+
+        if (!isset($_SESSION['keys_cursor_hotels'])) {
+            $_SESSION['keys_cursor_hotels'] = 0;
+        }
+        $cursor = $_SESSION['keys_cursor_hotels'];
+
+        if (variable_get('hotel_api_key_' . $cursor, NULL) !== NULL) {
+            $this->apiKeyHotels = variable_get('hotel_api_key_' . $cursor, NULL);
+            $this->signatureHotels = variable_get('hotel_signature_' . $cursor, NULL);
+        } else {
+            unset($_SESSION['keys_cursor_hotels']);
+            $this->apiKeyHotels = variable_get('hotel_api_key_0' . $cursor, NULL);
+            $this->signatureHotels = variable_get('hotel_signature_0' . $cursor, NULL);
+        }
+
+//        echo $_SESSION['keys_cursor_hotels'];die;
+        $response = $this->hotelbeds_connect($this->apiKeyHotels, $this->signatureHotels, $url, $method, $data, $headers, $accept);
+
+        if ($response->code == '200') {
+            switch ($accept) {
+                case 'json':
+//                    if ($url == $this->url . 'hotel-content-api/1.0/hotels?fields=all&language=ENG&codes=14057&from=1&to=6') {
+//                        var_dump(123);
+//                        die;
+//                    }
+                    return json_decode($response->data);
+                    break;
+                default:
+                    return $response->data;
+            }
+        } elseif ($response->code == '403' && $response->data == '<h1>Developer Over Rate</h1>') {
+            if (isset($_SESSION['keys_cursor_hotels'])) {
+                $_SESSION['keys_cursor_hotels'] += 1;
+            }
+            return $this->hotelbeds_connect($this->apiKeyHotels, $this->signatureHotels, $url, $method, $data = [], $headers = [], $format = 'json');
+        } else {
+            var_dump($response);die;
+        }
     }
 
     public function hotelbeds_get_activity_types()
@@ -138,7 +198,7 @@ class Hotelbeds
     function hotelbeds_get_hotels_room_types($from, $to)
     {
         return $this->hotelbeds_hotels_api_connect(
-            $this->url . 'hotel-content-api/1.0/types/rooms?fields=all&language=ENG&from='.$from.'&to='.$to,
+            $this->url . 'hotel-content-api/1.0/types/rooms?fields=all&language=ENG&from=' . $from . '&to=' . $to,
             'GET'
         );
     }
@@ -207,6 +267,23 @@ class Hotelbeds
         );
     }
 
+    function hotelbeds_check_rates($rates){
+        $ratesData = [];
+        foreach ($rates as $rate) {
+            $ratesData[]['rateKey']=$rate;
+        }
+        $data = json_encode([
+          'rooms'=>$ratesData
+        ]);
+//        var_dump(json_encode($data));die;
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-api/1.0/checkrates/',
+            'POST',
+            $data,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
     function hotelbeds_get_hotels_info($data)
     {
         return $this->hotelbeds_hotels_api_connect(
@@ -215,25 +292,36 @@ class Hotelbeds
         );
     }
 
-    function hotelbeds_get_hotels_info_by_codes($hotelsCodes, $to, $from = 1,  $fields = 'all', $segmentCodes='')//segmentCodes=31&
+    function hotelbeds_get_hotels_info_by_codes(
+        $hotelsCodes, $to, $from = 1, $fields = 'all', $segmentCodes = null, $boards = null, $accommodations = null)//segmentCodes=31&
     {
         $hotelsCodesString = implode(',', $hotelsCodes);
         $hotelsInfoRequestData = [
             'fields' => $fields,
             'language' => 'ENG',
             'codes' => $hotelsCodesString,
-            'segmentCodes'=>$segmentCodes,
             'from' => $from,
-            'to' => $to
+            'to' => $to,
         ];
+        if ($segmentCodes) {
+            $hotelsInfoRequestData['segmentCodes'] = $segmentCodes;
+        }
+        if ($boards) {
+            $hotelsInfoRequestData['boardCodes'] = $boards;
+        }
+        if ($accommodations) {
+            $hotelsInfoRequestData['accommodationTypes'] = $accommodations;
+        }
         $hotelsInfoRequestString = http_build_query($hotelsInfoRequestData);
+//        var_dump($hotelsInfoRequestString);die;
         $hotelsInfo = $this->hotelbeds_get_hotels_info($hotelsInfoRequestString);
         return $hotelsInfo->hotels;
     }
 
+
     function hotelbeds_get_hotels(
-        $latitude, $longitude, $checkIn, $checkOut, $rooms, $adults,
-        $children = 0, $minRate = null, $maxRate = null, $page = 1, $code = false)
+        $latitude, $longitude, $checkIn, $checkOut, $rooms = 1, $adults,
+        $children = 0, $minRate = null, $maxRate = null, $page = 1, $code = false, $segments, $boards, $accommodations)
     {
         $radius = 50;
         $hotelsRequestData = [
@@ -242,7 +330,7 @@ class Hotelbeds
                 'checkOut' => $checkOut
             ],
             'occupancies' => [
-                 [
+                [
                     'rooms' => $rooms,
                     'adults' => $adults,
                     'children' => $children
@@ -265,31 +353,31 @@ class Hotelbeds
 
         $hotelsRequestDataEncoded = json_encode($hotelsRequestData);
         $hotelsResponse = $this->hotelbeds_hotels($hotelsRequestDataEncoded);
+//        var_dump($hotelsResponse);die;
         $hotels = $hotelsResponse->hotels->hotels;
 //        var_dump($hotels);die;
-        if($code){
+        if ($code) {
             $hotelsCodes = [$code];
-        }else {
+        } else {
             $hotelsCodes = array_column($hotels, 'code');
         }
-        $hotelsBookingInfo = array_column($hotels, NULL,'code');
+        $hotelsBookingInfo = array_column($hotels, NULL, 'code');
 //        var_dump($hotelsBookingInfo);die;
         $hotelsResponseResult['total'] = $hotelsResponse->hotels->total;
 //        $hotelsResponseResult['hotels_booking'] = $hotelsResponse->hotels;
         $hotelsResponseResult['hotels_info'] = [];
 
 
-
-        if(count($hotelsCodes)>0) {
+        if (count($hotelsCodes) > 0) {
             $page = (int)$page;
-            if($page>0) {
-                $checkLimit = ($page*self::HOTELS_LIMIT_PER_PAGE) - $hotelsResponseResult['total'];
+            if ($page > 0) {
+                $checkLimit = ($page * self::HOTELS_LIMIT_PER_PAGE) - $hotelsResponseResult['total'];
 
-                if($checkLimit<=self::HOTELS_LIMIT_PER_PAGE) {
+                if ($checkLimit <= self::HOTELS_LIMIT_PER_PAGE) {
                     $offset = ($page - 1) * self::HOTELS_LIMIT_PER_PAGE;
                     $hotelsCodesSliced = array_slice($hotelsCodes, $offset, self::HOTELS_LIMIT_PER_PAGE);
-
-                    $hotelsResponseResult['hotels_info'] = $this->hotelbeds_get_hotels_info_by_codes($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE);
+//var_dump($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE, 1, 'all', $segments, $boards, $accommodations);die;
+                    $hotelsResponseResult['hotels_info'] = $this->hotelbeds_get_hotels_info_by_codes($hotelsCodesSliced, self::HOTELS_LIMIT_PER_PAGE, 1, 'all', $segments, $boards, $accommodations);
 //                var_dump($hotelsResponseResult['hotels_info']);die;
                     foreach ($hotelsResponseResult['hotels_info'] as $key => $hotelItem) {
                         $hotelsResponseResult['hotels_info'][$key]->bookingInfo = $hotelsBookingInfo[$hotelItem->code];

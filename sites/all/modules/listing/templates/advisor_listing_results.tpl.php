@@ -139,6 +139,9 @@ $url= ($base_url."/advisor_sharing/request_id/".$request_id."?dest=".$destinatio
 				 $advisor_data = user_load($value['uid']);
 				 $cover_pic = getcoverpic($value['uid']);
 				$location = passeport_location($value['uid']);
+
+
+                //REFACTORED DB STRUCTURE!
 				$getStarRating=getAdvisorStarRating($value['uid']);
 				if(!empty($getStarRating)){
 					$totalReviews=sizeof($getStarRating);

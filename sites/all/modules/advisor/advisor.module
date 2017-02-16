@@ -617,10 +617,10 @@ function getAdvisorInfo($uid , $returnType = 'array') {
                       WHERE a.`uid`='".$uid."' and a.`booking_status`='booked' and arrive_at_date<=now() 
                     ) as country_visit,
                     (
-                      SELECT count(*) as review_count FROM `gbl_listing_reviews` WHERE uid='".$uid."'
+                      SELECT count(*) as review_count FROM `gbl_reviews` WHERE uid='".$uid."'
                     ) as review_count,
                     (
-                      SELECT avg(value) as rating_avg FROM `gbl_listing_reviews` WHERE uid='".$uid."'
+                      SELECT avg(value) as rating_avg FROM `gbl_reviews` WHERE uid='".$uid."'
                     ) as rating
 
                     )");
