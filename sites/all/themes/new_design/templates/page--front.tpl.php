@@ -161,7 +161,7 @@
                                 <input type="hidden" id="country-advisor" name="country">
                                 <input type="hidden" id="state-advisor" name="state">
                                 <input type="hidden" id="address-advisor" name="address">
-                                <input type="hidden" id="passport-advisor" name="passport-types" value="1">
+                                <input type="hidden" id="passport-advisor" name="passport_types" value="1">
                                 <input type="hidden" id="search-type-advisor" name="search_type" value="recommendation">
                             </div>
                         </form>

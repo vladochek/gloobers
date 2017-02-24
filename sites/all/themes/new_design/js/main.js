@@ -1,3 +1,12 @@
+function searchAutocompletePrompt(id) {
+    var home_autocomplete = new google.maps.places.Autocomplete(
+        /** @type {HTMLInputElement} */
+        (document.getElementById(id)),
+        {types: ['geocode']});
+    google.maps.event.addListener(home_autocomplete, 'place_changed', function () {
+    });
+}
+
 function hometowngeocode(id) {
 
     var home_autocomplete = new google.maps.places.Autocomplete(

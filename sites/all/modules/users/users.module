@@ -776,7 +776,7 @@ function user_dashboard()
     $query1 = db_select('file_managed', 'f');
     $query1->fields('f', array('uri'));
     $query1->condition('uid', $userId);
-    $query1->condition('is_cover_pic', 'yes');
+    $query1->condition('is_cover_pic', 1);
     $result4 = $query1->execute();
     $cover_pic = $result4->fetchField();
 
@@ -2719,24 +2719,24 @@ function about_yourself_form_submit($form, &$form_state)
         $query = db_select('file_managed', 'f')
             ->fields('f')
             ->condition('uid', $user->uid)
-            ->condition('is_profile_pic', 'yes');
+            ->condition('is_profile_pic', 1);
         $result = $query->execute();
         $num_of_results = $result->rowCount();
         if ($num_of_results == 1) {
-            $query = db_update("file_managed")->fields(array('uri' => $destination))->condition('uid', $user->uid)->condition('is_profile_pic', 'yes');
+            $query = db_update("file_managed")->fields(array('uri' => $destination))->condition('uid', $user->uid)->condition('is_profile_pic', 1);
             $result = $query->execute();
 
             $query = db_select('file_managed', 'f')
                 ->fields('f', array('fid'))
                 ->condition('uid', $user->uid)
-                ->condition('is_profile_pic', 'yes');
+                ->condition('is_profile_pic', 1);
             $result = $query->execute();
             $FId_id = $result->fetchField();
             $query = db_update("users")->fields(array('picture' => $FId_id))->condition('uid', $user->uid)->execute();
             $result = 'submit';
         } else {
 
-            $Fid = db_insert('file_managed')->fields(array('uid' => $user->uid, 'uri' => $destination, 'is_profile_pic' => 'yes', 'timestamp' => time()))->execute();
+            $Fid = db_insert('file_managed')->fields(array('uid' => $user->uid, 'uri' => $destination, 'is_profile_pic' => 1, 'timestamp' => time()))->execute();
             $query = db_update("users")->fields(array('picture' => $Fid))->condition('uid', $user->uid)->execute();
             $result = 'submit';
         }
@@ -3462,17 +3462,16 @@ function user_profile_section()
     $query = db_select('file_managed', 'f');
     $query->fields('f', array('uri'));
     $query->condition('uid', $uid);
-    $query->condition('is_profile_pic', 'yes');
+    $query->condition('is_profile_pic', 1);
     $result3 = $query->execute();
     $profile_pic = $result3->fetchField();
 
     $query = db_select('file_managed', 'f');
     $query->fields('f', array('uri'));
     $query->condition('uid', $uid);
-    $query->condition('is_cover_pic', 'yes');
+    $query->condition('is_cover_pic', 1);
     $result4 = $query->execute();
     $cover_pic = $result4->fetchField();
-
 
     $Passeports = get_user_passport($uid);
 //    var_dump($Passeports);
@@ -3843,7 +3842,7 @@ function updateDp()
 //        var_dump($destination);die;
         $query = db_select('file_managed', 'u')
             ->fields('u')
-            ->condition('is_profile_pic', 'yes')
+            ->condition('is_profile_pic', 1)
             ->condition('uid', $user->uid);
         $result = $query->execute();
         $num_of_results = $result->rowCount();
@@ -3853,13 +3852,13 @@ function updateDp()
             $update_Dp = db_update("file_managed")
                 ->fields(array('uri' => $destination, 'filename' => $image_name))
                 ->condition('uid', $user->uid)
-                ->condition('is_profile_pic', 'yes');
+                ->condition('is_profile_pic', 1);
             $update_Dp->execute();
 
             $update_Dp_id = db_select("file_managed", 'f')
                 ->fields('f', array('fid'))
                 ->condition('uid', $user->uid)
-                ->condition('is_profile_pic', 'yes');
+                ->condition('is_profile_pic', 1);
             $update_Dp_res = $update_Dp_id->execute();
             $update_Dp_res_id = $update_Dp_res->fetchField();
 
@@ -3871,7 +3870,7 @@ function updateDp()
 
         } else {
 
-            $insert_Dp = db_insert("file_managed")->fields(array('uri' => $destination, 'filename' => $image_name, 'uid' => $user->uid, 'is_profile_pic' => 'yes', 'status' => '1'));
+            $insert_Dp = db_insert("file_managed")->fields(array('uri' => $destination, 'filename' => $image_name, 'uid' => $user->uid, 'is_profile_pic' => 1, 'status' => '1'));
             $lastId = $insert_Dp->execute();
             $update_user_Dp = db_update("users")
                 ->fields(array('picture' => $lastId))
@@ -3896,18 +3895,21 @@ function updateDp()
 
         $query = db_select('file_managed', 'u')
             ->fields('u')
-            ->condition('is_cover_pic', 'yes')
+            ->condition('is_cover_pic', 1)
             ->condition('uid', $user->uid);
         $result = $query->execute();
         $num_of_results = $result->rowCount();
         if ($num_of_results == 1) {
-            $update_Cp = db_update("file_managed")->fields(array('uri' => $destination, 'filename' => $image_name))->condition('uid', $user->uid)->condition('is_cover_pic', 'yes');
+            $update_Cp = db_update("file_managed")
+                ->fields(array('uri' => $destination, 'filename' => $image_name))
+                ->condition('uid', $user->uid)
+                ->condition('is_cover_pic', 1);
             $updateId = $update_Cp->execute();
 
             $update_Cp_id = db_select("file_managed", 'f')
                 ->fields('f', array('fid'))
                 ->condition('uid', $user->uid)
-                ->condition('is_cover_pic', 'yes');
+                ->condition('is_cover_pic', 1);
             $update_Cp_res = $update_Cp_id->execute();
             $update_Cp_res_id = $update_Cp_res->fetchField();
 
@@ -3918,10 +3920,11 @@ function updateDp()
             $result = '1';
         } else {
             $insert_Cp = db_insert("file_managed")
-                ->fields(array('uri' => $destination,
+                ->fields(array(
+                        'uri' => $destination,
                         'uid' => $user->uid,
                         'filename' => $image_name,
-                        'is_cover_pic' => 'yes',
+                        'is_cover_pic' => 1,
                         'status' => '1')
                 );
             $lastId = $insert_Cp->execute();
@@ -4394,7 +4397,7 @@ function getcoverpic($uid)
     $query1 = db_select('file_managed', 'f');
     $query1->fields('f', array('uri'));
     $query1->condition('uid', $uid);
-    $query1->condition('is_cover_pic', 'yes');
+    $query1->condition('is_cover_pic', 1);
     $result4 = $query1->execute();
     $cover_pic = $result4->fetchField();
     return ($cover_pic);

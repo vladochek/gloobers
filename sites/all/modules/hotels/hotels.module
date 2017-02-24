@@ -92,7 +92,7 @@ function latest_hotel_recommendations($hotelCode)//, $limit = 5, $offset = 0
     $query = db_select('gbl_recommendations', 'rec');
     $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
     $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
-    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 1");
     $query->fields('advisor', ['uid']);
     $query->addExpression('fm.filename', 'advisor_pic');
     $query->condition('rec.hotel_code', $hotelCode, '=');
@@ -108,7 +108,7 @@ function last_hotel_recommendation($hotelCode, $userId)//, $limit = 5, $offset =
     $query = db_select('gbl_recommendations', 'rec');
     $query->leftJoin('users', 'advisor', 'rec.advisor_id = advisor.uid');
     $query->leftJoin('gbl_users_meta', 'advisor_meta', 'advisor.uid = advisor_meta.uid');
-    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->leftJoin('file_managed', 'fm', "advisor.uid = fm.uid and fm.is_profile_pic = 1");
 
 
     $query->leftJoin('center_of_interest_to_recommendation', 'cir', 'rec.id = cir.rec_id');
@@ -156,7 +156,7 @@ function hotel_reviews($hotelСode, $offset = 0, $limit = 3)
     $query = db_select('gbl_reviews', 'rev');
     $query->leftJoin('users', 'author', 'rev.uid = author.uid');
     $query->leftJoin('gbl_users_meta', 'author_meta', 'author.uid = author_meta.uid');
-    $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 'yes'");
+    $query->leftJoin('file_managed', 'fm', "author.uid = fm.uid and fm.is_profile_pic = 1");
     $query->addExpression('fm.filename', 'author_pic');
     $query->fields('rev', ['id', 'comments', 'created', 'communication', 'safety', 'professional', 'money']);
     $query->addExpression('ROUND((rev.communication + rev.safety + rev.professional + rev.money)/4)', 'overall_rating');
@@ -173,28 +173,28 @@ function hotel_reviews($hotelСode, $offset = 0, $limit = 3)
 }
 
 
-function hotel_review_passsions_ratings($listingId, $offset = 0, $limit = 3)
+function hotel_center_of_interests_ratings($hotelCode, $offset = 0, $limit = 3)
 {
-
     //first three center of interests percentage
 
+    $query = db_select('center_of_interest', 'ci');
+    $query->rightJoin('gbl_center_of_interest_to_review', 'cir', 'ci.id = cir.ci_id');
 
-    $query = db_select('gbl_passions_category', 'pc');
-    $query->leftJoin('gbl_passions', 'p', 'pc.pcid = p.passion_category');
-    $query->leftJoin('gbl_passions_to_review', 'ptr', 'ptr.passion_id = p.pid');
-    $query->leftJoin('gbl_reviews', 'rev', 'ptr.review_id = rev.id and rev.listing_id = ' . $listingId);
-    $query->leftJoin('gbl_reviews', 'revc', 'revc.listing_id = ' . $listingId);
-    $query->addExpression('ROUND(((100/count(DISTINCT p.pid))*count(DISTINCT ptr.passion_id))/(count(DISTINCT revc.id)))', 'percentage');
-    $query->fields('pc', ['pcid', 'passion_category']);
-    $query->fields('ptr', ['review_id']);
-    $query->fields('rev', ['created']);
-    $query->groupBy('pc.pcid');
-    $query->orderBy('percentage', 'DESC');
+    $query->leftJoin('gbl_reviews', 'rev', 'cir.review_id = rev.id and rev.hotel_code = ' . $hotelCode);
+//    $query->leftJoin('gbl_reviews', 'revc', 'revc.hotel_code = ' . $hotelCode);
+//    $query->addExpression('ROUND(((100/count(DISTINCT ci.id))*count(DISTINCT cir.ci_id))/(count(DISTINCT revc.id)))', 'percentage');
+    $query->fields('ci', ['id', 'name']);
+    $query->addExpression('ROUND((100*COUNT(cir.ci_id))/(SELECT COUNT(coir.ci_id) FROM gbl_center_of_interest_to_review coir ORDER BY ci_id DESC))', 'ci_percentage');
+//    $query->fields('rev', ['created']);
+    $query->orderBy('ci_percentage', 'DESC');
+    $query->orderBy('ci.id', 'DESC');
+    $query->groupBy('cir.ci_id');
     $query->range($offset, $limit);
     $result = $query->execute();
 //    var_dump($result->queryString);die;
     return $result->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 function last_followed_recommendations_hotels($limit = 3, $offset = 0)
 {
@@ -235,9 +235,14 @@ function getHotel()
 
 //    $api = new Hotelbeds();
 //    $res = $api->hotelbeds_check_rates(['20170419|20170515|W|55|1454|APT.B2-VM|CG TODOS17 NUEV|SC||1~2~0||N@FDF5EFF071AA4C1792A5B386A2719A8B']);
-//    var_dump($res);die;
+
+
 
     $hotelCode = arg(1);
+
+    $ciRatings = hotel_center_of_interests_ratings($hotelCode);
+    var_dump($ciRatings);die;
+
     $daterange = filter_input(INPUT_GET, 'daterange');
     $dates = isset($daterange) ? explode(' - ', $daterange) : '';
     $dateFromSegments = explode('/', $dates[0]);

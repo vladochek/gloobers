@@ -1,428 +1,1048 @@
-<?php  global $base_url,$user; 
-$par = arg(0); 
-$filter_active="";
-if(((isset($_GET['with_mutual_interests'])) || (isset($_GET['have_been_there'])) || (isset($_GET['locals'])) || (isset($_GET['professionals']))))
-  {
-   $filter_active = 1;
-  };
-$passionlist=getPassionList();
-?>
-<!-- <link href="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/stylesheet/bootstrap.min.css" rel="stylesheet" type="text/css" /> -->
-<link href="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/fonts/stylesheet.css" rel="stylesheet" type="text/css" />
-<link href="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/stylesheet/style.css" rel="stylesheet" type="text/css" />
-<link href="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/stylesheet/font-awesome.css" rel="stylesheet" type="text/css" />
-<div class="innerpage">
-<section class="content-section">
-<div class="container-fluid">
-<div class="row">
-<div class="innersearch">
-<form method="get" id="search_result_advisor" action="<?php echo $base_url; ?>/advisor_listing_results">
-<div class="col-md-8 col-sm-6 col-xs-12 dessearch">
-<input type="search" name="dest" value="<?php if(isset($_GET['dest']) and $_GET['dest']!='') {echo $_GET['dest'];} ?>" class="desinput" onclick="search_destination();" id="advice_destination" onblur="if (this.placeholder == ''){this.placeholder = 'Enter a destination'; }" onfocus="if(this.placeholder == 'Enter a destination'){this.placeholder = '';}" placeholder="Enter a destination" />
-<input type="submit" name="nothing" value="Submit" class="searchinput" onclick="clickablesearch();" />
-</div> <!-- End DesSearch -->
-<div class="col-md-2 col-sm-3 col-xs-12 advisorsearch">
-<!-- <input type="text" name="advisors" class="advisorinput" value="Advisors" readonly="readonly" />
- -->
-  <select class ="advisorinput"  onChange="ChangetypeofAdvisor(this);">
-    <option value = "">-- Select-- </option>
-   <!--  <option value="Advisors" <?php //if(isset($_GET['advisors']) == 'Advisors'){ echo "selected" ;} ?>>Advisors</option> -->
-    <option value="Expereince">Experience</option>
-     <option value="Gloobers" <?php if(isset($par) == 'Gloobers'){ echo "selected" ;} ?>>Other gloobers</option>
-</select> 
- </div> <!-- End AdvisorSearch -->
-<div class="col-md-2 col-sm-3 col-xs-12 filtersearch">
-<span> Filters <i class="fa fa-list"></i></span>
-</div> <!-- End AdvisorSearch -->
+<!DOCTYPE html>
+<html lang="en" class="no-js">
 
-<div class="tab-pane tabs_ul" style="display:<?= $filter_active == 1 ? 'block' : 'none';  ?>">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gloobers</title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en" async defer></script>
+    <?php
+    drupal_add_css('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|PT+Sans:400,700', ['type' => 'external']);
+    drupal_add_css('sites/all/themes/new_design/css/sprite.css', ['type' => 'file']);
+    drupal_add_css('sites/all/themes/new_design/css/jquery.fancybox.css', ['type' => 'file']);
+    drupal_add_css('sites/all/themes/new_design/css/daterangepicker.css', ['type' => 'file']);
+    drupal_add_css('sites/all/themes/new_design/css/drop-theme-arrows.css', ['type' => 'file']);
+    drupal_add_css('sites/all/themes/new_design/css/bootstrap.min.css', ['type' => 'file']);
+    drupal_add_css('sites/all/themes/new_design/css/bootstrap-theme.min.css', ['type' => 'file']);
+    drupal_add_css('sites/all/themes/new_design/css/star-rating.min.css', ['type' => 'file']);
+    drupal_add_css('sites/all/themes/new_design/css/all.css', ['type' => 'file']);
+    ?>
 
-<div class="container">
-<ul class="check-tabs">
+</head>
+<body>
+<script>
 
-<!-- <li class="col-md-2 col-sm-6 col-xs-12"><input type="checkbox" name="facebook" class="checkbox" /><span>Facebook friends</span></li>
- --><li class="col-md-3 col-sm-6 col-xs-12"><input type="checkbox" <?php if(isset($_GET['with_mutual_interests'])){ echo 'checked'; } ?> 	name="with_mutual_interests" class="checkbox" /><span>With mutual interests</span></li>
-<li class="col-md-2 col-sm-6 col-xs-12"><input type="checkbox" <?php if(isset($_GET['have_been_there'])){ echo 'checked'; } ?> name="have_been_there" class="checkbox" /><span>Verified trips</span></li>
-<li class="col-md-2 col-sm-6 col-xs-12"><input type="checkbox" <?php if(isset($_GET['locals'])) {echo 'checked'; } ?> name="locals" class="checkbox" /><span>Locals</span></li>
-<li class="col-md-2 col-sm-6 col-xs-12"><input type="checkbox" <?php if(isset($_GET['professionals'])) {echo 'checked'; } ?>  name="professionals" class="checkbox" /><span>Professionals</span></li>
-</ul>
-</div>
-</div> <!-- End Tab-Pane -->
-<!-- <input type ="hidden" name="destination" value= "<?php //echo $_GET['destination']; ?>"> -->
-<input type ="hidden" name="advisors" value="<?php echo $_GET['advisors']; ?>">
-<input type ="hidden" name="triptype" value="<?php echo $_GET['triptype']; ?>">
-<input type ="hidden" name="traveler" value="<?php echo $_GET['traveler']; ?>">
-<input type ="hidden" name="start_date" value="<?php echo $_GET['start_date']; ?>">
-<input type ="hidden" name="end_date" value="<?php echo $_GET['end_date']; ?>">
-<input type ="hidden" name="overall_budget" value="<?php echo $_GET['overall_budget']; ?>">
-<input type ="hidden" name="lookingfor" value="<?php echo $_GET['lookingfor']; ?>">
-</form>
-</div> <!-- End InnerSearch -->
-<div class="col-md-12 col-sm-12 col-xs-12 passionblock">
-<div class="container">
-<div class="col-md-12 col-sm-4 col-xs-12 passionpanel">
-<?php 
-if($_GET['passions']){
-$selectedPassions=explode(',',$_GET['passions']);
-}else{
-$selectedPassions=array();
-}
-foreach($passionlist as $passions){
-if(in_array($passions['pid'],$selectedPassions)){
-	$checked='checked';
-}else{
-	$checked='';
-}
-?>
-<div class="col-md-3 col-sm-4 col-xs-12 passioncol">
-<div class="inputthumb"><input type="checkbox" name="passions<?php echo ucfirst($passions['pid']); ?>" id="<?php echo ucfirst($passions['pid']); ?>" class="css-checkbox passion_checks" value="<?php echo ucfirst($passions['pid']); ?>" <?php echo $checked; ?>/>
-<label for="<?php echo ucfirst($passions['pid']); ?>" class="css-label"><?php echo ucfirst($passions['passion']); ?></label></div>
-</div> <!-- PassionCol -->
-<?php } ?>
-</div> <!-- End PassionPanel -->
-</div> <!-- End Container -->
-</div> <!-- End PassionBlock -->
-</form>
-<div class="sharingblock">
-<div class="container">
-<div class="sharingrow">
-<div class="col-md-10 col-sm-10 col-xs-12"><h2>Share this request</h2></div>
-<fieldset>
-<?php 
-$destination = $_GET['dest'];
-$triptype = $_GET['triptype'];
-$traveler = $_GET['traveler'];
-$start_date = $_GET['start_date'];
-$end_date = $_GET['end_date'];
-$overall_budget = $_GET['overall_budget'];
-$looking_for = $_GET['lookingfor'];
-$request_id = $user->uid;
-$url= ($base_url."/advisor_sharing/request_id/".$request_id."?dest=".$destination."&triptype=".$triptype."&traveler=".$traveler."&start_date=".$start_date."&end_date=".$end_date."&overall_budget=".$overall_budget."&looking_for=".$looking_for);
-
-?>
-<div class="col-md-10 col-sm-10 col-xs-12">
-   <div class="clipboard">
-        <input name="input" id="dynamic" readonly type="text" value="<?php echo $url; ?>">
-       <!--  <span>http://gloobers.com/<?php //echo $url; ?></span> -->
-    </div>
-</div>
-<div class="col-md-2 col-sm-2 col-xs-12">
-<!--<a class="actionbtn"  id="copy-dynamic" href="javascript:void(0);">Copy</a>-->
-<a class="actionbtn btn" data-clipboard-action="copy" data-clipboard-target="#dynamic" id="copy-dynamic1" href="javascript:void(0);">Copy</a>
-</div>
-</fieldset>
-<div class="col-md-10 col-sm-10 col-xs-12 social_icons">
-<ul>
-<li><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode($url); ?>"><i class="fa fa-facebook"> </i></a></li>
-<li><a target="_blank" href="https://twitter.com/home?status=<?php echo urlencode($url); ?>"><i class="fa fa-twitter"> </i></a></li>
-<li><a target="_blank" href="https://plus.google.com/share?url=<?php echo urlencode($url); ?>"><i class="fa fa-google-plus"> </i></a></li>
-<li><a href="mailto:?&subject=&body=<?php echo urlencode($url); ?>"><i class="fa fa-envelope-o"> </i></a></li>
-</ul>
-</div> <!-- End Social_Icons -->
-</div> <!-- End sharingrow -->
-</div> <!-- End Container -->
-<div class="mask"></div>
-</div> <!-- End SharingBlock-->
-</div> <!-- End Row -->
-</div> <!-- End Container-Fluid -->
-</section> <!-- End Content-Section -->
-<section class="advisor_listing_tab">
-<div class="container">
-	<div class="tab-content">
-		<div class="tab-pane fade in active" id="facebookfriend">
-        <?php
-		$loogedUserId=$user->uid;
-		if($result){  
-			foreach($result as  $value){ 
-			if($value['uid'] != $loogedUserId){
-				 $advisor_detail = getUserDetails($value['uid']); 
-				 $advisor_data = user_load($value['uid']);
-				 $cover_pic = getcoverpic($value['uid']);
-				$location = passeport_location($value['uid']);
-
-
-                //REFACTORED DB STRUCTURE!
-				$getStarRating=getAdvisorStarRating($value['uid']);
-				if(!empty($getStarRating)){
-					$totalReviews=sizeof($getStarRating);
-					$totalRating=array_sum($getStarRating);
-					$averageRating=($totalRating/$totalReviews);
-					$avgRank=round($averageRating);
-				}else{
-					$avgRank=0;
-				}
-				switch($avgRank){
-					case '1':
-					$AvgStars='<i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i>';
-					break;
-					case '2':
-					$AvgStars='<i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i>';
-					break;
-					case '3':
-					$AvgStars='<i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i>';
-					break;
-					case '4':
-					$AvgStars='<i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star emptystar"></i>';
-					break;
-					case '5':
-					$AvgStars='<i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i>';
-					break;
-					default:
-					$AvgStars='<i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i><i class="glyphicon glyphicon-star emptystar"></i>';
-					break;
-				}
-				
-			?>
-
-			<div class="col-md-6 col-sm-6 col-xs-12 advisorcol">
-				<div class="advisorlist">
-					<!-- <a href="#"> -->
-                    <?php if(!empty($cover_pic)){ 
-                        $style = "advisor_cover_pic";  
-                        print '<img class="" src="' . image_style_url($style, $cover_pic) . '" alt="">';
-                
-        
-                  }else{?>
-						<img src="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/images/advisor_cover.jpg" alt="" title="" />
-             <?php } ?>
-					<div class="advisordetail">
-						<div class="advisorimg">
-                            <?php 
-                                if ($advisor_data->picture != "") {
-                                    $file = file_load($advisor_data->picture->fid);
-                                    $imgpath = $file->uri;
-                                    $style = "advisor_profile_pic";
-                                   print '<img class="img-circle" src="' . image_style_url($style, $imgpath) . '" alt="display pic">';
-                                }else{ 
-                                    print '<img src="' . base_path() . drupal_get_path('theme', $GLOBALS['theme']) . '/images/no-profile-male-img.jpg" class="img-circle" alt="display pic" />';
-                                } ?>
-                                <!-- </a> -->
-						</div> <!-- End AdvisorImg -->
-						 <div class="advisorname">
-							<!-- <a href="#"> -->
-                            <h4><a href="<?php echo $base_url.'/profile/'.$value['uid']; ?>"><?php echo $advisor_data->field_first_name['und'][0]['value']; ?> </a></h4>
-							<h5><?php echo $location; ?></h5>
-                            <!-- </a> -->
-							<?php
-							echo '<span class="reviewstar">'.$AvgStars.'</span>'; ?>
-                            </div> <!-- End AdvisorName -->
-						<a href="javascript:void(0)" onclick="forward_request('<?php echo base64_encode($value['uid']); ?>','<?php echo $advisor_data->field_first_name['und'][0]['value']; ?>')" class="actionbtn btnselect">Send request</a> 
-						</div> <!-- End AdvisorDetail -->
-					<div class="mask"></div>
-					
-				</div> <!-- End AdvisorList -->
-			</div> <!-- End AdvisorColumn -->
-			
-			<?php  }else{
-          if((sizeof($result)==1)){
-                print '<div class="listing-info"><div class="no-listing"> <h2>Please Modify Your Search</h2><h3>No Result Found !!! </h3></div></div>';
-          }
-        }} ?>
-		</div> <!-- End FacebookID -->
-		<?php
-        print'<div class="col-md-12 text-center"><div class="pagination pagination-lg">';
-        echo $pagination;
-        print '</div></div>';
-        }
-        else { print '<div class="listing-info"><div class="no-listing"><h4>No Result found</h4></div></div>'; 
-        } ?>        
-
-	</div> <!-- End tab-Content -->
-</div> <!-- End Container -->
-</section>
-
-</div> <!-- End InnerPage -->
-
-
-<!--MODAL FOR MESSAGE AND SEND REQUEST TO SELECTED ADVISOR-->
-
-<div id="modal_advisor_request" class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="advisor_request_form" name="advisor_request_form"   method="post">  
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="exampleModalLabel">Advisor Request</h4>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="recipient-name" class="control-label">Recipient:</label>
-                        <input type="text" class="form-control" id="recipient-name" readonly="readonly" name="recipient-name" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="message-text" class="control-label">Message:</label>
-                        <textarea class="form-control" id="message-text" required="required" name="message"></textarea>
-                        <input type="hidden" value="<?php echo $filter_advisor_input; ?>" name="filter_advisor_input" id="filter_advisor_input" />
-                        <input type="hidden" name="advisor_uid" id="advisor_uid">
+</script>
+<div class="wrapper">
+    <header class="header">
+        <div class="header-holder container-fluid">
+            <a href="#" class="logo"><img src="<?= drupal_get_path('theme', 'new_design') . '/images/logo-inner.png' ?>"
+                                          alt="Gloobers" height="60" width="49"></a>
+            <nav class="nav">
+                <ul class="main-nav">
+                    <li><a href="#">About <i class="gl-ico gl-ico-arrow-down"></i></a></li>
+                    <li class="active"><a href="#">Professionals</a></li>
+                    <li><a href="#">Log in</a></li>
+                </ul>
+                <a href="#" id="refresh-prices" class="btn btn-default">Refer a professional</a>
+            </nav>
+            <div class="object-type">
+                <a href="#" class="open-drop" data-offset="-10px 0" data-theme="drop-theme-arrows-bounce">
+                    Hotels <i class="gl-ico gl-ico-arrow-down"></i>
+                </a>
+                <div class="drop-content hide">
+                    <div class="drop-list">
+                        <ul>
+                            <li><a href="#">Hotels</a></li>
+                            <li><a href="#">Activites</a></li>
+                            <li class="active"><a href="#">Advisors</a></li>
+                        </ul>
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                   <!--  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
-                    <input type="submit" class="btn btn-primary" value="Send message" data-loading-text="Sending..." />
-                </div>
-            </form>
+            </div>
+            <div class="search-row">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <input onclick="searchAutocompletePrompt('search-advisor-prompt')" id="search-advisor-prompt" class="search-field" type="text" placeholder="Start searching">
+            </div>
         </div>
-    </div>
-</div> <!--END OF MODAL-->
+    </header>
+    <main class="main">
+        <section class="search-wrapper">
+            <div class="search-sidebar col-xs-12 col-sm-6">
+                <div class="search-nav">
+                    <div class="search-nav-row">
+                        <div class="col">
+                            <span class="ttl">Type of search</span>
+                            <div class="person-num" style="cursor: pointer">
+                                <span id="search-type-dropdown" class="chosen open-drop" data-offset="-15px 0"
+                                      data-theme="drop-theme-arrows-bounce" data-position="bottom left"> <?php if ($_GET['search_type'] == 'review') {
+                                        echo 'Reviews';
+                                    }else{
+                                        echo 'Recommendations';
+                                    } ?> <i
+                                            class="gl-ico gl-ico-arrow-down"></i></span>
+                                <div class="drop-content hide">
+                                    <div class="drop-list rooms-drop">
+                                        <ul>
+                                            <li id="reviews"  <?php if ($_GET['search_type'] == 'review') {
+                                                echo 'class="active"';
+                                            } ?> ><a>Reviews</a>
+                                            </li>
+                                            <li id="recommendations" <?php if ($_GET['search_type'] == 'recommendation') {
+                                                echo 'class="active"';
+                                            } ?> ><a>Recommendation</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <span class="ttl">№ records</span>
+                            <div class="person-num" style="cursor: pointer">
+                                <span class="chosen open-drop" data-offset="-15px 0"
+                                      data-theme="drop-theme-arrows-bounce" data-position="bottom left">51-100 <i
+                                            class="gl-ico gl-ico-arrow-down"></i></span>
+                                <div class="drop-content hide">
+                                    <div class="drop-list rooms-drop">
+                                        <ul>
+                                            <li id="rec10" <?php if ($_GET['records'] == '10') {
+                                                echo 'class="active"';
+                                            } ?>><a>1–10</a></li>
+                                            <li id="rec20" <?php if ($_GET['records'] == '20') {
+                                                echo 'class="active"';
+                                            } ?>><a>11–20</a></li>
+                                            <li id="rec50" <?php if ($_GET['records'] == '50') {
+                                                echo 'class="active"';
+                                            } ?>><a>21–50</a></li>
+                                            <li id="rec100" <?php if ($_GET['records'] == '100') {
+                                                echo 'class="active"';
+                                            } ?>><a>51–100</a></li>
+                                            <li id="rec100more" <?php if ($_GET['records'] == '>100') {
+                                                echo 'class="active"';
+                                            } ?>><a>>100</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <span class="ttl">Rating</span>
+                            <input id="choose-rating" class="rating" value="3" data-step=1 data-size="md" data-symbol="&#xe011;"
+                                   data-glyphicon="false" data-rating-class="rating-gloobers">
+                        </div>
+                    </div>
+                    <div class="advansed-filter">
+                        <div class="ttl-row">
+                            <strong class="ttl">Advanced options</strong>
+                            <a class="lnk-expand collapsed" href="#filterDropdown" data-toggle="collapse"
+                               aria-expanded="false" aria-controls="collapseExample"
+                               data-lnk-expand-text-show="Show more" data-lnk-expand-text-hide="Hide"></a>
+                        </div>
+                    </div>
+                    <div class="filter-dropdown collapse" id="filterDropdown">
+                        <div class="filter-section">
+                            <strong class="filter-section-ttl">Passport:</strong>
+                            <div class="filter-area">
+                                <div class="filter-check-list">
+                                    <div class="check-col">
+                                        <ul class="check-list">
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk1" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk1">I live there</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk2" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk2">I’ve been living there</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk3" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk3">I've been there in a business trip</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk4" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk4">I've been there in a romantic trip
+                                                    </label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="check-col">
+                                        <ul class="check-list">
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk5" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk5">
+                                                        I've been there with a group</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk6" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk6">I've been there alone</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk7" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk7">
+                                                        I've been there with the friend</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="chk8" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="chk8">I've been in a family trip</label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-section">
+                            <strong class="filter-section-ttl">Categories of advisor:</strong>
+                            <div class="recommendations-btns">
 
+                                <a id="fb-friends" class="btn btn-sm
+                                <?php if (!$fb) { ?>
+                                 disabled
+                                 <?php } ?>
+                                ">Facebook friends</a>
+                                <a id="mutual-interests" class="btn btn-sm
+                                <?php if (!$mutualInterests) { ?>
+                                 disabled
+                                 <?php } ?>
+                                 ">With mutual interests</a>
+                                <a id="local-advisors" class="btn btn-sm
+                                <?php if (!$local) { ?>
+                                 disabled
+                                 <?php } ?>
+                                ">Local experts</a>
+                            </div>
+                        </div>
+                        <div class="filter-section">
+                            <strong class="filter-section-ttl">Passionate about:</strong>
+                            <div class="filter-area">
+                                <div class="filter-check-list">
+                                    <div class="check-col">
+                                        <ul class="check-list">
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb1" type="checkbox" name="conditions">
+                                                    <label for="lb1">Local Culture</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb2" type="checkbox" name="conditions">
+                                                    <label for="lb2">Art &amp; Culture</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb3" type="checkbox" name="conditions">
+                                                    <label for="lb3">Sightseeing</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb6" type="checkbox" name="conditions">
+                                                    <label for="lb6">Wildlife</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb8" type="checkbox" name="conditions">
+                                                    <label for="lb8">Nightlife</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb9" type="checkbox" name="conditions">
+                                                    <label for="lb9">Luxury</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb13" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb13">Trekking</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb14" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb14">Camping</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb17" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb17">Wine</label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="check-col">
+                                        <ul class="check-list">
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb18" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb18">Extrême</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb19" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb19">Motor sports</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb20" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb20">Water sports</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb21" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb21">Scuba diving</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb22" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb22">Sailing</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb23" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb23">Fishing</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb24" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb24">Photography</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb25" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb25">Wellness</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb26" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb26">Road trips</label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="check-col">
+                                        <ul class="check-list">
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb27" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb27">Archeology</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb28" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb28">Fitness</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb29" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb29">Golf</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb30" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb30">Kids activities</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb35" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb35">Music</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb36" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb36">Beach</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb38" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb38">Shopping</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="checkbox checkbox-inline">
+                                                    <input id="lb42" type="checkbox"
+                                                           name="conditions">
+                                                    <label for="lb42">Fooding</label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btns-row">
+                            <div class="flex-auto-width">
+                                <a href="#" class="btn btn-link">CLEAR SEARCH FILTERS</a>
+                            </div>
+                            <span id="cancelFilters" class="btn">Cancel</span>
+                            <span id="confirmSearch" class="btn btn-primary">Confirm search</span>
+                        </div>
+                    </div>
+                    <div class="results-found-info text-right"><strong>35+ Advisors</strong> search results</div>
+                </div>
+                <div class="result-wrapper">
+                    <div class="result-list row" id="search_results">
+                        <div class="col-xs-12 col-sm-6">
+                            <?php if (count($advisorsLeft)) {
+                                foreach ($advisorsLeft as $advisorLeft) {
+                                    ?>
+                                    <div class="card card-advisor">
+                                        <div class="img-h">
+										<span class="img-wrap ">
+                                            <?php
+                                            $cover = isset($advisorLeft['cover_img']) ? image_style_url('cover_pic', $advisorLeft['cover_img']) : 'sites/all/themes/new_design/images/bg-main.jpg';
+                                            $avatar = isset($advisorLeft['profile_img']) ? image_style_url('reservation_popup_listing_img', $advisorLeft['profile_img']) : 'sites/all/themes/new_design/images/photo01-big.jpg';
+                                            ?>
+                                            <img src="<?= $cover ?>"
+                                                 alt="image">
+										</span>
+                                            <span class="photo-adv">
+											<img src="<?= $avatar ?>"
+                                                 alt="avatar">
+										</span>
+                                        </div>
+                                        <div class="card-ttl">
+                                            <div class="card-ttl-col">
+                                                <strong class="ttl"><a
+                                                            href="#"><?= $advisorLeft['first_name'] . ' ' . $advisorLeft['last_name'] ?> </a></strong>
+                                                <span class="sub-ttl">
+                                                     <?php if ($advisorLeft['advisor_city']) {
+                                                         ?>
+                                                         <?= $advisorLeft['advisor_city'] ?>
+                                                     <?php } ?>
+                                                    <?php if ($advisorLeft['advisor_city'] && $advisorLeft['advisor_country']) { ?>
+                                                        ,
+                                                    <?php } ?>
+                                                    <?php if ($advisorLeft['advisor_country']) {
+                                                        ?>
+                                                        <?= $advisorLeft['advisor_country'] ?>
+                                                    <?php } ?>
+                                                </span>
+                                            </div>
+                                            <div class="card-rate-info">
+                                                <div class="rating">
+                                                    <strong class="rating-ttl"><?= $advisorLeft['rates_count'] ?></strong>
+                                                    <div class="stars">
+                                                        <?php for ($i = 0; $i < $advisorLeft['overall_advisor_rating']; $i++) { ?>
+                                                            <span class="star"><i class="fa fa-star"
+                                                                                  aria-hidden="true"></i></span>
+                                                        <?php } ?>
+                                                        <?php for ($k = 0; $k < 5 - $advisorLeft['overall_advisor_rating']; $k++) { ?>
+                                                            <span class="star full"><i class="fa fa-star"
+                                                                                       aria-hidden="true"></i></span>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
+                                                <?php if ($searchType == 'recommendation') { ?>
+                                                    <em class="recommend"><strong><?= $advisorLeft['rec_count'] ?></strong>
+                                                        Recommendation<?php if ($advisorLeft['rec_count'] != 1) {
+                                                            echo 's';
+                                                        } ?>
+                                                    </em>
+                                                <?php } else { ?>
+                                                    <em class="recommend"><strong><?= $advisorLeft['rev_count'] ?> </strong>
+                                                        Review<?php if ($advisorLeft['rev_count'] != 1) {
+                                                            echo 's';
+                                                        } ?></em>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <footer>
+                                            <span class="adv-desc-info">
+                                                <?php if ($advisorLeft['birth_date']) {
+                                                    $presentYear = date('Y');
+                                                    $birthYear = date('Y', $advisorLeft['birth_date']);
+                                                    $age = $presentYear - $birthYear;
+                                                    ?>
+                                                    <?= $age ?> years, <br>
+                                                <?php } ?>
+                                                <?php if ($advisorLeft['occupation']) {
+                                                    ?>
+                                                    <?= $advisorLeft['occupation'] ?>
+                                                <?php } ?>
 
-<!--<script src="<?php //print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/jQuery.min.js" type="text/javascript" language="javascript"></script> -->
-<!--<script src="<?php  //print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/easingv1.3.js" type="text/javascript" language="javascript"></script> -->
+                                                <?php if ($advisorLeft['company']) {
+                                                    ?>
+                                                    in
+                                                    <?= $advisorLeft['company'] ?>
+                                                <?php } ?>
+                                            </span>
+                                            <a href="#" class="btn"><?php
+                                                if ($searchType == 'recommendation') {
+                                                    ?> Recommendation<?php
+                                                    if ($advisorLeft['rec_count'] != 1) {
+                                                        ?>s<?php
+                                                    }
+                                                    ?> on map <?php
+                                                } else {
+                                                    ?> Review<?php
+                                                    if ($advisorLeft['rev_count'] != 1) {
+                                                        ?>s<?php
+                                                    }
+                                                    ?> on map
+                                                <?php }
+                                                ?></a>
+                                        </footer>
+                                        <div class="more-info">
+                                            <div class="show-more-row">
+                                                <a class="lnk-expand collapsed"
+                                                   href="#adv-drop<?= $advisorLeft['uid'] ?>"
+                                                   data-toggle="collapse" aria-expanded="false"
+                                                   aria-controls="collapseExample"
+                                                   data-lnk-expand-text-show="SHOW INTERESTS (<?php
+                                                   if ($advisorLeft['passions']) {
+                                                       $passionsArr = explode(', ', $advisorLeft['passions']);
+                                                       $passionsCount = count($passionsArr);
+                                                   } else {
+                                                       $passionsCount = 0;
+                                                   }
+                                                   echo $passionsCount;
+                                                   ?>)"
+                                                   data-lnk-expand-text-hide="HIDe INTERESTS"><i
+                                                            class="gl-ico gl-ico-arrow-down"></i></a>
+                                            </div>
+                                            <div class="more-drop collapse" id="adv-drop<?= $advisorLeft['uid'] ?>">
+                                                <div class="more-drop-area">
+                                                    <div class="interests-tags">
+                                                        <?= $advisorLeft['passions'] ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <?php if (count($advisorsRight)) {
+                                foreach ($advisorsRight as $advisorRight) {
+                                    ?>
+                                    <div class="card card-advisor">
+                                        <div class="img-h">
+										<span class="img-wrap">
+                                            <?php
+                                            $cover = isset($advisorRight['cover_img']) ? image_style_url('cover_pic', $advisorRight['cover_img']) : 'sites/all/themes/new_design/images/bg-main.jpg';
+                                            $avatar = isset($advisorRight['profile_img']) ? image_style_url('reservation_popup_listing_img', $advisorRight['profile_img']) : 'sites/all/themes/new_design/images/photo01-big.jpg';
+                                            ?>
+                                            <img src="<?= $cover ?>"
+                                                 alt="image">
+										</span>
+                                            <span class="photo-adv">
+											<img src="<?= $avatar ?>"
+                                                 alt="avatar">
+										</span>
+                                        </div>
+                                        <div class="card-ttl">
+                                            <div class="card-ttl-col">
+                                                <strong class="ttl"><a
+                                                            href="#"><?= $advisorRight['first_name'] . ' ' . $advisorRight['last_name'] ?> </a></strong>
+                                                <span class="sub-ttl">
+                                                     <?php if ($advisorRight['advisor_city']) {
+                                                         ?>
+                                                         <?= $advisorRight['advisor_city'] ?>
+                                                     <?php } ?>
+                                                    <?php if ($advisorRight['advisor_city'] && $advisorRight['advisor_country']) { ?>
+                                                        ,
+                                                    <?php } ?>
+                                                    <?php if ($advisorRight['advisor_country']) {
+                                                        ?>
+                                                        <?= $advisorRight['advisor_country'] ?>
+                                                    <?php } ?>
+                                                </span>
+                                            </div>
+                                            <div class="card-rate-info">
+                                                <div class="rating">
+                                                    <strong class="rating-ttl"><?= $advisorRight['rates_count'] ?></strong>
+                                                    <div class="stars">
+                                                        <?php for ($i = 0; $i < $advisorRight['overall_advisor_rating']; $i++) { ?>
+                                                            <span class="star"><i class="fa fa-star"
+                                                                                  aria-hidden="true"></i></span>
+                                                        <?php } ?>
+                                                        <?php for ($k = 0; $k < 5 - $advisorRight['overall_advisor_rating']; $k++) { ?>
+                                                            <span class="star full"><i class="fa fa-star"
+                                                                                       aria-hidden="true"></i></span>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
+                                                <?php if ($searchType == 'recommendation') { ?>
+                                                    <em class="recommend"><strong><?= $advisorRight['rec_count'] ?></strong>
+                                                        Recommendation<?php if ($advisorRight['rec_count'] != 1) {
+                                                            echo 's';
+                                                        } ?>
+                                                    </em>
+                                                <?php } else { ?>
+                                                    <em class="recommend"><strong><?= $advisorRight['rev_count'] ?> </strong>
+                                                        Review<?php if ($advisorRight['rev_count'] != 1) {
+                                                            echo 's';
+                                                        } ?></em>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <footer>
+                                            <span class="adv-desc-info">
+                                                <?php if ($advisorRight['birth_date']) {
+                                                    $presentYear = date('Y');
+                                                    $birthYear = date('Y', $advisorRight['birth_date']);
+                                                    $age = $presentYear - $birthYear;
+                                                    ?>
+                                                    <?= $age ?> years, <br>
+                                                <?php } ?>
+                                                <?php if ($advisorRight['occupation']) {
+                                                    ?>
+                                                    <?= $advisorRight['occupation'] ?>
+                                                <?php } ?>
 
-<script src="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/jqueryui.js" type="text/javascript" language="javascript"></script>
+                                                <?php if ($advisorRight['company']) {
+                                                    ?>
+                                                    in
+                                                    <?= $advisorRight['company'] ?>
+                                                <?php } ?>
+                                            </span>
+                                            <a href="#" class="btn">
+                                                <?php
+                                                if ($searchType == 'recommendation') {
+                                                    ?> Recommendation<?php
+                                                    if ($advisorRight['rec_count'] != 1) {
+                                                    ?>s<?php
+                                                    }
+                                                     ?> on map <?php
+                                                } else {
+                                                    ?> Review<?php
+                                                    if ($advisorRight['rev_count'] != 1) {
+                                                    ?>s<?php
+                                                    }
+                                                    ?>  on map
+                                                <?php }
+                                                ?>
+                                            </a>
+                                        </footer>
+                                        <div class="more-info">
+                                            <div class="show-more-row">
+                                                <a class="lnk-expand collapsed"
+                                                   href="#adv-drop<?= $advisorRight['uid'] ?>"
+                                                   data-toggle="collapse" aria-expanded="false"
+                                                   aria-controls="collapseExample"
+                                                   data-lnk-expand-text-show="SHOW INTERESTS (<?php
+                                                   if ($advisorRight['passions']) {
+                                                       $passionsArr = explode(', ', $advisorRight['passions']);
+                                                       $passionsCount = count($passionsArr);
+                                                   } else {
+                                                       $passionsCount = 0;
+                                                   }
+                                                   echo $passionsCount;
+                                                   ?>)"
+                                                   data-lnk-expand-text-hide="HIDe INTERESTS"><i
+                                                            class="gl-ico gl-ico-arrow-down"></i></a>
+                                            </div>
+                                            <div class="more-drop collapse" id="adv-drop<?= $advisorRight['uid'] ?>">
+                                                <div class="more-drop-area">
+                                                    <div class="interests-tags">
+                                                        <?= $advisorRight['passions'] ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <ul class="pagination">
+                            <li class="disabled"><a href="#" aria-label="Previous"><i aria-hidden="true"
+                                                                                      class="gl-ico gl-ico-arrow-left"></i></a>
+                            </li>
+                            <li class="active"><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><span>...</span></li>
+                            <li><a href="#">12</a></li>
+                            <li><a href="#" aria-label="Next"><i aria-hidden="true"
+                                                                 class="gl-ico gl-ico-arrow-right"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="map col-sm-6 hidden-xs" id="map"></div>
+        </section>
+    </main>
+</div>
+<?php
+drupal_add_js('https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', 'external');
+drupal_add_js('https://use.fontawesome.com/36fe5b07c5.js', 'external');
 
-<script src="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/bootstrap-datetimepicker.js" type="text/javascript" language="javascript"></script>
+drupal_add_js('sites/all/themes/new_design/js/custom-file-input.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/moment.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/daterangepicker.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/bootstrap.min.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/slick.min.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/popover-extra-placements.min.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/bootstrap-slider.min.js', 'file');
 
-<script src="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/jquery.nicescroll.min.js" type="text/javascript" language="javascript"></script>
-<script src="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/jquery.selectbox-0.2.js" type="text/javascript" language="javascript"></script>
+drupal_add_js('https://d3js.org/d3.v4.min.js', 'external');
+drupal_add_js('https://d3js.org/d3-selection-multi.v1.min.js', 'external');
+drupal_add_js('https://d3js.org/d3-ease.v1.min.js', 'external');
+drupal_add_js('sites/all/themes/new_design/js/modernizr.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/tether.min.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/star-rating.min.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/search.js', 'file');
+drupal_add_js('sites/all/themes/new_design/js/search-advisor.js', 'file');
 
-<script src="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/advisor.js" type="text/javascript" language="javascript"></script>
-<?php if($_GET['with_mutual_interests']){ ?>
-<script type="text/javascript">
-jQuery('.passionblock').show();
-</script>
+?>
 
-<?php } ?>
-<script type="text/javascript">
-jQuery(document).ready(function(){
-/*Html Scroll*/
-	jQuery("html").niceScroll();
-	/*SelectBox*/
-	//jQuery("select").selectbox(); 
-		jQuery(document).click(function(e){
-			if (!jQuery(e.target).is('.sbHolder, .sbHolder *')) {
-            	jQuery("select").selectbox('close'); 
-        	} 
-		}); //End
-	jQuery(".filtersearch").click(function(){
-		jQuery('.tabs_ul').slideToggle();
-		jQuery('.filter-icon').toggleClass("filter-icon-active");
-		if(jQuery("input[name='with_mutual_interests']").is(":checked")){
-			jQuery('.passionblock').toggle(5000);
-		}else {
-		    var url      = window.location.href;     // Returns full URL
-			var alteredURL = removeParam("passions", url);
-			jQuery('.passionblock').slideUp(8000);
-		}
-	});
-}); //End Document.Ready()
-	jQuery("input[name='with_mutual_interests']").click(function(){
-		jQuery('.passionblock').toggle(5000);
-	});
-	function search_destination(){
-     	var home_autocomplete = new google.maps.places.Autocomplete(
-                /** @type {HTMLInputElement} */
-                        (document.getElementById('advice_destination')),
-                        {types: ['geocode']});
-        google.maps.event.addListener(home_autocomplete, 'place_changed', function () {
+<script>
+    /* start map init */
+    $(document).ready(function () {
+        $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true
+            }
         });
-    }
-	function clickablesearch(){
-		var destination=jQuery('#advice_destination').val();
-		if(destination==''){
-			alert('please select destination.');
-			return false;
-		}
-		var filtersearch=jQuery('#advice_destination_type').val();
-		if (filtersearch == 'Advisors') {
-			window.location.href = '<?= $base_url; ?>/search-listing/advisors/' + destination;
-        }else if (filtersearch == 'Expereince') {
-			window.location.href = '<?= $base_url; ?>/search-destination/' + destination;
-        }else if (filtersearch == 'Gloobers') {
-			window.location.href = '<?= $base_url; ?>/Gloobers/' + destination;
-       }else{
-         preLoading('hide', 'load-screen');
-       }
-    }
 
-</script>
-<script type="text/javascript">  
-        jQuery(function(){
-         jQuery('.checkbox').on('change',function(){
-            preLoading('show', 'load-screen');
-            jQuery('#search_result_advisor').submit();
+//        console.log(se.changeUrlParams('fb', 456));
+        var markers = [];
+        var locations = <?= json_encode($allAdvisors); ?>;
+        console.log(locations);
+        var map,
+            desktopScreen = Modernizr.mq("only screen and (min-width:1024px)"),
+            zoom = desktopScreen ? 10 : 8,
+            scrollable = draggable = !Modernizr.hiddenscroll || desktopScreen,
+            isIE11 = !!(navigator.userAgent.match(/Trident/) && navigator.userAgent.match(/rv[ :]11/)),
+            customStyles = [
+                {
+                    "featureType": "administrative",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{"color": "#444444"}]
+                }, {
+                    "featureType": "landscape",
+                    "elementType": "all",
+                    "stylers": [{"color": "#f2f2f2"}]
+                }, {
+                    "featureType": "poi",
+                    "elementType": "all",
+                    "stylers": [{"visibility": "off"}]
+                }, {
+                    "featureType": "road",
+                    "elementType": "all",
+                    "stylers": [{"saturation": -100}, {"lightness": 45}]
+                }, {
+                    "featureType": "road.highway",
+                    "elementType": "all",
+                    "stylers": [{"visibility": "simplified"}]
+                }, {
+                    "featureType": "road.arterial",
+                    "elementType": "labels.icon",
+                    "stylers": [{"visibility": "off"}]
+                }, {
+                    "featureType": "transit",
+                    "elementType": "all",
+                    "stylers": [{"visibility": "off"}]
+                }, {
+                    "featureType": "water",
+                    "elementType": "all",
+                    "stylers": [{"color": "#46bcec"}, {"visibility": "on"}]
+                }]
+
+        var myLatLng = {
+            lat: 50.768525, lng: -74.075736
+        };
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: zoom,
+            center: myLatLng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: scrollable,
+            draggable: draggable,
+            styles: customStyles
+        });
+
+//            var locations = [
+//                {
+//                    title: 'point1',
+//                    position: {lat: 45.768525, lng: -74.075736},
+//                    label: '22'/*,
+//                 icon: {
+//                 url: isIE11 ? "images/ico-map-marker.png" : "images/ico-map-marker.png",//svg
+//                 scaledSize: new google.maps.Size(53, 69)
+//                 }*/
+//
+//                }
+//            ];
+//        console.log(locations.length);
+//for(var i = 0; i<locations.length; i++){
+//
+//}
+
+        locations.forEach(function (element, index) {
+//                console.log(element.advisor_latitude);
+            var position = {lat: parseFloat(element.advisor_latitude), lng: parseFloat(element.advisor_longitude)};
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map,
+//                    title: element.title,
+//                    icon: element.icon,
+//                    label: element.label
+            });
+            markers.push(marker);
+        });
+
+        var bounds = new google.maps.LatLngBounds();
+        //  Go through each...
+        for (var i = 0; i < markers.length; i++) {
+            bounds.extend(markers[i].position);
+        }
+        //  Fit these bounds to the map
+        map.fitBounds(bounds);
+
+        map.addListener('dragend', function () {
+            var bounds = map.getBounds();
+            var ne = bounds.getNorthEast();
+            var sw = bounds.getSouthWest();
+
+            var NElat = ne.lat();
+            var NElon = ne.lng();
+
+            var SWlat = sw.lat();
+            var SWlon = sw.lng();
+
+//            var NWlat = sw.lat();
+//            var NWlon = ne.lng();
+//
+//            var SElat = ne.lat();
+//            var SElon = sw.lng();
+            var searchBoundsQuery = '&NElat='+NElat+'&'+'NElon='+NElon+'&'+'SWlat='+SWlat+'&'+'SWlon='+SWlon;
+            console.log('NElat = '+NElat);
+            console.log('NElon = '+NElon);
+            console.log('SWlat = '+SWlat);
+            console.log('SWlon = '+SWlon);
+//            console.log('NWlat'+NWlat);
+//            console.log('NWlon'+NWlon);
+//            console.log('SElat'+SElat);
+//            console.log('SElon'+SElon);
+
+            var decodedParameters = location.search.substr(1);
+            console.log(decodedParameters);
+            $.get( "ajax/search-advisor?"+decodedParameters+searchBoundsQuery).done(function( data ) {
+                $('#search_results').html(data);
             });
         });
-</script>
-<script type="text/javascript">
-//on change of gloobers search box
-    jQuery(document).on('change','#advice_destination',function(){
-      var search = (jQuery('#advice_destination').val()).trim();
-     if(search.length<=0){
-            return false;
-        }
-        
-        setTimeout(function(){
-             jQuery('#search_result_advisor').submit();
+        map.addListener('zoom_changed', function () {
+            var bounds = map.getBounds();
+            var ne = bounds.getNorthEast();
+            var sw = bounds.getSouthWest();
+            console.log(ne);
+            console.log(sw);
         });
-    
-    });
-    function ChangetypeofAdvisor(ad){
-            var change = ad.value;
-           
-            if(change == 'Expereince'){
-                var destination = jQuery('#advice_destination').val();
-                var href = $baseUrl+'/search-destination/'+destination;
-                window.location.href = href;
-            }else if(change == 'Gloobers'){
-                var destination = jQuery('#advice_destination').val();
-                var href = $baseUrl+'/Gloobers/'+destination;
-                window.location.href = href;
 
-            }else{
-                return false;
-            }
+
+    })
+    ;
+    /* end map init */
+
+    var newUrl = '';
+var passportsAndPassions = {
+    passport_types: '',
+    passions: ''
+};
+    //passport types filtration
+
+    var passportTypes = <?= json_encode($passportTypes); ?>;
+    var passportIdsStr = '';
+
+    var passportTypesInitially = [];
+    if (passportTypes) {
+        console.log('passportTypes: '+passportTypes);
+
+        var passportTypesLength = passportTypes.length;
+        console.log('length: '+passportTypesLength);
+        for (var i = 0; i < passportTypesLength; i++) {
+            passportTypesInitially.push(passportTypes[i]);
+            $('#chk' + passportTypes[i]).prop('checked', true);
+        }
+        passportsAndPassions.passport_types = passportTypesInitially.join();
     }
-	jQuery("select").selectbox();
-    jQuery(document).on('click','.passion_checks',function(){
-		var mypassionsSelected= [];
-		jQuery('.passion_checks').each(function( index,value){
-			if (jQuery(this).prop('checked')==true){ 
-				mypassionsSelected.push(jQuery(this).val());
-			}
-		});
-		var passions = (mypassionsSelected.length>0) ? '&passions='+mypassionsSelected : '';
-	/* 	if(mypassionsSelected.length>0){
-			var passions='&passions='+mypassionsSelected;
-		}else{
-			var passions='';
-		} */
-		var url      = window.location.href;     // Returns full URL
-		var alteredURL = removeParam("passions", url);
-		//alert(alteredURL);
-		var redirectedUrl=alteredURL+passions;
-		window.location.href=redirectedUrl;
-	});
-    function removeParam(key, sourceURL) {
-		var rtn = sourceURL.split("?")[0],
-			param,
-			params_arr = [],
-			queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-		if (queryString !== "") {
-			params_arr = queryString.split("&");
-			for (var i = params_arr.length - 1; i >= 0; i -= 1) {
-				param = params_arr[i].split("=")[0];
-				if (param === key) {
-					params_arr.splice(i, 1);
-				}
-			}
-			rtn = rtn + "?" + params_arr.join("&");
-		}
-		return rtn;
-	}	
+        var passportIds = $("[id^=chk]:checked");
+        $("[id^=chk]").change(function () {
+            var passportIdsArr = [];
+            passportIds = $("[id^=chk]:checked");
+            var passportIdsLength = passportIds.length;
+            for (var i = 0; i < passportIdsLength; i++) {
+                var passId = passportIds[i].id.replace("chk", "");
+                passportIdsArr.push(passId);
+            }
+            passportIdsStr = passportIdsArr.join();
+            passportsAndPassions.passport_types = passportIdsStr;
+            console.log(passportsAndPassions);
+        });
+
+    console.log(passportIdsStr);
+
+
+    //passions filtration
+    var passionTypes = <?= json_encode($passions); ?>;
+    var passionIdsStr = '';
+    var passionTypesInitially = [];
+    if (passionTypes) {
+        var passionTypesLength = passionTypes.length;
+        for (var i = 0; i < passionTypesLength; i++) {
+            passionTypesInitially.push(passionTypes[i]);
+            $('#lb' + passionTypes[i]).prop('checked', true);
+        }
+        passportsAndPassions.passions = passionTypesInitially.join();
+    }
+        var passionIds = $("[id^=lb]:checked");
+
+        $("[id^=lb]").change(function () {
+            var passionIdsArr = [];
+            passionIds = $("[id^=lb]:checked");
+            var passionIdsLength = passionIds.length;
+
+
+            for (var i = 0; i < passionIdsLength; i++) {
+                var passId = passionIds[i].id.replace("lb", "");
+                passionIdsArr.push(passId);
+            }
+            passionIdsStr = passionIdsArr.join();
+            passportsAndPassions.passions = passionIdsStr;
+            console.log(passportsAndPassions);
+        });
+
+    console.log(passionIdsStr);
+
+
+    //cancelling filters
+    $("#cancelFilters").click(function () {
+        $('[id^=chk], [id^=lb]').prop('checked', false);
+        console.log(passportTypesInitially);
+        console.log(passportTypesInitially.length);
+        if (passportTypesInitially.length) {
+            for (var i = 0; i < passportTypesInitially.length; i++) {
+                $('#chk' + passportTypesInitially[i]).prop('checked', true);
+            }
+            passportIdsStr = passportTypesInitially.join();
+            passportsAndPassions.passport_types = passportIdsStr;
+
+        }else{
+            passportsAndPassions.passport_types = '';
+        }
+
+        if (passionTypesInitially.length) {
+            for (var i = 0; i < passionTypesInitially.length; i++) {
+                $('#lb' + passionTypesInitially[i]).prop('checked', true);
+            }
+            passionIdsStr = passionTypesInitially.join();
+            passportsAndPassions.passions = passionIdsStr;
+        }else{
+            passportsAndPassions.passions = '';
+        }
+        console.log(passportsAndPassions);
+    });
+
+    function doAdvisorsSearch($url){
+        $.get( 'ajax/search-advisor'+$url ).done(function( data ) {
+            se.changeUrl($url);
+            $('#search_results').html(data);
+        });
+    }
+
+    $("#confirmSearch").click(function(){
+        var newUrl = se.changeUrlParams(passportsAndPassions);
+        console.log(newUrl);
+        doAdvisorsSearch(newUrl);
+    });
+
+
+
 </script>
-<script src="<?php print $GLOBALS['base_url'].'/'. drupal_get_path('theme',$GLOBALS['theme']); ?>/js/clipboard.min.js" type="text/javascript"></script>
-<script>
-    var clipboard = new Clipboard('.btn');
+<?php
+//drupal_add_js(
+//    'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10&callback=initMap',
+//    array('type' => 'external', 'async' => TRUE, 'defer' => TRUE
+//    ));
+?>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+<!--<script src="https://use.fontawesome.com/36fe5b07c5.js"></script>-->
+<!---->
+<!--<script src="js/custom-file-input.js"></script>-->
+<!---->
+<!--<script src="js/moment.js"></script>-->
+<!--<script src="js/daterangepicker.js"></script>-->
+<!--<script src="js/bootstrap.min.js"></script>-->
+<!--<script src="js/slick.min.js"></script>-->
+<!--<script src="js/popover-extra-placements.min.js"></script>-->
+<!--<script src="js/bootstrap-slider.min.js"></script>-->
+<!---->
+<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+<!--<script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>-->
+<!--<script src="https://d3js.org/d3-ease.v1.min.js"></script>-->
+<!---->
+<!--<script src="js/modernizr.js"></script>-->
+<!---->
+<!---->
+<!--<script src="js/tether.min.js"></script>-->
+<!--<script src="js/drop.min.js"></script>-->
+<!---->
+<!--<script src="js/star-rating.min.js"></script>-->
+<!---->
+<!--<script src="js/main.js"></script>-->
+<!---->
+<!--<script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>-->
 
-    clipboard.on('success', function(e) {
-        console.log(e);
-    });
-
-    clipboard.on('error', function(e) {
-        console.log(e);
-    });
-</script>   
+</body>
+</html>
