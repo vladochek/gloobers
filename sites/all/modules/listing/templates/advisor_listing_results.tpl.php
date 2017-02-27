@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gloobers</title>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyA9ZXW_xxCYbGV5hAN13jO2yquESD3MY10 &libraries=places&language=en"
+            async defer></script>
     <?php
     drupal_add_css('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|PT+Sans:400,700', ['type' => 'external']);
     drupal_add_css('sites/all/themes/new_design/css/sprite.css', ['type' => 'file']);
@@ -53,7 +54,8 @@
             </div>
             <div class="search-row">
                 <i class="fa fa-search" aria-hidden="true"></i>
-                <input onclick="searchAutocompletePrompt('search-advisor-prompt')" id="search-advisor-prompt" class="search-field" type="text" placeholder="Start searching">
+                <input value="<?= $destination ?>" onclick="searchAutocompletePrompt('search-advisor-prompt')"
+                       id="search-advisor-prompt" class="search-field" type="text" placeholder="Start searching">
             </div>
         </div>
     </header>
@@ -66,16 +68,17 @@
                             <span class="ttl">Type of search</span>
                             <div class="person-num" style="cursor: pointer">
                                 <span id="search-type-dropdown" class="chosen open-drop" data-offset="-15px 0"
-                                      data-theme="drop-theme-arrows-bounce" data-position="bottom left"> <?php if ($_GET['search_type'] == 'review') {
+                                      data-theme="drop-theme-arrows-bounce"
+                                      data-position="bottom left"> <?php if ($_GET['search_type'] == 'review') {
                                         echo 'Reviews';
-                                    }else{
+                                    } else {
                                         echo 'Recommendations';
                                     } ?> <i
                                             class="gl-ico gl-ico-arrow-down"></i></span>
                                 <div class="drop-content hide">
                                     <div class="drop-list rooms-drop">
                                         <ul>
-                                            <li id="reviews"  <?php if ($_GET['search_type'] == 'review') {
+                                            <li id="reviews" <?php if ($_GET['search_type'] == 'review') {
                                                 echo 'class="active"';
                                             } ?> ><a>Reviews</a>
                                             </li>
@@ -119,7 +122,12 @@
                         </div>
                         <div class="col">
                             <span class="ttl">Rating</span>
-                            <input id="choose-rating" class="rating" value="3" data-step=1 data-size="md" data-symbol="&#xe011;"
+                            <input id="choose-rating" class="rating" <?php if (!isset($_GET['rating'])) { ?>
+                                value="0"
+                            <?php } elseif ($_GET['rating'] >= 0 || $_GET['rating'] <= 5) { ?>
+                                value="<?= $_GET['rating'] ?>"
+                            <?php } ?>
+                                   data-step=1 data-size="md" data-symbol="&#xe011;"
                                    data-glyphicon="false" data-rating-class="rating-gloobers">
                         </div>
                     </div>
@@ -657,13 +665,13 @@
                                                 if ($searchType == 'recommendation') {
                                                     ?> Recommendation<?php
                                                     if ($advisorRight['rec_count'] != 1) {
-                                                    ?>s<?php
+                                                        ?>s<?php
                                                     }
-                                                     ?> on map <?php
+                                                    ?> on map <?php
                                                 } else {
                                                     ?> Review<?php
                                                     if ($advisorRight['rev_count'] != 1) {
-                                                    ?>s<?php
+                                                        ?>s<?php
                                                     }
                                                     ?>  on map
                                                 <?php }
@@ -704,19 +712,7 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <ul class="pagination">
-                            <li class="disabled"><a href="#" aria-label="Previous"><i aria-hidden="true"
-                                                                                      class="gl-ico gl-ico-arrow-left"></i></a>
-                            </li>
-                            <li class="active"><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><span>...</span></li>
-                            <li><a href="#">12</a></li>
-                            <li><a href="#" aria-label="Next"><i aria-hidden="true"
-                                                                 class="gl-ico gl-ico-arrow-right"></i></a></li>
-                        </ul>
+                        <ul class="pagination" id="advisors-pagination"></ul>
                     </div>
                 </div>
             </div>
@@ -728,6 +724,7 @@
 drupal_add_js('https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', 'external');
 drupal_add_js('https://use.fontawesome.com/36fe5b07c5.js', 'external');
 
+drupal_add_js('sites/all/themes/new_design/js/jquery.paging.min.js', 'file');
 drupal_add_js('sites/all/themes/new_design/js/custom-file-input.js', 'file');
 drupal_add_js('sites/all/themes/new_design/js/moment.js', 'file');
 drupal_add_js('sites/all/themes/new_design/js/daterangepicker.js', 'file');
@@ -756,10 +753,45 @@ drupal_add_js('sites/all/themes/new_design/js/search-advisor.js', 'file');
             }
         });
 
-//        console.log(se.changeUrlParams('fb', 456));
+        var advisorsOverallCount = <?= $advisorsOverallCount ?>;
+//        var advisorsOverallCount = 300;
+        var advisorsPerPage = <?= ADVISORS_PER_PAGE ?>;
+        var pagesCount = Math.ceil(advisorsOverallCount / advisorsPerPage);
+        var currentPageNum = $.urlParam('page') || 1;
+
+        paginate_advisors(advisorsOverallCount, advisorsPerPage);
+
+        $("body").on("click", "#prevlink", function () {
+            var currentPageNum = $.urlParam('page') || 1;
+            if (currentPageNum !== 1 && pagesCount !== 1){
+            var prevPageNum = parseInt(currentPageNum) - 1;
+            var newUrl = se.changeUrlParams('page', prevPageNum);
+            doAdvisorsSearch(newUrl);
+        }
+        }).on("click", "#nextlink", function () {
+            var currentPageNum = $.urlParam('page') || 1;
+            if (currentPageNum != pagesCount && pagesCount !== 1){
+            var nextPageNum = parseInt(currentPageNum) + 1;
+            console.log(nextPageNum);
+            var newUrl = se.changeUrlParams('page', nextPageNum);
+            doAdvisorsSearch(newUrl);
+        }
+        }).on("click", "[class^=pager-element]", function () {
+            if(!$(this).hasClass('active')) {
+                var currId = $(this).attr('class').replace("pager-element-", "").replace(" active", "");
+                console.log(currId);
+                var newUrl = se.changeUrlParams('page', currId);
+                doAdvisorsSearch(newUrl);
+            }
+        });
+
+        //        $(".pager-element-"+currentPageNum).addClass('active');
+
+
+        //        console.log(se.changeUrlParams('fb', 456));
         var markers = [];
         var locations = <?= json_encode($allAdvisors); ?>;
-        console.log(locations);
+        console.dir(locations[0].advisor_latitude);
         var map,
             desktopScreen = Modernizr.mq("only screen and (min-width:1024px)"),
             zoom = desktopScreen ? 10 : 8,
@@ -812,22 +844,6 @@ drupal_add_js('sites/all/themes/new_design/js/search-advisor.js', 'file');
             styles: customStyles
         });
 
-//            var locations = [
-//                {
-//                    title: 'point1',
-//                    position: {lat: 45.768525, lng: -74.075736},
-//                    label: '22'/*,
-//                 icon: {
-//                 url: isIE11 ? "images/ico-map-marker.png" : "images/ico-map-marker.png",//svg
-//                 scaledSize: new google.maps.Size(53, 69)
-//                 }*/
-//
-//                }
-//            ];
-//        console.log(locations.length);
-//for(var i = 0; i<locations.length; i++){
-//
-//}
 
         locations.forEach(function (element, index) {
 //                console.log(element.advisor_latitude);
@@ -851,55 +867,23 @@ drupal_add_js('sites/all/themes/new_design/js/search-advisor.js', 'file');
         map.fitBounds(bounds);
 
         map.addListener('dragend', function () {
-            var bounds = map.getBounds();
-            var ne = bounds.getNorthEast();
-            var sw = bounds.getSouthWest();
-
-            var NElat = ne.lat();
-            var NElon = ne.lng();
-
-            var SWlat = sw.lat();
-            var SWlon = sw.lng();
-
-//            var NWlat = sw.lat();
-//            var NWlon = ne.lng();
-//
-//            var SElat = ne.lat();
-//            var SElon = sw.lng();
-            var searchBoundsQuery = '&NElat='+NElat+'&'+'NElon='+NElon+'&'+'SWlat='+SWlat+'&'+'SWlon='+SWlon;
-            console.log('NElat = '+NElat);
-            console.log('NElon = '+NElon);
-            console.log('SWlat = '+SWlat);
-            console.log('SWlon = '+SWlon);
-//            console.log('NWlat'+NWlat);
-//            console.log('NWlon'+NWlon);
-//            console.log('SElat'+SElat);
-//            console.log('SElon'+SElon);
-
-            var decodedParameters = location.search.substr(1);
-            console.log(decodedParameters);
-            $.get( "ajax/search-advisor?"+decodedParameters+searchBoundsQuery).done(function( data ) {
-                $('#search_results').html(data);
-            });
+            getAndSendBoundsData(map);
         });
         map.addListener('zoom_changed', function () {
-            var bounds = map.getBounds();
-            var ne = bounds.getNorthEast();
-            var sw = bounds.getSouthWest();
-            console.log(ne);
-            console.log(sw);
+            getAndSendBoundsData(map);
         });
-
+        //        map.maxZoom = 3;
 
     })
     ;
+
     /* end map init */
 
     var newUrl = '';
-var passportsAndPassions = {
-    passport_types: '',
-    passions: ''
-};
+    var passportsAndPassions = {
+        passport_types: '',
+        passions: ''
+    };
     //passport types filtration
 
     var passportTypes = <?= json_encode($passportTypes); ?>;
@@ -907,29 +891,29 @@ var passportsAndPassions = {
 
     var passportTypesInitially = [];
     if (passportTypes) {
-        console.log('passportTypes: '+passportTypes);
+//        console.log('passportTypes: ' + passportTypes);
 
         var passportTypesLength = passportTypes.length;
-        console.log('length: '+passportTypesLength);
+//        console.log('length: ' + passportTypesLength);
         for (var i = 0; i < passportTypesLength; i++) {
             passportTypesInitially.push(passportTypes[i]);
             $('#chk' + passportTypes[i]).prop('checked', true);
         }
         passportsAndPassions.passport_types = passportTypesInitially.join();
     }
-        var passportIds = $("[id^=chk]:checked");
-        $("[id^=chk]").change(function () {
-            var passportIdsArr = [];
-            passportIds = $("[id^=chk]:checked");
-            var passportIdsLength = passportIds.length;
-            for (var i = 0; i < passportIdsLength; i++) {
-                var passId = passportIds[i].id.replace("chk", "");
-                passportIdsArr.push(passId);
-            }
-            passportIdsStr = passportIdsArr.join();
-            passportsAndPassions.passport_types = passportIdsStr;
-            console.log(passportsAndPassions);
-        });
+    var passportIds = $("[id^=chk]:checked");
+    $("[id^=chk]").change(function () {
+        var passportIdsArr = [];
+        passportIds = $("[id^=chk]:checked");
+        var passportIdsLength = passportIds.length;
+        for (var i = 0; i < passportIdsLength; i++) {
+            var passId = passportIds[i].id.replace("chk", "");
+            passportIdsArr.push(passId);
+        }
+        passportIdsStr = passportIdsArr.join();
+        passportsAndPassions.passport_types = passportIdsStr;
+        console.log(passportsAndPassions);
+    });
 
     console.log(passportIdsStr);
 
@@ -946,22 +930,22 @@ var passportsAndPassions = {
         }
         passportsAndPassions.passions = passionTypesInitially.join();
     }
-        var passionIds = $("[id^=lb]:checked");
+    var passionIds = $("[id^=lb]:checked");
 
-        $("[id^=lb]").change(function () {
-            var passionIdsArr = [];
-            passionIds = $("[id^=lb]:checked");
-            var passionIdsLength = passionIds.length;
+    $("[id^=lb]").change(function () {
+        var passionIdsArr = [];
+        passionIds = $("[id^=lb]:checked");
+        var passionIdsLength = passionIds.length;
 
 
-            for (var i = 0; i < passionIdsLength; i++) {
-                var passId = passionIds[i].id.replace("lb", "");
-                passionIdsArr.push(passId);
-            }
-            passionIdsStr = passionIdsArr.join();
-            passportsAndPassions.passions = passionIdsStr;
-            console.log(passportsAndPassions);
-        });
+        for (var i = 0; i < passionIdsLength; i++) {
+            var passId = passionIds[i].id.replace("lb", "");
+            passionIdsArr.push(passId);
+        }
+        passionIdsStr = passionIdsArr.join();
+        passportsAndPassions.passions = passionIdsStr;
+        console.log(passportsAndPassions);
+    });
 
     console.log(passionIdsStr);
 
@@ -978,7 +962,7 @@ var passportsAndPassions = {
             passportIdsStr = passportTypesInitially.join();
             passportsAndPassions.passport_types = passportIdsStr;
 
-        }else{
+        } else {
             passportsAndPassions.passport_types = '';
         }
 
@@ -988,25 +972,62 @@ var passportsAndPassions = {
             }
             passionIdsStr = passionTypesInitially.join();
             passportsAndPassions.passions = passionIdsStr;
-        }else{
+        } else {
             passportsAndPassions.passions = '';
         }
         console.log(passportsAndPassions);
     });
 
-    function doAdvisorsSearch($url){
-        $.get( 'ajax/search-advisor'+$url ).done(function( data ) {
+    function doAdvisorsSearch($url) {
+        $.get('ajax/search-advisor' + $url).done(function (data) {
             se.changeUrl($url);
-            $('#search_results').html(data);
+            $('#search_results').html(data.advisors);
+            paginate_advisors(data.advisors_overall_count, data.advisors_per_page);
         });
     }
 
-    $("#confirmSearch").click(function(){
+    $("#confirmSearch").click(function () {
         var newUrl = se.changeUrlParams(passportsAndPassions);
         console.log(newUrl);
         doAdvisorsSearch(newUrl);
     });
 
+    function getAndSendBoundsData(map) {
+        var bounds = map.getBounds();
+        var ne = bounds.getNorthEast();
+        var sw = bounds.getSouthWest();
+
+        var NElat = ne.lat();
+        var NElon = ne.lng();
+
+        var SWlat = sw.lat();
+        var SWlon = sw.lng();
+
+//            var NWlat = sw.lat();
+//            var NWlon = ne.lng();
+//
+//            var SElat = ne.lat();
+//            var SElon = sw.lng();
+//        console.log('NElat = ' + NElat);
+//        console.log('NElon = ' + NElon);
+//        console.log('SWlat = ' + SWlat);
+//        console.log('SWlon = ' + SWlon);
+//            console.log('NWlat'+NWlat);
+//            console.log('NWlon'+NWlon);
+//            console.log('SElat'+SElat);
+//            console.log('SElon'+SElon);
+
+        var boundsData = {
+            NElat: NElat,
+            NElon: NElon,
+            SWlat: SWlat,
+            SWlon: SWlon
+        };
+
+        var newUrl = se.changeUrlParams(boundsData);
+        console.log(newUrl);
+        doAdvisorsSearch(newUrl);
+    }
 
 
 </script>

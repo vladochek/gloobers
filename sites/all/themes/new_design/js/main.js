@@ -1,9 +1,202 @@
+$.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    return results ? results[1] : false;
+}
+
+function paginate_advisors(advisorsOverallCount, advisorsPerPage) {
+    var pagesCount = Math.ceil(advisorsOverallCount / advisorsPerPage);
+    var currentPageNum = $.urlParam('page') || 1;
+//        currentPageNum = 4;
+    console.log(currentPageNum);
+
+
+    var format = '';
+    var prevClass = '';
+    var nextClass = '';
+    if (pagesCount >= 0 && pagesCount <= 6) {
+        switch (pagesCount) {
+            case 0:
+                format = '< c >';
+                prevClass = 'class="disabled"';
+                nextClass = 'class="disabled"';
+                break;
+            case 1:
+                format = '< c >';
+                prevClass = 'class="disabled"';
+                break;
+            case 2:
+                format = '< nc >';
+                break;
+            case 3:
+                format = '< ncn! >';
+                break;
+            case 4:
+                format = '< ncnn! >';
+                break;
+            case 5:
+                format = '< nncnn! >';
+                break;
+            case 6:
+                format = '< nnncnn! >';
+                break;
+        }
+    } else {
+        var formatEnd = '';
+        var formatStart = '';
+        var formatMid = 'nncnn';
+
+        if ((pagesCount - currentPageNum) == 3) {
+            formatMid = 'nnncnnn';
+            formatStart = '';
+        }
+
+//            if ((pagesCount - currentPageNum) <= 3) {
+//                console.log(1);
+//                formatEnd = '(-)';
+//            }
+        if ((pagesCount - currentPageNum) < 3) {
+            console.log(2);
+            formatMid = 'nncnn';
+            formatStart = '([-)';
+            formatEnd = '(-)';
+//                if((currentPageNum - 1) >= 4) {
+//                    formatEnd = '(-])';
+//                }
+        } else {
+            formatMid = 'nncnn';
+//                formatStart = '([-)';
+            formatEnd = '(-])';
+        }
+
+        if ((currentPageNum - 1) == 3 && pagesCount - currentPageNum == 3) {
+            formatMid = 'nnncnnn';
+            formatEnd = '';
+        }
+        if ((currentPageNum - 1) == 3 && pagesCount - currentPageNum >= 3) {
+            console.log(3);
+            formatMid = 'nncnn';
+            formatEnd = '(-])';
+            formatStart = '([-)';
+        }
+        if ((currentPageNum) >= 4) {
+            formatStart = '([-)';
+        } else {
+            formatStart = '(-)';
+        }
+
+        format = '<' + formatStart + formatMid + formatEnd + '>';
+    }
+
+    if (currentPageNum == pagesCount) {
+        nextClass = 'class="disabled"';
+    }
+    if (currentPageNum == 1) {
+        prevClass = 'class="disabled"';
+    }
+
+    console.log(format);
+    $("#advisors-pagination").paging(advisorsOverallCount, { // make 1337 elements navigatable
+        format: format, // define how the navigation should look like and in which order onFormat() get's called
+        perpage: advisorsPerPage, // show n elements per page
+        lapping: 0, // don't overlap pages for the moment
+        page: currentPageNum, // start at page, can also be "null" or negative
+        onSelect: function (page, qw) {
+            // add code which gets executed when user selects a page, how about $.ajax() or $(...).slice()?
+//                console.log(this);
+//                console.log(qw);
+        },
+        onFormat: function (type) {
+            switch (type) {
+                case 'block': // n and c
+                    var className = 'pager-element-' + this.value;
+                    if (this.value == currentPageNum) {
+                        className = 'pager-element-' + this.value + ' active';
+                    }
+                    return '<li class="' + className + '"><span>' + this.value + '</span></li>';
+                case 'next': // >
+                    return '<li id="nextlink" ' + nextClass + ' ><span aria-label="Next"><i aria-hidden="true" class="gl-ico gl-ico-arrow-right"></i></span></li>';
+                case 'prev': // <
+                    return '<li id="prevlink" ' + prevClass + ' ><span aria-label="Previous"><i aria-hidden="true" class="gl-ico gl-ico-arrow-left"></i></span></li>';
+                case 'first': // [
+                    var className = 'pager-element-' + this.value;
+                    if (this.value == currentPageNum) {
+                        className = 'pager-element-' + this.value + ' active';
+                    }
+                    return '<li class="' + className + '"><span>' + this.value + '</span></li>';
+                case 'last': // ]
+                    var className = 'pager-element-' + this.value;
+                    if (this.value == currentPageNum) {
+                        className = 'pager-element-' + this.value + ' active';
+                    }
+                    return '<li class="' + className + '"><span>' + this.value + '</span></li>';// class="active"
+                case 'left': // q
+                    return 'lf';
+                case 'right': // p
+                    return 'rt';
+                case 'fill':
+                    if (this.active) {
+                        return "<li><span>...</span></li>";
+                    }
+                    return "";
+            }
+        }
+    });
+
+    // $("body").on("click", "#prevlink", function () {
+    //     console.log(currentPageNum);
+    //     console.log(pagesCount);
+    //     if (currentPageNum !== 1 && pagesCount !== 1){
+    //         var prevPageNum = currentPageNum - 1;
+    //         var newUrl = se.changeUrlParams('page', prevPageNum);
+    //         doAdvisorsSearch(newUrl);
+    //     }
+    // }).on("click", "#nextlink", function () {
+    //     console.log(currentPageNum);
+    //     console.log(pagesCount);
+    //     if (currentPageNum != pagesCount && pagesCount !== 1){
+    //         var nextPageNum = currentPageNum + 1;
+    //         console.log(nextPageNum);
+    //         var newUrl = se.changeUrlParams('page', nextPageNum);
+    //         doAdvisorsSearch(newUrl);
+    //     }
+    // })
+}
+
 function searchAutocompletePrompt(id) {
     var home_autocomplete = new google.maps.places.Autocomplete(
         /** @type {HTMLInputElement} */
         (document.getElementById(id)),
         {types: ['geocode']});
+    var fullAddress = {
+        address: false,
+        city: false,
+        state: false,
+        country: false,
+        destination: false
+    };
     google.maps.event.addListener(home_autocomplete, 'place_changed', function () {
+        var place = home_autocomplete.getPlace();
+        var arrAddress = place.address_components;
+        fullAddress['destination'] = place.formatted_address;
+        for (var i = 0; i < arrAddress.length; i++) {
+            var addressType = arrAddress[i].types[0];
+            switch (addressType) {
+                case "route" :
+                    fullAddress['address'] = arrAddress[i].long_name;
+                    break;
+                case "locality" :
+                    fullAddress['city'] = arrAddress[i].long_name;
+                    break;
+                case "administrative_area_level_1" :
+                    fullAddress['state'] = arrAddress[i].long_name;
+                    break;
+                case "country" :
+                    fullAddress['country'] = arrAddress[i].long_name;
+                    break;
+            }
+        }
+        var newUrl = se.changeUrlParams(fullAddress);
+        doAdvisorsSearch(newUrl);
     });
 }
 
@@ -34,7 +227,8 @@ function hometowngeocode(id) {
         case 'destination-activity':
             var searchType = 'activity';
             break;
-        default: var searchType = 'hotels';
+        default:
+            var searchType = 'hotels';
     }
 
     home_autocomplete.addListener('place_changed', function () {
@@ -58,10 +252,10 @@ function hometowngeocode(id) {
                     break;
             }
         }
-        $('#country-'+searchType).val(fullAddress['country']);
-        $('#state-'+searchType).val(fullAddress['state'] );
-        $('#city-'+searchType).val(fullAddress['city']);
-        $('#address-'+searchType).val(fullAddress['address']);
+        $('#country-' + searchType).val(fullAddress['country']);
+        $('#state-' + searchType).val(fullAddress['state']);
+        $('#city-' + searchType).val(fullAddress['city']);
+        $('#address-' + searchType).val(fullAddress['address']);
         console.log(fullAddress);
     });
 
@@ -69,7 +263,7 @@ function hometowngeocode(id) {
 }
 
 
-$(document).ready(function() {
+$(document).ready(function () {
 
     $('.testimonials-carousel').slick({
         centerMode: true,
@@ -104,13 +298,13 @@ $(document).ready(function() {
 
     $("[data-toggle=popover]").popover({
         html: true,
-        content: function() {
+        content: function () {
             return $($(this).data("popoverHtmlId")).html();
         }
-    }).on('shown.bs.popover', function(e){
+    }).on('shown.bs.popover', function (e) {
         var popover = $(this);
 
-        $(document).on( "click", '.popover .lnk-close', function(){
+        $(document).on("click", '.popover .lnk-close', function () {
             popover.popover('hide');
             return false;
         });
@@ -128,12 +322,12 @@ $(document).ready(function() {
             slidesToShow: 1,
             arrows: false
         })
-        .on('afterChange', function(event, slick, currentSlide, nextSlide){
+        .on('afterChange', function (event, slick, currentSlide, nextSlide) {
             $('.slider-tabs li').removeClass("active").eq(currentSlide).addClass("active");
         });
 
-    $('.slider-tabs li').each( function(i) {
-        $(this).click(function(){
+    $('.slider-tabs li').each(function (i) {
+        $(this).click(function () {
             $('.slider-tabs li').removeClass("active");
             $(this).addClass("active");
             $('.slider').slick('slickGoTo', i);
@@ -147,7 +341,6 @@ $(document).ready(function() {
 
     var selectedRadio = $('input[name=search-tabs]:checked').val();
     $('#submit-btn').attr('form', selectedRadio);
-
 
 
     $(document).on("click", '#adult-minus', function () {
@@ -282,20 +475,19 @@ $(document).ready(function() {
     });
 
 
-
-    (function() {
+    (function () {
         var init, setupDrop, _Drop;
 
         _Drop = Drop.createContext({
             classPrefix: 'drop'
         });
 
-        init = function() {
+        init = function () {
             return setupDrop();
         };
 
-        setupDrop = function() {
-            return $('.open-drop').each(function() {
+        setupDrop = function () {
+            return $('.open-drop').each(function () {
 
                 var $elm, content, drop, openOn, theme, position, offset;
 
@@ -306,7 +498,7 @@ $(document).ready(function() {
 
                 offset = $elm.data('offset') || '0 0';
 
-                position = $elm.data('position')  || 'bottom center';
+                position = $elm.data('position') || 'bottom center';
 
                 $elm.addClass(theme);
 
@@ -331,7 +523,7 @@ $(document).ready(function() {
 
     }).call(this);
 
-    $(function() {
+    $(function () {
 
         var eventDate = moment();
 

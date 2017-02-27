@@ -50,7 +50,9 @@ var se = {
         }
         var searchStrArr = [];
         for (var param in parameters) {
-            searchStrArr.push(param + '=' + parameters[param]);
+            if(parameters[param] && parameters[param] != '') {
+                searchStrArr.push(param + '=' + parameters[param]);
+            }
         }
         var searchStr = searchStrArr.join('&');
         searchStr = '?' + searchStr;
