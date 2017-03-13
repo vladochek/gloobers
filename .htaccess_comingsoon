@@ -1,0 +1,7 @@
+RewriteEngine on
+RewriteCond %{REQUEST_URI} !/coming-soon.php$
+RewriteCond %{REQUEST_URI} !/bg-coming-soon.jpg$
+RewriteCond %{REQUEST_URI} !/logo01.png$
+RewriteCond %{REQUEST_URI} !/comingsoon.php$
+#RewriteCond %{REMOTE_ADDR} !^123\.123\.123\.123
+RewriteRule $ /coming-soon.php [L]

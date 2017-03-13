@@ -66,7 +66,7 @@ if(arg(1)){
 <div class="col-md-2 col-sm-4 col-xs-12">
                         <div class="ranktype">
                             <h2>Ranking</h2>
-                            <i class="fa fa-star gold"></i> <i class="fa fa-star gold"></i> <i class="fa fa-star gold"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                            <i class="gl-ico gl-ico-star gold"></i> <i class="gl-ico gl-ico-star gold"></i> <i class="gl-ico gl-ico-star gold"></i> <i class="gl-ico gl-ico-star"></i> <i class="gl-ico gl-ico-star"></i>
                         </div>
 </div>
 <div class="col-md-2 col-sm-4 col-xs-12">

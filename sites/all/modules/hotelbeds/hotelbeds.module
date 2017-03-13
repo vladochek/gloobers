@@ -8,15 +8,14 @@ class Hotelbeds
     private $signatureActivities;
     private $mode;
     private $url;
-    private $keysCursor = 0;
     const HOTELS_LIMIT_PER_PAGE = 6;
 
     public function __construct()
     {
-        $this->apiKeyHotels = variable_get('hotel_api_key_0', NULL);
-        $this->signatureHotels = variable_get('hotel_signature_0', NULL);
-        $this->apiKeyActivities = variable_get('activities_api_key_0', NULL);
-        $this->signatureActivities = variable_get('activities_signature_0', NULL);
+        $this->apiKeyHotels = variable_get('hotel_api_key', NULL);
+        $this->signatureHotels = variable_get('hotel_signature', NULL);
+        $this->apiKeyActivities = variable_get('activities_api_key', NULL);
+        $this->signatureActivities = variable_get('activities_signature', NULL);
         $this->mode = variable_get('apitude_mode', NULL);
         $this->url = $this->mode == 'test' ? variable_get('apitude_test_url', NULL) : variable_get('apitude_live_url', NULL);
     }
@@ -31,89 +30,31 @@ class Hotelbeds
         $options['headers'] = array_merge($definedHeaders, $headers);
         $options['data'] = $data;
         $options['method'] = $method;
-        return drupal_http_request($url, $options);
-    }
+        $response = drupal_http_request($url, $options);
 
-    protected function hotelbeds_activities_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
-    {
-        session_start();
-        if (!isset($_SESSION['keys_cursor_activities'])) {
-            $_SESSION['keys_cursor_activities'] = 0;
-        }
-        $cursor = $_SESSION['keys_cursor_activities'];
-
-        if (variable_get('activities_api_key_' . $cursor, NULL) !== NULL) {
-            $this->apiKeyActivities = variable_get('activities_api_key_' . $cursor, NULL);
-            $this->signatureActivities = variable_get('activities_signature_' . $cursor, NULL);
-        } else {
-            unset($_SESSION['keys_cursor_activities']);
-        }
-
-        $response = $this->hotelbeds_connect($this->apiKeyActivities, $this->signatureActivities, $url, $method, $data, $headers, $accept);
         if ($response->code == '200') {
-            switch ($accept) {
+            switch ($format) {
                 case 'json':
                     return json_decode($response->data);
                     break;
                 default:
                     return $response->data;
             }
-        } elseif ($response->code == '403' && $response->data == '<h1>Developer Over Rate</h1>') {
-            if (isset($_SESSION['keys_cursor_activities'])) {
-                $_SESSION['keys_cursor_activities'] += 1;
-            }
-            $this->hotelbeds_connect($this->apiKeyActivities, $this->signatureActivities, $url, $method, $data = [], $headers = [], $format = 'json');
-        } else {
-            var_dump($response);
-            die;
-        }
-    }
-
-    protected function hotelbeds_hotels_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
-    {
-        session_start();
-
-        $_SESSION['keys_cursor_hotels'] = 10;
-
-
-        if (!isset($_SESSION['keys_cursor_hotels'])) {
-            $_SESSION['keys_cursor_hotels'] = 0;
-        }
-        $cursor = $_SESSION['keys_cursor_hotels'];
-
-        if (variable_get('hotel_api_key_' . $cursor, NULL) !== NULL) {
-            $this->apiKeyHotels = variable_get('hotel_api_key_' . $cursor, NULL);
-            $this->signatureHotels = variable_get('hotel_signature_' . $cursor, NULL);
-        } else {
-            unset($_SESSION['keys_cursor_hotels']);
-            $this->apiKeyHotels = variable_get('hotel_api_key_0' . $cursor, NULL);
-            $this->signatureHotels = variable_get('hotel_signature_0' . $cursor, NULL);
-        }
-
-//        echo $_SESSION['keys_cursor_hotels'];die;
-        $response = $this->hotelbeds_connect($this->apiKeyHotels, $this->signatureHotels, $url, $method, $data, $headers, $accept);
-
-        if ($response->code == '200') {
-            switch ($accept) {
-                case 'json':
-//                    if ($url == $this->url . 'hotel-content-api/1.0/hotels?fields=all&language=ENG&codes=14057&from=1&to=6') {
-//                        var_dump(123);
-//                        die;
-//                    }
-                    return json_decode($response->data);
-                    break;
-                default:
-                    return $response->data;
-            }
-        } elseif ($response->code == '403' && $response->data == '<h1>Developer Over Rate</h1>') {
-            if (isset($_SESSION['keys_cursor_hotels'])) {
-                $_SESSION['keys_cursor_hotels'] += 1;
-            }
-            return $this->hotelbeds_connect($this->apiKeyHotels, $this->signatureHotels, $url, $method, $data = [], $headers = [], $format = 'json');
         } else {
             var_dump($response);die;
         }
     }
+
+    protected function hotelbeds_activities_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
+    {
+        return $this->hotelbeds_connect($this->apiKeyActivities, $this->signatureActivities, $url, $method, $data, $headers, $accept);
+    }
+
+    protected function hotelbeds_hotels_api_connect($url, $method, $data = [], $headers = [], $accept = 'json')
+    {
+        return $this->hotelbeds_connect($this->apiKeyHotels, $this->signatureHotels, $url, $method, $data, $headers, $accept);
+    }
+
 
     public function hotelbeds_get_activity_types()
     {
@@ -191,6 +132,14 @@ class Hotelbeds
     {
         return $this->hotelbeds_hotels_api_connect(
             $this->url . 'hotel-content-api/1.0/types/facilities?fields=all&language=ENG&from=1&to=450',
+            'GET'
+        );
+    }
+
+    function hotelbeds_get_hotels_board_types()
+    {
+        return $this->hotelbeds_hotels_api_connect(
+            $this->url . 'hotel-content-api/1.0/types/boards?fields=all&language=ENG&from=1&to=100',
             'GET'
         );
     }

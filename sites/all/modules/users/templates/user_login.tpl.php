@@ -68,6 +68,8 @@ $form = drupal_get_form('user_login_block');
 
         }
     });
-
+    jQuery(document).ready(function () {
+        jQuery("footer").css({display: 'none'});
+    });
 
 </script>

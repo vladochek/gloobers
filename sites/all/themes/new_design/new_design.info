@@ -27,8 +27,8 @@ scripts[] = js/bootstrap.min.js
 scripts[] = js/popover-extra-placements.min.js
 scripts[] = js/bootstrap-slider.min.js
 scripts[] = js/slick.min.js
-scripts[] = js/tether.min.js
-scripts[] = js/drop.min.js
+
+
 scripts[] = js/star-rating.min.js
 scripts[] = js/main.js
 

@@ -39,7 +39,7 @@ jQuery('#product-details-form').addClass('Calenderform');
 ?>
 	<div id="photo-content<?php echo $i++; ?>" class="photo-content">
 		<div class="plupload_star_action1">
-			<div class="plupload_star_icon  phpuplC_<?php echo $photo["fid"]; ?>" onclick="setmainimg('<?php echo $photo["fid"]; ?>');"><i class="fa fa-star <?php echo $class; ?>"></i><p>Set as main </p></div>
+			<div class="plupload_star_icon  phpuplC_<?php echo $photo["fid"]; ?>" onclick="setmainimg('<?php echo $photo["fid"]; ?>');"><i class="gl-ico gl-ico-star <?php echo $class; ?>"></i><p>Set as main </p></div>
 		</div>
 		<div class="plupload_file_action1">
 			<input type="hidden" class="fileID" value="<?php echo $photo["fid"]; ?>">

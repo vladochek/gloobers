@@ -11,6 +11,13 @@ function users_menu()
         'type' => MENU_NORMAL_ITEM,
     );
 
+    $items['comingsoon/subscribe'] = array(
+        'page callback' => 'send_mail_coming_soon',
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK
+    );
+
     $items['linkedin'] = array(
         'page callback' => 'linkedin_binding',
         'access callback' => TRUE,
@@ -760,53 +767,6 @@ function users_theme(&$existing, $type, $theme, $path)
 }
 
 
-function user_dashboard()
-{
-
-    $userId = arg(1);
-
-    unset($_SESSION['destination']);
-    //$userListing=getuserlistdata();
-    $query = db_select('gbl_user_passeport', 'gup');
-    $query->fields('gup', array('location'));
-    $query->condition('uid', $userId);
-    $query->condition('description', 'I live there');
-    $result1 = $query->execute();
-    $location = $result1->fetchField();
-    $query1 = db_select('file_managed', 'f');
-    $query1->fields('f', array('uri'));
-    $query1->condition('uid', $userId);
-    $query1->condition('is_cover_pic', 1);
-    $result4 = $query1->execute();
-    $cover_pic = $result4->fetchField();
-
-    $reviewCount = getUserReviewsCount($userId);
-    $allReviews = getListingReviewsAll($userId);
-    $countriesVisited = countryVisited($userId);
-    $OverviewData = getOverviewData($userListing['eid']);
-    // $userpassion = getUserPassionList($userId);
-    $TotalCredits = get_total_credits();
-    //$travelguidedata = travel_guide();
-    $query = db_select('gbl_user_passeport', 'p')
-        ->fields('p')
-        ->condition('uid', $userId);
-    $result = $query->execute();
-    $Passeports = $result->fetchAll(PDO::FETCH_ASSOC);
-    $data = array('changePassForm' => $changePassForm,
-        'userListing' => $userListing,
-        'commisson' => $commisson,
-        'reviewCount' => $reviewCount,
-        'allReviews' => $allReviews,
-        'TotalCredits' => $TotalCredits,
-        //'travelguidedata'=>$travelguidedata,
-        'countriesVisited' => $countriesVisited,
-        'loc' => $location,
-        'cover_pic' => $cover_pic,
-        'passeports' => $Passeports
-    );
-    return theme('user_dashboard', $data);
-}
-
 function my_dashboard_data()
 {
     global $user;
@@ -1172,6 +1132,33 @@ function sendNotificationEmail($module, $key, $to_email, $subject, $title, $body
     }
 }
 
+function users_mail($key, &$message, $params) {
+//    switch ($key) {
+//        case 'Gloobers':
+            $message['subject'] = $params['subject'];
+//            $params['message'] = 'message is here';
+            $message['body'][] = 'you should work';
+//            break;
+//    }
+}
+
+
+function send_mail_coming_soon()
+{
+    $email = filter_input(INPUT_POST, 'email');
+
+    if ($email) {
+        $to = 'contact@gloobers.com';
+        $key = 'Gloobers Team';
+        $body = 'User\'s email: ' . $email;
+        $headers = 'From: developers@gloobers.com' . "\r\n" .
+            'Content-Type: text/html; charset=UTF-8; format=flowed' . "\r\n" .
+            'Content-Transfer-Encoding: 8Bit' . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+        mail($to, $key, $body, $headers);
+    }
+}
+
 /* functions to send emails */
 function sendWelcomeEmail($module, $key, $to_email, $subject, $title, $body = NULL)
 {
@@ -1203,7 +1190,8 @@ function sendWelcomeEmail($module, $key, $to_email, $subject, $title, $body = NU
     }
 }
 
-function get_user_by_id($id){
+function get_user_by_id($id)
+{
     $query = db_select('users', 'u');
     $query->fields('u');
     $query->condition('u.uid', $id, '=');
@@ -3346,6 +3334,17 @@ function gplus_sync_sing_on_custom()
     return;
 }
 
+function user_dashboard()
+{
+    $userId = arg(1);
+    $profileInfo = get_overall_user_profile_data($userId);
+//    var_dump($profileInfo);die;
+    $data = array(
+        'profileInfo' => $profileInfo,
+    );
+    return theme('user_dashboard', $data);
+}
+
 //user profile functions
 
 function get_profile_info($uid)
@@ -3356,16 +3355,18 @@ function get_profile_info($uid)
     $query->leftJoin('linkedin_token', 'ld', 'u.uid = ld.uid');
     $query->leftJoin('twitter_account', 'tw', 'u.uid = tw.uid');
     $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = u.uid');
+    $query->leftJoin('gbl_user_passeport', 'p', 'u.uid = p.uid');
 
-    $query->fields('u', array(
-        'uid', 'first_name', 'last_name', 'occupation', 'confirm_status',
-        'language', 'mobile', 'about_yourself', 'phone'));
+    $query->fields('u');
     $query->fields('us', array('gplus_sync_url_profile', 'mail'));
     $query->fields('fb', array('fbid'));
     $query->addExpression('ld.token_key', 'linkedin_token_key');
     $query->addExpression('AVG(rat.rating)', 'overall_advisor_rating');
+    $query->addExpression('p.city', 'user_city');
+    $query->addExpression('p.country', 'user_country');
     $query->fields('tw', array('twitter_uid'));
     $query->condition('u.uid', $uid);
+    $query->condition('p.passport_trip_type_id', 1);
     $query->groupBy('us.uid');
     $result = $query->execute();
     $info = $result->fetchAssoc();
@@ -3400,22 +3401,28 @@ function get_user_experience_quantity($userId)
     COUNT(DISTINCT b.id) as user_trips_count
     FROM {gbl_reviews} as rev, {gbl_experience_list} as el, {gbl_booking} as b
     where rev.uid = :userId and el.uid = :userId and b.uid = :userId";
-    return db_query($sql, [':userId'=>$userId])->fetchAssoc();
+    return db_query($sql, [':userId' => $userId])->fetchAssoc();
 }
 
 
 function get_overall_user_profile_data($userId)
 {
     $result = [];
-    $result['passports'] = get_user_passport($userId);
+    $result['passport'] = get_user_passport($userId);
     $result['passions'] = getUserPassionList($userId);
     $result['profile'] = get_profile_info($userId);
+    $userImages = get_users_profile_cover_pics([$userId]);
+    foreach ($userImages as $userImage) {
+        $type = $userImage['is_profile_pic'] ? 'profile_img' : 'cover_img';
+        $result['profile'][$type] = $userImage['uri'];
+    }
+    $result['experience'] = get_user_experience_quantity($userId);
     return $result;
 }
 
 function user_profile_section()
 {
-
+//var_dump($_SERVER);die;
     global $user;
 //    var_dump(get_profile_info($user->uid));
 //    die;
@@ -3625,8 +3632,14 @@ function linkedin_access_token_custom($account)
     }
 }
 
-
 /// --------------------------------End -------------------------------//
+
+
+function coming_soon_subscribe()
+{
+    echo 123;
+    die;
+}
 
 function add_user_hometown()
 {

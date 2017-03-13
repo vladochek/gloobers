@@ -61,24 +61,17 @@
     </header>
     <main class="main">
         <div class="main-slider">
-            <div class="item"><img
-                        src="<?= $base_path . drupal_get_path('theme', 'new_design') . '/images/img03.jpg' ?>"
-                        width="1920" height="550" alt="image"></div>
-            <div class="item"><img
-                        src="<?= $base_path . drupal_get_path('theme', 'new_design') . '/images/img03-rotate.jpg' ?>"
-                        width="1920" height="550" alt="image"></div>
-            <div class="item"><img
-                        src="<?= $base_path . drupal_get_path('theme', 'new_design') . '/images/img03.jpg' ?>"
-                        width="1920" height="550" alt="image"></div>
-            <div class="item"><img
-                        src="<?= $base_path . drupal_get_path('theme', 'new_design') . '/images/img03-rotate.jpg' ?>"
-                        width="1920" height="550" alt="image"></div>
-            <div class="item"><img
-                        src="<?= $base_path . drupal_get_path('theme', 'new_design') . '/images/img03.jpg' ?>"
-                        width="1920" height="550" alt="image"></div>
-            <div class="item"><img
-                        src="<?= $base_path . drupal_get_path('theme', 'new_design') . '/images/img03-rotate.jpg' ?>"
-                        width="1920" height="550" alt="image"></div>
+            <?php
+            if (is_array($listingPhotosData) && count($listingPhotosData)) {
+                foreach ($listingPhotosData as $listingPhoto) {
+                    ?>
+                    <div class="item"><img
+                                src="<?= $listingPhoto ?>"
+                                width="1920" height="550" alt="image"></div>
+                    <?php
+                }
+            }
+            ?>
         </div>
         <div class="object-desc container">
             <div class="row">
@@ -99,7 +92,7 @@
                                                 <span class="star"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span>
                                             <?php } ?>
                                             <?php for ($k = 0; $k < 5 - $listingInfo['avg_overall_rating']; $k++) { ?>
-                                                <span class="star full"><i class="gl-ico gl-ico-star"
+                                                <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                            aria-hidden="true"></i></span>
                                             <?php } ?>
                                         </div>
@@ -161,7 +154,7 @@
                                                                   aria-hidden="true"></i></span>
                                         <?php } ?>
                                         <?php for ($k = 0; $k < 5 - $listingInfo['last_recommendation']['advisor_rating']; $k++) { ?>
-                                            <span class="star full"><i class="gl-ico gl-ico-star"
+                                            <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                        aria-hidden="true"></i></span>
                                         <?php } ?>
                                     </div>
@@ -198,7 +191,7 @@
                                         <strong class="tags-ttl">Recomends this activity for</strong>
                                         <div class="tags-list">
                                             <?php
-                                            if ($listingInfo['last_user_trip_types'][0]) {
+                                            if (is_array($listingInfo['last_user_trip_types']) && count($listingInfo['last_user_trip_types'])) {
                                                 foreach ($listingInfo['last_user_trip_types'] as $tripType) { ?>
                                                     <span class="tag btn btn-sm"><i
                                                                 class="gl-ico gl-ico-airplane"></i><?= $tripType ?></span>
@@ -211,7 +204,7 @@
                                         <strong class="tags-ttl">Travelers passionate about</strong>
                                         <div class="tags-list">
                                             <?php
-                                            if ($listingInfo['last_user_passions'][0]) {
+                                            if (is_array($listingInfo['last_user_passions']) && count($listingInfo['last_user_passions'])) {
                                                 foreach ($listingInfo['last_user_passions'] as $passion) { ?>
                                                     <span class="tag btn btn-sm"><i
                                                                 class="gl-ico gl-ico-like"></i><?= $passion ?></span>
@@ -365,7 +358,7 @@
                                     <?php for ($b = 0;
                                                $b < 5 - $listingInfo['listing_details']['overall_money'];
                                                $b++) { ?>
-                                        <span class="star full"><i class="gl-ico gl-ico-star"
+                                        <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                    aria-hidden="true"></i></span>
                                     <?php } ?>
                                 </div>
@@ -381,7 +374,7 @@
                                     <?php for ($h = 0;
                                                $h < 5 - $listingInfo['listing_details']['overall_communication'];
                                                $h++) { ?>
-                                        <span class="star full"><i class="gl-ico gl-ico-star"
+                                        <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                    aria-hidden="true"></i></span>
                                     <?php } ?>
                                 </div>
@@ -397,7 +390,7 @@
                                     <?php for ($p = 0;
                                                $p < 5 - $listingInfo['listing_details']['overall_professional'];
                                                $p++) { ?>
-                                        <span class="star full"><i class="gl-ico gl-ico-star"
+                                        <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                    aria-hidden="true"></i></span>
                                     <?php } ?>
                                 </div>
@@ -413,7 +406,7 @@
                                     <?php for ($f = 0;
                                                $f < 5 - $listingInfo['listing_details']['overall_safety'];
                                                $f++) { ?>
-                                        <span class="star full"><i class="gl-ico gl-ico-star"
+                                        <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                    aria-hidden="true"></i></span>
                                     <?php } ?>
                                 </div>
@@ -448,7 +441,7 @@
                                                     <?php for ($i = 0;
                                                                $i < 5 - $review['overall_rating'];
                                                                $i++) { ?>
-                                                        <span class="star full"><i class="gl-ico gl-ico-star"
+                                                        <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                                    aria-hidden="true"></i></span>
                                                     <?php } ?>
                                                 </div>
@@ -576,15 +569,15 @@
                                             <div class="rating">
                                                 <strong class="rating-ttl">7</strong>
                                                 <div class="stars">
-                                                    <span class="star"><i class="fa fa-star"
+                                                    <span class="star"><i class="gl-ico gl-ico-star"
                                                                           aria-hidden="true"></i></span>
-                                                    <span class="star"><i class="fa fa-star"
+                                                    <span class="star"><i class="gl-ico gl-ico-star"
                                                                           aria-hidden="true"></i></span>
-                                                    <span class="star"><i class="fa fa-star"
+                                                    <span class="star"><i class="gl-ico gl-ico-star"
                                                                           aria-hidden="true"></i></span>
-                                                    <span class="star"><i class="fa fa-star"
+                                                    <span class="star"><i class="gl-ico gl-ico-star"
                                                                           aria-hidden="true"></i></span>
-                                                    <span class="star full"><i class="fa fa-star"
+                                                    <span class="star empty"><i class="gl-ico gl-ico-star"
                                                                                aria-hidden="true"></i></span>
                                                 </div>
                                             </div>

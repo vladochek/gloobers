@@ -85,7 +85,7 @@ drupal_add_js(drupal_get_path('theme', $GLOBALS['theme']) . '/js/script_menu_bac
       </div>
       <div class="col-xs-12 col-sm-4 col-md-4">
         <p>Advisor rank</p>
-        <div class="col-lg-12 starrating"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
+        <div class="col-lg-12 starrating"><i class="gl-ico gl-ico-star"></i><i class="gl-ico gl-ico-star"></i><i class="gl-ico gl-ico-star"></i><i class="gl-ico gl-ico-star"></i><i class="gl-ico gl-ico-star"></i></div>
       </div>
     </div>
     <div class="col-lg-12 activebar">

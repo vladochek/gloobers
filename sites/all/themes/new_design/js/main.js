@@ -162,6 +162,72 @@ function paginate_advisors(advisorsOverallCount, advisorsPerPage) {
     // })
 }
 
+function searchAutocompleteByItem(id){
+    var home_autocomplete = new google.maps.places.Autocomplete(
+        /** @type {HTMLInputElement} */
+        (document.getElementById(id)),
+        {types: ['geocode']});
+    var fullAddress = {
+        address: false,
+        city: false,
+        state: false,
+        country: false,
+        destination: false
+    };
+    google.maps.event.addListener(home_autocomplete, 'place_changed', function () {
+        var place = home_autocomplete.getPlace();
+        var arrAddress = place.address_components;
+        var itemType = $('#search-items').val();
+        var url = window.location.protocol+'//'+window.location.host+'/';
+var addrTypes = [];
+        switch (itemType){
+            case 'Advisors': url += 'search-advisor';
+                break;
+            case 'Hotels': url += 'search-hotel';
+                break;
+            case 'Activities': url = 'search-activity';
+                break;
+            default: url += 'search-advisor';
+
+        }
+
+        console.log(itemType);
+        fullAddress['destination'] = place.formatted_address;
+        for (var i = 0; i < arrAddress.length; i++) {
+            var addressType = arrAddress[i].types[0];
+            switch (addressType) {
+                case "route" :
+                    // fullAddress['address'] = arrAddress[i].long_name;
+                    addrTypes.push('address='+arrAddress[i].long_name);
+                    break;
+                case "locality" :
+                    // fullAddress['city'] = arrAddress[i].long_name;
+                    addrTypes.push('city='+arrAddress[i].long_name);
+                    break;
+                case "administrative_area_level_1" :
+                    // fullAddress['state'] = arrAddress[i].long_name;
+                    addrTypes.push('state='+arrAddress[i].long_name);
+                    break;
+                case "country" :
+                    // fullAddress['country'] = arrAddress[i].long_name;
+                    addrTypes.push('country='+arrAddress[i].long_name);
+                    break;
+            }
+        }
+        url += '?'+addrTypes.join('&');
+        console.log(url);
+        window.location.replace(url);
+
+// for(var addrType in fullAddress){
+//
+// }
+
+
+        // var newUrl = se.changeUrlParams(fullAddress);
+        // doAdvisorsSearch(newUrl);
+    });
+}
+
 function searchAutocompletePrompt(id) {
     var home_autocomplete = new google.maps.places.Autocomplete(
         /** @type {HTMLInputElement} */
@@ -264,6 +330,7 @@ function hometowngeocode(id) {
 
 
 $(document).ready(function () {
+
 
     $('.testimonials-carousel').slick({
         centerMode: true,
@@ -475,6 +542,9 @@ $(document).ready(function () {
     });
 
 
+
+
+
     (function () {
         var init, setupDrop, _Drop;
 
@@ -512,6 +582,7 @@ $(document).ready(function () {
                     constrainToScrollParent: false,
                     openOn: openOn,
                     content: content,
+                    // remove: false,
                     tetherOptions: {
                         offset: offset
                     }

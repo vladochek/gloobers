@@ -20,12 +20,30 @@ class SyncAPI
 
     public static function getHotelTypes($ext_id)
     {
-        return db_select('gbl_hotel_type', 'ht')
-            ->fields('ht')
-            ->condition('ext_id', $ext_id)
-            ->execute()
-            ->fetchAssoc();
+        $query = db_select('gbl_hotel_type', 'ht');
+        $query->fields('ht');
+        if ($ext_id) {
+            $query->condition('ext_id', $ext_id);
+            return $query->execute()->fetchAssoc();
+        } else {
+            return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+        }
+
     }
+
+    public static function getHotelBoards($code)
+    {
+        $query = db_select('gbl_hotel_boards', 'hb');
+        $query->fields('hb');
+        if ($code) {
+            $query->condition('code', $code);
+            return $query->execute()->fetchAssoc();
+        } else {
+            return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+    }
+
 
     public static function getHotelFacilitiesGroups($code)
     {
@@ -49,11 +67,14 @@ class SyncAPI
 
     public static function getHotelAccomodations($code)
     {
-        return db_select('gbl_hotel_accomodations', 'hac')
-            ->fields('hac')
-            ->condition('code', $code)
-            ->execute()
-            ->fetchAssoc();
+        $query = db_select('gbl_hotel_accomodations', 'hac');
+        $query->fields('hac');
+        if ($code) {
+            $query->condition('code', $code);
+            return $query->execute()->fetchAssoc();
+        } else {
+            return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public static function getHotelCategories($code)
@@ -366,7 +387,8 @@ class SyncAPI
         }
     }
 
-    public function saveHotels(){
+    public function saveHotels()
+    {
 
     }
 
@@ -387,7 +409,8 @@ class SyncAPI
         $hotelsCodes = [];
         $urlData = 'fields=all&from=' . $from . '&to=' . $step;
         $hotelsResponse = $hotelbeds->hotelbeds_get_hotels_info($urlData);
-        var_dump(mb_strlen(json_encode($hotelsResponse)));die;
+        var_dump(mb_strlen(json_encode($hotelsResponse)));
+        die;
         $itemsCount = $hotelsResponse->total;
         $iterations = ceil($itemsCount / $step);
         foreach ($hotelsResponse as $hotel) {
@@ -454,6 +477,41 @@ class SyncAPI
 //                $roomCategories = array_merge($roomCategories, $response->rooms);
             }
 
+        }
+    }
+
+    public static function synchronizeHotelBoardTypes()
+    {
+        $hotelbeds = new Hotelbeds();
+        $groupsResponse = $hotelbeds->hotelbeds_get_hotels_board_types();
+        $boards = $groupsResponse->boards;
+        $existingCodes = [];
+        foreach ($boards as $type) {
+            $existingCodes[] = $type->code;
+            $dbActivity = self::getHotelBoards($type->code);
+            if ($dbActivity) {
+                if ($dbActivity['name'] !== ucfirst(strtolower($type->description->content))) {
+                    db_update('gbl_hotel_boards')
+                        ->fields(array(
+                            'description' => ucfirst(strtolower($type->description->content))
+                        ))
+                        ->condition('code', $type->code)
+                        ->execute();
+                }
+            } else {
+                db_insert('gbl_hotel_boards')
+                    ->fields(array(
+                        'code' => $type->code,
+                        'name' => ucfirst(strtolower($type->description->content)),
+                        'multi_lingual_code' => $type->multiLingualCode
+                    ))
+                    ->execute();
+            }
+        }
+        if (count($existingCodes)) {
+            db_delete('gbl_hotel_boards')
+                ->condition('code', $existingCodes, 'NOT IN')
+                ->execute();
         }
     }
 }

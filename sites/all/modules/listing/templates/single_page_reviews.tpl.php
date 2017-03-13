@@ -30,7 +30,7 @@ global $base_path;
                             <?php for ($i = 0;
                                        $i < 5 - $review['overall_rating'];
                                        $i++) { ?>
-                                <span class="star full"><i class="gl-ico gl-ico-star"
+                                <span class="star empty"><i class="gl-ico gl-ico-star"
                                                            aria-hidden="true"></i></span>
                             <?php } ?>
                         </div>

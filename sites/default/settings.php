@@ -565,100 +565,76 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
 # $conf['allow_authorize_operations'] = FALSE;
 
 //gloobers account
-$conf['activities_api_key_0'] = 'crtb6wvg5rraypzzvb8fm7dd';
-$conf['activities_secret_key_0'] = 'xwuJ22kzbA';
-$conf['hotel_api_key_0'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
-$conf['hotel_secret_key_0'] = 'puUJZPazyh';
-$conf['activities_signature_0'] = hash("sha256", $conf['activities_api_key_0'].$conf['activities_secret_key_0'].time());
-$conf['hotel_signature_0'] = hash("sha256", $conf['hotel_api_key_0'].$conf['hotel_secret_key_0'].time());
+//$conf['activities_api_key'] = 'crtb6wvg5rraypzzvb8fm7dd';
+//$conf['activities_secret_key'] = 'xwuJ22kzbA';
+//$conf['hotel_api_key'] = 'avcnqvd6xhjwqkxbjsbtt9kw';
+//$conf['hotel_secret_key'] = 'puUJZPazyh';
 
 //zing account
-$conf['activities_api_key_1'] = '3fuyx82hu2cxgyaz74kmgqdf';
-$conf['activities_secret_key_1'] = 'yhFQpN6a7Z';
-$conf['hotel_api_key_1'] = 'x37dc798rxs3m2z2zje9z4dd';
-$conf['hotel_secret_key_1'] = 'UDpjqa2kFP';
-$conf['activities_signature_1'] = hash("sha256", $conf['activities_api_key_1'].$conf['activities_secret_key_1'].time());
-$conf['hotel_signature_1'] = hash("sha256", $conf['hotel_api_key_1'].$conf['hotel_secret_key_1'].time());
+//$conf['activities_api_key'] = '3fuyx82hu2cxgyaz74kmgqdf';
+//$conf['activities_secret_key'] = 'yhFQpN6a7Z';
+//$conf['hotel_api_key'] = 'x37dc798rxs3m2z2zje9z4dd';
+//$conf['hotel_secret_key'] = 'UDpjqa2kFP';
 
 //zingeon account
-$conf['activities_api_key_2'] = 'gsj8gbjpmq7dy2xdr3q28pqa';
-$conf['activities_secret_key_2'] = 'ZsWgDNJvy7';
-$conf['hotel_api_key_2'] = 'sfh6nz24y69wfqavmh3mggqs';
-$conf['hotel_secret_key_2'] = 'XP9wutzfTR';
-$conf['activities_signature_2'] = hash("sha256", $conf['activities_api_key_2'].$conf['activities_secret_key_2'].time());
-$conf['hotel_signature_2'] = hash("sha256", $conf['hotel_api_key_2'].$conf['hotel_secret_key_2'].time());
+//$conf['activities_api_key'] = 'gsj8gbjpmq7dy2xdr3q28pqa';
+//$conf['activities_secret_key'] = 'ZsWgDNJvy7';
+//$conf['hotel_api_key'] = 'sfh6nz24y69wfqavmh3mggqs';
+//$conf['hotel_secret_key'] = 'XP9wutzfTR';
 
 //zingeon1 account
-$conf['activities_api_key_3'] = '9gm5j46jdh2qt2fsuamtjrqp';
-$conf['activities_secret_key_3'] = 'JVr85neg92';
-$conf['hotel_api_key_3'] = '8d8g4nbsas5rqkpkejgwejx3';
-$conf['hotel_secret_key_3'] = 'nfRvckEWJr';
-$conf['activities_signature_3'] = hash("sha256", $conf['activities_api_key_3'].$conf['activities_secret_key_3'].time());
-$conf['hotel_signature_3'] = hash("sha256", $conf['hotel_api_key_3'].$conf['hotel_secret_key_3'].time());
+//$conf['activities_api_key'] = '9gm5j46jdh2qt2fsuamtjrqp';
+//$conf['activities_secret_key'] = 'JVr85neg92';
+//$conf['hotel_api_key'] = '8d8g4nbsas5rqkpkejgwejx3';
+//$conf['hotel_secret_key'] = 'nfRvckEWJr';
 
 //zingeon2 account
-$conf['activities_api_key_4'] = 'b4hey33e2k7ugv5uhqb6zdcq';
-$conf['activities_secret_key_4'] = 'h5HJeZJ44n';
-$conf['hotel_api_key_4'] = '4ja8v9ry4f59zdvmx37krr3y';
-$conf['hotel_secret_key_4'] = 'jfsv72GE5C';
-$conf['activities_signature_4'] = hash("sha256", $conf['activities_api_key_4'].$conf['activities_secret_key_4'].time());
-$conf['hotel_signature_4'] = hash("sha256", $conf['hotel_api_key_4'].$conf['hotel_secret_key_4'].time());
+//$conf['activities_api_key'] = 'b4hey33e2k7ugv5uhqb6zdcq';
+//$conf['activities_secret_key'] = 'h5HJeZJ44n';
+//$conf['hotel_api_key'] = '4ja8v9ry4f59zdvmx37krr3y';
+//$conf['hotel_secret_key'] = 'jfsv72GE5C';
 
 //zingeon3 account
-$conf['activities_api_key_5'] = '4dee7jk6zyfxj7mha8zxpy8n';
-$conf['activities_secret_key_5'] = 'QSHnGwX82k';
-$conf['hotel_api_key_5'] = 'fkxjmqjh85mggxxsavyf8aje';
-$conf['hotel_secret_key_5'] = 'wYEvvk8A7M';
-$conf['activities_signature_5'] = hash("sha256", $conf['activities_api_key_5'].$conf['activities_secret_key_5'].time());
-$conf['hotel_signature_5'] = hash("sha256", $conf['hotel_api_key_5'].$conf['hotel_secret_key_5'].time());
+//$conf['activities_api_key'] = '4dee7jk6zyfxj7mha8zxpy8n';
+//$conf['activities_secret_key'] = 'QSHnGwX82k';
+//$conf['hotel_api_key'] = 'fkxjmqjh85mggxxsavyf8aje';
+//$conf['hotel_secret_key'] = 'wYEvvk8A7M';
 
 //zingeon4 account
-$conf['activities_api_key_6'] = 'drwzyt2pqhm9f8cah4ubyqtq';
-$conf['activities_secret_key_6'] = 'v74Myzc6Pm';
-$conf['hotel_api_key_6'] = 'wurm9p4zhmqt4eu4mjtrkwbh';
-$conf['hotel_secret_key_6'] = 'vSSGccEaJB';
-$conf['activities_signature_6'] = hash("sha256", $conf['activities_api_key_6'].$conf['activities_secret_key_6'].time());
-$conf['hotel_signature_6'] = hash("sha256", $conf['hotel_api_key_6'].$conf['hotel_secret_key_6'].time());
+//$conf['activities_api_key'] = 'drwzyt2pqhm9f8cah4ubyqtq';
+//$conf['activities_secret_key'] = 'v74Myzc6Pm';
+//$conf['hotel_api_key'] = 'wurm9p4zhmqt4eu4mjtrkwbh';
+//$conf['hotel_secret_key'] = 'vSSGccEaJB';
 
 //zingeon5 account
-$conf['activities_api_key_7'] = 'jqmrb5wdhp3rth4gryn94v57';
-$conf['activities_secret_key_7'] = 'hmCuRCns5e';
-$conf['hotel_api_key_7'] = 'adubgj8fe3zftcenky296hux';
-$conf['hotel_secret_key_7'] = 'FqbbM6UvA4';
-$conf['activities_signature_7'] = hash("sha256", $conf['activities_api_key_7'].$conf['activities_secret_key_7'].time());
-$conf['hotel_signature_7'] = hash("sha256", $conf['hotel_api_key_7'].$conf['hotel_secret_key_7'].time());
+//$conf['activities_api_key'] = 'jqmrb5wdhp3rth4gryn94v57';
+//$conf['activities_secret_key'] = 'hmCuRCns5e';
+//$conf['hotel_api_key'] = 'adubgj8fe3zftcenky296hux';
+//$conf['hotel_secret_key'] = 'FqbbM6UvA4';
 
 //zingeon6 account
-$conf['activities_api_key_8'] = 'k5bwnf8b7sxpj85gxeqhe7q5';
-$conf['activities_secret_key_8'] = '35ZXQchRgg';
-$conf['hotel_api_key_8'] = 'h2dvufpwtuha33eydc24pkbs';
-$conf['hotel_secret_key_8'] = 'WD3Xp9XZ3m';
-$conf['activities_signature_8'] = hash("sha256", $conf['activities_api_key_8'].$conf['activities_secret_key_8'].time());
-$conf['hotel_signature_8'] = hash("sha256", $conf['hotel_api_key_8'].$conf['hotel_secret_key_8'].time());
+//$conf['activities_api_key'] = 'k5bwnf8b7sxpj85gxeqhe7q5';
+//$conf['activities_secret_key'] = '35ZXQchRgg';
+//$conf['hotel_api_key'] = 'h2dvufpwtuha33eydc24pkbs';
+//$conf['hotel_secret_key'] = 'WD3Xp9XZ3m';
 
 //zingeon7 account
-$conf['activities_api_key_9'] = 'a22nazt4grknje44gbq2ftrf';
-$conf['activities_secret_key_9'] = 'zPr9Pf47R6';
-$conf['hotel_api_key_9'] = 'nnxbxm6qjx8urszatcfhfv5r';
-$conf['hotel_secret_key_9'] = 'pqkmydQSGP';
-$conf['activities_signature_9'] = hash("sha256", $conf['activities_api_key_9'].$conf['activities_secret_key_9'].time());
-$conf['hotel_signature_9'] = hash("sha256", $conf['hotel_api_key_9'].$conf['hotel_secret_key_9'].time());
+//$conf['activities_api_key'] = 'a22nazt4grknje44gbq2ftrf';
+//$conf['activities_secret_key'] = 'zPr9Pf47R6';
+//$conf['hotel_api_key'] = 'nnxbxm6qjx8urszatcfhfv5r';
+//$conf['hotel_secret_key'] = 'pqkmydQSGP';
 
 //zingeon8 account
-//$conf['activities_api_key_10'] = '82suknm2dx84tszhr8wwpmqv';
-//$conf['activities_secret_key_10'] = '4P4AGJ2tHk';
-//$conf['hotel_api_key_10'] = '9ybqq7efmauqdhx4p36y3as3';
-//$conf['hotel_secret_key_10'] = 'G8tdRDz5QA';
-//$conf['activities_signature_10'] = hash("sha256", $conf['activities_api_key_10'].$conf['activities_secret_key_10'].time());
-//$conf['hotel_signature_10'] = hash("sha256", $conf['hotel_api_key_10'].$conf['hotel_secret_key_10'].time());
+//$conf['activities_api_key'] = '82suknm2dx84tszhr8wwpmqv';
+//$conf['activities_secret_key'] = '4P4AGJ2tHk';
+//$conf['hotel_api_key'] = '9ybqq7efmauqdhx4p36y3as3';
+//$conf['hotel_secret_key'] = 'G8tdRDz5QA';
 
 //zingeon9 account
-$conf['activities_api_key_10'] = 's7d8f9xr6uzjmhefkwrvgvhg';
-$conf['activities_secret_key_10'] = 'E52AC3aVgs';
-$conf['hotel_api_key_10'] = 'zd876ahjmfdh32w6vhugadcg';
-$conf['hotel_secret_key_10'] = 'F4wKTFsH4Z';
-$conf['activities_signature_10'] = hash("sha256", $conf['activities_api_key_10'].$conf['activities_secret_key_10'].time());
-$conf['hotel_signature_10'] = hash("sha256", $conf['hotel_api_key_10'].$conf['hotel_secret_key_10'].time());
+$conf['activities_api_key'] = 's7d8f9xr6uzjmhefkwrvgvhg';
+$conf['activities_secret_key'] = 'E52AC3aVgs';
+$conf['hotel_api_key'] = 'zd876ahjmfdh32w6vhugadcg';
+$conf['hotel_secret_key'] = 'F4wKTFsH4Z';
 
 
 
@@ -704,6 +680,8 @@ $conf['hotel_signature_10'] = hash("sha256", $conf['hotel_api_key_10'].$conf['ho
 //$conf['fb_old_secret'] = '502e74bc468f8ab3604fb51dae243e2e';
 
 
+$conf['activities_signature'] = hash("sha256", $conf['activities_api_key'].$conf['activities_secret_key'].time());
+$conf['hotel_signature'] = hash("sha256", $conf['hotel_api_key'].$conf['hotel_secret_key'].time());
 $conf['apitude_test_url'] = 'https://api.test.hotelbeds.com/';
 $conf['apitude_live_url'] = 'https://api.hotelbeds.com/';
 $conf['apitude_mode'] = 'test';

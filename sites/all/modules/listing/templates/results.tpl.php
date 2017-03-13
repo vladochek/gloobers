@@ -87,11 +87,11 @@ if ($keys) {
             <div class="col-md-2 col-sm-4 col-xs-12">
                 <div class="ranktype">
                     <h2>Ranking</h2>
-                    <i class="fa fa-star" id="rank_1"></i>
-                    <i class="fa fa-star" id="rank_2"></i>
-                    <i class="fa fa-star" id="rank_3"></i>
-                    <i class="fa fa-star" id="rank_4"></i>
-                    <i class="fa fa-star" id="rank_5"></i>
+                    <i class="gl-ico gl-ico-star" id="rank_1"></i>
+                    <i class="gl-ico gl-ico-star" id="rank_2"></i>
+                    <i class="gl-ico gl-ico-star" id="rank_3"></i>
+                    <i class="gl-ico gl-ico-star" id="rank_4"></i>
+                    <i class="gl-ico gl-ico-star" id="rank_5"></i>
                 </div>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-12">

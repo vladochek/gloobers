@@ -112,7 +112,7 @@ $trevelGuideList=getListTrevelGuide();
                     <div class="rowmap">
                         <div class="ranktype">
                             <h2>Ranking</h2>
-                            <i class="fa fa-star gold"></i> <i class="fa fa-star gold"></i> <i class="fa fa-star gold"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                            <i class="gl-ico gl-ico-star gold"></i> <i class="gl-ico gl-ico-star gold"></i> <i class="gl-ico gl-ico-star gold"></i> <i class="gl-ico gl-ico-star"></i> <i class="gl-ico gl-ico-star"></i>
                         </div>
                         <div class="spcloffer">
                             <h2>Special offers</h2>

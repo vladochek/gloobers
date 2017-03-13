@@ -23,6 +23,18 @@ function listing_menu()
         'access callback' => true,
         'type' => MENU_NORMAL_ITEM
     );
+    $items['advisor/recommendations/ajax'] = array(
+        'page callback' => 'advisor_recommendations_ajax',
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK
+    );
+    $items['advisor/reviews/ajax'] = array(
+        'page callback' => 'advisor_reviews_ajax',
+        'access arguments' => TRUE,
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK
+    );
     $items['Hotels/%'] = array(
         'page callback' => 'hotels_listing',
         'access callback' => true,
@@ -3720,7 +3732,220 @@ function get_registered_fb_friends()
 }
 
 //count of search results on advisors search page
-define('ADVISORS_PER_PAGE', 6);
+define('ADVISORS_PER_PAGE', 12);
+
+function get_advisor_recommendations($userId)
+{
+    $query = db_select('gbl_recommendations', 'rec');
+    $query->leftJoin('gbl_experience_list', 'el', 'rec.experience_id = el.eid');
+    $query->leftJoin('gbl_users_meta', 'author', 'el.uid = author.uid');
+    $query->leftJoin('file_managed', 'fm', 'author.uid = fm.uid AND fm.is_profile_pic = 1');
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = author.uid');
+    $query->leftJoin('gbl_trip_types_to_experience', 'tte', 'rec.id = tte.rec_id');
+    $query->leftJoin('gbl_advisor_trip_type', 'tt', 'tte.trip_type_id = tt.trip_id');
+    $query->leftJoin('gbl_passions_to_experience', 'pte', 'rec.id = pte.rec_id');
+    $query->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
+
+    $query->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
+    $query->addExpression('GROUP_CONCAT(DISTINCT tt.trip_type SEPARATOR \', \')', 'trip_types');
+    $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
+    $query->addExpression('fm.filename', 'author_avatar');
+
+    $query->condition('rec.advisor_id', $userId, '=');
+
+    $query->fields('el', ['eid', 'base_price', 'latitude', 'longitude', 'title', 'city', 'state']);
+    $query->fields('author', ['first_name', 'last_name']);
+    $query->fields('rec');
+    $query->groupBy('rec.id');
+    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    return $result ? $result : [];
+}
+
+function get_advisor_reviews($userId)
+{
+    $query = db_select('gbl_reviews', 'rev');
+    $query->leftJoin('gbl_experience_list', 'el', 'rev.listing_id = el.eid');
+    $query->leftJoin('gbl_users_meta', 'author', 'el.uid = author.uid');
+    $query->leftJoin('file_managed', 'fm', 'author.uid = fm.uid AND fm.is_profile_pic = 1');
+
+    $query->leftJoin('gbl_advisor_rating', 'rat', 'rat.advisor_id = author.uid');
+    $query->leftJoin('gbl_passions_to_review', 'pte', 'rev.id = pte.review_id');
+    $query->leftJoin('gbl_passions', 'pas', 'pte.passion_id = pas.pid');
+
+    $query->condition('rev.uid', $userId, '=');
+
+    $query->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
+//    $query->addExpression('GROUP_CONCAT(DISTINCT tt.trip_type SEPARATOR \', \')', 'trip_types');
+    $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
+    $query->addExpression('fm.filename', 'author_avatar');
+
+    $query->fields('el', ['eid', 'base_price', 'latitude', 'longitude', 'title', 'city', 'state']);
+    $query->fields('author', ['first_name', 'last_name']);
+    $query->fields('rev');
+    $query->groupBy('rev.id');
+    $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    return $result ? $result : [];
+}
+
+function advisor_recommendations_ajax()
+{
+    $advisorId = filter_input(INPUT_POST, 'advisor_id');
+    $recommendations = get_advisor_recommendations($advisorId);
+
+    foreach ($recommendations as $key => $recommendation) {
+        $photos = getPhotosData($recommendation['eid']);
+        $photosIds = [];
+        $listingPhotos = [];
+        if (is_array($photos) && count($photos)) {
+            foreach ($photos as $photo) {
+                $metaData = unserialize($photo['value1']);
+                if (isset($metaData['fid'])) {
+                    $photosIds[] = $metaData['fid'];
+                }
+            }
+            $listingPhotos = getListingPhotos($photosIds);
+            if (is_array($listingPhotos) && count($listingPhotos)) {
+                foreach ($listingPhotos as $listingPhoto) {
+                    if (isset($metaData['fid'])) {
+                        $recommendations[$key]['listing_photos'][] = image_style_url('experience_slider_new_design', 'products/' . $listingPhoto['filename']);
+                    }
+                }
+            }
+
+        }
+
+        $recommendations[$key]['popup'] = '<div class="review-card">' .
+            '<div class="img-slider-wrap">' .
+            '<div class="img-slider">';
+        foreach ($recommendations[$key]['listing_photos'] as $photoVal) {
+            $recommendations[$key]['popup'] .= '<div class="item"><img src="' . $photoVal . '" alt=""></div>';
+        }
+        $avatar = isset($recommendations[$key]['author_avatar']) ? image_style_url('reservation_popup_listing_img', 'pictures/' . $recommendations[$key]['author_avatar']) : 'sites/all/themes/new_design/images/photo01-big.jpg';
+        $recommendations[$key]['popup'] .= '</div>' .
+            '</div>' .
+            '<div class="card-ttl">' .
+            '<div  class="card-ttl-col">' .
+            '<strong class="ttl"><a href="#">' . $recommendation['title'] . '</a></strong>' .
+            '<span class="sub-ttl">' . $recommendation['city'] . ', ' . $recommendation['state'] . '</span>' .
+            '</div>' .
+            '<div class="card-rate-wrap">' .
+            '<div class="recommend-avatar">' .
+            '<img src="' . $avatar . '" alt="">' .
+            '</div>' .
+            '<div class="card-rate-info">' .
+            '<div class="rating">' .
+            '<div class="stars">';
+        for ($i = 0; $i < $recommendation['overall_advisor_rating']; $i++) {
+            $recommendations[$key]['popup'] .= '<span class="star"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span>';
+        }
+        for ($k = 0; $k < 5 - $recommendation['overall_advisor_rating']; $k++) {
+            $recommendations[$key]['popup'] .= '<span class="star empty"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span>';
+        }
+        $recommendations[$key]['popup'] .= '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '<div class="recommendation-types">' .
+            '<div class="col">' .
+            '<strong class="ttl">' . $recommendation['first_name'] . ' recommends this activity for:</strong>' .
+            '<div class="tags">' . $recommendation['passions'] . '</div>' .
+            '</div>' .
+            '<div class="col">' .
+            '<strong class="ttl">Type of trip</strong>' .
+            '<div class="tags">' . $recommendation['trip_types'] . '</div>' .
+            '</div>' .
+            '</div>' .
+            '<div class="content-holder">' .
+            '<strong class="ttl">Recommendation</strong>' .
+            '<p>' . $recommendation['comment'] . ' </p>' .
+            '</div>' .
+            '</div>';
+
+    }
+
+    drupal_json_output($recommendations);
+}
+
+function advisor_reviews_ajax()
+{
+    $advisorId = filter_input(INPUT_POST, 'advisor_id');
+    $recommendations = get_advisor_reviews($advisorId);
+
+    foreach ($recommendations as $key => $recommendation) {
+        $photos = getPhotosData($recommendation['eid']);
+        $photosIds = [];
+        $listingPhotos = [];
+        if (is_array($photos) && count($photos)) {
+            foreach ($photos as $photo) {
+                $metaData = unserialize($photo['value1']);
+                if (isset($metaData['fid'])) {
+                    $photosIds[] = $metaData['fid'];
+                }
+            }
+            $listingPhotos = getListingPhotos($photosIds);
+            if (is_array($listingPhotos) && count($listingPhotos)) {
+                foreach ($listingPhotos as $listingPhoto) {
+                    if (isset($metaData['fid'])) {
+                        $recommendations[$key]['listing_photos'][] = image_style_url('experience_slider_new_design', 'products/' . $listingPhoto['filename']);
+                    }
+                }
+            }
+
+        }
+
+        $recommendations[$key]['popup'] = '<div class="review-card">' .
+            '<div class="img-slider-wrap">' .
+            '<div class="img-slider">';
+        foreach ($recommendations[$key]['listing_photos'] as $photoVal) {
+            $recommendations[$key]['popup'] .= '<div class="item"><img src="' . $photoVal . '" alt=""></div>';
+        }
+        $avatar = isset($recommendations[$key]['author_avatar']) ? image_style_url('reservation_popup_listing_img', 'pictures/' . $recommendations[$key]['author_avatar']) : 'sites/all/themes/new_design/images/photo01-big.jpg';
+        $recommendations[$key]['popup'] .= '</div>' .
+            '</div>' .
+            '<div class="card-ttl">' .
+            '<div  class="card-ttl-col">' .
+            '<strong class="ttl"><a href="#">' . $recommendation['title'] . '</a></strong>' .
+            '<span class="sub-ttl">' . $recommendation['city'] . ', ' . $recommendation['state'] . '</span>' .
+            '</div>' .
+            '<div class="card-rate-wrap">' .
+            '<div class="recommend-avatar">' .
+            '<img src="' . $avatar . '" alt="">' .
+            '</div>' .
+            '<div class="card-rate-info">' .
+            '<div class="rating">' .
+            '<div class="stars">';
+        for ($i = 0; $i < $recommendation['overall_advisor_rating']; $i++) {
+            $recommendations[$key]['popup'] .= '<span class="star"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span>';
+        }
+        for ($k = 0; $k < 5 - $recommendation['overall_advisor_rating']; $k++) {
+            $recommendations[$key]['popup'] .= '<span class="star empty"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span>';
+        }
+        $recommendations[$key]['popup'] .= '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '<div class="recommendation-types">' .
+            '<div class="col">' .
+            '<strong class="ttl">' . $recommendation['first_name'] . ' recommends this activity for:</strong>' .
+            '<div class="tags">' . $recommendation['passions'] . '</div>' .
+            '</div>' .
+            '<div class="col">' .
+            '<strong class="ttl">Type of trip</strong>' .
+            '<div class="tags">' . $recommendation['trip_types'] . '</div>' .
+            '</div>' .
+            '</div>' .
+            '<div class="content-holder">' .
+            '<strong class="ttl">Recommendation</strong>' .
+            '<p>' . $recommendation['comment'] . ' </p>' .
+            '</div>' .
+            '</div>';
+
+    }
+
+    drupal_json_output($recommendations);
+}
 
 function get_advisor_results_ajax()
 {
@@ -3740,6 +3965,8 @@ function get_advisor_results_ajax()
     $fb = filter_input(INPUT_GET, 'fb');
     $rating = filter_input(INPUT_GET, 'rating');
     $records = filter_input(INPUT_GET, 'records');
+    $page = filter_input(INPUT_GET, 'page');
+    $page = $page ? (int)$page : 1;
 
     $NElat = filter_input(INPUT_GET, 'NElat');
     $NElon = filter_input(INPUT_GET, 'NElon');
@@ -3776,18 +4003,47 @@ function get_advisor_results_ajax()
     $testDateTo = explode('-', $dateTo);
     $testDateToValidation = checkdate($testDateTo[1], $testDateTo[2], $testDateTo[0]);
 
-    if($searchType == 'recommendation'){
-        $advisors =  get_advisors_by_recommendations($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
-        $advisorsOverallCount = get_advisors_by_recommendations_count($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
-    }else{
-        $advisors =  get_advisors_by_reviews($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
-        $advisorsOverallCount = get_advisors_by_reviews_count($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+    if ($searchType == 'recommendation') {
+        $advisorsOverallCount = get_advisors_by_recommendations_count(
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+
+        $offset = ($page - 1) * ADVISORS_PER_PAGE;
+        $pagesCount = ceil($advisorsOverallCount / ADVISORS_PER_PAGE);
+        $pagesCount = $pagesCount > 0 ? $pagesCount : 1;
+        $maxOffset = ($pagesCount - 1) * ADVISORS_PER_PAGE;
+        if ($offset > $maxOffset) {
+            $offset = $maxOffset;
+        }
+        $advisors = get_advisors_by_recommendations(
+            $offset,
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+
+    } else {
+        $advisorsOverallCount = get_advisors_by_reviews_count(
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+        $offset = ($page - 1) * ADVISORS_PER_PAGE;
+        $pagesCount = ceil($advisorsOverallCount / ADVISORS_PER_PAGE);
+        $pagesCount = $pagesCount > 0 ? $pagesCount : 1;
+        $maxOffset = ($pagesCount - 1) * ADVISORS_PER_PAGE;
+        if ($offset > $maxOffset) {
+            $offset = $maxOffset;
+        }
+        $advisors = get_advisors_by_reviews(
+            $offset,
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
     }
+
     $usersIds = array_column($advisors, 'uid');
     $userImages = get_users_profile_cover_pics($usersIds);
 
     $advisorsCoords = [];
     foreach ($advisors as $key => $advisor) {
+
+
         $advisorsCoords[$advisor['uid']] = [
             'lat' => $advisor['advisor_latitude'],
             'lon' => $advisor['advisor_longitude']
@@ -3811,11 +4067,27 @@ function get_advisor_results_ajax()
     if (count($advisorsLeft)) {
         foreach ($advisorsLeft as $advisorLeft) {
 
-            $advisorsHTML .= '<div class="card card-advisor"><div class="img-h"><span class="img-wrap ">';
+            $advisorsHTML .= '<div class="card card-advisor" id="advisor-card-' . $advisorLeft['uid'] . '"><div class="img-h">';
+            $advisorsHTML .= '<a href="profile/' . $advisorLeft['uid'] . '" >';
+            $advisorsHTML .= '<span class="img-wrap ">';
             $cover = isset($advisorLeft['cover_img']) ? image_style_url('cover_pic', $advisorLeft['cover_img']) : 'sites/all/themes/new_design/images/bg-main.jpg';
             $avatar = isset($advisorLeft['profile_img']) ? image_style_url('reservation_popup_listing_img', $advisorLeft['profile_img']) : 'sites/all/themes/new_design/images/photo01-big.jpg';
 
-            $advisorsHTML .= '<img src="' . $cover . '" alt="image"></span><span class="photo-adv"><img src="' . $avatar . '" alt="avatar"></span></div><div class="card-ttl"><div class="card-ttl-col"><strong class="ttl"><a href="#">' . $advisorLeft['first_name'] . '   ' . $advisorLeft['last_name'] . ' </a></strong><span class="sub-ttl">';
+            $advisorsHTML .= '<img src="' . $cover . '" alt="image"></span><span class="photo-adv"><img src="' . $avatar . '" alt="avatar"></span>';
+
+            $advisorsHTML .= '<div class="categories-adv">';
+            if ($advisorLeft['is_local']) {
+                $advisorsHTML .= '<span class="category">Local interests</span>';
+            }
+            if ($advisorLeft['is_mutual']) {
+                $advisorsHTML .= '<span class="category">Mutual interests</span>';
+            }
+            if ($advisorLeft['is_fb_friend']) {
+                $advisorsHTML .= '<span class="category">Facebook friends</span>';
+            }
+
+
+            $advisorsHTML .= '</div></div><div class="card-ttl"><div class="card-ttl-col"><strong class="ttl"><a href="#">' . $advisorLeft['first_name'] . '   ' . $advisorLeft['last_name'] . ' </a></strong><span class="sub-ttl">';
             if ($advisorLeft['advisor_city']) {
                 $advisorsHTML .= $advisorLeft['advisor_city'];
             }
@@ -3829,10 +4101,10 @@ function get_advisor_results_ajax()
             $advisorsHTML .= $advisorLeft['rates_count'] . '&nbsp;</strong><div class="stars">';
 
             for ($i = 0; $i < $advisorLeft['overall_advisor_rating']; $i++) {
-                $advisorsHTML .= ' <span class="star"><i class="fa fa-star" aria-hidden="true"></i></span> ';
+                $advisorsHTML .= ' <span class="star"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span> ';
             }
             for ($k = 0; $k < 5 - $advisorLeft['overall_advisor_rating']; $k++) {
-                $advisorsHTML .= ' <span class="star full"><i class="fa fa-star" aria-hidden="true"></i></span> ';
+                $advisorsHTML .= ' <span class="star empty"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span> ';
             }
             $advisorsHTML .= ' </div> </div>';
             if ($searchType == 'recommendation') {
@@ -3868,24 +4140,29 @@ function get_advisor_results_ajax()
                 $advisorsHTML .= ' in ';
                 $advisorsHTML .= $advisorLeft['company'];
             }
+            $advisorsHTML .= '</span>';
 
-            $advisorsHTML .= '</span><a href="#" class="btn">';
 
             if ($searchType == 'recommendation') {
+                $advisorsHTML .= '<span id="adv-rec' . $advisorLeft['uid'] . '" class="btn recs-on-map">';
                 $advisorsHTML .= 'Recommendation';
                 if ($advisorLeft['rec_count'] != 1) {
                     $advisorsHTML .= 's';
                 }
                 $advisorsHTML .= ' on map';
+                $advisorsHTML .= '</a>';
             } else {
+                $advisorsHTML .= '<span id="adv-rev' . $advisorLeft['uid'] . '" class="btn revs-on-map">';
                 $advisorsHTML .= 'Review';
                 if ($advisorLeft['rev_count'] != 1) {
                     $advisorsHTML .= 's';
                 }
                 $advisorsHTML .= ' on map';
+                $advisorsHTML .= '</a>';
             }
 
-            $advisorsHTML .= '</a></footer><div class="more-info"><div class="show-more-row"> <a class="lnk-expand collapsed" href="#adv-drop';
+
+            $advisorsHTML .= '</footer><div class="more-info"><div class="show-more-row"> <a class="lnk-expand collapsed" href="#adv-drop';
 
             $advisorsHTML .= $advisorLeft['uid'];
             $advisorsHTML .= '"data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" data-lnk-expand-text-show="SHOW INTERESTS (';
@@ -3910,11 +4187,26 @@ function get_advisor_results_ajax()
     if (count($advisorsRight)) {
         foreach ($advisorsRight as $advisorRight) {
 
-            $advisorsHTML .= '<div class="card card-advisor"><div class="img-h"><span class="img-wrap ">';
+            $advisorsHTML .= '<div class="card card-advisor" id="advisor-card-' . $advisorRight['uid'] . '"><div class="img-h">';
+            $advisorsHTML .= '<a href="profile/' . $advisorRight['uid'] . '" >';
+            $advisorsHTML .= '<span class="img-wrap ">';
             $cover = isset($advisorRight['cover_img']) ? image_style_url('cover_pic', $advisorRight['cover_img']) : 'sites/all/themes/new_design/images/bg-main.jpg';
             $avatar = isset($advisorRight['profile_img']) ? image_style_url('reservation_popup_listing_img', $advisorRight['profile_img']) : 'sites/all/themes/new_design/images/photo01-big.jpg';
 
-            $advisorsHTML .= '<img src="' . $cover . '" alt="image"></span><span class="photo-adv"><img src="' . $avatar . '" alt="avatar"></span></div><div class="card-ttl"><div class="card-ttl-col"><strong class="ttl"><a href="#">' . $advisorRight['first_name'] . '   ' . $advisorRight['last_name'] . ' </a></strong><span class="sub-ttl">';
+            $advisorsHTML .= '<img src="' . $cover . '" alt="image"></span><span class="photo-adv"><img src="' . $avatar . '" alt="avatar"></span>';
+
+            $advisorsHTML .= '<div class="categories-adv">';
+            if ($advisorRight['is_local']) {
+                $advisorsHTML .= '<span class="category">Local interests</span>';
+            }
+            if ($advisorRight['is_mutual']) {
+                $advisorsHTML .= '<span class="category">Mutual interests</span>';
+            }
+            if ($advisorRight['is_fb_friend']) {
+                $advisorsHTML .= '<span class="category">Facebook friends</span>';
+            }
+
+            $advisorsHTML .= '</div></div><div class="card-ttl"><div class="card-ttl-col"><strong class="ttl"><a href="#">' . $advisorRight['first_name'] . '   ' . $advisorRight['last_name'] . ' </a></strong><span class="sub-ttl">';
             if ($advisorRight['advisor_city']) {
                 $advisorsHTML .= $advisorRight['advisor_city'];
             }
@@ -3928,10 +4220,10 @@ function get_advisor_results_ajax()
             $advisorsHTML .= $advisorRight['rates_count'] . '&nbsp;</strong><div class="stars">';
 
             for ($i = 0; $i < $advisorRight['overall_advisor_rating']; $i++) {
-                $advisorsHTML .= ' <span class="star"><i class="fa fa-star" aria-hidden="true"></i></span> ';
+                $advisorsHTML .= ' <span class="star"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span> ';
             }
             for ($k = 0; $k < 5 - $advisorRight['overall_advisor_rating']; $k++) {
-                $advisorsHTML .= ' <span class="star full"><i class="fa fa-star" aria-hidden="true"></i></span> ';
+                $advisorsHTML .= ' <span class="star empty"><i class="gl-ico gl-ico-star" aria-hidden="true"></i></span> ';
             }
             $advisorsHTML .= ' </div> </div>';
             if ($searchType == 'recommendation') {
@@ -3966,23 +4258,28 @@ function get_advisor_results_ajax()
                 $advisorsHTML .= ' in ';
                 $advisorsHTML .= $advisorRight['company'];
             }
-            $advisorsHTML .= '</span><a href="#" class="btn">';
+            $advisorsHTML .= '</span>';
+
 
             if ($searchType == 'recommendation') {
+                $advisorsHTML .= '<span id="adv-rec' . $advisorRight['uid'] . '" class="btn recs-on-map">';
                 $advisorsHTML .= 'Recommendation';
-                if ($advisorRight['rec_count'] != 1) {
+                if ($advisorLeft['rec_count'] != 1) {
                     $advisorsHTML .= 's';
                 }
                 $advisorsHTML .= ' on map';
+                $advisorsHTML .= '</a>';
             } else {
+                $advisorsHTML .= '<span id="adv-rev' . $advisorRight['uid'] . '" class="btn revs-on-map">';
                 $advisorsHTML .= 'Review';
-                if ($advisorRight['rev_count'] != 1) {
+                if ($advisorLeft['rev_count'] != 1) {
                     $advisorsHTML .= 's';
                 }
                 $advisorsHTML .= ' on map';
+                $advisorsHTML .= '</a>';
             }
 
-            $advisorsHTML .= '</a></footer><div class="more-info"><div class="show-more-row"> <a class="lnk-expand collapsed" href="#adv-drop';
+            $advisorsHTML .= '</footer><div class="more-info"><div class="show-more-row"> <a class="lnk-expand collapsed" href="#adv-drop';
 
             $advisorsHTML .= $advisorRight['uid'];
             $advisorsHTML .= '"data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" data-lnk-expand-text-show="SHOW INTERESTS (';
@@ -4001,11 +4298,12 @@ function get_advisor_results_ajax()
     }
 
     $advisorsHTML .= '</div>';
+
     drupal_json_output([
-        'advisors'=>$advisorsHTML,
-        'advisor_coordinates'=>$advisorsCoords,
-        'advisors_overall_count'=>$advisorsOverallCount,
-        'advisors_per_page'=>ADVISORS_PER_PAGE
+        'advisors' => $advisorsHTML,
+        'advisor_coordinates' => $advisorsCoords,
+        'advisors_overall_count' => $advisorsOverallCount,
+        'advisors_per_page' => ADVISORS_PER_PAGE
     ]);
     die;
 }
@@ -4032,6 +4330,10 @@ function search_advisor_results()
     $fb = filter_input(INPUT_GET, 'fb');
     $rating = filter_input(INPUT_GET, 'rating');
     $records = filter_input(INPUT_GET, 'records');
+
+    $page = filter_input(INPUT_GET, 'page');
+    $page = $page ? (int)$page : 1;
+
 
     $NElat = filter_input(INPUT_GET, 'NElat');
     $NElon = filter_input(INPUT_GET, 'NElon');
@@ -4075,12 +4377,37 @@ function search_advisor_results()
 //    $filter['long'] = $long;
 //    $overallCount = get_advisors_by_reviews($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
 //    var_dump($overallCount);die;
-    if($searchType == 'recommendation'){
-        $advisors =  get_advisors_by_recommendations($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
-        $advisorsOverallCount = get_advisors_by_recommendations_count($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
-    }else{
-        $advisors =  get_advisors_by_reviews($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
-        $advisorsOverallCount = get_advisors_by_reviews_count($city, $state, $country, $address, $user->uid, $passportTypes, $passionsList, $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+    if ($searchType == 'recommendation') {
+        $advisorsOverallCount = get_advisors_by_recommendations_count(
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+        $offset = ($page - 1) * ADVISORS_PER_PAGE;
+        $pagesCount = ceil($advisorsOverallCount / ADVISORS_PER_PAGE);
+        $pagesCount = $pagesCount > 0 ? $pagesCount : 1;
+        $maxOffset = ($pagesCount - 1) * ADVISORS_PER_PAGE;
+        if ($offset > $maxOffset) {
+            $offset = $maxOffset;
+        }
+        $advisors = get_advisors_by_recommendations(
+            $offset,
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+
+    } else {
+        $advisorsOverallCount = get_advisors_by_reviews_count(
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
+        $offset = ($page - 1) * ADVISORS_PER_PAGE;
+        $pagesCount = ceil($advisorsOverallCount / ADVISORS_PER_PAGE);
+        $pagesCount = $pagesCount > 0 ? $pagesCount : 1;
+        $maxOffset = ($pagesCount - 1) * ADVISORS_PER_PAGE;
+        if ($offset > $maxOffset) {
+            $offset = $maxOffset;
+        }
+        $advisors = get_advisors_by_reviews(
+            $offset,
+            $city, $state, $country, $address, $user->uid, $passportTypes, $passionsList,
+            $mutualInterests, $local, $fb, $rating, $records, $latBounds, $lonBounds);
     }
     $usersIds = array_column($advisors, 'uid');
     $userImages = get_users_profile_cover_pics($usersIds);
@@ -4106,22 +4433,22 @@ function search_advisor_results()
 //var_dump($reviewsLink);die;
 
 
-//    var_dump($_GET);die;
+//    var_dump($advisors);die;
 
     return theme(
         'advisor_listing_results', array(
         'allAdvisors' => $advisors,
         'advisorsLeft' => $advisorsLeft,
         'advisorsRight' => $advisorsRight,
-        'advisorsOverallCount'=>$advisorsOverallCount,
-        'advisors_per_page'=>ADVISORS_PER_PAGE,
+        'advisorsOverallCount' => $advisorsOverallCount,
+        'advisors_per_page' => ADVISORS_PER_PAGE,
         'searchType' => $searchType,
         'mutualInterests' => $mutualInterests,
         'local' => $local,
         'fb' => $fb,
         'passportTypes' => $passportTypes,
         'passions' => $passionsList,
-        'destination'=>$destination
+        'destination' => $destination
     ));
 //    if ($output->results[0]->address_components) {
 //        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
@@ -4134,9 +4461,9 @@ function search_advisor_results()
 
 }
 
-function get_advisors_by_recommendations(
-    $city, $state, $country, $address, $userId, $passportTypes, $passions = [],
-    $mutualInterests = 0, $local = 0, $fb = 0, $rating = null, $records, $latBounds, $lonBounds)
+function get_advisors_by_recommendations($offset = 0,
+                                         $city, $state, $country, $address, $userId, $passportTypes, $passions = [],
+                                         $mutualInterests = 0, $local = 0, $fb = 0, $rating = null, $records, $latBounds, $lonBounds)
 {
     $query = db_select('gbl_recommendations', 'rec');
     $passportCond = '';
@@ -4200,7 +4527,7 @@ function get_advisors_by_recommendations(
     } else {
         $query->leftJoin('fboauth_users', 'fbu', 'rec.advisor_id = fbu.uid');
     }
-    if(is_array($fbFriends) && count($fbFriends)) {
+    if (is_array($fbFriends) && count($fbFriends)) {
         $query->condition('fbu.fbid', $fbFriends, 'IN');
     }
 
@@ -4254,6 +4581,7 @@ function get_advisors_by_recommendations(
     $query->fields('am');
     $query->fields('pass');
     $query->fields('advisor');
+    $query->range($offset, ADVISORS_PER_PAGE);
     $query->groupBy('rec.advisor_id');
     $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     return $result ? $result : [];
@@ -4313,7 +4641,7 @@ function get_advisors_by_recommendations_count(
 //    $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
     $query->addExpression('COUNT(DISTINCT rec.advisor_id)', 'advisors_count');
     if ($rating !== null) {
-        $query->having('ROUND(AVG(rat.rating)) >= '.$rating);
+        $query->having('ROUND(AVG(rat.rating)) >= ' . $rating);
     }
 
 
@@ -4340,7 +4668,7 @@ function get_advisors_by_recommendations_count(
     }
 //    $query->groupBy('rev.uid');
     $result = $query->execute()->fetchField();
-    return $result ? $result : [];
+    return $result ? $result : 0;
 }
 
 
@@ -4361,9 +4689,9 @@ function get_users_profile_cover_pics($users)
     }
 }
 
-function get_advisors_by_reviews(
-    $city, $state, $country, $address, $userId, $passportTypes, $passions = [],
-    $mutualInterests = 0, $local = 0, $fb = 0, $rating = null, $records, $latBounds, $lonBounds)
+function get_advisors_by_reviews($offset = ADVISORS_PER_PAGE,
+                                 $city, $state, $country, $address, $userId, $passportTypes, $passions = [],
+                                 $mutualInterests = 0, $local = 0, $fb = 0, $rating = null, $records, $latBounds, $lonBounds)
 {
     $query = db_select('gbl_reviews', 'rev');
     $passportCond = '';
@@ -4425,7 +4753,7 @@ function get_advisors_by_reviews(
     } else {
         $query->leftJoin('fboauth_users', 'fbu', 'rev.uid = fbu.uid');
     }
-    if(is_array($fbFriends) && count($fbFriends)) {
+    if (is_array($fbFriends) && count($fbFriends)) {
         $query->condition('fbu.fbid', $fbFriends, 'IN');
     }
 
@@ -4468,6 +4796,7 @@ function get_advisors_by_reviews(
     $query->fields('pass');
     $query->fields('am');
     $query->fields('advisor');
+    $query->range($offset, ADVISORS_PER_PAGE);
     $query->groupBy('rev.uid');
     $result = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     return $result ? $result : [];
@@ -4527,7 +4856,7 @@ function get_advisors_by_reviews_count(
 //    $query->addExpression('ROUND(AVG(rat.rating))', 'overall_advisor_rating');
     $query->addExpression('COUNT(DISTINCT rev.uid)', 'advisors_count');
     if ($rating !== null) {
-        $query->having('ROUND(AVG(rat.rating)) >= '.$rating);
+        $query->having('ROUND(AVG(rat.rating)) >= ' . $rating);
     }
 
 
@@ -4554,7 +4883,7 @@ function get_advisors_by_reviews_count(
     }
 //    $query->groupBy('rev.uid');
     $result = $query->execute()->fetchField();
-    return $result ? $result : [];
+    return $result ? $result : 0;
 }
 
 function recommendations_by_advisor($advisorId)
@@ -4843,6 +5172,7 @@ function last_recommendation($listingId, $userId)//, $limit = 5, $offset = 0
     }
 
     $query->addExpression('GROUP_CONCAT(DISTINCT pas.passion SEPARATOR \', \')', 'passions');
+
     $query->addExpression('GROUP_CONCAT(DISTINCT tt.trip_type SEPARATOR \', \')', 'trip_types');
     $query->addExpression('ROUND(SUM(rat.rating)/COUNT(rat.id))', 'advisor_rating');
     $query->addExpression('COUNT(DISTINCT rat.id)', 'advisor_rating_count');
@@ -4987,9 +5317,30 @@ function experience_listing_details()
     $listingInfo['last_user_passions'] = explode(', ', $listingInfo['last_recommendation']['passions']);
     $listingInfo['avg_overall_rating'] = round(array_sum(array_column($listingInfo['listing_reviews'], 'overall_rating')) / count($listingInfo['listing_reviews']));
     $recLink = url(current_path(), array('absolute' => TRUE, 'query' => ['ruid' => base64_encode($user->uid)]));
+    $photos = getPhotosData($listId);
+    $photosIds = [];
+    $listingPhotos = [];
+    $listingPhotosData = [];
+    if (is_array($photos) && count($photos)) {
+        foreach ($photos as $photo) {
+            $metaData = unserialize($photo['value1']);
+            if (isset($metaData['fid'])) {
+                $photosIds[] = $metaData['fid'];
+            }
+        }
+        $listingPhotos = getListingPhotos($photosIds);
+        if (is_array($listingPhotos) && count($listingPhotos)) {
+            foreach ($listingPhotos as $listingPhoto) {
+                if (isset($metaData['fid'])) {
+                    $listingPhotosData[] = image_style_url('experience_slider_new_design', 'products/' . $listingPhoto['filename']);
+                }
+            }
+        }
 
+    }
+//var_dump($listingPhotosData);die;
     //        echo $listingInfo['avg_overall_rating'];die;
-    $output = '';
+//    $output = '';
 //    $api = new Hotelbeds;
 //    $list = $api->hotelbeds_get_hotels_facility_groups()->facilities;
 //    foreach($list as $gr){
@@ -5002,8 +5353,8 @@ function experience_listing_details()
     return theme('experience_listing_details', array(
             'listingInfo' => $listingInfo,
             'user' => $user,
-            'recLink' => $recLink
-//            'pagination'=>$output
+            'recLink' => $recLink,
+            'listingPhotosData' => $listingPhotosData
         )
     );
 
@@ -6805,7 +7156,7 @@ function handleRating($value)
     $ratingHtml = '';
     for ($i = 1; $i <= 5; $i++) {
         $classReview = ($value >= $i) ? '' : '-o';
-        $ratingHtml .= '<i class="fa fa-star' . $classReview . '"></i>';
+        $ratingHtml .= '<i class="gl-ico gl-ico-star' . $classReview . '"></i>';
     }
     return $ratingHtml;
 }
@@ -8189,61 +8540,71 @@ function hotel_result_listing()
 
     $daterange = filter_input(INPUT_GET, 'daterange');
     $dates = isset($daterange) ? explode(' - ', $daterange) : '';
-    $dateFromSegments = explode('/', $dates[0]);
-    $checkIn = $dateFromSegments[2] . '-' . $dateFromSegments[1] . '-' . $dateFromSegments[0];
-    $dateToSegments = explode('/', $dates[1]);
-    $checkOut = $dateToSegments[2] . '-' . $dateToSegments[1] . '-' . $dateToSegments[0];
-    $testCheckIn = explode('-', $checkIn);
-    $testCheckOInValidation = checkdate($testCheckIn[1], $testCheckIn[2], $testCheckIn[0]);
-    $testCheckOut = explode('-', $checkOut);
-    $testCheckOutValidation = checkdate($testCheckOut[1], $testCheckOut[2], $testCheckOut[0]);
 
+    $checkInDateModel = DateTime::createFromFormat('d/m/Y', $dates[0]);
+    $checkOutDateModel = DateTime::createFromFormat('d/m/Y', $dates[1]);
+    $checkIn = $checkInDateModel ? $checkInDateModel->format('Y-m-d') : date('Y-m-d');
+    $checkOut = $checkOutDateModel ? $checkOutDateModel->format('Y-m-d') : date('Y-m-d', strtotime("+2 days"));
 
     $maxRate = filter_input(INPUT_GET, 'maxRate');
     $minRate = filter_input(INPUT_GET, 'minRate');
     $search_destination = filter_input(INPUT_GET, 'destination');
     $adults = filter_input(INPUT_GET, 'adults');
+    $adults = $adults ? $adults : 1;
     $children = filter_input(INPUT_GET, 'childrens');
-    $rooms = filter_input(INPUT_GET, 'rooms');
-    $page = filter_input(INPUT_GET, 'page');
-    $page = $page ? $page : 1;
-    $rooms = $rooms ? $rooms : 1;
     $children = $children ? $children : 0;
+    $rooms = filter_input(INPUT_GET, 'rooms');
+    $rooms = $rooms ? $rooms : 1;
+    $page = filter_input(INPUT_GET, 'page');
+
+    $page = $page ? $page : 1;
     $boards = filter_input(INPUT_GET, 'boardCodes');
     $segments = filter_input(INPUT_GET, 'segmentCodes');
     $accommodations = filter_input(INPUT_GET, 'accommodationTypes');
+    $pkgRates = filter_input(INPUT_GET, 'pkgRates');
+    $ratesPerRoom = filter_input(INPUT_GET, 'ratesPerRoom');
 
 
-    $show_filter = 1;
     $mapsResponse = searchLocationByQuery($search_destination);
 
+    $hotelTypes = SyncAPI::getHotelTypes();
+    $hotelBoards = SyncAPI::getHotelBoards();
+    $hotelAccomodations = SyncAPI::getHotelAccomodations();
+//    var_dump($hotelTypes);die;
+
     if (isset($mapsResponse->results[0]->geometry->location->lat) &&
-        isset($mapsResponse->results[0]->geometry->location->lng) && $testCheckOInValidation &&
-        $testCheckOutValidation
+        isset($mapsResponse->results[0]->geometry->location->lng)
     ) {
         $latitude = $mapsResponse->results[0]->geometry->location->lat;
         $longitude = $mapsResponse->results[0]->geometry->location->lng;
         $api = new Hotelbeds();
-        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children,
-            $minRate, $maxRate, $page, false, $segments, $boards, $accommodations);
+//        $hotels = $api->hotelbeds_get_hotels($latitude, $longitude, $checkIn, $checkOut, $rooms, $adults, $children,
+//            $minRate, $maxRate, $page, false, $segments, $boards, $accommodations);
         $searchParams = drupal_get_query_parameters();
-//var_dump($hotels->hotels_info);die;
-        $output = theme('hotel_result_listing', array(
+        $checkOut = $checkOut ? date('d/m/Y', strtotime($checkOut)) : null;
+        $checkIn = $checkIn ? date('d/m/Y', strtotime($checkIn)) : null;
+//var_dump($hotels['hotels_info']);die;
+        return theme('hotel_result_listing', array(
             'seach_destination' => $search_destination,
             'checkin_date' => $checkIn,
             'checkout_date' => $checkOut,
-            'hotels' => $hotels['hotels_info'],
+//            'hotels' => $hotels['hotels_info'],
+            'hotelTypes' => $hotelTypes,
+            'hotelBoards' => $hotelBoards,
+            'hotelAccomodations' => $hotelAccomodations,
             'searchParams' => $searchParams,
             'pagination' => $output,
             'base_url' => $base_url,
             'latitude' => $latitude,
             'longitude' => $longitude,
-            'show_filter' => $show_filter,
+            'rooms' => $rooms,
+            'adults' => $adults,
+            'children' => $children
         ));
-        $current_page = pager_default_initialize($hotels['total'], $api::HOTELS_LIMIT_PER_PAGE);
-//        theme_pager_first(['text'=>'hj']);
-        $output .= theme('pager', array('quantity' => $hotels['total'], 'parameters' => ['some' => 'aaa']));//, 'tags'=>['dddd']
-        return $output;
+//        $current_page = pager_default_initialize($hotels['total'], $api::HOTELS_LIMIT_PER_PAGE);
+////        theme_pager_first(['text'=>'hj']);
+//        $output .= theme('pager', array('quantity' => $hotels['total'], 'parameters' => ['some' => 'aaa']));//, 'tags'=>['dddd']
+//        return $output;
     }
 
 
