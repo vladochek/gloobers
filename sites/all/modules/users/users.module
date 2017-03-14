@@ -2100,7 +2100,7 @@ function ajax_register($email = null, $pass = null, $firstname = null, $lastname
     //check with email user already register
     $user_Details = user_load_by_mail($email);
 
-    if ($user_Details) {
+    if (!$user_Details) {
         //user already exist
         $response['failure'] = 'Err_already_exist';
         echo json_encode($response);
