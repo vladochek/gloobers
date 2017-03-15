@@ -404,7 +404,12 @@ function listing_menu()
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK,
     );
-
+  // @By Vlad
+    $items['professional'] = array(
+        'page callback' => 'single_page_professional',
+        'access callback' => true,
+        'type' => MENU_NORMAL_ITEM,
+    );
     return $items;
 }
 
@@ -541,6 +546,12 @@ function listing_theme()
 
         'single_page_reviews' => array(
             'template' => 'single_page_reviews',
+            'path' => $module_path . '/templates',
+        ),
+
+        //By Vlad
+        'single_page_professional' => array(
+            'template' => 'single_page_professional',
             'path' => $module_path . '/templates',
         ),
 
@@ -4448,7 +4459,7 @@ function search_advisor_results()
         'fb' => $fb,
         'passportTypes' => $passportTypes,
         'passions' => $passionsList,
-        'destination' => $destination
+        'destination' => $destination,
     ));
 //    if ($output->results[0]->address_components) {
 //        $filter = generateSearchFilter($output->results[0]->address_components, $filter, $destination);
@@ -9584,4 +9595,8 @@ function cancel_booking()
         //drupal_goto('mytrips');
     }
 
+}
+
+function single_page_professional(){
+    return theme('single_page_professional');
 }
