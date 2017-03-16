@@ -22,7 +22,7 @@
 
 <div class="wrapper">
     <header class="header">
-    <div class="container">
+        <div class="container">
             <div class="header-holder">
                 <a href="#" class="logo"><img src="<?= drupal_get_path('theme', 'new_design') . '/images/logo.png' ?>"
                                               alt="Gloobers" height="59" width="160"></a>
@@ -213,7 +213,9 @@
                 <div class="block-title">
                     <h2>Pricing</h2>
                 </div>
-                <p class="text-center">Just like in a plane, decide where you want your listing to show up. <br>We charge a 20% fix commission, we behave exactly as a classic travel agency. The only <br>difference is that we give that commission away to reward the advisors that promoted you.</p>
+                <p class="text-center">Just like in a plane, decide where you want your listing to show up. <br>We
+                    charge a 20% fix commission, we behave exactly as a classic travel agency. The only <br>difference
+                    is that we give that commission away to reward the advisors that promoted you.</p>
                 <div class="pricing-list">
                     <div class="pricing-card">
                         <div class="card-bg-image">
@@ -233,7 +235,8 @@
                         </div>
                         <div class="card-holder">
                             <strong class="name">BUSINESS</strong>
-                            <strong class="price"><span class="cur">$</span>29<span class="month"> /month</span></strong>
+                            <strong class="price"><span class="cur">$</span>29<span
+                                        class="month"> /month</span></strong>
                             <strong>Real profit</strong>
                             <p>First advantage <br>Second advantage here <br>Third advantage with %</p>
                         </div>
@@ -245,7 +248,8 @@
                         </div>
                         <div class="card-holder">
                             <strong class="name">PREMIERE</strong>
-                            <strong class="price"><span class="cur">$</span>59<span class="month"> /month</span></strong>
+                            <strong class="price"><span class="cur">$</span>59<span
+                                        class="month"> /month</span></strong>
                             <strong>Real profit</strong>
                             <p>First advantage <br>Second advantage here <br>Third advantage here
                             </p>
